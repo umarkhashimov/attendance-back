@@ -3,8 +3,8 @@ from django.contrib.auth.models import AbstractUser
 
 class UsersModel(AbstractUser):
     ROLE_CHOICES = [
-        ('teacher', 'teacher'),
-        ('admin', 'admin'),
+        ('1', 'Teacher'),
+        ('2', 'Admin'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES)
     phone_number = models.CharField(max_length=13, null=True, blank=True)

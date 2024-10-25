@@ -16,6 +16,7 @@ class CourseModel(models.Model):
     total_lessons = models.PositiveIntegerField()
     students = models.ManyToManyField(StudentModel)
     is_started = models.BooleanField(default=False)
+    course_cost = models.PositiveIntegerField(default=0)
     
     def __str__(self):
         return self.course_name
