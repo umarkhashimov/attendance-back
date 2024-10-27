@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings  # to use custom user model if needed
 from users.models import UsersModel
-from students.models import StudentModel
 
 
 
@@ -9,12 +8,11 @@ from students.models import StudentModel
 class CourseModel(models.Model):
     course_name = models.CharField(max_length=100, unique=True)
     subject = models.CharField(max_length=100, blank=True, null=True)
-    teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': 'teacher'})
+    teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': '1'})
     start_date = models.DateField()
     lesson_time = models.TimeField()
     duration = models.TimeField()
     total_lessons = models.PositiveIntegerField()
-    students = models.ManyToManyField(StudentModel)
     is_started = models.BooleanField(default=False)
     course_cost = models.PositiveIntegerField(default=0)
     

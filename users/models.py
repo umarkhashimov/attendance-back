@@ -10,7 +10,7 @@ class UsersModel(AbstractUser):
     phone_number = models.CharField(max_length=13, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.username} - {self.role}"
+        return f"{self.username}"
 
     class Meta:
         verbose_name = 'user'
