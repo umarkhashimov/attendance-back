@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'courses',
     'attendance',
     'payment',
+    'main',
 ]
 
 MIDDLEWARE = [
@@ -145,3 +146,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 AUTH_USER_MODEL = "users.UsersModel"
+
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
