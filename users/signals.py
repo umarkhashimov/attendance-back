@@ -3,10 +3,10 @@ from django.dispatch import receiver
 from datetime import timedelta
 from .models import UsersModel
 
-@receiver(post_save, sender=UsersModel)
-def create_sessions(sender, instance, created, **kwargs):
-    if created:
-        pswd = instance.password
-        user = UsersModel.objects.get(id=instance.id)
-        user.set_password(pswd)
-        user.save()
+# @receiver(post_save, sender=UsersModel)
+# def create_user(sender, instance, created, **kwargs):
+#     if created:
+#         pswd = instance.password
+#         user = UsersModel.objects.get(id=instance.id)
+#         user.set_password(pswd)
+#         user.save()
