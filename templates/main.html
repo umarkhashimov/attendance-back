@@ -1,6 +1,21 @@
-{% extends "layout/base.html" %}
+{% extends 'layout/base.html' %}
 
-
+{% block title %}
+  <title>Панель Управления</title>
+{% endblock %}
 {% block content %}
-    <h1>Welcome: {{ user.username }}</h1>
-{% endblock  %}
+  {% include 'layout/navbar.html' %}
+
+  <h2 class="text-center">Добро пожаловать {{ user.first_name }}</h2>
+
+  <ul class="list-group">
+    {% for obj in courses %}
+      <li class="list-group-item">{{ obj.course_name }}</li>
+    {% endfor %}
+  </ul>
+
+  <form action="{% url 'users:logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+  </form>
+{% endblock %}
