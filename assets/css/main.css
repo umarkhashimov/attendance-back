@@ -1,0 +1,19 @@
+
+.loginFormContainer{
+    max-width: 400px;
+}
+
+.loginForm{
+    font-size: 17px;
+    font-weight: 500;
+    border-radius: 10px;
+}
+
+.loginForm input {
+    letter-spacing:  1px;
+    font-weight: 400;
+}
+
+.loginForm button{
+    font-size: 18px !important;
+}

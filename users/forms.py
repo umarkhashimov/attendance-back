@@ -6,13 +6,13 @@ from django.utils.translation import gettext_lazy as _
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         max_length=254,
-        widget=forms.TextInput(attrs={'class': 'form-control border-3', 'placeholder': 'Имя пользователя'}),
+        widget=forms.TextInput(attrs={'class': 'form-control border-3'}),
         label=_("Имя пользователя")
     )
     password = forms.CharField(
         label=_("Пароль"),
         strip=False,
-        widget=forms.PasswordInput(attrs={'class': 'form-control border-3', 'placeholder': 'Пароль'}),
+        widget=forms.PasswordInput(attrs={'class': 'form-control border-3'}),
     )
 
     # Optional: Add custom validation, error messages, etc.
