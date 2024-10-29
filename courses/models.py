@@ -24,12 +24,12 @@ WEEKDAY_CHOICES = [
 ]
 
 class CourseModel(models.Model):
-    course_name = models.CharField(max_length=100, unique=True)
-    weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
     subject = models.ForeignKey(SubjectModel, on_delete=models.CASCADE)
+    course_name = models.CharField(max_length=100, null=True, blank=True)
     teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': '1'})
-    start_date = models.DateField()
+    weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
     lesson_time = models.TimeField()
+    start_date = models.DateField()
     duration = models.PositiveIntegerField()
     total_lessons = models.PositiveIntegerField()
     course_cost = models.PositiveIntegerField(default=0)
