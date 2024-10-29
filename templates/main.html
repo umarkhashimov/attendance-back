@@ -6,13 +6,22 @@
 {% block content %}
   {% include 'layout/navbar.html' %}
 
-  <h2 class="text-center">Добро пожаловать {{ user.first_name }}</h2>
+  <h2 class="text-center mt-5 mb-3">Добро пожаловать {{ user.first_name }}</h2>
 
-  <ul class="list-group">
+  <div class="container courses-list">
     {% for obj in courses %}
-      <li class="list-group-item">{{ obj.course_name }}</li>
+      <a href="" class="border-2 border p-3 d-block course-list-item my-3">
+        <div class="row">
+          <div class="col-5 my-1">
+            {{ obj.course_name|capfirst }} <span class="badge text-bg-secondary">#{{ obj.id }}</span>
+          </div>
+          <div class="col-5">
+            {{ obj.lesson_time }}
+          </div>
+        </div>
+      </a>
     {% endfor %}
-  </ul>
+  </div>
 
   <form action="{% url 'users:logout' %}" method="post">
     {% csrf_token %}

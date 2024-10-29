@@ -33,3 +33,23 @@
     overflow: hidden;
     border: 1px solid black !important;
 }
+
+.course-cards{
+    text-decoration: none;
+}
+
+
+.courses-list-item {
+    display: block;
+    border-radius: 5px;
+    transition: 0.5s;
+    overflow: hidden;
+}
+.courses-list-item:hover  {
+    box-shadow: 2px 2px 2px 2px black;
+}
+
+
+.course-list-item{
+    text-decoration: none;
+}
