@@ -8,23 +8,34 @@
 
   <h2 class="text-center mt-5 mb-3">Добро пожаловать {{ user.first_name }}</h2>
 
+
+
   <div class="container courses-list">
+    <h4>Все Группы</h4>
+    <hr class="table-group-divider">
     {% for obj in courses %}
-      <a href="" class="border-2 border p-3 d-block course-list-item my-3">
+      <a href="{% url 'main:course_detail' pk=obj.id %}" class="border-2 border p-3 d-block course-list-item my-3">
         <div class="row">
-          <div class="col-5 my-1">
-            {{ obj.course_name|capfirst }} <span class="badge text-bg-secondary">#{{ obj.id }}</span>
+          <div class="col-6 d-flex align-items-center">
+            <p class="text-dark m-0">
+              <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
+              {{ obj.course_name|capfirst }}
+            </p>
           </div>
-          <div class="col-5">
-            {{ obj.lesson_time }}
+          <div class="col-1 d-flex align-items-center">
+            <p class="text-dark m-0">{{ obj.lesson_time|time:'H:i' }}</p>
+          </div>
+          <div class="col-5 d-flex align-items-center">
+            <p class="main-lesson-days m-0 text-dark">
+              {% for key, value in obj.weekdays.choices.items %}
+                {% if key in obj.weekdays %}
+                  <span>{{ value }}</span>
+                {% endif %}
+              {% endfor %}
+            </p>
           </div>
         </div>
       </a>
     {% endfor %}
   </div>
-
-  <form action="{% url 'users:logout' %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Logout</button>
-  </form>
 {% endblock %}

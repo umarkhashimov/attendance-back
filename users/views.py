@@ -9,3 +9,5 @@ class LoginPageView(LoginView):
     template_name = 'auth/login.html'
     redirect_authenticated_user = True
 
+class ProfileView(TemplateView):
+    template_name = 'auth/profile.html'

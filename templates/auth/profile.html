@@ -1,0 +1,15 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+  <title>Профиль</title>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+  <h2 class="text-center mt-5 mb-3">Профиль: {{ user.username }}</h2>
+
+  <form action="{% url 'users:logout' %}" method="post">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+  </form>
+{% endblock %}

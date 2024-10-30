@@ -36,8 +36,6 @@ class CourseModel(models.Model):
     is_started = models.BooleanField(default=False)
     finished = models.BooleanField(default=False)
 
-    
-    
     def __str__(self):
         return self.course_name
 

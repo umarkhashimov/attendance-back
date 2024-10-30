@@ -1,0 +1,17 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+  <title>Курс</title>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+    {{course}}
+
+    {% for session in sessions  %}
+      <p>
+        <span>{{session.id}}: </span>
+        {{session.date}} - {{session.course}}
+      </p>
+        {% endfor %}
+{% endblock %}
