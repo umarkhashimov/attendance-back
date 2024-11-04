@@ -3,12 +3,14 @@ from courses.models import SessionsModel
 from students.models import Enrollment
 
 
+STATUS_CHOICES = [('1', 'Present'), ('0', 'Absent'), ('3', 'Late')]
+
 class AttendanceModel(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     session = models.ForeignKey(SessionsModel, on_delete=models.CASCADE)
     status = models.CharField(
         max_length=10, 
-        choices=[('Present', 'Present'), ('Absent', 'Absent'), ('Late', 'Late')]
+        choices=STATUS_CHOICES
     )
     remarks = models.TextField(blank=True, null=True)
 
