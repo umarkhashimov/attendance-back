@@ -3,7 +3,7 @@ from courses.models import SessionsModel
 from students.models import Enrollment
 
 
-STATUS_CHOICES = [('1', 'Present'), ('0', 'Absent'), ('3', 'Late')]
+STATUS_CHOICES = [('1', 'Присутствует'), ('0', 'Отсутствует'), ('3', 'Опоздал')]
 
 class AttendanceModel(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
