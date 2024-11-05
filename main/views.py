@@ -1,6 +1,7 @@
-from django.views.generic import TemplateView, DetailView, ListView
+from django.views.generic import TemplateView, DetailView, ListView, UpdateView
 from django.core.exceptions import PermissionDenied
 from datetime import date
+from django.urls import reverse
 from django.utils import timezone
 from courses.models import CourseModel, SessionsModel
 from students.models import Enrollment, StudentModel
@@ -85,3 +86,12 @@ class StudentsListView(AdminRequired, ListView):
     model = StudentModel
     template_name = 'students_list.html'
     context_object_name = 'students'
+
+
+class StudentUpdateView(AdminRequired, UpdateView):
+    model = StudentModel
+    template_name = 'student_update.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('main:students_list')

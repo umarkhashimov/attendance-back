@@ -40,7 +40,7 @@ class Enrollment(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Balance per course
     lessons_paid = models.IntegerField(default=0)  # Total lessons covered by payments
     lessons_attended = models.IntegerField(default=0)  # Lessons attended by student
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')  # Enrollment status
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='1')  # Enrollment status
 
     def lessons_remaining(self):
         return max(self.lessons_paid - self.lessons_attended, 0)
