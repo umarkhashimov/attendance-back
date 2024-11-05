@@ -64,3 +64,4 @@
 .main-lesson-days span:not(:last-child)::after {
     content: ',';
 }
+

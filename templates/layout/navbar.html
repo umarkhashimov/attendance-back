@@ -10,15 +10,17 @@
         <li class="nav-item">
           <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{% url 'main:main' %}">{% if user.role == '1' %}Мои {% endif %}Группы</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="#">Учителя</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="#">Ученики</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="#">Оплата</a>
-        </li>
+        {% if user.role == '2' %}
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#">Учителя</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="{% url 'main:students_list' %}">Ученики</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="#">Оплата</a>
+          </li>
+        {% endif %}
       </ul>
     </div>
     <a href="{% url 'users:profile' %}" class="profile-navbtn d-none d-lg-block"><img src="{% static 'img/user.webp' %}" alt="" /></a>

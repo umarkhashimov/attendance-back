@@ -16,6 +16,10 @@ class StudentModel(models.Model):
     balance = models.PositiveIntegerField(null=True, blank=True, default=0)
     courses = models.ManyToManyField(CourseModel, through='Enrollment')
 
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 

@@ -21,5 +21,5 @@ class AttendanceModel(models.Model):
     class Meta:
         verbose_name = 'attendance record'
         verbose_name_plural = 'attendance records'
-        # unique_together = ('enrollment', 'session')  # Each student should have one attendance record per session
+        unique_together = ('enrollment', 'session') 
         ordering = ['session__date']
