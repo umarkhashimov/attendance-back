@@ -15,7 +15,12 @@
           <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
             <p class="text-dark m-0">
               <span class="bandge text-secondary opacity-50 me-3">{{ obj.session_number }}</span>
-              {{ obj.date }}
+              {{ obj.date|date:'F j, Y' }}
+              <span class="text-primary"> - {{ obj.date|date:'l' }}</span>
+              {% now 'Y-m-d' as current_date %}
+              {% if obj.date|date:'Y-m-d' == current_date %}
+                <span class="ms-3 text-danger">  Сегодня</span>
+              {% endif %}
             </p>
           </div>
           <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
@@ -34,5 +39,4 @@
       </a>
     {% endfor %}
   </div>
-
 {% endblock %}

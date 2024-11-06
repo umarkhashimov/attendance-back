@@ -79,7 +79,7 @@ class RecordAttendanceView(View, LoginRequiredMixin):
                 enrolled = Enrollment.objects.get(student__student_id=stid, course=session.course)
                 AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': value})                
                 print(key, stid, value)
-        return redirect('main:session_detail', session_id=session.id)
+        return redirect('main:course_detail', pk=session.course.id)
 
 
 class StudentsListView(AdminRequired, ListView):

@@ -1,3 +1,4 @@
+from typing import Iterable
 from django.db import models
 from django.conf import settings  # to use custom user model if needed
 from users.models import UsersModel
@@ -15,17 +16,17 @@ class SubjectModel(models.Model):
         verbose_name_plural = "subjects"
 
 WEEKDAY_CHOICES = [
-    ('1', 'Понедельник'),
-    ('2', 'Вторник'),
-    ('3', 'Среда'),
-    ('4', 'Четверг'),
-    ('5', 'Пятница'),
-    ('6', 'Суббота'),
+    ('0', 'Понедельник'),
+    ('1', 'Вторник'),
+    ('2', 'Среда'),
+    ('3', 'Четверг'),
+    ('4', 'Пятница'),
+    ('5', 'Суббота'),
 ]
 
 class CourseModel(models.Model):
     subject = models.ForeignKey(SubjectModel, on_delete=models.CASCADE)
-    course_name = models.CharField(max_length=100, null=True, blank=True)
+    course_name = models.CharField(max_length=100, null=True, blank=True, unique=False)
     teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': '1'})
     weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
     lesson_time = models.TimeField()

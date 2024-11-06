@@ -57,3 +57,8 @@ class Enrollment(models.Model):
 
     def __str__(self):
         return f"{self.student} - {self.course} ({self.status})"
+    
+    class Meta:
+        verbose_name = "enrollment"
+        verbose_name_plural = "enrollments"
+        unique_together = ("student", "course")
