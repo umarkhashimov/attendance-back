@@ -5,7 +5,7 @@ from .models import SessionsModel, CourseModel
 
 @receiver(post_save, sender=CourseModel)
 def create_sessions(sender, instance, created, **kwargs):
-    if created:
+    if not created and instance.is_started:
         lesson_days = [i for i in instance.weekdays]
         current_date = instance.start_date
         created_count = 0
