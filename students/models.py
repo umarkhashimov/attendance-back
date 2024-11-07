@@ -41,6 +41,7 @@ class Enrollment(models.Model):
     lessons_paid = models.IntegerField(default=0)  # Total lessons covered by payments
     lessons_attended = models.IntegerField(default=0)  # Lessons attended by student
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='1')  # Enrollment status
+    trial_lesson = models.BooleanField(default=False)
 
     def lessons_remaining(self):
         return max(self.lessons_paid - self.lessons_attended, 0)
