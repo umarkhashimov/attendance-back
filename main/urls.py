@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import MainPageView, CourseDetailView, RecordAttendanceView, StudentsListView, StudentUpdateView,  TeachersListView, TeacherUpdateView, CoursesListView, CourseUpdateView
+from .views import MainPageView, CourseDetailView, RecordAttendanceView, StudentsListView, StudentUpdateView,  TeachersListView, CoursesListView, CourseUpdateView
 
 app_name = 'main'
 
@@ -10,7 +10,6 @@ urlpatterns = [
     path('students', StudentsListView.as_view(), name='students_list'),
     path('student/<int:pk>', StudentUpdateView.as_view(), name='student_update'),
     path('teachers/', TeachersListView.as_view(), name='teachers_list'),
-    path('teacher/<int:pk>', TeacherUpdateView.as_view(), name='teacher_update'),
     path('courses/', CoursesListView.as_view(), name='courses_list'),
     path('course/<int:pk>', CourseUpdateView.as_view(), name='course_update'),
 
