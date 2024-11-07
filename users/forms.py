@@ -3,6 +3,8 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 
+from .models import UsersModel
+
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         max_length=254,
@@ -22,3 +24,12 @@ class LoginForm(AuthenticationForm):
                 _("This account is inactive."),
                 code='inactive',
             )
+
+
+class TeacherUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = UsersModel
+        # fields = "__all__"
+        fields = ['first_name', 'last_name', 'phone_number', 'email', 'is_active']
+        # exclude = ['password', 'last_login']'

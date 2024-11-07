@@ -2,7 +2,6 @@ from django.views.generic import TemplateView, DetailView, ListView, UpdateView
 from django.core.exceptions import PermissionDenied
 from datetime import date
 from django.urls import reverse
-from django.utils import timezone
 from courses.models import CourseModel, SessionsModel
 from students.models import Enrollment, StudentModel
 from django.shortcuts import render, get_object_or_404, redirect
@@ -12,8 +11,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from users.filters import AdminRequired
 from courses.models import SessionsModel
 from attendance.models import AttendanceModel, STATUS_CHOICES
-from attendance.forms import AttendanceStatusForm
-from django.forms import formset_factory
 from users.models import UsersModel
 
 class MainPageView(TemplateView):
@@ -80,7 +77,7 @@ class RecordAttendanceView(View, LoginRequiredMixin):
                 enrolled = Enrollment.objects.get(student__student_id=stid, course=session.course)
                 AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': value})                
                 print(key, stid, value)
-        return redirect('main:course_detail', pk=session.course.id)
+        return redirect('main:course_sessions', pk=session.course.id)
 
 
 class StudentsListView(AdminRequired, ListView):
@@ -101,15 +98,6 @@ class TeachersListView(AdminRequired, ListView):
     queryset = UsersModel.objects.all().filter(role='1')
     template_name = 'teachers_list.html'
     context_object_name = 'teachers'
-
-
-class TeacherUpdateView(AdminRequired, UpdateView):
-    model = UsersModel
-    template_name = 'teacher_update.html'
-    fields = '__all__'
-
-    def get_success_url(self):
-        return reverse('main:teachers_list')
     
 class CoursesListView(AdminRequired, ListView):
     queryset = CourseModel.objects.all()
