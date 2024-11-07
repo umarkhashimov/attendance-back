@@ -1,0 +1,41 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+  <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+  <h2 class="text-center mt-5 mb-3">Добро пожаловать {{ user.first_name }}</h2>
+
+  <div class="container courses-list">
+    <h4 class="mt-5">Все Учителя</h4>
+    <hr class="table-group-divider" />
+    {% for obj in teachers %}
+      <a href="{% url 'main:teacher_update' pk=obj.id %}" class="border-2 border p-3 d-block course-list-item my-3">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
+            <p class="text-dark m-0">
+              {{ obj.username }}
+              {% if obj.get_full_name %}
+              <span class="ms-3">
+                {{ obj.get_full_name }}
+              </span>
+              {% endif %}
+            </p>
+          </div>
+          <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
+            <p class="text-dark m-0">--:--</p>
+          </div>
+          <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
+            <p class="main-lesson-days m-0 text-dark">
+              <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
+            </p>
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <p class="text-center text-secondary">Нет Учеников.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

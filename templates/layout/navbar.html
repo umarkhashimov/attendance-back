@@ -6,19 +6,26 @@
     <a href="{% url 'users:profile' %}" class="profile-navbtn d-block d-lg-none ms-auto me-4"><img src="{% static 'img/user.webp' %}" alt="" /></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 pb-2 mb-lg-0 gap-2">
+      <ul class="navbar-nav me-auto text-center mb-2 pb-2 mb-lg-0 gap-2">
         <li class="nav-item">
-          <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{% url 'main:main' %}">{% if user.role == '1' %}Мои {% endif %}Группы</a>
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{% url 'main:main' %}">Посещение</a>
         </li>
         {% if user.role == '2' %}
           <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="#">Учителя</a>
+            {% url 'main:courses_list' as cpath %}
+            <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'main:courses_list' %}">Группы</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="{% url 'main:students_list' %}">Ученики</a>
+            {% url 'main:students_list' as cpath %}
+            <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'main:students_list' %}">Ученики</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="#">Оплата</a>
+            {% url 'main:teachers_list' as cpath %}
+            <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'main:teachers_list' %}">Учителя</a>
+          </li>
+          <li class="nav-item">
+            {% url '' as cpath %}
+            <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="#">Оплата</a>
           </li>
         {% endif %}
       </ul>

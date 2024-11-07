@@ -9,6 +9,10 @@ class UsersModel(AbstractUser):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1')
     phone_number = models.CharField(max_length=13, null=True, blank=True)
 
+    @property
+    def get_full_name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         return f"{self.username}"
 

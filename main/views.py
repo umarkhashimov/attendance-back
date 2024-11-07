@@ -14,6 +14,7 @@ from courses.models import SessionsModel
 from attendance.models import AttendanceModel, STATUS_CHOICES
 from attendance.forms import AttendanceStatusForm
 from django.forms import formset_factory
+from users.models import UsersModel
 
 class MainPageView(TemplateView):
     template_name = 'main.html'
@@ -36,7 +37,7 @@ class MainPageView(TemplateView):
 
 class CourseDetailView(DetailView):
     model = CourseModel
-    template_name = 'course_detail.html'
+    template_name = 'course_sessions_list.html'
     context_object_name = 'course'
 
     def get_object(self, queryset=None):
@@ -95,3 +96,27 @@ class StudentUpdateView(AdminRequired, UpdateView):
 
     def get_success_url(self):
         return reverse('main:students_list')
+    
+class TeachersListView(AdminRequired, ListView):
+    queryset = UsersModel.objects.all().filter(role='1')
+    template_name = 'teachers_list.html'
+    context_object_name = 'teachers'
+
+
+class TeacherUpdateView(AdminRequired, UpdateView):
+    model = UsersModel
+    template_name = 'teacher_update.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('main:teachers_list')
+    
+class CoursesListView(AdminRequired, ListView):
+    queryset = CourseModel.objects.all()
+    template_name = "courses_list.html"
+    context_object_name = 'courses'
+
+class CourseUpdateView(AdminRequired, UpdateView):
+    model = CourseModel
+    template_name = "course_detail.html"
+    fields = '__all__'
