@@ -1,8 +1,7 @@
-from typing import Iterable
 from django.db import models
-from django.conf import settings  # to use custom user model if needed
 from users.models import UsersModel
 from multiselectfield import MultiSelectField
+from datetime import timedelta
 
 
 class SubjectModel(models.Model):
@@ -39,6 +38,22 @@ class CourseModel(models.Model):
 
     def __str__(self):
         return self.course_name
+    
+
+    def create_sessions(self):
+        lesson_days = [i for i in self.weekdays]
+        current_date = self.start_date
+        created_count = 0
+        if self.is_started == False:
+            while created_count < self.total_lessons:
+                if str(current_date.weekday()) in lesson_days:
+                    SessionsModel.objects.create(course=self, date=current_date, session_number=created_count + 1,)
+                    print('created session: ', current_date.strftime("%A, %B %d, %Y"), current_date.weekday())
+                    created_count += 1
+                
+                current_date += timedelta(days=1)
+            self.is_started =  True
+            self.save()
 
     class Meta:
         verbose_name = 'course'

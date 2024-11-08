@@ -1,16 +1,10 @@
-from django.views.generic import TemplateView, DetailView, ListView, UpdateView
-from django.core.exceptions import PermissionDenied
+from django.views.generic import TemplateView, ListView
 from datetime import date
-from django.urls import reverse
 from courses.models import CourseModel, SessionsModel
-from students.models import Enrollment, StudentModel
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from students.models import StudentModel
 
 from users.filters import AdminRequired
 from courses.models import SessionsModel
-from attendance.models import AttendanceModel, STATUS_CHOICES
 from users.models import UsersModel
 
 class MainPageView(TemplateView):
@@ -32,67 +26,12 @@ class MainPageView(TemplateView):
         return context
     
 
-class CourseDetailView(DetailView):
-    model = CourseModel
-    template_name = 'course_sessions_list.html'
-    context_object_name = 'course'
-
-    def get_object(self, queryset=None):
-        obj = super().get_object(queryset)
-        if not self.request.user.is_superuser and obj.teacher != self.request.user:
-            raise PermissionDenied()  # Raises a 403 error if the teacher is not assigned to the course
-        return obj
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        course = self.get_object()
-        context['sessions'] = SessionsModel.objects.all().filter(course=course)
-        return context
-    
-
-class RecordAttendanceView(View, LoginRequiredMixin):
-    template_name = 'session_detail.html'
-    
-
-    def get(self, request, session_id):
-        session = get_object_or_404(SessionsModel, id=session_id)
-        enrollments = Enrollment.objects.all().filter(course=session.course)
-        existing_records = AttendanceModel.objects.all().filter(session=session).values_list('enrollment__student_id', flat=True)
-        attendance = AttendanceModel.objects.all().filter(session=session)
-        
-        context = {
-            'session': session,
-            'enrollments': enrollments,
-            'exist': existing_records,
-            'attendance': attendance,
-            'status_choices':  STATUS_CHOICES
-        }
-        return render(request, self.template_name, context)
-
-    def post(self, request, session_id):
-        session = get_object_or_404(SessionsModel, id=session_id)
-        for key, value in request.POST.items():
-            if str(key).startswith('stid'):
-                stid = str(key).split('_')[1]
-                enrolled = Enrollment.objects.get(student__student_id=stid, course=session.course)
-                AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': value})                
-                print(key, stid, value)
-        return redirect('main:course_sessions', pk=session.course.id)
-
-
 class StudentsListView(AdminRequired, ListView):
     model = StudentModel
     template_name = 'students_list.html'
     context_object_name = 'students'
 
 
-class StudentUpdateView(AdminRequired, UpdateView):
-    model = StudentModel
-    template_name = 'student_update.html'
-    fields = '__all__'
-
-    def get_success_url(self):
-        return reverse('main:students_list')
     
 class TeachersListView(AdminRequired, ListView):
     queryset = UsersModel.objects.all().filter(role='1')
@@ -103,8 +42,3 @@ class CoursesListView(AdminRequired, ListView):
     queryset = CourseModel.objects.all()
     template_name = "courses_list.html"
     context_object_name = 'courses'
-
-class CourseUpdateView(AdminRequired, UpdateView):
-    model = CourseModel
-    template_name = "course_detail.html"
-    fields = '__all__'

@@ -10,7 +10,7 @@
     <h1>{{ session.course.course_name }}</h1><h2 class="mt-3"> Урок {{ session.session_number }} - {{ session.date }}</h2>
     <hr class="table-group-divider"  />
 
-    <form method="post" action="{% url 'main:session_detail' session_id=session.id %}">
+    <form method="post" action="{% url 'attendance:session_detail' session_id=session.id %}">
       {% csrf_token %}
       {% for obj in enrollments %}
         {{ obj.enrollment }}

@@ -9,13 +9,18 @@
   <h2 class="text-center mt-5 mb-3">Добро пожаловать {{ user.first_name }}</h2>
 
   <div class="container courses-list">
-
     <h4 class="mt-5">Курс</h4>
     <hr class="table-group-divider" />
     <form method="post">
       {% csrf_token %}
-      {{form.as_p}}
+      {{ form.as_p }}
       <button type="submit">Сохранить</button>
     </form>
+    {% if not obj.is_started %}
+      <form method="post" action="{% url 'courses:course_start' obj.id %}">
+        {% csrf_token %}
+        <button type="submit">Начать Курс</button>
+      </form>
+    {% endif %}
   </div>
 {% endblock %}
