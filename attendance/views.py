@@ -13,7 +13,7 @@ class RecordAttendanceView(View, LoginRequiredMixin):
 
     def get(self, request, session_id):
         session = get_object_or_404(SessionsModel, id=session_id)
-        enrollments = Enrollment.objects.all().filter(course=session.course)
+        enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
         existing_records = AttendanceModel.objects.all().filter(session=session).values_list('enrollment__student_id', flat=True)
         attendance = AttendanceModel.objects.all().filter(session=session)
         
@@ -28,10 +28,15 @@ class RecordAttendanceView(View, LoginRequiredMixin):
 
     def post(self, request, session_id):
         session = get_object_or_404(SessionsModel, id=session_id)
-        for key, value in request.POST.items():
-            if str(key).startswith('stid'):
-                stid = str(key).split('_')[1]
-                enrolled = Enrollment.objects.get(student__student_id=stid, course=session.course)
-                AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': value})                
-                print(key, stid, value)
-        return redirect('courses:course_sessions', pk=session.course.id)
+
+        keys = {key: value for key, value in request.POST.items() if key.startswith('stid')}.keys()
+        print(keys)
+        enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
+        for obj in enrollments:
+            status = False
+            if f"stid_{obj.student.student_id}" in keys:
+                status = True
+            enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
+            AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': status}) 
+       
+        return redirect(request.path, pk=session.course.id)
