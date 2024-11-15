@@ -45,7 +45,7 @@
 }
 
 .course-list-item p,
-.course-list-item span{
+.course-list-item span {
     transition: 0.3s;
 }
 
@@ -65,3 +65,11 @@
     content: ',';
 }
 
+.checkstatus {
+    width: 20px;
+    height: 20px;
+    box-shadow: none !important;
+    background: whitesmoke !important;
+    border: 1px solid red !important;
+    border-radius: 2px !important;
+}

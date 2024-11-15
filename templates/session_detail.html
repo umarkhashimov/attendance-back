@@ -7,7 +7,7 @@
   {% include 'layout/navbar.html' %}
 
   <div class="container courses-list mt-5 pb-5">
-    <h1>{{ session.course.course_name }}</h1><h2 class="mt-3"> Урок {{ session.session_number }} - {{ session.date }}</h2>
+    <h1>{{ session.course.course_name }}</h1><h2 class="mt-3"> Урок {{ session.session_number }} - {{ session.date }} - {{ session.course.lesson_time|time:'H:i' }}</h2>
     <hr class="table-group-divider"  />
 
     <form method="post" action="{% url 'attendance:session_detail' session_id=session.id %}">
@@ -20,12 +20,12 @@
                {% if obj.student.id  in exist  %}
                {% for record in attendance %}
                   {% if record.enrollment.student.id == obj.student.id %}
-                  <input name="stid_{{ obj.student.student_id }}" type="checkbox" {% if record.status %}checked{% endif %}>
+                  <input name="stid_{{ obj.student.student_id }}" type="checkbox" {% if record.status %}checked{% endif %} class="checkstatus">
                   {% endif %}
                 
                 {% endfor %}
                 {% else %}
-                <input name="stid_{{ obj.student.student_id }}" type="checkbox">
+                <input name="stid_{{ obj.student.student_id }}" type="checkbox" class="checkstatus">
               {% endif %} 
               <p class="m-0 ms-3">{{obj.student.first_name}} {{obj.student.last_name}}</p>
             </div>

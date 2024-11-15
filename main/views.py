@@ -14,15 +14,14 @@ class MainPageView(TemplateView):
         context = super().get_context_data(**kwargs)
         today = date.today()
         sessions_today = SessionsModel.objects.filter(date=today)
+        courses = CourseModel.objects.all()
+
         if self.request.user.role == '1':
             courses = CourseModel.objects.all().filter(teacher__id=self.request.user.id)
-            courses_with_today_sessions = CourseModel.objects.filter(teacher__id=self.request.user.id, id__in=sessions_today.values_list('course_id', flat=True)).distinct()
-        else:
-            courses = CourseModel.objects.all()
-            courses_with_today_sessions = CourseModel.objects.filter(id__in=sessions_today.values_list('course_id', flat=True)).distinct()
+            sessions_today = SessionsModel.objects.filter(date=today, course__teacher__id=self.request.user.id)
 
         context["courses"] = courses
-        context['sessions_today'] = courses_with_today_sessions
+        context['sessions_today'] = sessions_today
         return context
     
 

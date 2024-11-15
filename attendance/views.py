@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from courses.filters import session_date_match
 from courses.models import SessionsModel
 from .models import AttendanceModel, STATUS_CHOICES
 
@@ -16,7 +17,10 @@ class RecordAttendanceView(View, LoginRequiredMixin):
         enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
         existing_records = AttendanceModel.objects.all().filter(session=session).values_list('enrollment__student_id', flat=True)
         attendance = AttendanceModel.objects.all().filter(session=session)
-        
+
+        if request.user.role == '1' and not session_date_match(session):
+            return redirect("main:main")
+
         context = {
             'session': session,
             'enrollments': enrollments,
@@ -30,7 +34,6 @@ class RecordAttendanceView(View, LoginRequiredMixin):
         session = get_object_or_404(SessionsModel, id=session_id)
 
         keys = {key: value for key, value in request.POST.items() if key.startswith('stid')}.keys()
-        print(keys)
         enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
         for obj in enrollments:
             status = False

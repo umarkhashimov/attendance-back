@@ -67,6 +67,11 @@ class SessionsModel(models.Model):
     session_number = models.PositiveIntegerField()
     date = models.DateField()
     is_canceled = models.BooleanField(default=False)
+    conducted = models.BooleanField(default=False)
+
+    def conduct(self):
+        self.conducted = True
+        self.save()
 
     def __str__(self):
         return f"{self.course.course_name} - Session {self.session_number} on {self.date}"
@@ -76,5 +81,3 @@ class SessionsModel(models.Model):
         verbose_name_plural = 'sessions'
         unique_together = ('course', 'session_number')
         ordering = ['date']
-
-
