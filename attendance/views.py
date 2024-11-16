@@ -26,7 +26,9 @@ class RecordAttendanceView(View, LoginRequiredMixin):
             'enrollments': enrollments,
             'exist': existing_records,
             'attendance': attendance,
-            'status_choices':  STATUS_CHOICES
+            'status_choices':  STATUS_CHOICES,
+            'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
+            'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
         }
         return render(request, self.template_name, context)
 

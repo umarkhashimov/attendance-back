@@ -7,7 +7,17 @@
   {% include 'layout/navbar.html' %}
 
   <div class="container courses-list mt-5 pb-5">
-    <h1>{{ session.course.course_name }}</h1><h2 class="mt-3"> Урок {{ session.session_number }} - {{ session.date }} - {{ session.course.lesson_time|time:'H:i' }}</h2>
+    {% if user.role == '2' %}
+    {% if prev_session %}
+    <a href="{% url "attendance:session_detail" session_id=prev_session.id %}">previous sesion</a>
+    {% endif %}
+    <input type="date" value="{{session.date|date:'Y-m-d'}}">
+    {% if next_session %}
+    <a href="{% url "attendance:session_detail" session_id=next_session.id %}">next sesion</a>
+    {% endif %}
+    {% endif %}
+    <h1>{{ session.course.course_name }}</h1>
+    <h2 class="mt-3"> Урок {{ session.session_number }} - {{ session.date }} - {{ session.course.lesson_time|time:'H:i' }}</h2>
     <hr class="table-group-divider"  />
 
     <form method="post" action="{% url 'attendance:session_detail' session_id=session.id %}">
