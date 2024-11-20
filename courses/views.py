@@ -6,6 +6,7 @@ from django.core.exceptions import PermissionDenied
 from .models import CourseModel, SessionsModel
 from django.urls import reverse
 from django.shortcuts import redirect
+from datetime import datetime
 
 from .forms import CourseUpdateForm
 
@@ -49,3 +50,28 @@ class StartCourseView(AdminRequired, View):
         course.create_sessions()
         print('Success')
         return redirect("courses:course_update", pk=pk)
+    
+class RedirectCourseToCloseSession(View):
+    
+    def get(self, request, course_id):
+        today = datetime.now().date()
+        course = CourseModel.objects.get(id=course_id)
+
+        if course.is_started:
+
+            closest_session = (
+                SessionsModel.objects.filter(date__gte=today, course_id=course.id)
+                .order_by('date')
+                .first()
+            )
+            if not closest_session:
+                closest_session = (
+                    SessionsModel.objects.filter(date__lt=today, course_id=course.id)
+                    .order_by('-date')
+                    .first()
+                )
+            print(closest_session)
+            return redirect('attendance:session_detail', session_id=closest_session.id)
+        
+        else:
+            return redirect("main:main")

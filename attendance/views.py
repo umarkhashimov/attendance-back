@@ -12,8 +12,9 @@ class RecordAttendanceView(View, LoginRequiredMixin):
     template_name = 'session_detail.html'
     
 
-    def get(self, request, session_id):
-        session = get_object_or_404(SessionsModel, id=session_id)
+    def get(self, request, session_id=None):
+        if session_id:
+            session = get_object_or_404(SessionsModel, id=session_id)
         enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
         existing_records = AttendanceModel.objects.all().filter(session=session).values_list('enrollment__student_id', flat=True)
         attendance = AttendanceModel.objects.all().filter(session=session)
