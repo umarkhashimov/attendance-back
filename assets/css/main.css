@@ -42,6 +42,7 @@
     border-radius: 5px;
     text-decoration: none;
     transition: 0.3s;
+    border-color: gray;
 }
 
 .course-list-item p,
@@ -51,12 +52,12 @@
 
 
 
-.course-list-item:hover p,
-.course-list-item:hover span {
+.course-list-item:hover:not([disabled]) p,
+.course-list-item:hover:not([disabled]) span {
     color: blue !important;
 }
 
-.course-list-item:hover {
+.course-list-item:hover:not([disabled]) {
     border-color: blue !important;
 }
 
@@ -72,4 +73,8 @@
     background: whitesmoke !important;
     border: 1px solid red !important;
     border-radius: 2px !important;
+}
+
+.course-list-item[disabled]{
+    opacity: 0.5;
 }
