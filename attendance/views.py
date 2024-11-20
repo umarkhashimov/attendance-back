@@ -12,7 +12,7 @@ class RecordAttendanceView(View, LoginRequiredMixin):
     template_name = 'session_detail.html'
     
 
-    def get(self, request, session_id=None):
+    def get(self, request, session_id):
         if session_id:
             session = get_object_or_404(SessionsModel, id=session_id)
         enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
@@ -34,6 +34,10 @@ class RecordAttendanceView(View, LoginRequiredMixin):
         return render(request, self.template_name, context)
 
     def post(self, request, session_id):
+
+        if request.user.role == '1' and not session_date_match(session):
+            return redirect("main:main")
+
         session = get_object_or_404(SessionsModel, id=session_id)
 
         keys = {key: value for key, value in request.POST.items() if key.startswith('stid')}.keys()

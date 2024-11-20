@@ -3,6 +3,8 @@ from users.models import UsersModel
 from multiselectfield import MultiSelectField
 from datetime import timedelta
 
+from .filters import session_date_match
+
 
 class SubjectModel(models.Model):
     name = models.CharField(max_length=150, unique=True)
@@ -72,6 +74,10 @@ class SessionsModel(models.Model):
     def conduct(self):
         self.conducted = True
         self.save()
+
+    @property
+    def check_time(self):
+        return session_date_match(self)
 
     def __str__(self):
         return f"{self.course.course_name} - Session {self.session_number} on {self.date}"

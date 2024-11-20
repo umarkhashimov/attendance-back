@@ -11,13 +11,12 @@
     <h4>Сегодня</h4>
     <hr class="table-group-divider" />
     {% for obj in sessions_today %}
-      <a href="{% url 'attendance:session_detail' session_id=obj.id %}" class="border-2 border p-3 d-block course-list-item my-3">
+      <a {% if obj.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' session_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
         <div class="row">
           <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
             <p class="text-dark m-0">
               <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
               {{ obj.course.course_name|capfirst }}
-              {{ obj.course.is_started }}
             </p>
           </div>
           <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
@@ -42,13 +41,12 @@
     <hr class="table-group-divider" />
     {% for obj in courses %}
       {% if obj.is_started %}
-        <a href="{% url 'courses:closest_session' course_id=obj.id %}" class="border-2 border p-3 d-block course-list-item my-3">
+        <a {% if user.role != '1'  %} href="{% url 'courses:closest_session' course_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
           <div class="row">
             <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
               <p class="text-dark m-0">
                 <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
                 {{ obj.course_name|capfirst }}
-                {{ obj.is_started }}
               </p>
             </div>
             <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
