@@ -8,15 +8,25 @@
   {% include 'layout/navbar.html' %}
 
   <div class="container courses-list mt-5 pb-5">
+    <div class="row">
     {% if user.role == '2' %}
-    {% if prev_session %}
-    <a href="{% url "attendance:session_detail" session_id=prev_session.id %}">previous sesion</a>
-    {% endif %}
-    <input type="date" value="{{session.date|date:'Y-m-d'}}" id="customDatePicker">
-    {% if next_session %}
-    <a href="{% url "attendance:session_detail" session_id=next_session.id %}">next sesion</a>
-    {% endif %}
-    {% endif %}
+    <div class="d-flex mb-5">
+      <div class="col-12 d-flex gap-3">
+        <form method="get" action="{% url "attendance:session_date" course_id=session.course.id %}" id="customDateForm" value='{{session.date}}' class="h-100">
+          <input type="date" name="date" class="h-100 border-1 border-primary text-center rounded-2" value="{{session.date|date:'Y-m-d'}}" id="customDatePicker">
+        </form>
+
+        {% if prev_session %}
+        <a class="btn btn-outline-primary" href="{% url "attendance:session_detail" session_id=prev_session.id %}"><i class="bi bi-arrow-bar-left me-2"></i>Урок {{prev_session.session_number}}</a>
+        {% endif %}
+        {% if next_session %}
+        <a  class="btn btn-outline-primary" href="{% url "attendance:session_detail" session_id=next_session.id %}">Урок {{next_session.session_number}}<i class="bi bi-arrow-bar-right ms-2"></i></a>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+
+
     <h1>{{ session.course.course_name }}</h1>
     <h2 class="mt-3"> Урок {{ session.session_number }} - {{ session.date }} - {{ session.course.lesson_time|time:'H:i' }}</h2>
     <hr class="table-group-divider"  />
@@ -59,11 +69,14 @@
 
 {% block custom_js %}
 <script>
-  
+  document.getElementById('customDatePicker').addEventListener('change', () =>{
+    document.getElementById('customDateForm').submit()
+  } )
   let dates = JSON.parse('{{all_session_dates|safe}}')
   flatpickr("#customDatePicker", {
-    dateFormat: "d-m-Y",
-    enable: dates
+    dateFormat: "Y-m-d",
+    enable: dates,
+    
 });
 </script>
 {% endblock %}

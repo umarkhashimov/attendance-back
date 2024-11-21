@@ -28,10 +28,11 @@ class RecordAttendanceView(View, LoginRequiredMixin):
             'enrollments': enrollments,
             'exist': existing_records,
             'attendance': attendance,
-            'all_session_dates': json.dumps([session.date.strftime('%d-%m-%Y') for session in sessions]),
+            'all_session_dates': json.dumps([session.date.strftime('%Y-%m-%d') for session in sessions]),
             'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
             'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
         }
+
         return render(request, self.template_name, context)
 
     def post(self, request, session_id):
@@ -43,6 +44,7 @@ class RecordAttendanceView(View, LoginRequiredMixin):
 
         keys = {key: value for key, value in request.POST.items() if key.startswith('stid')}.keys()
         enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
+
         for obj in enrollments:
             status = False
             if f"stid_{obj.student.student_id}" in keys:
@@ -51,3 +53,16 @@ class RecordAttendanceView(View, LoginRequiredMixin):
             AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': status}) 
        
         return redirect(request.path, pk=session.course.id)
+    
+class RedirecToSessionByDate(View):
+
+    def get(self, request, course_id):
+        date = self.request.GET.get('date')
+        session = SessionsModel.objects.get(course_id=course_id, date=date)
+
+        if session:
+            return redirect('attendance:session_detail', session_id=session.id)
+        else:
+            return redirect('main:main')
+
+
