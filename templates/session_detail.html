@@ -3,6 +3,7 @@
 {% block title %}
   <title>Курс</title>
 {% endblock %}
+
 {% block content %}
   {% include 'layout/navbar.html' %}
 
@@ -11,7 +12,7 @@
     {% if prev_session %}
     <a href="{% url "attendance:session_detail" session_id=prev_session.id %}">previous sesion</a>
     {% endif %}
-    <input type="date" value="{{session.date|date:'Y-m-d'}}">
+    <input type="date" value="{{session.date|date:'Y-m-d'}}" id="customDatePicker">
     {% if next_session %}
     <a href="{% url "attendance:session_detail" session_id=next_session.id %}">next sesion</a>
     {% endif %}
@@ -54,3 +55,16 @@
     </form>
   </div>
 {% endblock %}
+{% if user.role == '2' %}
+
+{% block custom_js %}
+<script>
+  
+  let dates = JSON.parse('{{all_session_dates|safe}}')
+  flatpickr("#customDatePicker", {
+    dateFormat: "d-m-Y",
+    enable: dates
+});
+</script>
+{% endblock %}
+{% endif %}

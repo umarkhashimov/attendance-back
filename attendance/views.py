@@ -3,6 +3,7 @@ from students.models import Enrollment
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+import json
 
 from courses.filters import session_date_match
 from courses.models import SessionsModel
@@ -13,8 +14,8 @@ class RecordAttendanceView(View, LoginRequiredMixin):
     
 
     def get(self, request, session_id):
-        if session_id:
-            session = get_object_or_404(SessionsModel, id=session_id)
+        session = get_object_or_404(SessionsModel, id=session_id)
+        sessions = SessionsModel.objects.all().filter(course_id=session.course.id)
         enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
         existing_records = AttendanceModel.objects.all().filter(session=session).values_list('enrollment__student_id', flat=True)
         attendance = AttendanceModel.objects.all().filter(session=session)
@@ -27,7 +28,7 @@ class RecordAttendanceView(View, LoginRequiredMixin):
             'enrollments': enrollments,
             'exist': existing_records,
             'attendance': attendance,
-            'status_choices':  STATUS_CHOICES,
+            'all_session_dates': json.dumps([session.date.strftime('%d-%m-%Y') for session in sessions]),
             'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
             'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
         }
