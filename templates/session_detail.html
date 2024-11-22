@@ -41,12 +41,12 @@
                {% if obj.student.id  in exist  %}
                {% for record in attendance %}
                   {% if record.enrollment.student.id == obj.student.id %}
-                  <input name="stid_{{ obj.student.student_id }}" type="checkbox" {% if record.status %}checked{% endif %} class="checkstatus">
+                    <input name="stid_{{ obj.student.student_id }}" type="checkbox" {% if record.status %}checked{% endif %} class="checkStatus form-check-input">
                   {% endif %}
                 
                 {% endfor %}
                 {% else %}
-                <input name="stid_{{ obj.student.student_id }}" type="checkbox" class="checkstatus">
+                <input name="stid_{{ obj.student.student_id }}" type="checkbox" class="checkStatus form-check-input">
               {% endif %} 
               <p class="m-0 ms-3">{{obj.student.first_name}} {{obj.student.last_name}}</p>
             </div>

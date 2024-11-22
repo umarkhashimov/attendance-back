@@ -66,13 +66,46 @@
     content: ',';
 }
 
-.checkstatus {
-    width: 20px;
-    height: 20px;
+.checkStatus {
+    position: relative;
+    width: 35px;
+    height: 35px;
     box-shadow: none !important;
-    background: whitesmoke !important;
-    border: 1px solid red !important;
-    border-radius: 2px !important;
+    border: 0px !important;
+    border-radius: 10px !important;
+    cursor: pointer;
+}
+
+.checkStatus:checked{
+    background-color: green !important;
+}
+
+.checkStatus:not(:checked)::before{
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 5px;
+    top: calc(50% - 3px);
+    left: calc(50% - 12px);
+    transform: rotate(45deg);
+    background-color: white;
+    border-radius: 5px;
+}
+
+.checkStatus:not(:checked)::after{
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 5px;
+    top: calc(50% - 3px);
+    left: calc(50% - 12px);
+    transform: rotate(-45deg);
+    background-color: white;
+    border-radius: 5px;
+}
+
+.checkStatus:not(:checked){
+    background-color: darkred !important;
 }
 
 .course-list-item[disabled]{
