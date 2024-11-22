@@ -89,13 +89,13 @@
   
   function uncheckAll(){
     checkInputs.forEach((inp) => {
-      inp.removeAttribute('checked')
+      inp.checked = false
     })
   }
   
   function checkAll(){
     checkInputs.forEach((inp) => {
-      inp.setAttribute('checked', '')
+      inp.checked = true
     })
   }
 </script>
