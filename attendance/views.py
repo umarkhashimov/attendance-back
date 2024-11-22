@@ -7,6 +7,7 @@ import json
 
 from courses.filters import session_date_match
 from courses.models import SessionsModel
+from users.filters import AdminRequired
 from .models import AttendanceModel, STATUS_CHOICES
 
 class RecordAttendanceView(View, LoginRequiredMixin):
@@ -54,7 +55,7 @@ class RecordAttendanceView(View, LoginRequiredMixin):
        
         return redirect(request.path, pk=session.course.id)
     
-class RedirecToSessionByDate(View):
+class RedirecToSessionByDate(View, AdminRequired):
 
     def get(self, request, course_id):
         date = self.request.GET.get('date')
