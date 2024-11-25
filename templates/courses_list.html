@@ -14,7 +14,7 @@
       <div class="row">
         <div class="col-3">
           <label for="teacherName" class="mb-2 ms-1">Учителя</label>
-          <select name="teacher" class="form-select border-3 w-100" id="teacherName">
+          <select name="teacher" class="form-select border-3 {% if request.GET.teacher %} border-primary{% endif %} w-100" id="teacherName">
             <option value="">--</option>
             {% for teacher in teachers %}
               <option {% if request.GET.teacher == teacher.id|stringformat:"i" %}selected{% endif %} value="{{ teacher.id }}" class="text-dark">
@@ -27,7 +27,7 @@
         </div>
         <div class="col-2">
           <label for="daySelect" class="mb-2 ms-1">Дни</label>
-          <select name="day" class="form-select border-3" id="daySelect">
+          <select name="day" class="form-select border-3 {% if request.GET.day %} border-primary{% endif %}" id="daySelect">
             <option value="">--</option>
             {% for day in days %}
               <option {% if request.GET.day == day.0 %}selected{% endif %} value="{{ day.0 }}">{{ day.1 }}</option>
@@ -36,7 +36,7 @@
         </div>
         <div class="col-5">
           <label for="courseName" class="mb-2 ms-1">Имя курса</label>
-          <input value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="Имя курса" type="text" class="form-control border-3 w-100" />
+          <input value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="Имя курса" type="text" class="form-control border-3 w-100 {% if request.GET.course_name %} border-primary{% endif %}" />
         </div>
         <div class="col-2">
           <div class="d-flex align-items-end gap-3 h-100">
@@ -71,7 +71,7 @@
         </div>
       </a>
     {% empty %}
-      <p class="text-center text-secondary">У вас нет груп.</p>
+      <p class="text-center text-secondary">Нет груп.</p>
     {% endfor %}
   </div>
 
