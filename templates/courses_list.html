@@ -6,13 +6,47 @@
 {% block content %}
   {% include 'layout/navbar.html' %}
 
-  <h2 class="text-center mt-5 mb-3">Добро пожаловать {{ user.first_name }}</h2>
-
   <div class="container courses-list">
-    <h4 class="mt-5">Все Группы</h4>
+    <h4 class="my-5">Все Группы</h4>
+    <h6>Фильтры</h6>
+    <hr class="table-group-divider" />
+    <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">
+      <div class="row">
+        <div class="col-3">
+          <label for="teacherName" class="mb-2 ms-1">Учителя</label>
+          <select name="teacher" class="form-select border-3 w-100" id="teacherName">
+            <option value="">--</option>
+            {% for teacher in teachers %}
+              <option {% if request.GET.teacher == teacher.id|stringformat:"i" %}selected{% endif %} value="{{ teacher.id }}" class="text-dark">
+                {{ teacher.username }} {% if teacher.first_name or teacher.last_name %}
+                  - {{ teacher.get_full_name }}
+                {% endif %}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-2">
+          <label for="daySelect" class="mb-2 ms-1">Дни</label>
+          <select name="day" class="form-select border-3" id="daySelect">
+            <option value="">--</option>
+            {% for day in days %}
+              <option {% if request.GET.day == day.0 %}selected{% endif %} value="{{ day.0 }}">{{ day.1 }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-4">
+          <label for="courseName" class="mb-2 ms-1">Имя курса</label>
+          <input value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="Имя курса" type="text" class="form-control border-3 w-100" />
+        </div>
+        <div class="col-3 d-flex align-items-end gap-2">
+          <button type="reset" class="btn btn-danger w-100 border-3">Очистить</button>
+          <button type="submit" class="btn btn-primary w-100 border-3">Принять</button>
+        </div>
+      </div>
+    </form>
     <hr class="table-group-divider" />
     {% for obj in courses %}
-      <a href="{% url "courses:course_update" pk=obj.id %}" class="border-2 border p-3 d-block course-list-item my-3">
+      <a href="{% url 'courses:course_update' pk=obj.id %}" class="border-2 border p-3 d-block course-list-item my-3">
         <div class="row">
           <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
             <p class="text-dark m-0">
@@ -34,8 +68,18 @@
           </div>
         </div>
       </a>
-      {% empty %}
+    {% empty %}
       <p class="text-center text-secondary">У вас нет груп.</p>
     {% endfor %}
   </div>
+
+  <script>
+    let filterForm = document.querySelector('form#filterForm')
+    filterForm.addEventListener('reset', () => {
+      filterForm.querySelectorAll('input').forEach((inp)=>{inp.removeAttribute('value')})
+      filterForm.querySelectorAll('option').forEach((select)=>{select.removeAttribute('selected')})
+      filterForm.submit()
+    })
+  </script>
+
 {% endblock %}
