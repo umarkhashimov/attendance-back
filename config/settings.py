@@ -92,7 +92,7 @@ DATABASES = {
         'PASSWORD': config('DB_PASSWORD'),
         'HOST': config('DB_HOST'),
         'PORT': config('DB_PORT'),
-    }
+    },
 }
 
 
@@ -151,3 +151,9 @@ AUTH_USER_MODEL = "users.UsersModel"
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+
+try:
+    from .local_settings import *
+except:
+    pass
