@@ -1,11 +1,9 @@
-
-
 from users.filters import AdminRequired
 from django.views.generic import DetailView,  UpdateView, View
 from django.core.exceptions import PermissionDenied
 from .models import CourseModel, SessionsModel
 from django.urls import reverse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime
 
 from .forms import CourseUpdateForm
@@ -75,3 +73,14 @@ class RedirectCourseToCloseSession(View):
         
         else:
             return redirect("main:main")
+        
+
+class ConductSession(View):
+
+    def get(self, request, session_id):
+        session = get_object_or_404(SessionsModel, id=session_id)
+        session.conduct()
+        
+        return redirect('attendance:session_detail', session_id=session_id)
+
+        
