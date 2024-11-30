@@ -4,7 +4,7 @@ from courses.models import CourseModel, SessionsModel
 from students.models import StudentModel
 
 from users.filters import AdminRequired
-from courses.models import SessionsModel, WEEKDAY_CHOICES
+from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
 from users.models import UsersModel
 
 class MainPageView(TemplateView):
@@ -39,11 +39,14 @@ class CoursesListView(AdminRequired, ListView):
     queryset = CourseModel.objects.all()
     template_name = "courses_list.html"
     context_object_name = 'courses'
+    paginate_by = 10
+
 
     def get_queryset(self):
         course_name = self.request.GET.get('course_name')
         day = self.request.GET.get('day')
         teacher = self.request.GET.get('teacher')
+        subject = self.request.GET.get('subject')
 
         queryset = super().get_queryset()
         
@@ -53,6 +56,9 @@ class CoursesListView(AdminRequired, ListView):
             queryset = queryset.filter(weekdays__contains=day)
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
+        if subject:
+            queryset = queryset.filter(subject_id=subject)
+
 
         return queryset
     
@@ -61,5 +67,6 @@ class CoursesListView(AdminRequired, ListView):
         context = super().get_context_data(**kwargs)
         context["teachers"] = UsersModel.objects.all().filter(role='1')
         context["days"] = WEEKDAY_CHOICES
+        context['subjects'] = SubjectModel.objects.all()
         return context
     
