@@ -2,6 +2,7 @@ from django.views.generic import TemplateView, ListView
 from datetime import date
 from courses.models import CourseModel, SessionsModel
 from students.models import StudentModel
+from django.core.paginator import Paginator
 
 from users.filters import AdminRequired
 from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
@@ -14,13 +15,19 @@ class MainPageView(TemplateView):
         context = super().get_context_data(**kwargs)
         today = date.today()
         sessions_today = SessionsModel.objects.filter(date=today)
-        courses = CourseModel.objects.all()
+        courses = CourseModel.objects.all().filter(is_started=True, finished=False).order_by('id')
 
         if self.request.user.role == '1':
-            courses = CourseModel.objects.all().filter(teacher__id=self.request.user.id)
-            sessions_today = SessionsModel.objects.filter(date=today, course__teacher__id=self.request.user.id)
+            courses = courses.filter(teacher__id=self.request.user.id)
+            sessions_today = sessions_today.filter(course__teacher__id=self.request.user.id)
 
-        context["courses"] = courses
+
+        paginator = Paginator(courses, 10)
+        page_number = self.request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+
+
+        context["page_obj"] = page_obj
         context['sessions_today'] = sessions_today
         return context
     

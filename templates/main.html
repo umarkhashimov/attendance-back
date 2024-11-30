@@ -40,8 +40,7 @@
 
     <h4 class="mt-5">Все Группы</h4>
     <hr class="table-group-divider" />
-    {% for obj in courses %}
-      {% if obj.is_started %}
+    {% for obj in page_obj.object_list %}
         <a {% if user.role != '1'  %} href="{% url 'courses:closest_session' course_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
           <div class="row">
             <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
@@ -65,9 +64,45 @@
             </div>
           </div>
         </a>
-      {% endif %}
     {% empty %}
       <p class="text-center text-secondary">У вас нет груп.</p>
     {% endfor %}
+
+
+    {% if page_obj.paginator.count >= 10 %}
+    <div class="row mt-5">
+        <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination ">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% for page in page_obj.paginator.page_range %}
+                        {% if page_obj.number == page %}
+                            <li class="page-item ms-1"><a class="page-link active"
+                                                          href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
+                        {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
+                            <li class="page-item ms-1"><a class="page-link"
+                                                          href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item ms-1">
+                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endif %}
   </div>
 {% endblock %}
