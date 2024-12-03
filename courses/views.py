@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime
 
-
+from .filters import session_date_match
 from students.models import Enrollment
 from attendance.models import AttendanceModel
 from .forms import CourseUpdateForm
@@ -82,13 +82,17 @@ class ConductSession(View):
 
     def get(self, request, session_id):
         session = get_object_or_404(SessionsModel, id=session_id)
+
+        if request.user.role == '1' and not session_date_match(session):
+            return redirect("main:main")
+
         if not session.conducted:
             session.conduct()
 
             enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
             for obj in enrollments:
                 enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
-                AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': False})
+                AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session, defaults={'status': False})
 
         return redirect('attendance:session_detail', session_id=session_id)
 
