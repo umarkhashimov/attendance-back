@@ -5,8 +5,9 @@ from .models import CourseModel, SessionsModel
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime
+from django.contrib import messages
 
-from .filters import session_date_match
+from .filters import session_date_match, early_to_conduct_session
 from students.models import Enrollment
 from attendance.models import AttendanceModel
 from .forms import CourseUpdateForm
@@ -85,6 +86,10 @@ class ConductSession(View):
 
         if request.user.role == '1' and not session_date_match(session):
             return redirect("main:main")
+
+        if early_to_conduct_session(session):
+            messages.error(request, "Рано провести урок!")
+            return redirect('attendance:session_detail', session_id=session_id)
 
         if not session.conducted:
             session.conduct()
