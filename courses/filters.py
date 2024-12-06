@@ -13,3 +13,12 @@ def session_date_match(session) -> bool:
         return True
     else:
         return False 
+    
+def early_to_conduct_session(session) -> bool:
+    session_datetime = datetime.combine(session.date, session.course.lesson_time)
+    time_now = datetime.now()
+
+    if time_now < session_datetime:
+        return True
+    else:
+        return False 

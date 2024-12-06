@@ -139,3 +139,5 @@ GitHub.sublime-settings
 
 
 static
+local_settings.py
+sqlite3.db

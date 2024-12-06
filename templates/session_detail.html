@@ -31,29 +31,31 @@
     <h2 class="mt-3"> Урок {{ session.session_number }} - {{ session.date }} - {{ session.course.lesson_time|time:'H:i' }}</h2>
     <hr class="table-group-divider"  />
 
+
+    {% if session.conducted %}
     <div class="markAllBtn mb-2">
       <button onclick="checkAll()">Отметить все <i class="bi bi-check-lg"></i></button>
       <button onclick="uncheckAll()">Отметить все <i class="bi bi-x-lg"></i></i></button>
     </div>
-
+    
     <form method="post" action="{% url 'attendance:session_detail' session_id=session.id %}">
       {% csrf_token %}
       {% for obj in enrollments %}
-        {{ obj.enrollment }}
-        <div class="border-2 border p-3 d-block course-list-item my-3">
-          <div class="row">
-            <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
-               {% if obj.student.id  in exist  %}
-               {% for record in attendance %}
-                  {% if record.enrollment.student.id == obj.student.id %}
-                    <input name="stid_{{ obj.student.student_id }}" type="checkbox" {% if record.status %}checked{% endif %} class="checkStatus form-check-input">
-                  {% endif %}
-                
-                {% endfor %}
-                {% else %}
-                <input name="stid_{{ obj.student.student_id }}" type="checkbox" class="checkStatus form-check-input">
-              {% endif %} 
-              <p class="m-0 ms-3">{{obj.student.first_name}} {{obj.student.last_name}}</p>
+      {{ obj.enrollment }}
+      <div class="border-2 border p-3 d-block course-list-item my-3">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
+            {% if obj.student.id  in exist  %}
+            {% for record in attendance %}
+            {% if record.enrollment.student.id == obj.student.id %}
+            <input name="stid_{{ obj.student.student_id }}" type="checkbox" {% if record.status %}checked{% endif %} class="checkStatus form-check-input">
+            {% endif %}
+            
+            {% endfor %}
+            {% else %}
+            <input name="stid_{{ obj.student.student_id }}" type="checkbox" class="checkStatus form-check-input">
+            {% endif %} 
+            <p class="m-0 ms-3">{{obj.student.first_name}} {{obj.student.last_name}}</p>
             </div>
             <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
               <p class="text-dark m-0">--:--</p>
@@ -63,15 +65,28 @@
             </div>
           </div>
         </div>
-      {% endfor %}
-      <div class="d-flex justify-content-end">
-        <button type="submit" class="btn btn-primary py-3">Сохранить</button>
+        {% endfor %}
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary py-3">Сохранить</button>
       </div>
     </form>
+    {% else %}
+    <div class="border p-3 border-3 d-flex align-items-center justify-content-between rounded-3">
+      <h5 class="m-0">Урок проведен?</h5>
+      <a href="{% url "courses:conduct_session" session_id=session.id %}" class="btn btn-success px-4"><i class="bi bi-check-lg"></i></a>
+    </div>
+    {% endif %}
+    {% if messages %}
+      {% for message in messages  %}
+        {% if message.tags == 'error' %}
+          <div class="alert alert-danger my-3" role="alert">{{message}}</div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
   </div>
-{% endblock %}
-
-{% block custom_js %}
+  {% endblock %}
+  
+  {% block custom_js %}
 <script>
   {% if user.role == '2' %}
   document.getElementById('customDatePicker').addEventListener('change', () =>{

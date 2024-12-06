@@ -1,13 +1,15 @@
-
-
 from users.filters import AdminRequired
 from django.views.generic import DetailView,  UpdateView, View
 from django.core.exceptions import PermissionDenied
 from .models import CourseModel, SessionsModel
 from django.urls import reverse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime
+from django.contrib import messages
 
+from .filters import session_date_match, early_to_conduct_session
+from students.models import Enrollment
+from attendance.models import AttendanceModel
 from .forms import CourseUpdateForm
 
 class CourseUpdateView(AdminRequired, UpdateView):
@@ -75,3 +77,28 @@ class RedirectCourseToCloseSession(View):
         
         else:
             return redirect("main:main")
+        
+
+class ConductSession(View):
+
+    def get(self, request, session_id):
+        session = get_object_or_404(SessionsModel, id=session_id)
+
+        if request.user.role == '1' and not session_date_match(session):
+            return redirect("main:main")
+
+        if early_to_conduct_session(session):
+            messages.error(request, "Рано провести урок!")
+            return redirect('attendance:session_detail', session_id=session_id)
+
+        if not session.conducted:
+            session.conduct()
+
+            enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
+            for obj in enrollments:
+                enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
+                AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session, defaults={'status': False})
+
+        return redirect('attendance:session_detail', session_id=session_id)
+
+        

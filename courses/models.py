@@ -5,7 +5,6 @@ from datetime import timedelta
 
 from .filters import session_date_match
 
-
 class SubjectModel(models.Model):
     name = models.CharField(max_length=150, unique=True)
 
@@ -60,7 +59,7 @@ class CourseModel(models.Model):
     class Meta:
         verbose_name = 'course'
         verbose_name_plural = 'courses'
-        ordering = ['course_name']
+        ordering = ['id']
 
 
 
@@ -86,4 +85,4 @@ class SessionsModel(models.Model):
         verbose_name = 'session'
         verbose_name_plural = 'sessions'
         unique_together = ('course', 'session_number')
-        ordering = ['date']
+        ordering = ['course__id']

@@ -2,9 +2,10 @@ from django.views.generic import TemplateView, ListView
 from datetime import date
 from courses.models import CourseModel, SessionsModel
 from students.models import StudentModel
+from django.core.paginator import Paginator
 
 from users.filters import AdminRequired
-from courses.models import SessionsModel, WEEKDAY_CHOICES
+from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
 from users.models import UsersModel
 
 class MainPageView(TemplateView):
@@ -14,13 +15,19 @@ class MainPageView(TemplateView):
         context = super().get_context_data(**kwargs)
         today = date.today()
         sessions_today = SessionsModel.objects.filter(date=today)
-        courses = CourseModel.objects.all()
+        courses = CourseModel.objects.all().filter(is_started=True, finished=False).order_by('id')
 
         if self.request.user.role == '1':
-            courses = CourseModel.objects.all().filter(teacher__id=self.request.user.id)
-            sessions_today = SessionsModel.objects.filter(date=today, course__teacher__id=self.request.user.id)
+            courses = courses.filter(teacher__id=self.request.user.id)
+            sessions_today = sessions_today.filter(course__teacher__id=self.request.user.id)
 
-        context["courses"] = courses
+
+        paginator = Paginator(courses, 10)
+        page_number = self.request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+
+
+        context["page_obj"] = page_obj
         context['sessions_today'] = sessions_today
         return context
     
@@ -39,11 +46,14 @@ class CoursesListView(AdminRequired, ListView):
     queryset = CourseModel.objects.all()
     template_name = "courses_list.html"
     context_object_name = 'courses'
+    paginate_by = 10
+
 
     def get_queryset(self):
         course_name = self.request.GET.get('course_name')
         day = self.request.GET.get('day')
         teacher = self.request.GET.get('teacher')
+        subject = self.request.GET.get('subject')
 
         queryset = super().get_queryset()
         
@@ -53,6 +63,9 @@ class CoursesListView(AdminRequired, ListView):
             queryset = queryset.filter(weekdays__contains=day)
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
+        if subject:
+            queryset = queryset.filter(subject_id=subject)
+
 
         return queryset
     
@@ -61,5 +74,6 @@ class CoursesListView(AdminRequired, ListView):
         context = super().get_context_data(**kwargs)
         context["teachers"] = UsersModel.objects.all().filter(role='1')
         context["days"] = WEEKDAY_CHOICES
+        context['subjects'] = SubjectModel.objects.all()
         return context
     

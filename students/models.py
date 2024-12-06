@@ -4,17 +4,16 @@ from courses.models import CourseModel
 
 class StudentModel(models.Model):
     student_id = models.PositiveBigIntegerField(null=True, blank=True, unique=True, editable=False)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    birth_date = models.DateField()  # Date of birth
-    phone_number = models.CharField(max_length=15)
-    additional_number = models.CharField(max_length=15, blank=True, null=True)
-    address = models.TextField(max_length=300, blank=True, null=True)
-    notes = models.TextField(blank=True, null=True)
-    enrollment_date = models.DateField(auto_now_add=True)  # Date the student was enrolled
-    email = models.EmailField(null=True, blank=True)
-    balance = models.PositiveIntegerField(null=True, blank=True, default=0)
-    courses = models.ManyToManyField(CourseModel, through='Enrollment')
+    first_name = models.CharField(max_length=50, verbose_name='Имя')
+    last_name = models.CharField(max_length=50, verbose_name='Фамилия')
+    birth_date = models.DateField(verbose_name='Дата рождения', null=True, blank=True)  # Date of birth
+    phone_number = models.CharField(max_length=15, verbose_name='Номер телефона')
+    additional_number = models.CharField(max_length=15, verbose_name='Номер телефона родителей')
+    address = models.TextField(max_length=300, blank=True, null=True, verbose_name='Адресс')
+    notes = models.TextField(blank=True, null=True, verbose_name='Заметка')
+    enrollment_date = models.DateField(auto_now_add=True, verbose_name='Имя')  # Date the student was enrolled
+    balance = models.PositiveIntegerField(null=True, blank=True, default=0, verbose_name='Баланс')
+    courses = models.ManyToManyField(CourseModel, through='Enrollment', verbose_name='Записанные курсы')
 
     @property
     def full_name(self):
