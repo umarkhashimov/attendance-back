@@ -2,6 +2,7 @@ from django.db import models
 from users.models import UsersModel
 from multiselectfield import MultiSelectField
 from datetime import timedelta
+from django.core.validators import MinValueValidator
 
 from .filters import session_date_match
 
@@ -32,7 +33,7 @@ class CourseModel(models.Model):
     lesson_time = models.TimeField(verbose_name="время урока")
     start_date = models.DateField(verbose_name="начало курса/группы")
     duration = models.PositiveIntegerField(verbose_name="продолжительность урока (мин)")
-    total_lessons = models.PositiveIntegerField(verbose_name="кол-во уроков")
+    total_lessons = models.PositiveIntegerField(verbose_name="кол-во уроков", validators=[MinValueValidator(1)])
     session_cost = models.PositiveIntegerField(default=0, verbose_name="цена урока")
     is_started = models.BooleanField(default=False, verbose_name="курс начался")
     finished = models.BooleanField(default=False, verbose_name="курс закончен")
