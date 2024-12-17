@@ -1,7 +1,7 @@
 {% extends 'layout/base.html' %}
 
 {% block title %}
-  <title>Панель Управления</title>
+  <title>Все Группы</title>
 {% endblock %}
 {% block content %}
   {% include 'layout/navbar.html' %}
@@ -9,7 +9,7 @@
   <div class="container courses-list">
     <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
       <h4 class="">Все Группы</h4>
-      <a href="" class="btn btn-primary">Создать</a>
+      <a href="{% url 'courses:create_course' %}" class="btn btn-primary">Создать</a>
     </div>
     <hr class="table-group-divider" />
     <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">

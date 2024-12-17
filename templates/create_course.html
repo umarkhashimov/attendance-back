@@ -1,0 +1,18 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+  <title>Создать Группу</title>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+  <div class="container courses-list">
+    <h4 class="mt-5">Группа</h4>
+    <hr class="table-group-divider" />
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Создать</button>
+    </form>
+  </div>
+{% endblock %}

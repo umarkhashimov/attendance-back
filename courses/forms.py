@@ -6,4 +6,4 @@ class CourseUpdateForm(forms.ModelForm):
     class Meta:
         model = CourseModel
         fields = "__all__"
-        exclude = ['is_started']
+        exclude = ['is_started', 'weekdays', 'total_lessons', 'finished', 'start_date']

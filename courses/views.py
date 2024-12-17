@@ -1,5 +1,5 @@
 from users.filters import AdminRequired
-from django.views.generic import DetailView,  UpdateView, View
+from django.views.generic import DetailView,  UpdateView, View, CreateView
 from django.core.exceptions import PermissionDenied
 from .models import CourseModel, SessionsModel
 from django.urls import reverse
@@ -79,6 +79,14 @@ class RedirectCourseToCloseSession(View):
             return redirect("main:main")
         
 
+class CreateCourseView(AdminRequired, CreateView):
+    model = CourseModel
+    template_name = 'create_course.html'
+    fields = '__all__'
+
+    def get_success_url(self):
+        return reverse('main:courses_list')
+
 class ConductSession(View):
 
     def get(self, request, session_id):
@@ -101,4 +109,3 @@ class ConductSession(View):
 
         return redirect('attendance:session_detail', session_id=session_id)
 
-        
