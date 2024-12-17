@@ -25,17 +25,17 @@ WEEKDAY_CHOICES = [
 ]
 
 class CourseModel(models.Model):
-    subject = models.ForeignKey(SubjectModel, on_delete=models.CASCADE)
-    course_name = models.CharField(max_length=100, null=True, blank=True, unique=False)
-    teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': '1'})
-    weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
-    lesson_time = models.TimeField()
-    start_date = models.DateField()
-    duration = models.PositiveIntegerField()
-    total_lessons = models.PositiveIntegerField()
-    course_cost = models.PositiveIntegerField(default=0)
-    is_started = models.BooleanField(default=False)
-    finished = models.BooleanField(default=False)
+    subject = models.ForeignKey(SubjectModel, on_delete=models.CASCADE, verbose_name="предмет")
+    course_name = models.CharField(max_length=100, null=True, blank=True, unique=False, verbose_name="имя курса")
+    teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': '1'}, verbose_name="учитель")
+    weekdays = MultiSelectField(choices=WEEKDAY_CHOICES, verbose_name="дни недели")
+    lesson_time = models.TimeField(verbose_name="время урока")
+    start_date = models.DateField(verbose_name="начало курса/группы")
+    duration = models.PositiveIntegerField(verbose_name="продолжительность урока (мин)")
+    total_lessons = models.PositiveIntegerField(verbose_name="кол-во уроков")
+    session_cost = models.PositiveIntegerField(default=0, verbose_name="цена урока")
+    is_started = models.BooleanField(default=False, verbose_name="курс начался")
+    finished = models.BooleanField(default=False, verbose_name="курс закончен")
 
     def __str__(self):
         return self.course_name

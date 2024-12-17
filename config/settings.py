@@ -38,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'crispy_forms',
+    'crispy_bootstrap5',
     
     'users',
     'students',
@@ -152,8 +155,12 @@ AUTH_USER_MODEL = "users.UsersModel"
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 try:
     from .local_settings import *
 except:
     pass
+
+
+DATE_INPUT_FORMATS = ['%Y-%m-%d', '%d-%m-%Y', '%m/%d/%Y', '%d.%m.%Y']

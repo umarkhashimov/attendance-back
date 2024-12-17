@@ -31,5 +31,5 @@ class TeacherUpdateForm(forms.ModelForm):
     class Meta:
         model = UsersModel
         # fields = "__all__"
-        fields = ['first_name', 'last_name', 'phone_number', 'email', 'is_active']
+        fields = ['first_name', 'last_name', 'phone_number']
         # exclude = ['password', 'last_login']'

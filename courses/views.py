@@ -10,7 +10,7 @@ from django.contrib import messages
 from .filters import session_date_match, early_to_conduct_session
 from students.models import Enrollment
 from attendance.models import AttendanceModel
-from .forms import CourseUpdateForm
+from .forms import CourseUpdateForm, CourseCreateForm
 
 class CourseUpdateView(AdminRequired, UpdateView):
     model = CourseModel
@@ -82,7 +82,7 @@ class RedirectCourseToCloseSession(View):
 class CreateCourseView(AdminRequired, CreateView):
     model = CourseModel
     template_name = 'create_course.html'
-    fields = '__all__'
+    form_class = CourseCreateForm
 
     def get_success_url(self):
         return reverse('main:courses_list')

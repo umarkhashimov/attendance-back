@@ -1,4 +1,5 @@
 {% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   <title>Панель Управления</title>
@@ -9,18 +10,27 @@
   <h2 class="text-center mt-5 mb-3">Добро пожаловать {{ user.first_name }}</h2>
 
   <div class="container courses-list">
-    <h4 class="mt-5">Группа</h4>
+    <h4 class="mt-5">Изменть инфорамцию о группе #{{ obj.id }}</h4>
     <hr class="table-group-divider" />
     <form method="post">
       {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Сохранить</button>
+      {{ form|crispy }}
+      <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
     </form>
     {% if not obj.is_started %}
-      <form method="post" action="{% url 'courses:course_start' obj.id %}">
-        {% csrf_token %}
-        <button type="submit">Начать Курс</button>
-      </form>
+      <div class="pt-3">
+        <form method="post" action="{% url 'courses:course_start' obj.id %}">
+          {% csrf_token %}
+          <hr class="table-group-divider " />
+          <div class="d-flex justify-content-start flex-column flex-md-row gap-3">
+            <h4 class="m-0">Курс пока не начат.</h4>
+            <button type="submit" class="btn btn-danger">Начать Курс</button>
+          </div>
+          <hr class="table-group-divider" />
+        </form>
+      </div>
     {% endif %}
   </div>
 {% endblock %}

@@ -1,4 +1,5 @@
 {% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}
   <title>Создать Группу</title>
@@ -9,10 +10,31 @@
   <div class="container courses-list">
     <h4 class="mt-5">Группа</h4>
     <hr class="table-group-divider" />
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit">Создать</button>
-    </form>
+    <div class="row">
+      <div class="col-12">
+        <form method="post">
+          {% csrf_token %}
+          {{ form|crispy }}
+          <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
+            <button type="submit" class="btn btn-primary">Создать</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
+{% endblock %}
+
+{% block custom_js %}
+  <script>
+    flatpickr('#StartDatePicker', {
+      dateFormat: 'd.m.Y'
+    })
+    
+    flatpickr('#LessonTimePicker', {
+      enableTime: true, 
+      noCalendar: true, 
+      dateFormat: 'H:i', 
+      time_24hr: true, 
+    })
+  </script>
 {% endblock %}
