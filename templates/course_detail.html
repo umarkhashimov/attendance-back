@@ -7,10 +7,19 @@
 {% block content %}
   {% include 'layout/navbar.html' %}
 
-  <h2 class="text-center mt-5 mb-3">Добро пожаловать {{ user.first_name }}</h2>
-
-  <div class="container courses-list">
-    <h4 class="mt-5">Изменить инфорамацию группы #{{ obj.id }}</h4>
+  <div class="container courses-list pt-5">
+    {% if not obj.is_started %}
+      <div class="alert alert-secondary">
+        <form method="post" action="{% url 'courses:course_start' obj.id %}">
+          {% csrf_token %}
+          <div class="d-flex justify-content-between flex-column flex-md-row gap-3 align-items-center">
+            <h5 class="m-0 text-danger">Курс пока не начат.</h5>
+            <button type="submit" class="btn btn-danger">Начать Курс</button>
+          </div>
+        </form>
+      </div>
+    {% endif %}
+    <h4 class="mt-4">Изменить инфорамацию группы #{{ obj.id }}</h4>
     <hr class="table-group-divider" />
     <form method="post">
       {% csrf_token %}
@@ -19,18 +28,38 @@
         <button type="submit" class="btn btn-primary">Сохранить</button>
       </div>
     </form>
-    {% if not obj.is_started %}
-      <div class="pt-3">
-        <form method="post" action="{% url 'courses:course_start' obj.id %}">
-          {% csrf_token %}
-          <hr class="table-group-divider " />
-          <div class="d-flex justify-content-start flex-column flex-md-row gap-3">
-            <h4 class="m-0">Курс пока не начат.</h4>
-            <button type="submit" class="btn btn-danger">Начать Курс</button>
+    <hr class="table-group-divider" />
+    <div>
+      <h5>Время урока: <button class="btn border" data-bs-toggle="modal" data-bs-target="#changeTimeModal">{{ obj.lesson_time }}</button></h5>
+      <!-- Change time Modal -->
+      <div class="modal fade" id="changeTimeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">Изменить время урока</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form action="">{{ time_form }}</form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+              <button type="button" class="btn btn-primary">Сохранить</button>
+            </div>
           </div>
-          <hr class="table-group-divider" />
-        </form>
+        </div>
       </div>
-    {% endif %}
+    </div>
   </div>
+{% endblock %}
+
+{% block custom_js %}
+  <script>
+    flatpickr('#LessonTimePicker', {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: 'H:i',
+      time_24hr: true
+    })
+  </script>
 {% endblock %}

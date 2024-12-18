@@ -6,7 +6,26 @@ class CourseUpdateForm(forms.ModelForm):
     class Meta:
         model = CourseModel
         fields = "__all__"
-        exclude = ['is_started', 'weekdays', 'total_lessons', 'finished', 'start_date']
+        exclude = ['is_started', 'weekdays', 'total_lessons', 'finished', 'start_date', 'lesson_time']
+
+
+class LessonTimeForm(forms.ModelForm):
+
+    class Meta:
+        model = CourseModel
+        fields = ["lesson_time"]
+        widgets = {
+            'lesson_time': forms.TimeInput(
+                format='%H:%M', 
+                attrs={
+                    'class': 'form-control',  
+                    'placeholder': 'HH:MM',
+                    'type': 'time', 
+                    'id': 'LessonTimePicker',
+                }
+            )
+        }
+
 
 
 class CourseCreateForm(forms.ModelForm):

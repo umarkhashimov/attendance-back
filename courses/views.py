@@ -10,7 +10,7 @@ from django.contrib import messages
 from .filters import session_date_match, early_to_conduct_session
 from students.models import Enrollment
 from attendance.models import AttendanceModel
-from .forms import CourseUpdateForm, CourseCreateForm
+from .forms import CourseUpdateForm, CourseCreateForm, LessonTimeForm
 
 class CourseUpdateView(AdminRequired, UpdateView):
     model = CourseModel
@@ -23,6 +23,7 @@ class CourseUpdateView(AdminRequired, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['obj'] = self.get_object()
+        context['time_form'] = LessonTimeForm(instance=self.get_object())
         return context
 
 
