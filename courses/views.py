@@ -10,7 +10,7 @@ from django.contrib import messages
 from .filters import session_date_match, early_to_conduct_session
 from students.models import Enrollment
 from attendance.models import AttendanceModel
-from .forms import CourseUpdateForm, CourseCreateForm, LessonTimeForm
+from .forms import CourseUpdateForm, CourseCreateForm, LessonsWeekdaysForm
 
 class CourseUpdateView(AdminRequired, UpdateView):
     model = CourseModel
@@ -23,7 +23,7 @@ class CourseUpdateView(AdminRequired, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['obj'] = self.get_object()
-        context['time_form'] = LessonTimeForm(instance=self.get_object())
+        context['weekdays_form'] = LessonsWeekdaysForm(instance=self.get_object())
         return context
 
 
@@ -50,8 +50,9 @@ class StartCourseView(AdminRequired, View):
 
     def post(self, request, pk):
         course = CourseModel.objects.get(id=pk)
-        course.create_sessions()
-        print('Success')
+        if course.is_started == False:
+
+            course.create_sessions()
         return redirect("courses:course_update", pk=pk)
     
 class RedirectCourseToCloseSession(View):
@@ -110,3 +111,18 @@ class ConductSession(View):
 
         return redirect('attendance:session_detail', session_id=session_id)
 
+class UpdateCourseWeekdaysView(AdminRequired, View):
+
+    def post(self, request, pk):
+        try:
+            instance = get_object_or_404(CourseModel, id=pk)
+            form = LessonsWeekdaysForm(self.request.POST, instance=instance)
+            if form.is_valid():
+                instance.weekdays = ','.join(form.cleaned_data['weekdays'])
+                instance.save()
+                instance.regenerate_coming_sessions()
+                print(instance.weekdays)
+                
+            return redirect('courses:course_update', pk=pk)
+        except:
+            return redirect('main:main')

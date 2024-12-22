@@ -3,12 +3,12 @@ from courses.models import SessionsModel
 from students.models import Enrollment
 
 
-STATUS_CHOICES = [('1', 'Присутствует'), ('0', 'Отсутствует'), ('3', 'Опоздал')]
-
 class AttendanceModel(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     session = models.ForeignKey(SessionsModel, on_delete=models.CASCADE)
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=False) 
+    homework_grade = models.IntegerField(default=0)
+    participation_grade = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.enrollment} - {self.session} - {self.status}"

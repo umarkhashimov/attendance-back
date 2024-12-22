@@ -30,23 +30,30 @@
     </form>
     <hr class="table-group-divider" />
     <div>
-      <h5>Время урока: <button class="btn border" data-bs-toggle="modal" data-bs-target="#changeTimeModal">{{ obj.lesson_time }}</button></h5>
+      <h5>Дни уроков: <button class="btn border main-lesson-days" data-bs-toggle="modal" data-bs-target="#changeTimeModal">
+        {% for key, value in obj.weekdays.choices.items %}
+        {% if key in obj.weekdays %}
+          <span>{{value}}</span>
+        {% endif %}
+        {% endfor %}  
+      </button></h5>
       <!-- Change time Modal -->
-      <div class="modal fade" id="changeTimeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal fade"  data-bs-backdrop="static" id="changeTimeModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Изменить время урока</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <form action="{% url 'courses:update_course_weekdays' pk=obj.id %}" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Изменить дни курса</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">{{ weekdays_form|crispy }}</div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+              </div>
             </div>
-            <div class="modal-body">
-              <form action="">{{ time_form }}</form>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
-              <button type="button" class="btn btn-primary">Сохранить</button>
-            </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -59,7 +66,7 @@
       enableTime: true,
       noCalendar: true,
       dateFormat: 'H:i',
-      time_24hr: true
+      time_24hr: true,
     })
   </script>
 {% endblock %}

@@ -6,14 +6,7 @@ class CourseUpdateForm(forms.ModelForm):
     class Meta:
         model = CourseModel
         fields = "__all__"
-        exclude = ['is_started', 'weekdays', 'total_lessons', 'finished', 'start_date', 'lesson_time']
-
-
-class LessonTimeForm(forms.ModelForm):
-
-    class Meta:
-        model = CourseModel
-        fields = ["lesson_time"]
+        exclude = ['is_started', 'weekdays', 'total_lessons', 'finished', 'start_date']
         widgets = {
             'lesson_time': forms.TimeInput(
                 format='%H:%M', 
@@ -25,6 +18,35 @@ class LessonTimeForm(forms.ModelForm):
                 }
             )
         }
+
+
+class LessonsWeekdaysForm(forms.ModelForm):
+    weekdays = forms.MultipleChoiceField(
+        choices=CourseModel.weekdays,
+        widget=forms.CheckboxSelectMultiple,  # You can also use a `SelectMultiple` widget
+        required=True,  # Ensure at least one option is selected
+    )
+
+    class Meta:
+        model = CourseModel
+        fields = ["weekdays"]
+
+    def clean_multi_select_field(self):
+        data = self.cleaned_data['weekdays']
+        
+        # Example validation: Ensure at least two options are selected
+        if len(data) < 1:
+            raise forms.ValidationError("Please select at least two options.")
+        
+        return data
+
+
+class LessonsWeekdaysForm(forms.ModelForm):
+
+    class Meta:
+        model = CourseModel
+        fields = ["weekdays"]
+        
 
 
 

@@ -8,7 +8,7 @@ import json
 from courses.filters import session_date_match
 from courses.models import SessionsModel
 from users.filters import AdminRequired
-from .models import AttendanceModel, STATUS_CHOICES
+from .models import AttendanceModel
 
 class RecordAttendanceView(View, LoginRequiredMixin):
     template_name = 'session_detail.html'
