@@ -31,7 +31,9 @@ class MainPageView(TemplateView):
 
         if self.request.user.role == '1':
             courses = courses.filter(teacher__id=self.request.user.id)
-            sessions_today = sessions_today.filter(course__teacher__id=self.request.user.id)
+            sessions_today = sessions_today.filter(teacher__id=self.request.user.id)
+            marked_sessions = marked_sessions.filter(course__in=courses)
+            print(marked_sessions.values_list('course_id', flat=True))
 
 
         paginator = Paginator(courses, 20)

@@ -1,18 +1,19 @@
 from datetime import datetime, timedelta
 
-def session_date_match(session) -> bool:
-    session_datetime = datetime.combine(session.date, session.course.lesson_time)
-    session_endtime = session_datetime + timedelta(minutes=session.course.duration)
+def course_date_match(course) -> bool:
+    now = datetime.now()
 
+    course_weekdays = [x for x in course.weekdays]
+    lesson_time = datetime.combine(datetime.today(), course.lesson_time)
+    lesson_endtime = lesson_time + timedelta(minutes=course.duration)
     time_now = datetime.now().time().strftime("%H:%M")
-    date_match = session_datetime.date() == datetime.today().date() # session date match today
-    start_match = time_now >= session_datetime.time().strftime("%H:%M") # time_now is after lesson start
-    end_match = time_now <= session_endtime.time().strftime("%H:%M") # time_now is before lesson end
 
-    if date_match and start_match and end_match:
-        return True
-    else:
-        return False 
+    weekday_match = str(now.weekday()) in course_weekdays
+    time_match = time_now >= lesson_time.strftime("%H:%M") and time_now <= lesson_endtime.strftime("%H:%M")
+
+    return weekday_match and time_match
+    
+    
     
 def early_to_conduct_session(session) -> bool:
     session_datetime = datetime.combine(session.date, session.course.lesson_time)

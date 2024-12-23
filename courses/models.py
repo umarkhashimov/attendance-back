@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 
-from .filters import session_date_match
+from .filters import course_date_match
 
 class SubjectModel(models.Model):
     name = models.CharField(max_length=150, unique=True)
@@ -39,6 +39,9 @@ class CourseModel(models.Model):
     def __str__(self):
         return f"#{self.id} - {self.course_name}"
     
+    def check_time(self):
+        return course_date_match(self)
+    
     class Meta:
         verbose_name = 'course'
         verbose_name_plural = 'courses'
@@ -55,9 +58,6 @@ class SessionsModel(models.Model):
         self.status = True
         self.save()
 
-    # @property
-    # def check_time(self):
-    #     return session_date_match(self)
 
     def __str__(self):
         return f"{self.course.course_name} - Session on {self.date}"

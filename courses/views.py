@@ -7,7 +7,7 @@ from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime
 from django.contrib import messages
 
-from .filters import session_date_match, early_to_conduct_session
+from .filters import course_date_match, early_to_conduct_session
 from students.models import Enrollment
 from attendance.models import AttendanceModel
 from .forms import CourseUpdateForm, CourseCreateForm, LessonsWeekdaysForm

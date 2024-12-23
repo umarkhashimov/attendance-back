@@ -5,7 +5,7 @@ from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 
-from courses.filters import session_date_match
+from courses.filters import course_date_match
 from courses.models import SessionsModel
 from users.filters import AdminRequired
 from .models import AttendanceModel
@@ -46,7 +46,7 @@ class RecordAttendanceView(View, LoginRequiredMixin):
     def post(self, request, session_id):
         session = get_object_or_404(SessionsModel, id=session_id)
 
-        if request.user.role == '1' and not session_date_match(session):
+        if request.user.role == '1' and not course_date_match(session):
             return redirect("main:main")
 
 
