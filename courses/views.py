@@ -91,25 +91,28 @@ class CreateCourseView(AdminRequired, CreateView):
 
 class ConductSession(View):
 
-    def get(self, request, session_id):
-        session = get_object_or_404(SessionsModel, id=session_id)
+    def get(self, request, course_id):
+        today = datetime.now().date()
+        course= get_object_or_404(CourseModel, id=course_id)
+        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': True})
+        return redirect('attendance:session_detail', course_id=course_id)
+        # session = get_object_or_404(SessionsModel, id=session_id)
 
-        if request.user.role == '1' and not session_date_match(session):
-            return redirect("main:main")
+        # if request.user.role == '1' and not session_date_match(session):
+        #     return redirect("main:main")
 
-        if early_to_conduct_session(session):
-            messages.error(request, "Рано провести урок!")
-            return redirect('attendance:session_detail', session_id=session_id)
+        # if early_to_conduct_session(session):
+        #     messages.error(request, "Рано провести урок!")
+        #     return redirect('attendance:session_detail', session_id=session_id)
 
-        if not session.conducted:
-            session.conduct()
+        # if not session.status:
+        #     session.conduct()
 
-            enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
-            for obj in enrollments:
-                enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
-                AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session, defaults={'status': False})
+        #     enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
+        #     for obj in enrollments:
+        #         enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
+        #         AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session, defaults={'status': False})
 
-        return redirect('attendance:session_detail', session_id=session_id)
 
 class UpdateCourseWeekdaysView(AdminRequired, View):
 

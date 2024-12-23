@@ -6,7 +6,7 @@ class CourseUpdateForm(forms.ModelForm):
     class Meta:
         model = CourseModel
         fields = "__all__"
-        exclude = ['is_started', 'weekdays', 'total_lessons', 'finished', 'start_date']
+        exclude = []
         widgets = {
             'lesson_time': forms.TimeInput(
                 format='%H:%M', 

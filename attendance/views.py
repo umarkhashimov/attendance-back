@@ -9,29 +9,36 @@ from courses.filters import session_date_match
 from courses.models import SessionsModel
 from users.filters import AdminRequired
 from .models import AttendanceModel
+from datetime import datetime 
+from courses.models import CourseModel
 
 class RecordAttendanceView(View, LoginRequiredMixin):
     template_name = 'session_detail.html'
     
 
-    def get(self, request, session_id):
-        session = get_object_or_404(SessionsModel, id=session_id)
-        sessions = SessionsModel.objects.all().filter(course_id=session.course.id)
-        enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
-        existing_records = AttendanceModel.objects.all().filter(session=session).values_list('enrollment__student_id', flat=True)
-        attendance = AttendanceModel.objects.all().filter(session=session)
+    def get(self, request, course_id):
+        course = get_object_or_404(CourseModel, id=course_id)
+        enrollments = Enrollment.objects.all().filter(course=course, status='1')
+        # existing_records = AttendanceModel.objects.all().filter(session=session).values_list('enrollment__student_id', flat=True)
+        # attendance = AttendanceModel.objects.all().filter(session=session)
 
-        if request.user.role == '1' and not session_date_match(session):
-            return redirect("main:main")
+        # if request.user.role == '1' and not session_date_match(session):
+        #     return redirect("main:main")
+        today = datetime.now().date()
+        try:
+            session = SessionsModel.objects.get(course=course_id, date=today)
+        except:
+            session = None
 
         context = {
             'session': session,
-            'enrollments': enrollments,
-            'exist': existing_records,
-            'attendance': attendance,
-            'all_session_dates': json.dumps([session.date.strftime('%Y-%m-%d') for session in sessions]),
-            'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
-            'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
+            'course': course
+            # 'enrollments': enrollments,
+            # 'exist': existing_records,
+            # 'attendance': attendance,
+            # 'all_session_dates': json.dumps([session.date.strftime('%Y-%m-%d') for session in sessions]),
+            # 'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
+            # 'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
         }
 
         return render(request, self.template_name, context)

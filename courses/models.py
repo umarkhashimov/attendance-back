@@ -37,7 +37,7 @@ class CourseModel(models.Model):
     status = models.BooleanField(default=False, verbose_name="Статус курса")
 
     def __str__(self):
-        return self.course_name
+        return f"#{self.id} - {self.course_name}"
     
     class Meta:
         verbose_name = 'course'

@@ -3,6 +3,7 @@ from datetime import date
 from courses.models import CourseModel, SessionsModel
 from students.models import StudentModel
 from django.core.paginator import Paginator
+from django.db.models import Q
 
 from users.filters import AdminRequired
 from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
@@ -13,9 +14,33 @@ class MainPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # today = date.today()
+        # marked_sessions = SessionsModel.objects.all().filter(date=today, status=True)
+        # print(today, marked_sessions.values_list('course', flat=True))
+        # sessions_today = CourseModel.objects.filter(Q(weekdays__contains=str(today.weekday())))
+        # sessions_today = sessions_today.exclude(id__in=marked_sessions.values_list('course', flat=True))
+        # print('unmarked', sessions_today)
         today = date.today()
-        sessions_today = SessionsModel.objects.filter(date=today)
-        courses = CourseModel.objects.all().filter(is_started=True, finished=False).order_by('id')
+
+        # Get sessions already marked today
+        marked_sessions = SessionsModel.objects.filter(date=today, status=True)
+
+        # Log today's date and marked sessions
+        print("Today's date:", today)
+        print("Marked sessions (course IDs):", marked_sessions.values_list('course__id', flat=True))
+
+        # Get courses scheduled for today based on weekdays
+        sessions_today = CourseModel.objects.filter(weekdays__contains=str(today.weekday()))
+
+        # Exclude courses that already have marked sessions
+        marked_course_ids = marked_sessions.values_list('course', flat=True)
+        sessions_today = sessions_today.exclude(id__in=marked_course_ids)
+
+        print('marked ids:', marked_course_ids)
+
+        # Log the unmarked sessions
+        print("Unmarked sessions:", sessions_today.values_list('id', flat=True))
+        courses = CourseModel.objects.all().filter(status=True).order_by('id')
 
         if self.request.user.role == '1':
             courses = courses.filter(teacher__id=self.request.user.id)
@@ -29,6 +54,7 @@ class MainPageView(TemplateView):
 
         context["page_obj"] = page_obj
         context['sessions_today'] = sessions_today
+        context['marked_sessions'] = marked_sessions
         return context
     
 
