@@ -11,12 +11,10 @@
     <h4>Сегодня</h4>
     <hr class="table-group-divider" />
     
-    <hr class="table-group-divider" />
-    {{marked_sessions}}
     {% for obj in marked_sessions %}
-      <a {% if obj.course.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
+      <a {% if obj.course.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.course.id %}" {% else %}disabled{% endif %} class="border-2 border conducted {% if obj.status %}border-success btn btn-outline-success {% else %}border-danger btn btn-outline-danger{% endif %} p-3 d-block course-list-item my-3">
         <div class="row">
-          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
+          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center border-5">
             <p class="text-dark m-0">
               <span class="bandge text-secondary opacity-50">{{ obj.course.id }}</span>
               {{ obj.course.subject|capfirst }}, 
@@ -40,6 +38,7 @@
     {% empty %}
       <p class="text-center text-secondary">У вас нет груп на сегодня.</p>
     {% endfor %}
+
     <hr class="table-group-divider" />
     {% for obj in sessions_today %}
       <a {% if obj.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
@@ -100,7 +99,7 @@
     {% endfor %}
 
 
-    {% if page_obj.paginator.count >= 10 %}
+    {% if page_obj.paginator.count >= 20 %}
     <div class="row mt-5">
         <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
             <nav aria-label="Page navigation example">

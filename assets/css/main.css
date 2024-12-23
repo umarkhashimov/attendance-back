@@ -47,17 +47,21 @@
 
 .course-list-item p,
 .course-list-item span {
-    transition: 0.3s;
+    transition: 0.1s;
 }
 
 
 
-.course-list-item:hover:not([disabled]) p,
-.course-list-item:hover:not([disabled]) span {
+.course-list-item:hover:not([disabled], .conducted) :where(p, span){
     color: blue !important;
 }
 
-.course-list-item:hover:not([disabled]) {
+.course-list-item.conducted:hover :where(p, span) {
+    color: white !important;
+}
+
+
+.course-list-item:hover:not([disabled], .conducted) {
     border-color: blue !important;
 }
 

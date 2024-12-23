@@ -14,32 +14,19 @@ class MainPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # today = date.today()
-        # marked_sessions = SessionsModel.objects.all().filter(date=today, status=True)
-        # print(today, marked_sessions.values_list('course', flat=True))
-        # sessions_today = CourseModel.objects.filter(Q(weekdays__contains=str(today.weekday())))
-        # sessions_today = sessions_today.exclude(id__in=marked_sessions.values_list('course', flat=True))
-        # print('unmarked', sessions_today)
         today = date.today()
 
         # Get sessions already marked today
-        marked_sessions = SessionsModel.objects.filter(date=today, status=True)
-
-        # Log today's date and marked sessions
-        print("Today's date:", today)
-        print("Marked sessions (course IDs):", marked_sessions.values_list('course__id', flat=True))
+        marked_sessions = SessionsModel.objects.filter(date=today)
 
         # Get courses scheduled for today based on weekdays
-        sessions_today = CourseModel.objects.filter(weekdays__contains=str(today.weekday()))
+        sessions_today = CourseModel.objects.filter(status=True, weekdays__contains=str(today.weekday()))
 
         # Exclude courses that already have marked sessions
         marked_course_ids = marked_sessions.values_list('course', flat=True)
         sessions_today = sessions_today.exclude(id__in=marked_course_ids)
 
-        print('marked ids:', marked_course_ids)
-
-        # Log the unmarked sessions
-        print("Unmarked sessions:", sessions_today.values_list('id', flat=True))
+        # Get all marked courses
         courses = CourseModel.objects.all().filter(status=True).order_by('id')
 
         if self.request.user.role == '1':
@@ -47,10 +34,9 @@ class MainPageView(TemplateView):
             sessions_today = sessions_today.filter(course__teacher__id=self.request.user.id)
 
 
-        paginator = Paginator(courses, 10)
+        paginator = Paginator(courses, 20)
         page_number = self.request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
-
 
         context["page_obj"] = page_obj
         context['sessions_today'] = sessions_today
