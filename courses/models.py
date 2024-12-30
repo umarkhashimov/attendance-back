@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.core.validators import MinValueValidator
 from django.utils import timezone
 
+from users.models import UsersModel
 from .filters import course_date_match
 
 class SubjectModel(models.Model):
@@ -53,6 +54,7 @@ class SessionsModel(models.Model):
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE)
     date = models.DateField()
     status = models.BooleanField(default=False)
+    record_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, null=True, blank=True)
 
     def conduct(self):
         self.status = True

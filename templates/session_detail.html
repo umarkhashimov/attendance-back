@@ -1,26 +1,30 @@
 {% extends 'layout/base.html' %}
 
 {% block title %}
-  <title>Курс</title>
+<title>Курс</title>
 {% endblock %}
 
 {% block content %}
-  {% include 'layout/navbar.html' %}
+{% include 'layout/navbar.html' %}
 
-  <div class="container courses-list mt-5 pb-5">
-    <div class="row">
+<div class="container courses-list mt-5 pb-5">
+  <div class="row">
     {% if user.role == '2' and session %}
     <div class="d-flex mb-5">
       <div class="col-12 d-flex gap-3">
-        <form method="get" action="{% url "attendance:session_date" course_id=session.course.id %}" id="customDateForm" value='{{session.date}}' class="h-100">
-          <input type="date" name="date" class="h-100 border-1 border-primary text-center rounded-2" value="{{session.date|date:'Y-m-d'}}" id="customDatePicker">
+        <form method="get" action="{% url "attendance:session_date" course_id=session.course.id %}" id="customDateForm"
+          value='{{session.date}}' class="h-100">
+          <input type="date" name="date" class="h-100 border-1 border-primary text-center rounded-2"
+            value="{{session.date|date:'Y-m-d'}}" id="customDatePicker">
         </form>
 
         {% if prev_session %}
-        <a class="btn btn-outline-primary" href="{% url "attendance:session_detail" session_id=prev_session.id %}"><i class="bi bi-arrow-bar-left me-2"></i>Урок {{prev_session.session_number}}</a>
+        <a class="btn btn-outline-primary" href=""><i
+            class="bi bi-arrow-bar-left me-2"></i>Урок {{prev_session.session_number}}</a>
         {% endif %}
         {% if next_session %}
-        <a  class="btn btn-outline-primary" href="{% url "attendance:session_detail" session_id=next_session.id %}">Урок {{next_session.session_number}}<i class="bi bi-arrow-bar-right ms-2"></i></a>
+        <a class="btn btn-outline-primary" href="">Урок
+          {{next_session.session_number}}<i class="bi bi-arrow-bar-right ms-2"></i></a>
         {% endif %}
       </div>
     </div>
@@ -28,90 +32,124 @@
 
 
     <h1>{{ session.course.course_name }}</h1>
-    <h2 class="mt-3"> Урок {{ session.session_number }} - {{ session.date }} - {{ session.course.lesson_time|time:'H:i' }}</h2>
-    <hr class="table-group-divider"  />
+    <h2 class="mt-3"> Урок {{session.session_number }} - {{ session.date }} - {{ session.course.lesson_time|time:'H:i'}}</h2>
+    <hr class="table-group-divider" />
 
 
-    {% if session.status %}
+    {% if session %}
     <div class="markAllBtn mb-2">
       <button onclick="checkAll()">Отметить все <i class="bi bi-check-lg"></i></button>
       <button onclick="uncheckAll()">Отметить все <i class="bi bi-x-lg"></i></i></button>
     </div>
-    
-    <form method="post" action="{% url 'attendance:session_detail' session_id=session.id %}">
+
+      <form method="post" action="{% url 'attendance:session_detail' course_id=session.course.id session_id=session.id %}">
       {% csrf_token %}
-      {% for obj in enrollments %}
-      {{ obj.enrollment }}
+      <input type="number" name="session_id" hidden value="{{ session.id }}">
+      {% for obj in attendance %}
       <div class="border-2 border p-3 d-block course-list-item my-3">
         <div class="row">
           <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
-            {% if obj.student.id  in exist  %}
-            {% for record in attendance %}
-            {% if record.enrollment.student.id == obj.student.id %}
-            <input name="stid_{{ obj.student.student_id }}" type="checkbox" {% if record.status %}checked{% endif %} class="checkStatus form-check-input">
-            {% endif %}
-            
-            {% endfor %}
-            {% else %}
-            <input name="stid_{{ obj.student.student_id }}" type="checkbox" class="checkStatus form-check-input">
-            {% endif %} 
-            <p class="m-0 ms-3">{{obj.student.first_name}} {{obj.student.last_name}}</p>
-            </div>
-            <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
-              <p class="text-dark m-0">--:--</p>
-            </div>
-            <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
-              <p class="main-lesson-days m-0 text-dark">{{ obj.student.student_id }}</p>
-            </div>
+            <input name="stid_{{ obj.enrollment.student.student_id }}" type="checkbox" {% if obj.status %}checked{% endif %}
+              class="checkStatus form-check-input">
+            <p class="m-0 ms-3">{{obj.enrollment.student.first_name}} {{obj.enrollment.student.last_name}}</p>
+          </div>
+          <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
+            <p class="text-dark m-0">--:--</p>
+          </div>
+          <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
+            <p class="main-lesson-days m-0 text-dark">{{ obj.enrollment.student.student_id }}</p>
           </div>
         </div>
-        {% endfor %}
-        <div class="d-flex justify-content-end">
-          <button type="submit" class="btn btn-primary py-3">Сохранить</button>
+      </div>
+      {% endfor %}
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary py-3">Сохранить</button>
       </div>
     </form>
     {% else %}
     <div class="border p-3 border-3 d-flex align-items-center justify-content-between rounded-3">
       <h5 class="m-0">Урок проведен?</h5>
-      <a href="{% url "courses:conduct_session" course_id=course.id %}" class="btn btn-success px-4"><i class="bi bi-check-lg"></i></a>
+      <div>
+        <button type="button" class="btn btn-danger px-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+          <i class="bi bi-x-lg"></i>
+        </button>
+        <a href="{% url "courses:conduct_session" course_id=course.id %}" class="btn btn-success px-4"><i
+            class="bi bi-check-lg"></i></a>
+        <!-- cancel session modal -->
+        <!-- Button trigger modal -->
+
+        <div data-bs-backdrop="static" class="modal fade" id="exampleModal" tabindex="-1"
+          aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Причина отмены</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <form action="{% url "courses:cancel_session" course_id=course.id %}" method='post'>
+                {% csrf_token %}
+                <div class="modal-body">
+                  <div class="form-check">
+                    <input class="form-check-input" value='true' type="radio" name="cancelCause" id="flexRadioDefault1" checked>
+                    <label class="form-check-label" for="flexRadioDefault1">
+                    Из-за праздника
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" value="false" type="radio" name="cancelCause" id="flexRadioDefault2">
+                  <label class="form-check-label" for="flexRadioDefault2">
+                    Из-за нас
+                  </label>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     {% endif %}
     {% if messages %}
-      {% for message in messages  %}
-        {% if message.tags == 'error' %}
-          <div class="alert alert-danger my-3" role="alert">{{message}}</div>
-        {% endif %}
-      {% endfor %}
+    {% for message in messages %}
+    {% if message.tags == 'error' %}
+    <div class="alert alert-danger my-3" role="alert">{{message}}</div>
+    {% endif %}
+    {% endfor %}
     {% endif %}
   </div>
   {% endblock %}
-  
+
   {% block custom_js %}
-<script>
-  {% if user.role == '2' %}
-  document.getElementById('customDatePicker').addEventListener('change', () =>{
-    document.getElementById('customDateForm').submit()
-  } )
-  let dates = JSON.parse('{{all_session_dates|safe}}')
-  flatpickr("#customDatePicker", {
-    dateFormat: "Y-m-d",
-    enable: dates,
-    
-  });
-  {% endif %}
-  
-  let checkInputs = document.querySelectorAll('input.checkStatus')
-  
-  function uncheckAll(){
-    checkInputs.forEach((inp) => {
-      inp.checked = false
+  <script>
+    {% comment %} {% if user.role == '2' %}
+    document.getElementById('customDatePicker').addEventListener('change', () => {
+      document.getElementById('customDateForm').submit()
     })
-  }
-  
-  function checkAll(){
-    checkInputs.forEach((inp) => {
-      inp.checked = true
-    })
-  }
-</script>
-{% endblock %}
+    let dates = JSON.parse('{{all_session_dates|safe}}')
+    flatpickr("#customDatePicker", {
+      dateFormat: "Y-m-d",
+      enable: dates,
+
+    });
+    {% endif %} {% endcomment %}
+
+    window.onload = () => {
+      checkInputs = document.querySelectorAll('input.checkStatus')
+    }
+
+    function uncheckAll() {
+      checkInputs.forEach((inp) => {
+        inp.checked = false
+      })
+    }
+
+    function checkAll() {
+      checkInputs.forEach((inp) => {
+        inp.checked = true
+      })
+    }
+  </script>
+  {% endblock %}

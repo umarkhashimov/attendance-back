@@ -12,7 +12,7 @@
     <hr class="table-group-divider" />
     
     {% for obj in marked_sessions %}
-      <a {% if obj.course.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.course.id %}" {% else %}disabled{% endif %} class="border-2 border conducted {% if obj.status %}border-success btn btn-outline-success {% else %}border-danger btn btn-outline-danger{% endif %} p-3 d-block course-list-item my-3">
+      <a {% if obj.course.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.course.id session_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border conducted {% if obj.status %}border-success btn btn-outline-success {% else %}border-danger btn btn-outline-danger{% endif %} p-3 d-block course-list-item my-3">
         <div class="row">
           <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center border-5">
             <p class="text-dark m-0">

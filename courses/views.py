@@ -89,29 +89,6 @@ class CreateCourseView(AdminRequired, CreateView):
     def get_success_url(self):
         return reverse('main:courses_list')
 
-class ConductSession(View):
-
-    def get(self, request, course_id):
-        today = datetime.now().date()
-        course= get_object_or_404(CourseModel, id=course_id)
-        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': True})
-        return redirect('attendance:session_detail', course_id=course_id)
-        # session = get_object_or_404(SessionsModel, id=session_id)
-
-        # if request.user.role == '1' and not session_date_match(session):
-        #     return redirect("main:main")
-
-        # if early_to_conduct_session(session):
-        #     messages.error(request, "Рано провести урок!")
-        #     return redirect('attendance:session_detail', session_id=session_id)
-
-        # if not session.status:
-        #     session.conduct()
-
-        #     enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
-        #     for obj in enrollments:
-        #         enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
-        #         AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session, defaults={'status': False})
 
 
 class UpdateCourseWeekdaysView(AdminRequired, View):
@@ -129,3 +106,52 @@ class UpdateCourseWeekdaysView(AdminRequired, View):
             return redirect('courses:course_update', pk=pk)
         except:
             return redirect('main:main')
+        
+class CancelSessionView(View):
+
+    def post(self, request, course_id):
+        cause = self.request.POST.get('cancelCause')
+        print(cause)
+        today = datetime.now().date()
+        course= get_object_or_404(CourseModel, id=course_id)
+        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': False, 'record_by_id': self.request.user.id})
+
+        # generate empty attendance based on enrollment status
+        enrollments = Enrollment.objects.filter(course=course, status=True)
+        for obj in enrollments:
+            enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
+            AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
+            
+        return redirect('attendance:session_detail', course_id=course_id)
+        
+class ConductSession(View):
+
+    def get(self, request, course_id):
+        today = datetime.now().date()
+        course= get_object_or_404(CourseModel, id=course_id)
+        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': True, 'record_by_id': self.request.user.id})
+
+        # generate empty attendance based on enrollment status
+        enrollments = Enrollment.objects.filter(course=course, status=True)
+        for obj in enrollments:
+            enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
+            AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
+
+
+        return redirect('attendance:session_detail', course_id=course_id)
+        # session = get_object_or_404(SessionsModel, id=session_id)
+
+        # if request.user.role == '1' and not session_date_match(session):
+        #     return redirect("main:main")
+
+        # if early_to_conduct_session(session):
+        #     messages.error(request, "Рано провести урок!")
+        #     return redirect('attendance:session_detail', session_id=session_id)
+
+        # if not session.status:
+        #     session.conduct()
+
+        #     enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
+        #     for obj in enrollments:
+        #         enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
+        #         AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session, defaults={'status': False})

@@ -12,58 +12,40 @@ from .models import AttendanceModel
 from datetime import datetime 
 from courses.models import CourseModel
 
-class RecordAttendanceView(View, LoginRequiredMixin):
+class NewSessionView(View, LoginRequiredMixin):
     template_name = 'session_detail.html'
     
-
     def get(self, request, course_id):
-        course = get_object_or_404(CourseModel, id=course_id)
-        enrollments = Enrollment.objects.all().filter(course=course, status='1')
-        # existing_records = AttendanceModel.objects.all().filter(session=session).values_list('enrollment__student_id', flat=True)
-        # attendance = AttendanceModel.objects.all().filter(session=session)
 
-        # if request.user.role == '1' and not session_date_match(session):
-        #     return redirect("main:main")
+        if request.user.role == '1' and not course_date_match(course):
+            return redirect("main:main")
+        
         today = datetime.now().date()
-        try:
-            session = SessionsModel.objects.get(course=course_id, date=today)
-        except:
-            session = None
+        course = get_object_or_404(CourseModel, id=course_id)
+        session = SessionsModel.objects.filter(course=course, date=today)
+        
+        if session.exists():
+            obj = SessionsModel.objects.get(course=course, date=today)
+            return redirect('attendance:session_detail', course_id=course_id, session_id=obj.id)
+        
+
+        sessions = SessionsModel.objects.filter(course=course)
 
         context = {
             'session': session,
-            'course': course
+            'course': course,
+            'all_session_dates': sessions,
             # 'enrollments': enrollments,
             # 'exist': existing_records,
-            # 'attendance': attendance,
-            # 'all_session_dates': json.dumps([session.date.strftime('%Y-%m-%d') for session in sessions]),
-            # 'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
-            # 'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
         }
 
+        if session:
+            context.update({
+                'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
+                'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
+            })
+
         return render(request, self.template_name, context)
-
-    def post(self, request, session_id):
-        session = get_object_or_404(SessionsModel, id=session_id)
-
-        if request.user.role == '1' and not course_date_match(session):
-            return redirect("main:main")
-
-
-        keys = {key: value for key, value in request.POST.items() if key.startswith('stid')}.keys()
-        enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
-
-        for obj in enrollments:
-            status = False
-            if f"stid_{obj.student.student_id}" in keys:
-                status = True
-            enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
-            AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': status}) 
-
-        if request.user.role == '1':
-            return redirect('main:main')
-
-        return redirect(request.path, pk=session.course.id)
     
 class RedirecToSessionByDate(View, AdminRequired):
 
@@ -77,3 +59,63 @@ class RedirecToSessionByDate(View, AdminRequired):
             return redirect('main:main')
 
 
+class GetSessionView(View):
+    template_name = 'session_detail.html'
+
+    def get(self, request, course_id, session_id):
+        course = get_object_or_404(CourseModel, id=course_id)
+        session = get_object_or_404(SessionsModel, id=session_id)
+
+        if request.user.role == '1' and not course_date_match(course):
+            return redirect("main:main")
+        
+        attendance = AttendanceModel.objects.all().filter(session=session)
+
+        sessions = SessionsModel.objects.filter(course=course)
+       
+        context = {
+            'session': session,
+            'course': course,
+            'attendance': attendance,
+            'all_session_dates': sessions,
+        }
+
+        if session:
+            context.update({
+                'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
+                'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
+            })
+
+        return render(request, self.template_name, context)
+    
+
+    def post(self, request, course_id, session_id):
+        course = get_object_or_404(CourseModel, id=course_id)
+        session = get_object_or_404(SessionsModel, id=session_id)
+
+        if request.user.role == '1' and not course_date_match(session):
+            return redirect("main:main")
+
+        keys = {key: value for key, value in request.POST.items() if key.startswith('stid')}.keys()
+        enrollments = Enrollment.objects.all().filter(course=course, status=True)
+
+        attendances = AttendanceModel.objects.all().filter(session=session)
+
+        for obj in attendances:
+            status = False
+            if f"stid_{obj.enrollment.student.student_id}" in keys:
+                status = True
+            obj.status = status
+            obj.save()
+
+        # for obj in enrollments:
+        #     status = False
+        #     if f"stid_{obj.student.student_id}" in keys:
+        #         status = True
+        #     enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
+        #     AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': status}) 
+
+        if request.user.role == '1':
+            return redirect('main:main')
+
+        return redirect(request.path, pk=session.course.id)

@@ -6,9 +6,9 @@ from students.models import Enrollment
 class AttendanceModel(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     session = models.ForeignKey(SessionsModel, on_delete=models.CASCADE)
-    status = models.BooleanField(default=False) 
-    homework_grade = models.IntegerField(default=0)
-    participation_grade = models.IntegerField(default=0)
+    status = models.BooleanField(null=True) 
+    homework_grade = models.IntegerField(null=True)
+    participation_grade = models.IntegerField(null=True)
 
     def __str__(self):
         return f"{self.enrollment} - {self.session} - {self.status}"

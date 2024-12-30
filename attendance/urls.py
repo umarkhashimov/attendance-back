@@ -1,9 +1,10 @@
 from django.urls import path
-from .views import RecordAttendanceView, RedirecToSessionByDate
+from .views import NewSessionView, RedirecToSessionByDate, GetSessionView
 
 app_name = 'attendance'
 
 urlpatterns = [
-    path('course/<int:course_id>/session/', RecordAttendanceView.as_view(), name='session_detail'),
+    path('course/<int:course_id>/session/',  NewSessionView.as_view(), name='session_detail'),
+    path('course/<int:course_id>/session/<int:session_id>',  GetSessionView.as_view(), name='session_detail'),
     path('session_date/<int:course_id>', RedirecToSessionByDate.as_view(), name='session_date'),
 ]

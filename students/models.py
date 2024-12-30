@@ -26,15 +26,11 @@ class StudentModel(models.Model):
 
 
 class Enrollment(models.Model):
-    STATUS_CHOICES = [
-        ('1', 'Active'),
-        ('0', 'Dropped'),
-    ]
     
     student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Balance per course
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='1')  # Enrollment status
+    status = models.BooleanField(default=True)
     trial_lesson = models.BooleanField(default=False)
     hold = models.IntegerField(default=0)
 
