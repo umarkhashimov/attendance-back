@@ -30,9 +30,9 @@ class Enrollment(models.Model):
     student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE)
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Balance per course
-    status = models.BooleanField(default=True)
-    trial_lesson = models.BooleanField(default=False)
-    hold = models.IntegerField(default=0)
+    status = models.BooleanField(default=True, null=True)
+    trial_lesson = models.BooleanField(default=False, null=True)
+    hold = models.IntegerField(default=0, null=True)
 
     def __str__(self):
         return f"{self.student} - {self.course} ({self.status})"

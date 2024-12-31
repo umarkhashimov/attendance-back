@@ -51,16 +51,14 @@
       {% for obj in attendance %}
       <div class="border-2 border p-3 d-block course-list-item my-3">
         <div class="row">
-          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
-            <input name="stid_{{ obj.enrollment.student.student_id }}" type="checkbox" {% if obj.status %}checked{% endif %}
-            class="checkStatus form-check-input">
+          <div class="col-12 col-sm-2 col-md-8 d-flex align-items-center">
             <p class="m-0 ms-3">{{obj.enrollment.student.first_name}} {{obj.enrollment.student.last_name}}</p>
           </div>
-          <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
-            <p class="text-dark m-0">--:--</p>
-          </div>
-          <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
-            <p class="main-lesson-days m-0 text-dark">{{ obj.enrollment.student.student_id }}</p>
+         
+          <div class="col-12 col-md-4 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center justify-content-end pe-3">
+            
+            <input name="stid_{{ obj.enrollment.student.student_id }}" type="checkbox" {% if obj.status %}checked{% endif %}
+            class="checkStatus form-check-input">
           </div>
         </div>
       </div>

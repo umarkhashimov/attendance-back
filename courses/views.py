@@ -23,7 +23,7 @@ class CourseUpdateView(AdminRequired, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['obj'] = self.get_object()
-        context['weekdays_form'] = LessonsWeekdaysForm(instance=self.get_object())
+        context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True)
         return context
 
 
