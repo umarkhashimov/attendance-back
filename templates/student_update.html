@@ -18,5 +18,38 @@
         <button type="submit" class="btn btn-primary">Сохранить</button>
       </div>
     </form>
+
+    <hr class="table-group-divider mt-4" />
+    <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
+      <h4 class="">Записанные курсы</h4>
+      <a href="{% url "students:create_enrollment_from_student" student_id=student.id %}" class="btn btn-outline-primary">Добавить</a>
+    </div>
+    {% for obj in enrollments %}
+      <a href="{% url 'students:update_enrollment' pk=obj.id %}?next={{request.path}}" class="border-2 border p-3 d-block course-list-item my-3">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
+            <p class="text-dark m-0">
+              <span class="bandge text-secondary opacity-50">{{ obj.course.id }}</span>
+              {{ obj.course.subject|capfirst }}, 
+              {{ obj.course.course_name|capfirst }}
+            </p>
+          </div>
+          <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
+            <p class="text-dark m-0">{{ obj.course.lesson_time|time:'H:i' }}</p>
+          </div>
+          <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
+            <p class="main-lesson-days m-0 text-dark">
+              {% for key, value in obj.course.weekdays.choices.items %}
+                {% if key in obj.course.weekdays %}
+                  <span>{{ value }}</span>
+                {% endif %}
+              {% endfor %}
+            </p>
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <p class="text-center text-secondary">Нет груп.</p>
+    {% endfor %}
   </div>
 {% endblock %}
