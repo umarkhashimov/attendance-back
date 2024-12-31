@@ -110,11 +110,10 @@ class UpdateCourseWeekdaysView(AdminRequired, View):
 class CancelSessionView(View):
 
     def post(self, request, course_id):
-        cause = self.request.POST.get('cancelCause')
-        print(cause)
+        cause = self.request.POST.get('cancelCause').capitalize()
         today = datetime.now().date()
         course= get_object_or_404(CourseModel, id=course_id)
-        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': False, 'record_by_id': self.request.user.id})
+        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': False, 'record_by_id': self.request.user.id, 'cancel_on_holiday': cause})
 
         # generate empty attendance based on enrollment status
         enrollments = Enrollment.objects.filter(course=course, status=True)

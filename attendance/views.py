@@ -35,6 +35,7 @@ class NewSessionView(View, LoginRequiredMixin):
             'session': session,
             'course': course,
             'all_session_dates': sessions,
+            'today': today
             # 'enrollments': enrollments,
             # 'exist': existing_records,
         }

@@ -53,8 +53,9 @@ class CourseModel(models.Model):
 class SessionsModel(models.Model):
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE)
     date = models.DateField()
-    status = models.BooleanField(default=False)
+    status = models.BooleanField(default=True)
     record_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, null=True, blank=True)
+    cancel_on_holiday = models.BooleanField(null=True)
 
     def conduct(self):
         self.status = True
