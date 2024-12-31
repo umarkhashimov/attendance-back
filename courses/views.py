@@ -89,23 +89,6 @@ class CreateCourseView(AdminRequired, CreateView):
     def get_success_url(self):
         return reverse('main:courses_list')
 
-
-
-class UpdateCourseWeekdaysView(AdminRequired, View):
-
-    def post(self, request, pk):
-        try:
-            instance = get_object_or_404(CourseModel, id=pk)
-            form = LessonsWeekdaysForm(self.request.POST, instance=instance)
-            if form.is_valid():
-                instance.weekdays = ','.join(form.cleaned_data['weekdays'])
-                instance.save()
-                instance.regenerate_coming_sessions()
-                print(instance.weekdays)
-                
-            return redirect('courses:course_update', pk=pk)
-        except:
-            return redirect('main:main')
         
 class CancelSessionView(View):
 
@@ -138,19 +121,3 @@ class ConductSession(View):
 
 
         return redirect('attendance:session_detail', course_id=course_id)
-        # session = get_object_or_404(SessionsModel, id=session_id)
-
-        # if request.user.role == '1' and not session_date_match(session):
-        #     return redirect("main:main")
-
-        # if early_to_conduct_session(session):
-        #     messages.error(request, "Рано провести урок!")
-        #     return redirect('attendance:session_detail', session_id=session_id)
-
-        # if not session.status:
-        #     session.conduct()
-
-        #     enrollments = Enrollment.objects.all().filter(course=session.course, status='1')
-        #     for obj in enrollments:
-        #         enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
-        #         AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session, defaults={'status': False})

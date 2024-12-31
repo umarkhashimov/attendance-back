@@ -40,22 +40,12 @@ class LessonsWeekdaysForm(forms.ModelForm):
         
         return data
 
-
-class LessonsWeekdaysForm(forms.ModelForm):
-
-    class Meta:
-        model = CourseModel
-        fields = ["weekdays"]
         
-
-
-
 class CourseCreateForm(forms.ModelForm):
 
     class Meta:
         model = CourseModel
         fields = "__all__"
-        exclude = ['is_started', 'finished']
         widgets = {
             'lesson_time': forms.TimeInput(
                 format='%H:%M', 
@@ -66,24 +56,10 @@ class CourseCreateForm(forms.ModelForm):
                     'id': 'LessonTimePicker',
                 }
             ),
-            'start_date': forms.DateInput(
-                attrs={
-                    'class': 'form-control', 
-                    'type': 'date', 
-                    'id': 'StartDatePicker',
-                    'placeholder': 'день.месяц.год'
-                }
-            ),
             'duration':  forms.NumberInput(
                 attrs={
                     'oninput': 'this.value = this.value.replace(/[^0-9]/g, '');',
                     'placeholder': 'Длительность занятий',
-                }
-            ),
-            'total_lessons': forms.NumberInput(
-                attrs={
-                    'oninput': 'this.value = this.value.replace(/[^0-9]/g, '');',
-                    'placeholder': 'Сколько уроков',
                 }
             ),
             'session_cost': forms.NumberInput(
