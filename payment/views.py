@@ -54,8 +54,10 @@ class ConfirmPaymentView(View):
         payment = get_object_or_404(PaymentModel, id=payment_id)
 
         if 'confirm' in request.POST:
-            print('confirmed')
-            payment.status = True
-            payment.save()
+            if not payment.status:
+                print('confirmed')
+                payment.status = True
+                payment.save()
+                payment.enrollment.add_balance(payment.amount)
 
         return redirect('payment:payments_list')

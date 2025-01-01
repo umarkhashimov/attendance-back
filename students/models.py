@@ -30,7 +30,7 @@ class Enrollment(models.Model):
     
     student = models.ForeignKey(StudentModel, on_delete=models.CASCADE, verbose_name="Студент")
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE, verbose_name="Курс", limit_choices_to={'status': True})
-    balance = models.IntegerField(default=0, verbose_name="Баланс")  # Balance per course
+    balance = models.FloatField(default=0, verbose_name="Баланс")  # Balance per course
     status = models.BooleanField(default=True, verbose_name="Статус Активности")
     trial_lesson = models.BooleanField(default=True, verbose_name="Пробный урок")
     hold = models.IntegerField(default=0, null=True, verbose_name="Заморозка")
@@ -39,6 +39,22 @@ class Enrollment(models.Model):
     def __str__(self):
         return f"{self.student} - {self.course} ({self.status})"
     
+    def add_balance(self, amount):
+        self.balance += amount
+        self.save()
+
+    def substract_balance(self, amount):
+        self.balance -= amount
+        self.save()
+
+    def calc_session_cost_discount(self):
+        # return cost of one session with discount
+        cost = self.course.session_cost - ((self.course.session_cost / 100) * self.discount)
+        return cost
+    
+    def substract_one_session(self):
+        self.substract_balance(self.calc_session_cost_discount())
+
     class Meta:
         verbose_name = "enrollment"
         verbose_name_plural = "enrollments"

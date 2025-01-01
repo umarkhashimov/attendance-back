@@ -119,5 +119,7 @@ class ConductSession(View):
             enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
             AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
 
+        for obj in enrollments:
+            obj.substract_one_session()
 
         return redirect('attendance:session_detail', course_id=course_id)

@@ -34,7 +34,7 @@ class CourseModel(models.Model):
     weekdays = MultiSelectField(choices=WEEKDAY_CHOICES, verbose_name="дни недели")
     lesson_time = models.TimeField(verbose_name="время урока")
     duration = models.PositiveIntegerField(verbose_name="продолжительность урока (мин)")
-    session_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="цена урока")
+    session_cost = models.FloatField(default=0, verbose_name="цена урока")
     status = models.BooleanField(default=False, verbose_name="Статус курса")
 
     def __str__(self):

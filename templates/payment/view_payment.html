@@ -10,9 +10,6 @@
     <h4 class="mt-5">Чек</h4>
     <hr class="table-group-divider" />
 
-    <div class="" role="alert">
-      Этот чек не оплачен!
-    </div>
     <form method='post'>
         {% csrf_token %}
         {{form|crispy}}
