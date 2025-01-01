@@ -55,10 +55,13 @@
             <p class="m-0 ms-3">{{obj.enrollment.student.first_name}} {{obj.enrollment.student.last_name}}</p>
           </div>
          
-          <div class="col-12 col-md-4 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center justify-content-end pe-3">
-            
-            <input name="stid_{{ obj.enrollment.student.student_id }}" type="checkbox" {% if obj.status %}checked{% endif %}
-            class="checkStatus form-check-input">
+          <div class="col-12 col-md-4 mb-3 mb-sm-4 mb-md-0 d-flex gap-2 align-items-center justify-content-end pe-3">
+            <div class="d-flex gap-1 input-group justify-content-end" id="grade_{{ obj.enrollment.student.student_id }}">
+              <input name="ga_{{ obj.enrollment.student.student_id }}" type="number" class="m-0 p-1 py-2 grade-inp form-control" title="Оценка за посещение">
+              <input name="ghw_{{ obj.enrollment.student.student_id }}" type="number" class="m-0 p-1 py-2 grade-inp form-control" title="Оценка за домашнее задание">
+            </div>
+            <input gradeFor="grade_{{ obj.enrollment.student.student_id }}" name="stid_{{ obj.enrollment.student.student_id }}" type="checkbox" {% if obj.status %}checked{% endif %}
+            class="checkStatus form-check-input m-0 my-2">
           </div>
         </div>
       </div>
@@ -146,6 +149,33 @@
 
     window.onload = () => {
       checkInputs = document.querySelectorAll('input.checkStatus')
+
+      document.querySelectorAll('input[type="number"].grade-inp').forEach((inp) => {
+        inp.addEventListener('input', () => {
+        // Ensure the input value is a number
+        let value = inp.value;
+
+        // If the value is not a number or is outside the range of 0 to 5, reset it to an empty string or limit it.
+        if (isNaN(value) || value < 0 || value > 5) {
+          inp.value = ''; // Clear the input if the value is invalid
+        } else {
+          // Optionally, if you want to ensure only valid values are shown, limit the decimal places or sanitize input here
+          inp.value = value; // Set back the valid value
+        }
+      });
+      })
+
+      document.querySelectorAll('input[type="checkbox"].checkStatus').forEach((inp) => {
+        inp.addEventListener('click', () => {
+          let gradeDiv = document.querySelector(`div#${inp.getAttribute("gradeFor")}`)
+          console.log(inp.checked, gradeDiv);
+          if (inp.checked) {
+            gradeDiv.classList.remove('hiddenDiv')
+          }else{
+            gradeDiv.classList.add('hiddenDiv')
+          }
+        })
+      })
     }
 
     function uncheckAll() {
