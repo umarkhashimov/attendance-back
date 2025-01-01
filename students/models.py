@@ -1,5 +1,6 @@
 from django.db import models
 from courses.models import CourseModel
+from django.core.validators import MaxValueValidator
 
 
 class StudentModel(models.Model):
@@ -33,6 +34,7 @@ class Enrollment(models.Model):
     status = models.BooleanField(default=True, verbose_name="Статус Активности")
     trial_lesson = models.BooleanField(default=True, verbose_name="Пробный урок")
     hold = models.IntegerField(default=0, null=True, verbose_name="Заморозка")
+    discount = models.PositiveIntegerField(default=0, verbose_name="Скидка %", validators=[MaxValueValidator(100)])
 
     def __str__(self):
         return f"{self.student} - {self.course} ({self.status})"

@@ -1,0 +1,29 @@
+{% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+  <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+  <div class="container courses-list">
+    <h4 class="mt-5">Чек</h4>
+    <hr class="table-group-divider" />
+
+    <div class="" role="alert">
+      Этот чек не оплачен!
+    </div>
+    <form method='post'>
+        {% csrf_token %}
+        {{form|crispy}}
+
+
+      {% if not form.status.value %}
+      <div class="alert alert-danger d-flex justify-content-between flex-column align-items-center flex-md-row pt-3 gap-3">
+        <p class="m-0">Этот чек не оплачен!</p>
+          <button type="submit" name='confirm' class="btn btn-success">Оплачено</button>
+      </div>
+      {% endif %}
+    </form>
+  </div>
+{% endblock %}

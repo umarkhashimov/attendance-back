@@ -7,7 +7,7 @@ from users.filters import AdminRequired
 from .models import StudentModel, Enrollment
 from .forms import StudentInfoForm
 from courses.models import CourseModel
-from .forms import EnrollmentForm
+from .forms import EnrollmentForm, UpdateEnrollmentForm
 
 
 
@@ -88,9 +88,15 @@ class CreateEnrollmentView(AdminRequired, View):
 
 class UpdateEnrollmentView(UpdateView, AdminRequired):
     model = Enrollment
-    fields = '__all__'
+    form_class = UpdateEnrollmentForm
     template_name = "update_enrollment.html"
     
     def get_success_url(self):
         next_url  = self.request.GET.get('next', '/')
         return next_url
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["enrollment"] = self.get_object() 
+        return context
+    
