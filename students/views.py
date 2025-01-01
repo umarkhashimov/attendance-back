@@ -1,7 +1,7 @@
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db import IntegrityError
 
 from users.filters import AdminRequired
 from .models import StudentModel, Enrollment
@@ -33,7 +33,7 @@ class CreateStudentView(AdminRequired, CreateView):
     exclude = ['courses']
 
     def get_success_url(self):
-        return reverse('main:courses_list')
+        return reverse('students:student_update', kwargs={'pk': self.object.id})
     
 
 
@@ -65,21 +65,15 @@ class CreateEnrollmentView(AdminRequired, View):
     def post(self, request, course_id=None, student_id=None):
         form = EnrollmentForm(request.POST)
         if form.is_valid():
-            # Retrieve the cleaned data
             course = CourseModel.objects.get(id=course_id) if course_id else None
             student = StudentModel.objects.get(id=student_id) if student_id else None
-
-            # Use update_or_create to either update or create the enrollment
+            
             enrollment, created = Enrollment.objects.update_or_create(
-                course=course,
-                student=student,
-                defaults=form.cleaned_data
+                course=form.cleaned_data['course'],
+                student=form.cleaned_data['student'],
+                defaults={**form.cleaned_data, 'status': True}
             )
             
-            # if created:
-            #     pass
-            
-            next_url = 'main:main' 
 
             if course_id:
                 return redirect('courses:course_update', pk=course_id)

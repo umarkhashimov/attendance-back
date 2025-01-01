@@ -40,4 +40,4 @@ class Enrollment(models.Model):
     class Meta:
         verbose_name = "enrollment"
         verbose_name_plural = "enrollments"
-        unique_together = ("student", "course")
+        # unique_together = ("student", "course")

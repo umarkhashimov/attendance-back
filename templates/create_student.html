@@ -1,5 +1,5 @@
 {% extends 'layout/base.html' %}
-
+{% load crispy_forms_tags %}
 {% block title %}
   <title>Панель Управления</title>
 {% endblock %}
@@ -12,8 +12,10 @@
     <hr class="table-group-divider" />
     <form method="post">
       {% csrf_token %}
-      {{form.as_p}}
-      <button type="submit">Сохранить</button>
+      {{form|crispy}}
+      <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
     </form>
   </div>
 {% endblock %}

@@ -15,4 +15,3 @@ class EnrollmentForm(ModelForm):
         model = Enrollment
         fields = ['course', 'student', 'balance']
 
-    
