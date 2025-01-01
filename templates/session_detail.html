@@ -166,7 +166,7 @@
       })
 
       document.querySelectorAll('input[type="checkbox"].checkStatus').forEach((inp) => {
-        inp.addEventListener('click', () => {
+        inp.addEventListener('change', () => {
           let gradeDiv = document.querySelector(`div#${inp.getAttribute("gradeFor")}`)
           console.log(inp.checked, gradeDiv);
           if (inp.checked) {
@@ -180,13 +180,15 @@
 
     function uncheckAll() {
       checkInputs.forEach((inp) => {
-        inp.checked = false
+        inp.checked = false;
+        inp.dispatchEvent(new Event('change'))
       })
     }
 
     function checkAll() {
       checkInputs.forEach((inp) => {
         inp.checked = true
+        inp.dispatchEvent(new Event('change'))
       })
     }
   </script>
