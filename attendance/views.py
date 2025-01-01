@@ -6,11 +6,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 import json
 
 from courses.filters import course_date_match
-from courses.models import SessionsModel
+from courses.models import SessionsModel, CourseModel
+from courses.forms import CancelCauseForm
 from users.filters import AdminRequired
 from .models import AttendanceModel
 from datetime import datetime 
-from courses.models import CourseModel
 
 class NewSessionView(View, LoginRequiredMixin):
     template_name = 'session_detail.html'
@@ -35,7 +35,8 @@ class NewSessionView(View, LoginRequiredMixin):
             'session': session,
             'course': course,
             'all_session_dates': sessions,
-            'today': today
+            'today': today,
+            'cancel_cause_form': CancelCauseForm,
             # 'enrollments': enrollments,
             # 'exist': existing_records,
         }
@@ -79,6 +80,7 @@ class GetSessionView(View):
             'course': course,
             'attendance': attendance,
             'all_session_dates': sessions,
+            'cancel_cause_form': CancelCauseForm,
         }
 
         if session:

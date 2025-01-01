@@ -33,7 +33,7 @@ class Enrollment(models.Model):
     balance = models.FloatField(default=0, verbose_name="Баланс")  # Balance per course
     status = models.BooleanField(default=True, verbose_name="Статус Активности")
     trial_lesson = models.BooleanField(default=True, verbose_name="Пробный урок")
-    hold = models.IntegerField(default=0, null=True, verbose_name="Заморозка")
+    hold = models.PositiveIntegerField(default=0, null=True, verbose_name="Заморозка")
     discount = models.PositiveIntegerField(default=0, verbose_name="Скидка %", validators=[MaxValueValidator(100)])
 
     def __str__(self):
@@ -52,8 +52,15 @@ class Enrollment(models.Model):
         cost = self.course.session_cost - ((self.course.session_cost / 100) * self.discount)
         return cost
     
-    def substract_one_session(self):
-        self.substract_balance(self.calc_session_cost_discount())
+    def substract_one_session(self, cancelled_session=None):
+        if self.hold > 0:
+            self.hold -= 1
+        elif self.trial_lesson == True:
+            self.trial_lesson = False
+        else:
+            self.substract_balance(self.calc_session_cost_discount())
+
+        self.save()
 
     class Meta:
         verbose_name = "enrollment"

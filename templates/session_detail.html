@@ -1,4 +1,5 @@
 {% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}
 <title>Курс</title>
@@ -93,25 +94,14 @@
           aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog">
             <div class="modal-content">
+              <form action="{% url "courses:cancel_session" course_id=course.id %}" method='post'>
               <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Причина отмены</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Отмена урока</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <form action="{% url "courses:cancel_session" course_id=course.id %}" method='post'>
                 {% csrf_token %}
                 <div class="modal-body">
-                  <div class="form-check">
-                    <input class="form-check-input" value='true' type="radio" name="cancelCause" id="flexRadioDefault1" checked>
-                    <label class="form-check-label" for="flexRadioDefault1">
-                      Из-за праздника
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input" value="false" type="radio" name="cancelCause" id="flexRadioDefault2">
-                  <label class="form-check-label" for="flexRadioDefault2">
-                    Из-за нас
-                  </label>
-                </div>
+                  {{cancel_cause_form|crispy}}
               </div>
               <div class="modal-footer">
                 <button type="submit" class="btn btn-primary">Сохранить</button>

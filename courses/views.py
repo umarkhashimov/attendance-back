@@ -10,7 +10,7 @@ from django.contrib import messages
 from .filters import course_date_match, early_to_conduct_session
 from students.models import Enrollment
 from attendance.models import AttendanceModel
-from .forms import CourseUpdateForm, CourseCreateForm, LessonsWeekdaysForm
+from .forms import CourseUpdateForm, CourseCreateForm, LessonsWeekdaysForm, CancelCauseForm
 
 class CourseUpdateView(AdminRequired, UpdateView):
     model = CourseModel
@@ -93,17 +93,25 @@ class CreateCourseView(AdminRequired, CreateView):
 class CancelSessionView(View):
 
     def post(self, request, course_id):
-        cause = self.request.POST.get('cancelCause').capitalize()
-        today = datetime.now().date()
-        course= get_object_or_404(CourseModel, id=course_id)
-        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': False, 'record_by_id': self.request.user.id, 'cancel_on_holiday': cause})
+        form = CancelCauseForm(request.POST)
+        if form.is_valid():
+            cause = form.cleaned_data['cause']
+            today = datetime.now().date()
+            course= get_object_or_404(CourseModel, id=course_id)
+            session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': False, 'record_by_id': self.request.user.id, 'cause': cause})
 
-        # generate empty attendance based on enrollment status
-        enrollments = Enrollment.objects.filter(course=course, status=True)
-        for obj in enrollments:
-            enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
-            AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
+            # generate empty attendance based on enrollment status
+            enrollments = Enrollment.objects.filter(course=course, status=True)
+            for obj in enrollments:
+                enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
+                AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
             
+                if str(cause) == "1" and obj.trial_lesson == False:
+                    obj.substract_one_session(cancelled_session=True)
+
+            
+
+
         return redirect('attendance:session_detail', course_id=course_id)
         
 class ConductSession(View):
@@ -118,8 +126,6 @@ class ConductSession(View):
         for obj in enrollments:
             enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
             AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
-
-        for obj in enrollments:
             obj.substract_one_session()
 
         return redirect('attendance:session_detail', course_id=course_id)

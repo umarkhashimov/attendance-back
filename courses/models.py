@@ -51,10 +51,14 @@ class CourseModel(models.Model):
 
 
 class SessionsModel(models.Model):
+    CAUSE_OPTIONS = [
+        ("1", 'Праздник'),
+        ("2", 'Вина Учебного центра')
+    ]
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE, verbose_name="Курс")
     date = models.DateField(verbose_name="Дата")
     status = models.BooleanField(default=True, verbose_name="Статус проведение урока")
-    cancel_on_holiday = models.BooleanField(null=True, verbose_name="Отменен из-за праздника")
+    cause = models.CharField(max_length=50, choices=CAUSE_OPTIONS, null=True)
     record_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Кем Отмечено")
 
     def conduct(self):
