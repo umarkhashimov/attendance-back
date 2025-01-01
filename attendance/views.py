@@ -97,15 +97,23 @@ class GetSessionView(View):
         if request.user.role == '1' and not course_date_match(session):
             return redirect("main:main")
 
-        keys = {key: value for key, value in request.POST.items() if key.startswith('stid')}.keys()
+        keys = {key: value for key, value in request.POST.items()}.keys()
         enrollments = Enrollment.objects.all().filter(course=course, status=True)
 
         attendances = AttendanceModel.objects.all().filter(session=session)
 
         for obj in attendances:
             status = False
+
+            attendance_grade = None
+            homework_grade = None
             if f"stid_{obj.enrollment.student.student_id}" in keys:
                 status = True
+                attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'))
+                homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'))
+            
+            obj.participation_grade = attendance_grade if attendance_grade else None
+            obj.homework_grade = homework_grade if homework_grade else None
             obj.status = status
             obj.save()
 

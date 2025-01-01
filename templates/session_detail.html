@@ -56,12 +56,12 @@
           </div>
          
           <div class="col-12 col-md-4 mb-3 mb-sm-4 mb-md-0 d-flex gap-2 align-items-center justify-content-end pe-3">
-            <div class="d-flex gap-1 input-group justify-content-end" id="grade_{{ obj.enrollment.student.student_id }}">
-              <input name="ga_{{ obj.enrollment.student.student_id }}" type="number" class="m-0 p-1 py-2 grade-inp form-control" title="Оценка за посещение">
-              <input name="ghw_{{ obj.enrollment.student.student_id }}" type="number" class="m-0 p-1 py-2 grade-inp form-control" title="Оценка за домашнее задание">
+            <div class="d-flex gap-1 input-group justify-content-end {% if not obj.status %}hiddenDiv{% endif %}" id="grade_{{ obj.enrollment.student.student_id }}">
+              <input name="ga_{{ obj.enrollment.student.student_id }}" value="{{ obj.participation_grade|default:'' }}" type="number" class="m-0 p-1 grade-inp form-control" title="Оценка за посещение">
+              <input name="ghw_{{ obj.enrollment.student.student_id }}" value="{{ obj.homework_grade|default:'' }}"  type="number" class="m-0 p-1 grade-inp form-control" title="Оценка за домашнее задание">
             </div>
             <input gradeFor="grade_{{ obj.enrollment.student.student_id }}" name="stid_{{ obj.enrollment.student.student_id }}" type="checkbox" {% if obj.status %}checked{% endif %}
-            class="checkStatus form-check-input m-0 my-2">
+            class="checkStatus form-check-input m-0 my-1">
           </div>
         </div>
       </div>
