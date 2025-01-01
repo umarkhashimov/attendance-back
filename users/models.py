@@ -7,7 +7,7 @@ class UsersModel(AbstractUser):
         ('2', 'Admin'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1')
-    phone_number = models.CharField(max_length=13, null=True, blank=True)
+    phone_number = models.CharField(max_length=13, null=True, blank=True, verbose_name="Номер Телефона")
 
     @property
     def get_full_name(self) -> str:

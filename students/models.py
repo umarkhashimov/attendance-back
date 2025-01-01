@@ -27,12 +27,12 @@ class StudentModel(models.Model):
 
 class Enrollment(models.Model):
     
-    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE)
-    course = models.ForeignKey(CourseModel, on_delete=models.CASCADE)
-    balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)  # Balance per course
-    status = models.BooleanField(default=True)
-    trial_lesson = models.BooleanField(default=True)
-    hold = models.IntegerField(default=0, null=True)
+    student = models.ForeignKey(StudentModel, on_delete=models.CASCADE, verbose_name="Студент")
+    course = models.ForeignKey(CourseModel, on_delete=models.CASCADE, verbose_name="Курс", limit_choices_to={'status': True})
+    balance = models.IntegerField(default=0, verbose_name="Баланс")  # Balance per course
+    status = models.BooleanField(default=True, verbose_name="Статус Активности")
+    trial_lesson = models.BooleanField(default=True, verbose_name="Пробный урок")
+    hold = models.IntegerField(default=0, null=True, verbose_name="Заморозка")
 
     def __str__(self):
         return f"{self.student} - {self.course} ({self.status})"

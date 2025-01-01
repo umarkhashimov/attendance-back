@@ -51,16 +51,15 @@ class CourseModel(models.Model):
 
 
 class SessionsModel(models.Model):
-    course = models.ForeignKey(CourseModel, on_delete=models.CASCADE)
-    date = models.DateField()
-    status = models.BooleanField(default=True)
-    record_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, null=True, blank=True)
-    cancel_on_holiday = models.BooleanField(null=True)
+    course = models.ForeignKey(CourseModel, on_delete=models.CASCADE, verbose_name="Курс")
+    date = models.DateField(verbose_name="Дата")
+    status = models.BooleanField(default=True, verbose_name="Статус проведение урока")
+    cancel_on_holiday = models.BooleanField(null=True, verbose_name="Отменен из-за праздника")
+    record_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Кем Отмечено")
 
     def conduct(self):
         self.status = True
         self.save()
-
 
     def __str__(self):
         return f"{self.course.course_name} - Session on {self.date}"

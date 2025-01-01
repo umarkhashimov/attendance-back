@@ -20,7 +20,9 @@
     <hr class="table-group-divider mt-4" />
     <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
       <h4 class="">Ученики</h4>
+      {% if obj.status %}
       <a href="{% url "students:create_enrollment_from_course" course_id=obj.id %}" class="btn btn-outline-primary">Добавить</a>
+      {% endif %}
     </div>
     {% for obj in enrollments %}
       <a href="{% url "students:update_enrollment" pk=obj.id %}?next={{request.path}}" class="border-2 border p-3 d-block course-list-item my-3">
