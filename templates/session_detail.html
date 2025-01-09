@@ -53,7 +53,9 @@
       <div class="border-2 border p-3 py-2 d-block course-list-item my-3">
         <div class="row">
           <div class="col-12 col-sm-2 col-md-8 d-flex align-items-center">
-            <p class="m-0 ms-3">{{obj.enrollment.student.first_name}} {{obj.enrollment.student.last_name}}</p>
+            <p class="m-0 ms-3">{{obj.enrollment.student.first_name}} {{obj.enrollment.student.last_name}} 
+              {% if obj.enrollment.trial_lesson %}<span title="Пробный урок" class="badge text-primary">*</span>{% endif %}
+            </p>
           </div>
          
           <div class="col-12 py-0 col-md-4 mb-3 mb-sm-4 mb-md-0 d-flex gap-2 align-items-center justify-content-end pe-3">

@@ -58,6 +58,6 @@ class ConfirmPaymentView(View):
                 print('confirmed')
                 payment.status = True
                 payment.save()
-                payment.enrollment.add_balance(payment.amount)
+                payment.enrollment.add_balance(payment.lessons_covered * 12)
 
         return redirect('payment:payments_list')

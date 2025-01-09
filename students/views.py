@@ -8,7 +8,7 @@ from .models import StudentModel, Enrollment
 from .forms import StudentInfoForm
 from courses.models import CourseModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm
-
+from attendance.models import AttendanceModel
 
 
 class StudentUpdateView(AdminRequired, UpdateView):
@@ -98,5 +98,6 @@ class UpdateEnrollmentView(UpdateView, AdminRequired):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["enrollment"] = self.get_object() 
+        context['attendances'] = AttendanceModel.objects.filter(enrollment=self.get_object())
         return context
     

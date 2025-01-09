@@ -1,9 +1,9 @@
 import math
 
 def calculate_payment_amount(enrollment, count):
-    cost = enrollment.course.session_cost
+    cost = enrollment.course.session_cost # 940000 - 12
     discount = enrollment.discount
-
+    
 
     cost_by_count = cost * count
     discount_amount = (cost_by_count / 100) * discount

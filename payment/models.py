@@ -4,7 +4,7 @@ from students.models import Enrollment
 
 class PaymentModel(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, verbose_name="Запись")
-    lessons_covered = models.PositiveIntegerField(default=0, verbose_name="Кол-во покрытых уроков")
+    lessons_covered = models.PositiveIntegerField(default=0, verbose_name="Кол-во месяйев")
     amount = models.FloatField(null=True, verbose_name="Сумма оплаты")
     date = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время оплаты")
     status = models.BooleanField(default=False, verbose_name="Статус Оплаты")
