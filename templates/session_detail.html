@@ -50,11 +50,16 @@
       {% csrf_token %}
       <input type="number" name="session_id" hidden value="{{ session.id }}">
       {% for obj in attendance %}
-      <div class="border-2 border p-3 py-2 d-block course-list-item my-3">
+      <div class="border-2 border p-3 py-2 d-block my-3">
         <div class="row">
           <div class="col-12 col-sm-2 col-md-8 d-flex align-items-center">
             <p class="m-0 ms-3">{{obj.enrollment.student.first_name}} {{obj.enrollment.student.last_name}} 
-              {% if obj.enrollment.trial_lesson %}<span title="Пробный урок" class="badge text-primary">*</span>{% endif %}
+              <div class="ms-3">
+                {% if obj.enrollment.trial_lesson %}<span title="Пробный урок" role='button' class="text-success"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                {% if obj.enrollment.hold >= 1 %}<span title="Заморожен {{obj.enrollment.hold}} " role='button' class="text-primary"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                {% if obj.enrollment.balance <= 0 %}<span title="Долг {{obj.enrollment.balance}} " role='button' class="text-danger"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+              </div>
+              
             </p>
           </div>
          
