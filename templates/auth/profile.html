@@ -7,9 +7,15 @@
   {% include 'layout/navbar.html' %}
 
   <h2 class="text-center mt-5 mb-3">Профиль: {{ user.username }}</h2>
-
-  <form action="{% url 'users:logout' %}" method="post">
-    {% csrf_token %}
-    <button type="submit">Logout</button>
-  </form>
+  
+  <div class="container courses-list">
+    
+    <hr class="table-group-divider" />
+    <form action="{% url 'users:logout' %}" method="post">
+      {% csrf_token %}
+      <div class="d-flex justify-content-end flex-column-reverse flex-md-row pt-3 gap-3">
+        <button type="submit" class="btn btn-primary">Выйти</button>
+      </div>
+    </form>
+  </div>
 {% endblock %}
