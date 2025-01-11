@@ -66,6 +66,10 @@
 }
 
 
+.course-list-item.marked{
+    color: white !important
+}
+
 .main-lesson-days span:not(:last-child)::after {
     content: ',';
 }

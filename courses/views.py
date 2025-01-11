@@ -107,7 +107,7 @@ class CancelSessionView(View):
                 AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
             
                 if str(cause) == "1" and obj.trial_lesson == False:
-                    obj.substract_one_session(cancelled_session=True)
+                    obj.substract_one_session()
 
             
 
