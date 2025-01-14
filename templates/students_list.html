@@ -11,6 +11,52 @@
       <h4 class="">Все Ученики</h4>
       <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>
     </div>
+    {% comment %} <hr class="table-group-divider" /> {% endcomment %}
+    {% comment %} <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">
+      <div class="row">
+        <div class="col-12 col-sm-7 col-md-6 col-lg-3">
+          <label for="teacherName" class="mb-2 ms-1">Учителя</label>
+          <select name="teacher" class="form-select border-3 {% if request.GET.teacher %} border-primary{% endif %} w-100" id="teacherName">
+            <option value="">--</option>
+            {% for teacher in teachers %}
+            <option {% if request.GET.teacher == teacher.id|stringformat:"i" %}selected{% endif %} value="{{ teacher.id }}" class="text-dark">
+              {{ teacher.username }} {% if teacher.first_name or teacher.last_name %}
+              - {{ teacher.get_full_name }}
+              {% endif %}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 col-sm-5 col-md-3 col-lg-2 mt-2 mt-sm-0">
+          <label for="daySelect" class="mb-2 ms-1">Дни</label>
+          <select name="day" class="form-select border-3 {% if request.GET.day %} border-primary{% endif %}" id="daySelect">
+            <option value="">--</option>
+            {% for day in days %}
+            <option {% if request.GET.day == day.0 %}selected{% endif %} value="{{ day.0 }}">{{ day.1 }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 col-sm-5 col-md-3 col-lg-2 mt-2 mt-lg-0">
+          <label for="statusSelect" class="mb-2 ms-1">Курс</label>
+          <select name="subject" class="form-select border-3 {% if request.GET.subject %} border-primary{% endif %}" id="daySelect">
+            <option value="">--</option>
+            {% for subject in subjects %}
+            <option {% if request.GET.subject == subject.id|stringformat:"i" %}selected{% endif %} value="{{subject.id}}">{{subject.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-12 col-sm-7 col-md-9 col-lg-3 mt-2 mt-lg-0">
+          <label for="courseName" class="mb-2 ms-1">Имя курса</label>
+          <input value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="--" type="text" class="form-control border-3 w-100 {% if request.GET.course_name %} border-primary{% endif %}" />
+        </div>
+        <div class="col-12 col-md-3 col-lg-2 mt-3 mt-md-2">
+          <div class="d-flex align-items-end gap-4 gap-lg-2 h-100">
+            <button type="reset" class="btn btn-danger w-100 border-3 px-2"><i class="bi bi-x-lg"></i></button>
+            <button type="submit" class="btn btn-success w-100 border-3 px-2"><i class="bi bi-check-lg"></i></button>
+          </div>
+        </div>
+      </div>
+    </form> {% endcomment %}
     <hr class="table-group-divider" />
     {% for obj in students %}
       <a href="{% url 'students:student_update' pk=obj.id %}" class="border-2 border p-3 d-block course-list-item my-3">
@@ -31,5 +77,42 @@
     {% empty %}
       <p class="text-center text-secondary">Нет Учеников.</p>
     {% endfor %}
+
+
+    {% if page_obj.paginator.count > 20 %}
+    <div class="row mt-5">
+        <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination ">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% for page in paginator.page_range %}
+                        {% if page_obj.number == page %}
+                            <li class="page-item ms-1"><a class="page-link active"
+                                                          href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
+                        {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
+                            <li class="page-item ms-1"><a class="page-link"
+                                                          href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <li class="page-item ms-1">
+                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+{% endif %}
   </div>
 {% endblock %}

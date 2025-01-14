@@ -25,6 +25,7 @@ WEEKDAY_CHOICES = [
     ('3', 'Четверг'),
     ('4', 'Пятница'),
     ('5', 'Суббота'),
+    ('6', 'Воскресенье'),
 ]
 
 class CourseModel(models.Model):
