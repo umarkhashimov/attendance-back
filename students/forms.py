@@ -13,7 +13,7 @@ class EnrollmentForm(ModelForm):
     
     class Meta:
         model = Enrollment
-        fields = "__all__"
+        fields = ['course', 'student', 'balance', 'discount', 'trial_lesson']
 
 
 class UpdateEnrollmentForm(ModelForm):
