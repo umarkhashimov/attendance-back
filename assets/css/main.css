@@ -147,3 +147,12 @@ input[type=number]::-webkit-outer-spin-button {
 div.hiddenDiv{
     display: none !important;
 }
+
+
+.my-toggler[aria-expanded="true"] .upIcon{
+    display: none !important;
+}
+
+.my-toggler[aria-expanded="false"] .downIcon{
+    display: none !important;
+}

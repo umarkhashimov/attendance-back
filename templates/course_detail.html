@@ -8,41 +8,56 @@
   {% include 'layout/navbar.html' %}
 
   <div class="container courses-list pt-5">
-    <h4 class="mt-4">Изменить инфорамацию группы #{{ obj.id }}</h4>
-    <hr class="table-group-divider" />
-    <form method="post">
-      {% csrf_token %}
-      {{ form|crispy }}
-      <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-      </div>
-    </form>
-    <hr class="table-group-divider mt-4" />
+    <h3>Курс #{{obj.id}} - {{obj.subject}}, {{obj.course_name|default:"нет имени"}}</h3>
     <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
-      <h4 class="">Ученики</h4>
+      <h4 class="">Записанные Ученики</h4>
       {% if obj.status %}
-      <a href="{% url "students:create_enrollment_from_course" course_id=obj.id %}" class="btn btn-outline-primary">Добавить</a>
+        <a href="{% url 'students:create_enrollment_from_course' course_id=obj.id %}" class="btn btn-outline-primary">Добавить</a>
       {% endif %}
     </div>
-    {% for obj in enrollments %}
-      <a href="{% url "students:update_enrollment" pk=obj.id %}?next={{request.path}}" class="border-2 border p-3 d-block course-list-item my-3">
-        <div class="row">
-          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
-            <p class="text-dark m-0">{{ obj.student.full_name|capfirst }}</p>
+    <button class="w-100 btn border-1 d-flex justify-content-center align-items-center my-toggler px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="true" aria-controls="collapse1">
+      <hr class="table-group-divider w-100" />
+      <span class="mx-3 d-flex upIcon"><i class="bi bi-arrow-down me-2"></i>Развернуть <i class="bi bi-arrow-down ms-2"></i></span>
+      <span class="mx-3 d-flex downIcon"><i class="bi bi-arrow-up me-2"></i>Завернуть <i class="bi bi-arrow-up ms-2"></i></span>
+      <hr class="table-group-divider w-100" />
+    </button>
+    <div class="collapse show" id="collapse1">
+      {% for obj in enrollments %}
+        <a href="{% url 'students:update_enrollment' pk=obj.id %}?next={{ request.path }}" class="border-2 border p-3 d-block course-list-item my-3">
+          <div class="row">
+            <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
+              <p class="text-dark m-0">{{ obj.student.full_name|capfirst }}</p>
+            </div>
+            <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
+              <p class="text-dark m-0">--:--</p>
+            </div>
+            <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
+              <p class="main-lesson-days m-0 text-dark">
+                <span class="bandge text-secondary opacity-50">{{ obj.student.student_id }}</span>
+              </p>
+            </div>
           </div>
-          <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
-            <p class="text-dark m-0">--:--</p>
-          </div>
-          <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
-            <p class="main-lesson-days m-0 text-dark">
-              <span class="bandge text-secondary opacity-50">{{ obj.student.student_id }}</span>
-            </p>
-          </div>
+        </a>
+      {% empty %}
+        <p class="text-center text-secondary">Нет Учеников.</p>
+      {% endfor %}
+    </div>
+    <h4 class="mt-5">Изменить инфорамацию группы #{{ obj.id }}</h4>
+    <button class="w-100 btn border-1 d-flex justify-content-center align-items-center my-toggler px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
+      <hr class="table-group-divider w-100" />
+      <span class="mx-3 d-flex upIcon"><i class="bi bi-arrow-down me-2"></i>Развернуть <i class="bi bi-arrow-down ms-2"></i></span>
+      <span class="mx-3 d-flex downIcon"><i class="bi bi-arrow-up me-2"></i>Завернуть <i class="bi bi-arrow-up ms-2"></i></span>
+      <hr class="table-group-divider w-100" />
+    </button>
+    <div class="collapse" id="collapse2">
+      <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
+          <button type="submit" class="btn btn-primary">Сохранить</button>
         </div>
-      </a>
-    {% empty %}
-      <p class="text-center text-secondary">Нет Учеников.</p>
-    {% endfor %}
+      </form>
+    </div>
   </div>
 {% endblock %}
 
@@ -52,7 +67,7 @@
       enableTime: true,
       noCalendar: true,
       dateFormat: 'H:i',
-      time_24hr: true,
+      time_24hr: true
     })
   </script>
 {% endblock %}
