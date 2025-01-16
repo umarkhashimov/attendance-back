@@ -44,6 +44,7 @@ class CourseModel(models.Model):
     def check_time(self):
         return course_date_match(self)
     
+    
     class Meta:
         verbose_name = 'course'
         verbose_name_plural = 'courses'

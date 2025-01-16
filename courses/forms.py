@@ -1,5 +1,5 @@
 from django import forms
-from .models import CourseModel
+from .models import CourseModel, WEEKDAY_CHOICES
 
 class CourseUpdateForm(forms.ModelForm):
 
@@ -77,3 +77,12 @@ class CancelCauseForm(forms.Form):
     ]
 
     cause = forms.ChoiceField(choices=CAUSE_OPTIONS, widget=forms.RadioSelect, label="Причина", initial='1')
+
+from django_select2.forms import Select2MultipleWidget
+
+class DaysMultiselectForm(forms.Form):
+    weekdays = forms.MultipleChoiceField(
+        choices = WEEKDAY_CHOICES,
+        widget=Select2MultipleWidget(attrs={"id": "id_soft_skills", 'class':'form-select border border-3 brdeer-danger'}),
+        label=False, required=False
+    )

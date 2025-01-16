@@ -7,6 +7,7 @@ from django.db.models import Q
 
 from users.filters import AdminRequired
 from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
+from courses.forms import DaysMultiselectForm
 from users.models import UsersModel
 
 class MainPageView(TemplateView):
@@ -66,7 +67,7 @@ class CoursesListView(AdminRequired, ListView):
 
     def get_queryset(self):
         course_name = self.request.GET.get('course_name')
-        day = self.request.GET.get('day')
+        days =  self.request.GET.getlist('weekdays')
         teacher = self.request.GET.get('teacher')
         subject = self.request.GET.get('subject')
 
@@ -74,13 +75,12 @@ class CoursesListView(AdminRequired, ListView):
         
         if course_name:
             queryset = queryset.filter(course_name__icontains=course_name)
-        if day:
-            queryset = queryset.filter(weekdays__contains=day)
+        if days:
+            queryset = queryset.filter(weekdays__contains=','.join(days))
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
         if subject:
             queryset = queryset.filter(subject_id=subject)
-
 
         return queryset
     
@@ -88,7 +88,8 @@ class CoursesListView(AdminRequired, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["teachers"] = UsersModel.objects.all().filter(role='1')
-        context["days"] = WEEKDAY_CHOICES
+        days = self.request.GET.getlist('weekdays')
+        context["days_form"] = DaysMultiselectForm(initial={'weekdays': days})
         context['subjects'] = SubjectModel.objects.all()
         return context
     

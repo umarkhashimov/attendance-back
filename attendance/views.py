@@ -17,8 +17,8 @@ class NewSessionView(View, LoginRequiredMixin):
     
     def get(self, request, course_id):
 
-        # if request.user.role == '1' and not course_date_match(course):
-        #     return redirect("main:main")
+        if request.user.role == '1' and not course_date_match(course):
+            return redirect("main:main")
         
         today = datetime.now().date()
         course = get_object_or_404(CourseModel, id=course_id)
@@ -96,8 +96,8 @@ class GetSessionView(View):
         course = get_object_or_404(CourseModel, id=course_id)
         session = get_object_or_404(SessionsModel, id=session_id)
 
-        # if request.user.role == '1' and not course_date_match(session):
-        #     return redirect("main:main")
+        if request.user.role == '1' and not course_date_match(course=course):
+            return redirect("main:main")
 
         keys = {key: value for key, value in request.POST.items()}.keys()
         enrollments = Enrollment.objects.all().filter(course=course, status=True)
