@@ -68,7 +68,9 @@
                 <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
                 {{ obj.subject|capfirst }}, 
                 {{ obj.course_name|capfirst }}
+                
               </p>
+              <p class="badge text-bg-light border border-1 border-primary my-0 mx-3">{{obj.enrolled.count}}</p>
             </div>
             <div class="col-2 d-flex align-items-center justify-content-center h-100">
               <p class="m-0"><span class="badge text-bg-light border border-1" >{{ obj.lesson_time|time:'H:i' }}</span></p>

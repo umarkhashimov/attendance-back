@@ -37,13 +37,13 @@ class CourseModel(models.Model):
     duration = models.PositiveIntegerField(verbose_name="продолжительность урока (мин)")
     session_cost = models.IntegerField(verbose_name="цена курса за 12 уроков")
     status = models.BooleanField(default=False, verbose_name="Статус курса")
+    enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)
 
     def __str__(self):
         return f"#{self.id} - {self.course_name}"
     
     def check_time(self):
         return course_date_match(self)
-    
     
     class Meta:
         verbose_name = 'course'
