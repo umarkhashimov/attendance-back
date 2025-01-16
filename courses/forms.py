@@ -65,7 +65,7 @@ class CourseCreateForm(forms.ModelForm):
             'session_cost': forms.NumberInput(
                 attrs={
                     'oninput': 'this.value = this.value.replace(/[^0-9]/g, '');',
-                    'placeholder': 'Стоимость одного урока ?',
+                    'placeholder': '123',
                 }
             )
         }
