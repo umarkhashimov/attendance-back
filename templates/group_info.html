@@ -1,0 +1,54 @@
+{% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  <title>Панель Управления</title>
+{% endblock %}
+{% block custom_css %}
+  <style>
+    tr.border-danger:hover td {
+      background-color: rgba(255, 0, 0, 0.1) !important;
+    }
+    .group-intro > span.weekdays span:not(:last-child)::after{
+        content: ',';
+    }
+  </style>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+  <div class="container">
+    <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
+      <h4 class="group-intro">
+        Группа {{ group.lesson_time }} - <span class="weekdays">
+          {% for key, value in group.weekdays.choices.items %}
+            {% if key in group.weekdays %}
+              <span>{{ value }}</span>
+            {% endif %}
+          {% endfor %}
+        </span>
+      </h4>
+    </div>
+    <hr class="table-group-divider" />
+    <table class="table border border-2">
+      <thead>
+        <tr>
+          <th class="w-50">Имя</th>
+          <th class="w-50">Фамилия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for enrollment in enrollments %}
+          <tr {% if enrollment.balance <= 0 %}class=" border-2 border-danger" title='Должник {{enrollment.balance}}'{% endif %}>
+            <td class="">{{ enrollment.student.first_name }}</td>
+            <td class="">{{ enrollment.student.last_name }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="2" class="text-center w-100">Нет записанных учеников</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

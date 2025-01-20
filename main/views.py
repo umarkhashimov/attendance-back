@@ -36,12 +36,6 @@ class MainPageView(TemplateView):
             marked_sessions = marked_sessions.filter(course__in=courses)
             print(marked_sessions.values_list('course_id', flat=True))
 
-
-        paginator = Paginator(courses, 20)
-        page_number = self.request.GET.get('page', 1)
-        page_obj = paginator.get_page(page_number)
-
-        context["page_obj"] = page_obj
         context['sessions_today'] = sessions_today
         context['marked_sessions'] = marked_sessions
         return context
@@ -63,7 +57,7 @@ class CoursesListView(AdminRequired, ListView):
     template_name = "courses_list.html"
     context_object_name = 'courses'
     paginate_by = 10
-
+    ordering = ['-id']
 
     def get_queryset(self):
         course_name = self.request.GET.get('course_name')

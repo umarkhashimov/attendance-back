@@ -8,8 +8,14 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto text-center mb-2 pb-2 mb-lg-0 gap-2">
         <li class="nav-item">
-          <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{% url 'main:main' %}">Посещение</a>
+          <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{% url 'main:main' %}">Сегодня</a>
         </li>
+        {% if user.role == '1' %}
+        {% url 'courses:mygroups' as cpath %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'courses:mygroups' %}">Мои Группы</a>
+        </li>      
+        {% endif %}
         {% if user.role == '2' %}
           <li class="nav-item">
             {% url 'main:courses_list' as cpath %}

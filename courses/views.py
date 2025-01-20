@@ -1,5 +1,5 @@
 from users.filters import AdminRequired
-from django.views.generic import DetailView,  UpdateView, View, CreateView
+from django.views.generic import DetailView,  UpdateView, View, CreateView, ListView, TemplateView
 from django.core.exceptions import PermissionDenied
 from .models import CourseModel, SessionsModel
 from django.urls import reverse
@@ -129,3 +129,30 @@ class ConductSession(View):
             obj.substract_one_session()
 
         return redirect('attendance:session_detail', course_id=course_id)
+
+
+class MyCoursesView(ListView):
+    queryset = CourseModel.objects.all()
+    template_name = "my_groups.html"
+    context_object_name = 'courses'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+
+        if user.role == '1':
+            queryset = queryset.filter(teacher_id=user.id)
+
+        return queryset
+
+class GroupInfoView(DetailView):
+    template_name = 'group_info.html'
+    model = CourseModel
+    context_object_name = 'group'
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["enrollments"] = Enrollment.objects.filter(course=self.get_object())
+        return context
+    
