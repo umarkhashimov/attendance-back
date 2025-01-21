@@ -127,7 +127,8 @@
 }
 
 .grade-inp{
-    max-width: 40px;
+    min-width: 40px;
+    max-width: 60px;
     margin: 0 !important;
     box-shadow: none !important;
     text-align: center !important;
@@ -149,5 +150,56 @@ div.hiddenDiv{
 }
 
 .my-toggler[aria-expanded="false"] .downIcon{
+    display: none !important;
+}
+
+.attendance-item{
+    border: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.attendance-item:hover td{
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.attendance-item.trial-lesson td{
+    background-color: rgba(255, 255, 0, 0.1);
+}
+
+.attendance-item[status="absent"]{
+    border: 2px solid rgba(255, 0, 0, 0.2);
+}
+.attendance-item[status="absent"] td{
+    background-color: rgba(255, 0, 0, 0.05);
+}
+.attendance-item[status="absent"] td.name{
+    color: red;
+}
+
+.attendance-item[status="present"]{
+    border: 2px solid rgba(0, 128, 0, 0.1);
+}
+.attendance-item[status="present"] td{
+    background-color: rgba(0, 128, 0, 0.05);
+}
+.attendance-item[status="present"] td.name{
+    color: green;
+}
+
+.attendance-item[status="present"] .marked-status-badge .absent,
+.attendance-item[status="present"] .check-buttons{
+    display: none;
+}
+
+.attendance-item[status="absent"] .marked-status-badge .present,
+.attendance-item[status="absent"] .check-buttons{
+    display: none;
+}
+
+/* .attendance-item[status=""] .marked-conf */
+.attendance-item:not([status="present"]):not([status="absent"]) .marked-conf{
+    display: none !important;
+}
+
+.attendance-item:not([status="present"]) .gradesInp{
     display: none !important;
 }

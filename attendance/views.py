@@ -105,26 +105,22 @@ class GetSessionView(View):
         attendances = AttendanceModel.objects.all().filter(session=session)
 
         for obj in attendances:
-            status = False
-
             attendance_grade = None
             homework_grade = None
-            if f"stid_{obj.enrollment.student.student_id}" in keys:
-                status = True
-                attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'))
-                homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'))
-            
-            obj.participation_grade = attendance_grade if attendance_grade else None
-            obj.homework_grade = homework_grade if homework_grade else None
-            obj.status = status
-            obj.save()
 
-        # for obj in enrollments:
-        #     status = False
-        #     if f"stid_{obj.student.student_id}" in keys:
-        #         status = True
-        #     enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=session.course)
-        #     AttendanceModel.objects.update_or_create(enrollment=enrolled, session=session, defaults={'status': status}) 
+            if f"stid_{obj.enrollment.student.student_id}" in keys:
+
+                status = request.POST.get(str(f'stid_{obj.enrollment.student.student_id}'), None)
+                if status == 'present':
+                    attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'), None)
+                    homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'), None)
+                    obj.participation_grade = attendance_grade if attendance_grade else None
+                    obj.homework_grade = homework_grade if homework_grade else None
+                    obj.status = 1
+                elif status == 'absent':
+                    obj.status = 0
+            
+            obj.save()
 
         if request.user.role == '1':
             return redirect('main:main')
