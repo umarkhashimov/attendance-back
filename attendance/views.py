@@ -16,12 +16,12 @@ class NewSessionView(View, LoginRequiredMixin):
     template_name = 'session_detail.html'
     
     def get(self, request, course_id):
+        course = get_object_or_404(CourseModel, id=course_id)
 
         if request.user.role == '1' and not course_date_match(course):
             return redirect("main:main")
         
         today = datetime.now().date()
-        course = get_object_or_404(CourseModel, id=course_id)
         session = SessionsModel.objects.filter(course=course, date=today)
         
         if session.exists():
