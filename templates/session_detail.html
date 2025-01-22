@@ -55,9 +55,8 @@
           <tr class="attendance-item {% if obj.enrollment.trial_lesson %}trial-lesson{% endif %}" status='{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}' stid="{{obj.enrollment.student.student_id}}" class="attendance-item absent">
             <td class="w-100 align-middle ps-3 name">{{obj.enrollment.student.first_name}} {{obj.enrollment.student.last_name}} {{obj.status}}
               <span class="ms-3">
-                {{obj.enrollment.trial_lesson}}
                 {% if obj.enrollment.hold >= 1 %}<span title="Заморожен {{obj.enrollment.hold}} " role='button' class="text-primary"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
-                {% if obj.enrollment.balance <= 0 and obj.enrollment.trial_lesson == False %}<span title="Долг {{obj.enrollment.balance}} " role='button' class="text-danger"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                {% if obj.enrollment.balance < 0 and obj.enrollment.trial_lesson == False %}<span title="Долг {{obj.enrollment.balance}} " role='button' class="text-danger"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
               </span>
             </td>
             <td class="d-flex justify-content-end text-end">
