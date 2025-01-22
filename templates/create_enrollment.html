@@ -19,3 +19,10 @@
     </form>
   </div>
 {% endblock %}
+{% block custom_js %}
+<script>
+  $(document).ready(function() {
+      $('select').select2();  // Apply select2 to all select elements
+  });
+</script>
+{% endblock  %}
