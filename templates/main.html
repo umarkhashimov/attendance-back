@@ -12,11 +12,11 @@
     <hr class="table-group-divider" />
     
     {% for obj in marked_sessions %}
-    <a {% if user.role  %} href="{% url 'attendance:session_detail' course_id=obj.course.id session_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border marked conducted {% if obj.status %}border-success btn btn-success text-white {% else %}border-danger btn btn-danger{% endif %} p-3 d-block course-list-item my-3">
-      <div class="row">
-        <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center border-5">
-          <p class="m-0">
-            <span class="bandge text-white opacity-50">{{ obj.course.id }} {{obj.course.check_time}}</span>
+      <a {% if obj.course.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.course.id session_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border marked conducted {% if obj.status %}border-success btn btn-success text-white {% else %}border-danger btn btn-danger{% endif %} p-3 d-block course-list-item my-3">
+        <div class="row">
+          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center border-5">
+            <p class="m-0">
+              <span class="bandge text-white opacity-50">{{ obj.course.id }}</span>
               {{ obj.course.subject|capfirst }}, 
               {{ obj.course.course_name|capfirst }}
             </p>
@@ -27,9 +27,9 @@
           <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
             <p class="main-lesson-days m-0">
               {% for key, value in obj.course.weekdays.choices.items %}
-              {% if key in obj.course.weekdays %}
-              <span>{{ value }}</span>
-              {% endif %}
+                {% if key in obj.course.weekdays %}
+                  <span>{{ value }}</span>
+                {% endif %}
               {% endfor %}
             </p>
           </div>
@@ -37,13 +37,13 @@
       </a>
       
       {% endfor %}
-      
-      {% for obj in sessions_today %}
-      <a {% if user.role  %} href="{% url 'attendance:session_detail' course_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
+
+    {% for obj in sessions_today %}
+      <a {% if obj.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
         <div class="row">
           <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
             <p class="text-dark m-0">
-              <span class="bandge text-secondary opacity-50">{{ obj.id }} {{obj.check_time}}</span>
+              <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
               {{ obj.subject|capfirst }}, 
               {{ obj.course_name|capfirst }}
             </p>
