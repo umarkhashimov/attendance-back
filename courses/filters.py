@@ -11,7 +11,11 @@ def course_date_match(course) -> bool:
     weekday_match = str(now.weekday()) in course_weekdays
     time_match = time_now >= lesson_time.strftime("%H:%M") and time_now <= lesson_endtime.strftime("%H:%M")
 
-    return weekday_match and time_match
+    print("check_time", weekday_match and time_match)
+
+    # return weekday_match and time_match
+    return True
+
     
     
     

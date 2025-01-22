@@ -43,6 +43,7 @@ class CourseModel(models.Model):
         return f"#{self.id} - {self.course_name}"
     
     def check_time(self):
+        print('checking')
         return course_date_match(self)
     
     class Meta:
