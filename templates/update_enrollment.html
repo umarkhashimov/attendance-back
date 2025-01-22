@@ -13,7 +13,6 @@
     <form method="post">
       <p ><span class="d-inline fw-bold">Ученик:</span> {{enrollment.student.full_name}}</p>
       <p ><span class="d-inline fw-bold">Курс:</span> {{enrollment.course.course_name}}</p>
-      <p ><span class="d-inline fw-bold">Баланс:</span> {{enrollment.balance}}</p>
       {% csrf_token %}
       {{form|crispy}}
       <div class="d-flex justify-content-end flex-column-reverse flex-md-row pt-3 gap-3">
