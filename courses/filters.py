@@ -13,8 +13,8 @@ def course_date_match(course) -> bool:
 
     print("check_time", weekday_match and time_match)
 
-    # return weekday_match and time_match
-    return True
+    return weekday_match and time_match
+    # return True
 
     
     
