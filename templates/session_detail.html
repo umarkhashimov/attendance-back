@@ -48,12 +48,14 @@
     
     <form method="post" action="{% url 'attendance:session_detail' course_id=session.course.id session_id=session.id %}">
       {% csrf_token %}
+      {{session_topic|crispy}}
+      <hr>
       <input type="number" name="session_id" hidden value="{{ session.id }}">
       <table class="table border students-attendance-list">
         <tbody>
           {% for obj in attendance %}
           <tr class="attendance-item {% if obj.enrollment.trial_lesson %}trial-lesson{% endif %}" status='{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}' stid="{{obj.enrollment.student.student_id}}" class="attendance-item absent">
-            <td class="w-100 align-middle ps-3 name">{{obj.enrollment.student.first_name}} {{obj.enrollment.student.last_name}} {{obj.status}}
+            <td class="w-100 align-middle ps-3 name">{{obj.enrollment.student.first_name|default:""}} {{obj.enrollment.student.last_name|default:""}}
               <span class="ms-3">
                 {% if obj.enrollment.hold >= 1 %}<span title="Заморожен {{obj.enrollment.hold}} " role='button' class="text-primary"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                 {% if obj.enrollment.balance < 0 and obj.enrollment.trial_lesson == False %}<span title="Долг {{obj.enrollment.balance}} " role='button' class="text-danger"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}

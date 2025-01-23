@@ -4,6 +4,7 @@ from multiselectfield import MultiSelectField
 from datetime import timedelta
 from django.core.validators import MinValueValidator
 from django.utils import timezone
+from django.apps import apps
 
 from users.models import UsersModel
 from .filters import course_date_match
@@ -43,8 +44,17 @@ class CourseModel(models.Model):
         return f"#{self.id} - {self.course_name}"
     
     def check_time(self):
-        print('checking')
         return course_date_match(self)
+    
+    def get_enrolled_count(self):
+        Enrollments = apps.get_model('students', 'Enrollment')
+        count = Enrollments.objects.filter(course=self, status=True).count()
+        return count
+
+    def get_last_topic(self):
+        last_session = SessionsModel.objects.all().filter(course=self, status=True).order_by('id').last()
+        topic = last_session.topic if last_session else None 
+        return topic
     
     class Meta:
         verbose_name = 'course'
@@ -60,8 +70,9 @@ class SessionsModel(models.Model):
     ]
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE, verbose_name="Курс")
     date = models.DateField(verbose_name="Дата")
+    topic = models.CharField(max_length=250, null=True, blank=True, verbose_name='Тема')
     status = models.BooleanField(default=True, verbose_name="Статус проведение урока")
-    cause = models.CharField(max_length=50, choices=CAUSE_OPTIONS, null=True)
+    cause = models.CharField(max_length=50, choices=CAUSE_OPTIONS, null=True, blank=True)
     record_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, null=True, blank=True, verbose_name="Кем Отмечено")
 
     def conduct(self):

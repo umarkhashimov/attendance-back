@@ -7,7 +7,7 @@ import json
 
 from courses.filters import course_date_match
 from courses.models import SessionsModel, CourseModel
-from courses.forms import CancelCauseForm
+from courses.forms import CancelCauseForm, SessionTopicFieldForm
 from users.filters import AdminRequired
 from .models import AttendanceModel
 from datetime import datetime 
@@ -36,7 +36,7 @@ class NewSessionView(View, LoginRequiredMixin):
             'course': course,
             'all_session_dates': sessions,
             'today': today,
-            'cancel_cause_form': CancelCauseForm,
+            'cancel_cause_form': CancelCauseForm(),
             # 'enrollments': enrollments,
             # 'exist': existing_records,
         }
@@ -81,6 +81,7 @@ class GetSessionView(View):
             'attendance': attendance,
             'all_session_dates': sessions,
             'cancel_cause_form': CancelCauseForm,
+            'session_topic': SessionTopicFieldForm(instance=session)
         }
 
         if session:
@@ -101,8 +102,10 @@ class GetSessionView(View):
 
         keys = {key: value for key, value in request.POST.items()}.keys()
         enrollments = Enrollment.objects.all().filter(course=course, status=True)
-
         attendances = AttendanceModel.objects.all().filter(session=session)
+
+        session.topic = request.POST.get('topic', '')
+        session.save()
 
         for obj in attendances:
             attendance_grade = None

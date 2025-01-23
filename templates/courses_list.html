@@ -60,6 +60,8 @@
     </form>
     <hr class="table-group-divider border-2" />
     {% for obj in courses %}
+    <div class="position-relative">
+      {% if obj.get_last_topic %}<span class="position-absolute top-0 topic-label">{{obj.get_last_topic}}</span> {% endif %}
       <a href="{% url 'courses:course_update' pk=obj.id %}" class="border-2 border px-3 py-3 d-block course-list-item my-2">
         <div class="row">
           <div class="col-12 col-md-7 d-flex flex-row-reverse flex-md-row gap-2">
@@ -70,7 +72,7 @@
                 {{ obj.course_name|capfirst }}
                 
               </p>
-              <p class="badge text-bg-light border border-1 border-primary my-0 mx-3">{{obj.enrolled.count}}</p>
+              <p class="badge text-bg-light border border-1 border-primary my-0 mx-3">{{obj.get_enrolled_count}}</p>
             </div>
             <div class="col-2 d-flex align-items-center justify-content-center h-100">
               <p class="m-0"><span class="badge text-bg-light border border-1" >{{ obj.lesson_time|time:'H:i' }}</span></p>
@@ -79,17 +81,18 @@
           <div class="col-12 col-sm-10 col-md-5 px-3 d-flex align-items-center">
             <p class="main-lesson-days m-0 text-dark">
               {% for key, value in obj.weekdays.choices.items %}
-                {% if key in obj.weekdays %}
+              {% if key in obj.weekdays %}
                   <span>{{ value }}</span>
-                {% endif %}
-              {% endfor %}
+                  {% endif %}
+                  {% endfor %}
             </p>
           </div>
         </div>
       </a>
-    {% empty %}
+    </div>
+      {% empty %}
       <p class="text-center text-secondary">Нет груп.</p>
-    {% endfor %}
+      {% endfor %}
 
     {% if page_obj.paginator.count > 10 %}
     <div class="row mt-5">

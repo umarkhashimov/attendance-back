@@ -119,7 +119,7 @@ class ConductSession(View):
     def get(self, request, course_id):
         today = datetime.now().date()
         course= get_object_or_404(CourseModel, id=course_id)
-        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': True, 'record_by_id': self.request.user.id})
+        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': True, 'record_by_id': self.request.user.id, 'topic': course.get_last_topic()})
 
         # generate empty attendance based on enrollment status
         enrollments = Enrollment.objects.filter(course=course, status=True)
@@ -153,6 +153,6 @@ class GroupInfoView(DetailView):
         
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["enrollments"] = Enrollment.objects.filter(course=self.get_object())
+        context["enrollments"] = Enrollment.objects.filter(course=self.get_object(), status=True)
         return context
     

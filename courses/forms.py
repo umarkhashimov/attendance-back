@@ -1,5 +1,5 @@
 from django import forms
-from .models import CourseModel, WEEKDAY_CHOICES
+from .models import CourseModel, WEEKDAY_CHOICES, SessionsModel
 from django_select2.forms import Select2MultipleWidget
 
 class CourseUpdateForm(forms.ModelForm):
@@ -86,3 +86,19 @@ class DaysMultiselectForm(forms.Form):
         widget=Select2MultipleWidget(attrs={"id": "id_soft_skills", 'class':'form-select border border-3 brdeer-danger'}),
         label=False, required=False
     )
+
+class SessionTopicFieldForm(forms.ModelForm):
+
+    class Meta:
+        model = SessionsModel
+        fields = ['topic']
+
+        widgets = {
+            'topic': forms.TextInput(
+                attrs={
+                    'class': 'border border-2 rounded-1 form-control',
+                    'placeholder': '...',
+                },
+
+            )
+        }
