@@ -83,7 +83,7 @@ class CancelCauseForm(forms.Form):
 class DaysMultiselectForm(forms.Form):
     weekdays = forms.MultipleChoiceField(
         choices = WEEKDAY_CHOICES,
-        widget=Select2MultipleWidget(attrs={"id": "id_soft_skills", 'class':'form-select border border-3 brdeer-danger'}),
+        widget=Select2MultipleWidget(attrs={"id": "id_soft_skills", 'class':'form-select border border-3 border-danger w-100', 'onchange':'submit()'}),
         label=False, required=False
     )
 
