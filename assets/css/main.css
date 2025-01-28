@@ -214,3 +214,52 @@ div.hiddenDiv{
     border: 1px solid black;
     background-color: white;
 }
+
+.requiredField .asteriskField{
+    color: red !important;
+    margin-left: 3px;
+    font-size: 20px;
+}
+
+.form-floating label{
+    opacity: 0.7;
+    font-size: 16px !important;
+    padding: 10px 0 0 10px !important;
+}
+
+.form-floating label::after{
+    background:none !important;
+}
+
+.form-floating input{
+    font-size: 15px;
+    height: 50px !important;
+    min-height: 50px !important;
+    line-height: 0 !important;
+}
+.form-floating :where(){
+    box-shadow: none !important;
+}
+
+.form-floating :where(input, textarea):focus{
+    border-color: black;
+    box-shadow: 0px 0px 2px 1px black !important;
+}
+
+.form-floating label[aria-required="True"]{
+    color: #a00000 ;
+    font-size: 14px;
+}
+
+.form-floating :where(input, textarea):placeholder-shown + label[aria-required="True"]{
+    color: #a00000 !important;  
+}
+
+.form-floating :where(input, textarea):required:placeholder-shown{
+    border-color: #a00000;
+}
+
+.form-floating :where(input, textarea):required:placeholder-shown:focus{
+    border-color: #a00000 !important;
+    box-shadow: 0px 0px 2px 1px #a00000 !important;
+}

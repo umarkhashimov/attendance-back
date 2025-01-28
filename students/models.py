@@ -8,7 +8,7 @@ class StudentModel(models.Model):
     first_name = models.CharField(max_length=50, verbose_name='Имя')
     last_name = models.CharField(max_length=50, verbose_name='Фамилия')
     phone_number = models.CharField(max_length=15, verbose_name='Номер телефона')
-    additional_number = models.CharField(max_length=15, verbose_name='Номер телефона родителей')
+    additional_number = models.CharField(max_length=15, verbose_name='Номер телефона родителей', null=True, blank=True)
     notes = models.TextField(blank=True, null=True, verbose_name='Заметка')
     enrollment_date = models.DateField(auto_now_add=True, verbose_name='Имя')  # Date the student was enrolled
     courses = models.ManyToManyField(CourseModel, through='Enrollment', verbose_name='Записанные курсы')

@@ -8,6 +8,18 @@ class StudentInfoForm(ModelForm):
     class Meta:
         model = StudentModel
         exclude = ['courses']
+        widgets = {
+            'notes': forms.Textarea(attrs={'rows': '2'})
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add attributes to all fields
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                "class": "form-control",  # Add Bootstrap class
+                "placeholder": ' ',  # Optional: Use label as placeholder
+            })
 
 
 class EnrollmentForm(ModelForm):

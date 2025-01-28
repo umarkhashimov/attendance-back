@@ -8,7 +8,30 @@
   {% include 'layout/navbar.html' %}
 
   <div class="container courses-list pt-5">
-    <h3>Ученик #{{student.id}} - {{student.first_name|default:"нет Имени"}} {{student.last_name|default:"нет Фамилии"}}</h3>
+    <h4>Ученик #{{ student.id }} - {{ student.first_name|default:'нет Имени' }} {{ student.last_name|default:'нет Фамилии' }}</h4>
+    <p class="mt-2 text-secondary">Изменить информацию ученика</p>
+
+    {% comment %} {{ form.as_p }} {% endcomment %}
+    <form method="post">
+      {% csrf_token %}
+      
+      {% for field in form %}
+      <div class="form-floating my-1">
+        {{ field }}
+        <label aria-required="{{field.field.required}}" {{field.required}} for="{{ field.id_for_label }}">{{ field.label }}</label>
+      </div>
+        {% if field.errors %}
+          <div class="text-danger small">
+            {% for error in field.errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+      <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </form>
     <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
       <h4 class="">Записанные курсы</h4>
       <a href="{% url 'students:create_enrollment_from_student' student_id=student.id %}" class="btn btn-outline-primary">Добавить</a>
@@ -47,22 +70,6 @@
       {% empty %}
         <p class="text-center text-secondary">Нет груп.</p>
       {% endfor %}
-    </div>
-    <h4 class="mt-5">Изменить информацию об ученике</h4>
-    <button class="w-100 btn border-1 d-flex justify-content-center align-items-center my-toggler px-0" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2" aria-expanded="false" aria-controls="collapse2">
-      <hr class="table-group-divider w-100" />
-      <span class="mx-3 d-flex upIcon"><i class="bi bi-arrow-down me-2"></i>Развернуть <i class="bi bi-arrow-down ms-2"></i></span>
-      <span class="mx-3 d-flex downIcon"><i class="bi bi-arrow-up me-2"></i>Завернуть <i class="bi bi-arrow-up ms-2"></i></span>
-      <hr class="table-group-divider w-100" />
-    </button>
-    <div class="collapse" id="collapse2">
-      <form method="post">
-        {% csrf_token %}
-        {{ form|crispy }}
-        <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
-          <button type="submit" class="btn btn-primary">Сохранить</button>
-        </div>
-      </form>
     </div>
   </div>
 {% endblock %}
