@@ -23,7 +23,7 @@ class StudentModel(models.Model):
     class Meta:
         verbose_name = 'student'
         verbose_name_plural = 'students'
-        ordering = ['last_name', 'first_name'] 
+        ordering = ['-id'] 
 
 
 class Enrollment(models.Model):

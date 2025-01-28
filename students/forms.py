@@ -2,6 +2,7 @@ from django.forms import ModelForm
 from django import forms
 from django_select2.forms import Select2Widget
 from .models import StudentModel, Enrollment
+from courses.models import CourseModel
 
 class StudentInfoForm(ModelForm):
     
@@ -32,6 +33,17 @@ class EnrollmentForm(ModelForm):
     class Meta:
         model = Enrollment
         fields = ['course', 'student', 'balance', 'discount', 'trial_lesson']
+
+class StudentEnrollmentForm(ModelForm):
+    
+    course = forms.ModelChoiceField(
+        queryset=CourseModel.objects.all().filter(status=True),
+        widget=Select2Widget(),
+    )
+
+    class Meta:
+        model = Enrollment
+        fields = ['course', 'balance', 'discount', 'trial_lesson']
 
 
 class UpdateEnrollmentForm(ModelForm):

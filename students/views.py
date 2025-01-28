@@ -5,7 +5,7 @@ from django.db import IntegrityError
 
 from users.filters import AdminRequired
 from .models import StudentModel, Enrollment
-from .forms import StudentInfoForm
+from .forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import CourseModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm
 from attendance.models import AttendanceModel
@@ -23,6 +23,7 @@ class StudentUpdateView(AdminRequired, UpdateView):
         context = super().get_context_data(**kwargs)
         context["student"] = self.get_object()
         context['enrollments'] = Enrollment.objects.all().filter(student=self.get_object(), status=True)
+        context['enrollment_form'] = StudentEnrollmentForm
         return context
     
     
