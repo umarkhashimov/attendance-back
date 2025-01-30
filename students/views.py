@@ -7,7 +7,7 @@ from users.filters import AdminRequired
 from .models import StudentModel, Enrollment
 from .forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import CourseModel
-from .forms import EnrollmentForm, UpdateEnrollmentForm
+from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm
 from attendance.models import AttendanceModel
 
 
@@ -23,7 +23,7 @@ class StudentUpdateView(AdminRequired, UpdateView):
         context = super().get_context_data(**kwargs)
         context["student"] = self.get_object()
         context['enrollments'] = Enrollment.objects.all().filter(student=self.get_object(), status=True)
-        context['enrollment_form'] = StudentEnrollmentForm
+        context['enrollment_form'] = StudentEnrollmentForm(student=self.get_object())
         return context
     
     
@@ -65,13 +65,15 @@ class CreateEnrollmentView(AdminRequired, View):
     
     def post(self, request, course_id=None, student_id=None):
         form = EnrollmentForm(request.POST)
+        if student_id:
+            form = StudentEnrollmentForm(request.POST)
         if form.is_valid():
             course = CourseModel.objects.get(id=course_id) if course_id else None
             student = StudentModel.objects.get(id=student_id) if student_id else None
             
             enrollment, created = Enrollment.objects.update_or_create(
                 course=form.cleaned_data['course'],
-                student=form.cleaned_data['student'],
+                student=student,
                 defaults={**form.cleaned_data, 'status': True}
             )
             

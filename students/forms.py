@@ -37,13 +37,34 @@ class EnrollmentForm(ModelForm):
 class StudentEnrollmentForm(ModelForm):
     
     course = forms.ModelChoiceField(
-        queryset=CourseModel.objects.all().filter(status=True),
+        queryset=CourseModel.objects.all(),
         widget=Select2Widget(),
     )
 
     class Meta:
         model = Enrollment
         fields = ['course', 'balance', 'discount', 'trial_lesson']
+        widgets = {
+            'trial_lesson': forms.CheckboxInput(
+                attrs={
+                'class': 'form-check-input',
+            })
+        }
+
+    def __init__(self, *args, student=None, course=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add attributes to all fields
+        for field_name, field in self.fields.items():
+            if field_name in ['trial_lesson']:
+                continue
+            field.widget.attrs.update({
+                "class": "form-control",  # Add Bootstrap class
+                "placeholder": ' ',  # Optional: Use label as placeholder
+            })
+
+        if student:
+            enrolled = Enrollment.objects.filter(student=student, status=True).values_list('course__id', flat=True)
+            self.fields['course'].queryset = CourseModel.objects.all().exclude(id__in=enrolled)
 
 
 class UpdateEnrollmentForm(ModelForm):

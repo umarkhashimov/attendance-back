@@ -52,15 +52,15 @@
 
 
 
-.course-list-item:hover:not(.marked) :where(p, span){
+.course-list-item:hover:not(.marked) :where(p, span) {
     color: black !important;
 }
 
-.course-list-item:hover:not(.marked){
+.course-list-item:hover:not(.marked) {
     border-color: black !important;
 }
 
-.course-list-item.marked{
+.course-list-item.marked {
     color: white !important
 }
 
@@ -78,11 +78,11 @@
     cursor: pointer;
 }
 
-.checkStatus:checked{
+.checkStatus:checked {
     background-color: green !important;
 }
 
-.checkStatus:not(:checked)::before{
+.checkStatus:not(:checked)::before {
     content: '';
     position: absolute;
     width: 25px;
@@ -94,7 +94,7 @@
     border-radius: 5px;
 }
 
-.checkStatus:not(:checked)::after{
+.checkStatus:not(:checked)::after {
     content: '';
     position: absolute;
     width: 25px;
@@ -106,15 +106,15 @@
     border-radius: 5px;
 }
 
-.checkStatus:not(:checked){
+.checkStatus:not(:checked) {
     background-color: darkred !important;
 }
 
-.course-list-item[disabled]{
+.course-list-item[disabled] {
     opacity: 0.8;
 }
 
-.markAllBtn button{
+.markAllBtn button {
     border: 0px;
     background-color: transparent;
     color: black;
@@ -126,7 +126,7 @@
     text-shadow: 0px 0px 1px black;
 }
 
-.grade-inp{
+.grade-inp {
     min-width: 40px;
     max-width: 60px;
     margin: 0 !important;
@@ -134,77 +134,81 @@
     text-align: center !important;
 }
 
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
-div.hiddenDiv{
+div.hiddenDiv {
     display: none !important;
 }
 
 
-.my-toggler[aria-expanded="true"] .upIcon{
+.my-toggler[aria-expanded="true"] .upIcon {
     display: none !important;
 }
 
-.my-toggler[aria-expanded="false"] .downIcon{
+.my-toggler[aria-expanded="false"] .downIcon {
     display: none !important;
 }
 
-.attendance-item{
+.attendance-item {
     border: 2px solid rgba(0, 0, 0, 0.05);
 }
 
-.attendance-item:hover td{
+.attendance-item:hover td {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-.attendance-item.trial-lesson td{
+.attendance-item.trial-lesson td {
     background-color: rgba(255, 255, 0, 0.1);
 }
 
-.attendance-item[status="absent"]{
+.attendance-item[status="absent"] {
     border: 2px solid rgba(255, 0, 0, 0.2);
 }
-.attendance-item[status="absent"] td{
+
+.attendance-item[status="absent"] td {
     background-color: rgba(255, 0, 0, 0.05);
 }
-.attendance-item[status="absent"] td.name{
+
+.attendance-item[status="absent"] td.name {
     color: red;
 }
 
-.attendance-item[status="present"]{
+.attendance-item[status="present"] {
     border: 2px solid rgba(0, 128, 0, 0.1);
 }
-.attendance-item[status="present"] td{
+
+.attendance-item[status="present"] td {
     background-color: rgba(0, 128, 0, 0.05);
 }
-.attendance-item[status="present"] td.name{
+
+.attendance-item[status="present"] td.name {
     color: green;
 }
 
 .attendance-item[status="present"] .marked-status-badge .absent,
-.attendance-item[status="present"] .check-buttons{
+.attendance-item[status="present"] .check-buttons {
     display: none;
 }
 
 .attendance-item[status="absent"] .marked-status-badge .present,
-.attendance-item[status="absent"] .check-buttons{
+.attendance-item[status="absent"] .check-buttons {
     display: none;
 }
 
 /* .attendance-item[status=""] .marked-conf */
-.attendance-item:not([status="present"]):not([status="absent"]) .marked-conf{
+.attendance-item:not([status="present"]):not([status="absent"]) .marked-conf {
     display: none !important;
 }
 
-.attendance-item:not([status="present"]) .gradesInp{
+.attendance-item:not([status="present"]) .gradesInp {
     display: none !important;
 }
 
-.topic-label{
+.topic-label {
     position: absolute;
     top: -3px !important;
     font-size: 10px;
@@ -215,52 +219,63 @@ div.hiddenDiv{
     background-color: white;
 }
 
-.requiredField .asteriskField{
+.requiredField .asteriskField {
     color: red !important;
     margin-left: 3px;
     font-size: 20px;
 }
 
-.form-floating label{
+.form-floating label {
     opacity: 0.7;
     font-size: 16px !important;
     padding: 10px 0 0 10px !important;
 }
 
-.form-floating label::after{
-    background:none !important;
+.form-floating label::after {
+    background: none !important;
 }
 
-.form-floating input{
+.form-floating input {
     font-size: 15px;
     height: 50px !important;
     min-height: 50px !important;
     line-height: 0 !important;
 }
-.form-floating :where(){
+
+.form-floating :where() {
     box-shadow: none !important;
 }
 
-.form-floating :where(input, textarea):focus{
+.form-floating :where(input, textarea):focus {
     border-color: black;
     box-shadow: 0px 0px 2px 1px black !important;
 }
 
-.form-floating label[aria-required="True"]{
-    color: #a00000 ;
+.form-floating label[aria-required="True"] {
+    color: #a00000;
     font-size: 14px;
 }
 
-.form-floating :where(input, textarea):placeholder-shown + label[aria-required="True"]{
-    color: #a00000 !important;  
+.form-floating :where(input, textarea):placeholder-shown+label[aria-required="True"] {
+    color: #a00000 !important;
 }
 
-.form-floating :where(input, textarea):required:placeholder-shown{
+.form-floating :where(input, textarea):required:placeholder-shown {
     border-color: #a00000;
     background-color: rgba(255, 0, 0, 0.05);
 }
 
-.form-floating :where(input, textarea):required:placeholder-shown:focus{
+.form-floating :where(input, textarea):required:placeholder-shown:focus {
     border-color: #a00000 !important;
     box-shadow: 0px 0px 2px 1px #a00000 !important;
+}
+
+table.enrollments tr:hover td {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.form-floating > .select2 > .selection > .select2-selection{
+    height: 50px;
+    padding-top: 20px;
+    border: 1px solid lightgray;
 }
