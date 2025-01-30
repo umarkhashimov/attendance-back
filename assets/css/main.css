@@ -278,4 +278,5 @@ table.enrollments tr:hover td {
     height: 50px;
     padding-top: 20px;
     border: 1px solid lightgray;
+    width: 100%;
 }

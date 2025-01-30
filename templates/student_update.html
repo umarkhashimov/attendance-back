@@ -9,97 +9,103 @@
 
   <div class="container courses-list pt-2">
     <div class="bg-light rounded py-3 mt-3 px-2 border">
-      
       <p class="text-black ms-1">Изменить информацию ученика #{{ student.id }} - {{ student.first_name|default:'нет Имени' }} {{ student.last_name|default:'нет Фамилии' }}</p>
       {% comment %} {{ form.as_p }} {% endcomment %}
       <form method="post">
         {% csrf_token %}
-        
+
         {% for field in form %}
-        <div class="form-floating my-1">
-          {{ field }}
-          <label aria-required="{{ field.field.required }}" {{ field.required }} for="{{ field.id_for_label }}">{{ field.label }}</label>
-        </div>
-        {% if field.errors %}
-        <div class="text-danger small">
-          {% for error in field.errors %}
-          {{ error }}
-          {% endfor %}
-        </div>
-        {% endif %}
+          <div class="form-floating my-1">
+            {{ field }}
+            <label aria-required="{{ field.field.required }}" {{ field.required }} for="{{ field.id_for_label }}">{{ field.label }}</label>
+          </div>
+          {% if field.errors %}
+            <div class="text-danger small">
+              {% for error in field.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
         {% endfor %}
         <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
           <button type="submit" class="btn btn-success">Сохранить</button>
         </div>
       </form>
     </div>
-      {% comment %} <hr class="table-group-divider" /> {% endcomment %}
-    
-    <div class="rounded py-2 mt-3 px-1">
-
-      <p class="mt-2 text-dark ms-1">Записанные курсы</p>
-      
-      <table class="table border border-2 enrollments">
-        <thead>
-          <tr>
-            <th class="w-50">Курс</th>
-            <th class="w-50">Баланс</th>
-            <th class="w-50">Управления</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for enrollment in enrollments %}
-          <tr>
-            <td class="py-0 align-middle">{{ enrollment.course.subject }}, {{ enrollment.course.course_name }}</td>
-            <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{enrollment.balance}}</td>
-            <td class="d-flex justify-content-end p-0">
-              <div class="btn-group rounded-0 w-100 p-0">
-                <a href="" type="button" class="btn rounded-0 btn-warning px-3 py-1"><i class="bi bi-pencil-fill"></i></a>
-                <a href="" type="button" class="rounded-0 btn btn-danger px-3 py-1"><i class="bi bi-trash3"></i></a>
-              </div>
-          </td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="3" class="text-center w-100">нет записей</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-    
     {% comment %} <hr class="table-group-divider" /> {% endcomment %}
-    <div class="bg-light rounded py-3 mt-3 px-2 border">
-      <p class="text-dark ms-1">Записать на новый курс</p>
+    <div class="row flex-row flex-md-row-reverse ">
+      <div class="col-12 col-md-8">
+        <div class="rounded py-2 mt-3 mt-md-0">
+          <p class="mt-2 text-dark ms-1 mb-2">Записанные курсы</p>
 
-      <form method="post" action="{% url "students:create_enrollment_from_student" student_id=student.id %}">
-        {% csrf_token %}
-        {% comment %} {{enrollment_form|crispy}} {% endcomment %}
-        {% for field in enrollment_form %}
-        <div class="my-1 {% if field.name != 'trial_lesson' %}form-floating {% else %}ms-1{% endif %}">
-          {{ field }}
-          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          <table class="table border border-2 enrollments">
+            <thead>
+              <tr>
+                <th class="w-50">Курс</th>
+                <th class="w-50">Баланс</th>
+                <th class="w-50">Управления</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for enrollment in enrollments %}
+                <tr>
+                  <td class="py-0 align-middle">{{ enrollment.course.subject }}, {{ enrollment.course.course_name }} {{enrollment.course.get_name}}</td>
+                  <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
+                  <td class="d-flex justify-content-end p-0">
+                    <div class="btn-group rounded-0 w-100 p-0">
+                      <a href="" type="button" class="btn rounded-0 btn-warning px-3 py-1"><i class="bi bi-pencil-fill"></i></a>
+                      <a href="" type="button" class="rounded-0 btn btn-danger px-3 py-1"><i class="bi bi-trash3"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr>
+                  <td colspan="3" class="text-center w-100">нет записей</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
         </div>
-        {% if field.errors %}
-        <div class="text-danger small">
-          {% for error in field.errors %}
-          {{ error }}
-          {% endfor %}
+      </div>
+      {% comment %} <hr class="table-group-divider" /> {% endcomment %}
+      <div class="col-12 col-md-4">
+        <div class="bg-light rounded py-3 mt-3 px-2 border">
+          <p class="text-dark ms-1">Записать на новый курс</p>
+
+          <form method="post" action="{% url 'students:create_enrollment_from_student' student_id=student.id %}">
+            {% csrf_token %}
+            {% comment %} {{ enrollment_form|crispy }} {% endcomment %}
+            {% for field in enrollment_form %}
+              <div class="my-1 {% if field.name != 'trial_lesson' %}
+                  form-floating
+                {% else %}
+                  ms-1
+                {% endif %}">
+                {{ field }}
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              </div>
+              {% if field.errors %}
+                <div class="text-danger small">
+                  {% for error in field.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div class="d-flex justify-content-end flex-column flex-md-row">
+              <button type="submit" class="btn btn-success">Сохранить</button>
+            </div>
+          </form>
         </div>
-        {% endif %}
-        {% endfor %}
-        <div class="d-flex justify-content-end flex-column flex-md-row">
-          <button type="submit" class="btn btn-success">Сохранить</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 {% endblock %}
 
 {% block custom_js %}
-<script>
-  $(document).ready(function() {
-      $('select').select2();  // Apply select2 to all select elements
-  });
-</script>
-{% endblock  %}
+  <script>
+    $(document).ready(function () {
+      $('select').select2() // Apply select2 to all select elements
+    })
+  </script>
+{% endblock %}

@@ -29,6 +29,16 @@ WEEKDAY_CHOICES = [
     ('6', 'Воскресенье'),
 ]
 
+weekdays_short = {
+    '0': 'Пн',
+    '1': 'Вт',
+    '2': 'Ср',
+    '3': 'Чт',
+    '4': 'Пт',
+    '5': 'Сб',
+    '6': 'Вс',
+}
+
 class CourseModel(models.Model):
     subject = models.ForeignKey(SubjectModel, on_delete=models.CASCADE, verbose_name="предмет")
     course_name = models.CharField(max_length=100, null=True, blank=True, unique=False, verbose_name="имя курса")
@@ -56,6 +66,11 @@ class CourseModel(models.Model):
         topic = last_session.topic if last_session else None 
         return topic
     
+    def get_name(self):
+        # weekdays = ', '.join(weekdays_short[num] for num in self.weekdays.split(','))
+        # print(weekdays)
+        pass
+
     class Meta:
         verbose_name = 'course'
         verbose_name_plural = 'courses'
