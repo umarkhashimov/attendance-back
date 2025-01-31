@@ -104,3 +104,11 @@ class UpdateEnrollmentView(UpdateView, AdminRequired):
         context['attendances'] = AttendanceModel.objects.filter(enrollment=self.get_object())
         return context
     
+
+class DeactivateEnrollmentView(View):
+    def post(self, request, enrollment_id):
+        enrollment = get_object_or_404(Enrollment, id=enrollment_id)
+        enrollment.status = False
+        enrollment.save()
+        next_url  = self.request.GET.get('next', '/')
+        return redirect(next_url)

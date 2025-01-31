@@ -50,9 +50,6 @@ class CourseModel(models.Model):
     status = models.BooleanField(default=False, verbose_name="Статус курса")
     enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)
 
-    def __str__(self):
-        return f"#{self.id} - {self.course_name}"
-    
     def check_time(self):
         return course_date_match(self)
     
@@ -67,10 +64,14 @@ class CourseModel(models.Model):
         return topic
     
     def get_name(self):
-        # weekdays = ', '.join(weekdays_short[num] for num in self.weekdays.split(','))
-        # print(weekdays)
-        pass
+        course_weekdays = [x for x in self.weekdays]
+        weekdays = ','.join(weekdays_short[num] for num in course_weekdays)
+        return weekdays
 
+    def __str__(self):
+        name = self.course_name if self.course_name else f"{self.get_name()} {self.lesson_time.strftime(format="%H:%M")}"
+        return f"{self.id}. {name}"
+    
     class Meta:
         verbose_name = 'course'
         verbose_name_plural = 'courses'
