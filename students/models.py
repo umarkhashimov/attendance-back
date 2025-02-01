@@ -37,7 +37,7 @@ class Enrollment(models.Model):
     discount = models.PositiveIntegerField(default=0, verbose_name="Скидка %", validators=[MaxValueValidator(100)])
 
     def __str__(self):
-        return f"{self.student} - {self.course} ({self.status})"
+        return f"{self.student} - {self.course}"
     
     def add_balance(self, amount):
         self.balance += amount

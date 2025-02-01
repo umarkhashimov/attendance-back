@@ -162,7 +162,11 @@ div.hiddenDiv {
 }
 
 .attendance-item.trial-lesson td {
-    background-color: rgba(255, 255, 0, 0.1);
+    background-color: rgba(255, 255, 0, 0.1) !important;
+}
+
+tr.trial-lesson td {
+    background-color: rgba(255, 255, 0, 0.1) !important;
 }
 
 .attendance-item[status="absent"] {
@@ -270,8 +274,8 @@ div.hiddenDiv {
     box-shadow: 0px 0px 2px 1px #a00000 !important;
 }
 
-table.enrollments tr:hover td {
-    background-color: rgba(0, 0, 0, 0.05) !important;
+table.enrollments tr:not(.trial-lesson):hover td {
+    background-color: rgba(0, 0, 0, 0.02) !important;
 }
 
 .form-floating > .select2 > .selection > .select2-selection{

@@ -67,10 +67,9 @@ class StudentEnrollmentForm(ModelForm):
             self.fields['course'].queryset = CourseModel.objects.all().exclude(id__in=enrolled)
 
 
-class UpdateEnrollmentForm(ModelForm):
-    
-
-    class Meta:
-        model = Enrollment
-        fields = ['balance', 'discount', 'hold', 'trial_lesson', 'status']
+class UpdateEnrollmentForm(forms.Form):
+    balance = forms.IntegerField()
+    discount = forms.IntegerField(min_value=0, max_value=100)
+    hold = forms.IntegerField(required=False)
+    trial_lesson = forms.BooleanField(required=False)
 

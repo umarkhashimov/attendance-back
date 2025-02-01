@@ -22,6 +22,7 @@ class StudentUpdateView(AdminRequired, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["student"] = self.get_object()
+        context['enrollment_update_form'] = UpdateEnrollmentForm
         context['enrollments'] = Enrollment.objects.all().filter(student=self.get_object(), status=True)
         context['enrollment_form'] = StudentEnrollmentForm(student=self.get_object())
         return context
@@ -89,21 +90,20 @@ class CreateEnrollmentView(AdminRequired, View):
         return render(request, self.template_name, {'form': form})
     
 
-class UpdateEnrollmentView(UpdateView, AdminRequired):
-    model = Enrollment
-    form_class = UpdateEnrollmentForm
+class UpdateEnrollmentView(View, AdminRequired):
     template_name = "update_enrollment.html"
-    
-    def get_success_url(self):
-        next_url  = self.request.GET.get('next', '/')
-        return next_url
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["enrollment"] = self.get_object() 
-        context['attendances'] = AttendanceModel.objects.filter(enrollment=self.get_object())
-        return context
-    
+
+    def post(self, request, pk):
+        enrollment = get_object_or_404(Enrollment, id=pk)
+        form = UpdateEnrollmentForm(request.POST)
+        if form.is_valid():
+            enrollment, created = Enrollment.objects.update_or_create(
+                course=enrollment.course,
+                student=enrollment.student,
+                defaults={**form.cleaned_data}
+            )
+        
+        return redirect('students:student_update', pk=enrollment.student.id)
 
 class DeactivateEnrollmentView(View):
     def post(self, request, enrollment_id):
