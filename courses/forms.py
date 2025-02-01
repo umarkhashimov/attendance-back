@@ -1,8 +1,16 @@
 from django import forms
-from .models import CourseModel, WEEKDAY_CHOICES, SessionsModel
-from django_select2.forms import Select2MultipleWidget
+from .models import CourseModel, WEEKDAY_CHOICES, SessionsModel, SubjectModel
+from django_select2.forms import Select2Widget, Select2MultipleWidget
+from multiselectfield import MultiSelectField
 
 class CourseUpdateForm(forms.ModelForm):
+
+    subject = forms.ModelChoiceField(
+        queryset=SubjectModel.objects.all(),
+        widget=Select2Widget(),
+    )
+
+    weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
 
     class Meta:
         model = CourseModel
@@ -17,8 +25,27 @@ class CourseUpdateForm(forms.ModelForm):
                     'type': 'time', 
                     'id': 'LessonTimePicker',
                 }
-            )
+            ),
+            'subject': forms.ModelChoiceField(
+                queryset=SubjectModel.objects.all(),
+                widget=Select2Widget(attrs={'class':'form-control'}),
+            ),
+            'course_name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Введите имя курса'}),
+            'weekdays': Select2MultipleWidget(attrs={'class':'form-control multiplechoices'}),
+            'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
         }
+
+    def __init__(self, *args, student=None, course=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add attributes to all fields
+        for field_name, field in self.fields.items():
+            if field_name in ['weekdays', 'status']:
+                continue
+            field.widget.attrs.update({
+                "class": "form-control",  # Add Bootstrap class
+                "placeholder": ' ',  # Optional: Use label as placeholder
+            })
 
 
 class LessonsWeekdaysForm(forms.ModelForm):
@@ -102,3 +129,4 @@ class SessionTopicFieldForm(forms.ModelForm):
 
             )
         }
+

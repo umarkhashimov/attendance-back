@@ -9,6 +9,7 @@ from django.contrib import messages
 
 from .filters import course_date_match, early_to_conduct_session
 from students.models import Enrollment
+from students.forms import CourseEnrollmentForm
 from attendance.models import AttendanceModel
 from .forms import CourseUpdateForm, CourseCreateForm, LessonsWeekdaysForm, CancelCauseForm
 
@@ -18,11 +19,12 @@ class CourseUpdateView(AdminRequired, UpdateView):
     form_class = CourseUpdateForm
 
     def get_success_url(self):
-        return reverse('main:courses_list')
+        return self.request.path
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['obj'] = self.get_object()
+        context['enrollment_form'] = CourseEnrollmentForm(course=self.get_object().id)
         context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True)
         return context
 

@@ -7,7 +7,7 @@ from users.filters import AdminRequired
 from .models import StudentModel, Enrollment
 from .forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import CourseModel
-from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm
+from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
 from attendance.models import AttendanceModel
 
 
@@ -42,42 +42,45 @@ class CreateStudentView(AdminRequired, CreateView):
 class CreateEnrollmentView(AdminRequired, View):
     template_name = 'create_enrollment.html'
 
-    def get(self, request, course_id=None, student_id=None):
-        # Get the course or student based on the URL parameters
-        course = None
-        student = None
+    # def get(self, request, course_id=None, student_id=None):
+    #     # Get the course or student based on the URL parameters
+    #     course = None
+    #     student = None
 
-        if course_id:
-            course = CourseModel.objects.get(id=course_id)
-        if student_id:
-            student = StudentModel.objects.get(id=student_id)
+    #     if course_id:
+    #         course = CourseModel.objects.get(id=course_id)
+    #     if student_id:
+    #         student = StudentModel.objects.get(id=student_id)
 
-        # Create a new EnrollmentForm instance, pre-filling course or student if necessary
-        form = EnrollmentForm(initial={
-            'course': course,
-            'student': student
-        })
+    #     # Create a new EnrollmentForm instance, pre-filling course or student if necessary
+    #     form = EnrollmentForm(initial={
+    #         'course': course,
+    #         'student': student
+    #     })
 
-        return render(request, self.template_name, {
-            'form': form,
-            'course': course,
-            'student': student
-        })
+    #     return render(request, self.template_name, {
+    #         'form': form,
+    #         'course': course,
+    #         'student': student
+    #     })
     
     def post(self, request, course_id=None, student_id=None):
         form = EnrollmentForm(request.POST)
         if student_id:
             form = StudentEnrollmentForm(request.POST)
+
+        if course_id:
+            form = CourseEnrollmentForm(request.POST)
+
         if form.is_valid():
             course = CourseModel.objects.get(id=course_id) if course_id else None
             student = StudentModel.objects.get(id=student_id) if student_id else None
             
             enrollment, created = Enrollment.objects.update_or_create(
-                course=form.cleaned_data['course'],
-                student=student,
+                course=course if course else form.cleaned_data['course'],
+                student=student if student else form.cleaned_data['student'],
                 defaults={**form.cleaned_data, 'status': True}
             )
-            
 
             if course_id:
                 return redirect('courses:course_update', pk=course_id)
@@ -103,7 +106,8 @@ class UpdateEnrollmentView(View, AdminRequired):
                 defaults={**form.cleaned_data}
             )
         
-        return redirect('students:student_update', pk=enrollment.student.id)
+        next_url  = self.request.GET.get('next', '/')
+        return redirect(next_url)
 
 class DeactivateEnrollmentView(View):
     def post(self, request, enrollment_id):

@@ -278,9 +278,17 @@ table.enrollments tr:not(.trial-lesson):hover td {
     background-color: rgba(0, 0, 0, 0.02) !important;
 }
 
-.form-floating > .select2 > .selection > .select2-selection{
+.form-floating > select:not(.multiplechoices) + .select2 > .selection > .select2-selection{
     height: 50px;
     padding-top: 20px;
     border: 1px solid lightgray;
+    width: 100%;
+}
+
+.form-floating select.multiplechoices + .select2 .select2-selection{
+    /* height: 50px; */
+    padding-top: 20px;
+    font-size: 15px;
+    border: 1px solid lightgray !important;
     width: 100%;
 }

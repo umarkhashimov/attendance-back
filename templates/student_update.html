@@ -7,7 +7,7 @@
 {% block content %}
   {% include 'layout/navbar.html' %}
 
-  <div class="container courses-list pt-2">
+  <div class="container pt-2">
     <div class="bg-light rounded py-3 mt-3 px-2 border">
       <p class="text-black ms-1">Изменить информацию ученика #{{ student.id }} - {{ student.first_name|default:'нет Имени' }} {{ student.last_name|default:'нет Фамилии' }}</p>
       {% comment %} {{ form.as_p }} {% endcomment %}
