@@ -45,7 +45,7 @@ class CourseModel(models.Model):
     teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': '1'}, verbose_name="учитель")
     weekdays = MultiSelectField(choices=WEEKDAY_CHOICES, verbose_name="дни недели")
     lesson_time = models.TimeField(verbose_name="время урока")
-    duration = models.PositiveIntegerField(verbose_name="продолжительность урока (мин)")
+    duration = models.PositiveIntegerField(verbose_name="длительность урока (мин)")
     session_cost = models.IntegerField(verbose_name="цена курса за 12 уроков")
     status = models.BooleanField(default=False, verbose_name="Статус курса")
     enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)

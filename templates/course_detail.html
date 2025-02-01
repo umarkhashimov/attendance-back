@@ -9,10 +9,10 @@
 
   <div class="container pt-2">
     <div class="row">
-      <div class="col-4">
+      <div class="col-12 col-md-4">
         <div class="col-12">
           <div class="bg-light rounded py-3 mt-3 px-2 border">
-            <p class="text-dark ms-1">Записать на новый курс</p>
+            <p class="text-dark ms-1">Записать нового Ученика</p>
   
             <form method="post" action="{% url 'students:create_enrollment_from_course' course_id=obj.id %}">
               {% csrf_token %}
@@ -38,7 +38,7 @@
                   </div>
                 {% endif %}
               {% endfor %}
-              <div class="d-flex justify-content-end flex-column flex-md-row">
+              <div class="d-flex justify-content-end flex-column flex-md-row mt-2">
                 <button type="submit" class="btn btn-success">Сохранить</button>
               </div>
             </form>
@@ -78,7 +78,7 @@
           </div>
         </div>
       </div>
-      <div class="col-8">
+      <div class="col-12 col-md-8">
         <div class="rounded py-2 mt-3 mt-md-0">
           <p class="mt-2 text-dark ms-1 mb-2">Записанные ученики</p>
 

@@ -39,6 +39,7 @@ class StudentEnrollmentForm(ModelForm):
     course = forms.ModelChoiceField(
         queryset=CourseModel.objects.all(),
         widget=Select2Widget(),
+        label='Курс'
     )
 
     class Meta:
@@ -72,6 +73,7 @@ class CourseEnrollmentForm(ModelForm):
     student = forms.ModelChoiceField(
         queryset=StudentModel.objects.all(),
         widget=Select2Widget(),
+        label='Студент'
     )
 
     class Meta:
