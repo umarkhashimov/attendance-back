@@ -7,34 +7,56 @@
 {% block content %}
   {% include 'layout/navbar.html' %}
 
-  <div class="container courses-list">
-    <h4 class="mt-5">Группа</h4>
-    <hr class="table-group-divider" />
+  <div class="container">
     <div class="row">
       <div class="col-12">
-        <form method="post">
-          {% csrf_token %}
-          {{ form|crispy }}
-          <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
-            <button type="submit" class="btn btn-primary">Создать</button>
-          </div>
-        </form>
+          <div class="bg-light rounded py-3 mt-3 px-2 border">
+            <p class="text-black ms-1">Создать Группу</p>
+            {% comment %} {{ form.as_p }} {% endcomment %}
+            <form method="post">
+              {% csrf_token %}
+              {% for field in form %}
+              <div class="my-1 {% if field.name not in 'weekday,status' %}
+              
+              form-floating
+              
+              {% else %}
+              
+              ms-1
+              
+              {% endif %}">
+              {{ field }}
+                <label aria-required="{{ field.field.required }}" {{ field.required }} for="{{ field.id_for_label }}">{{ field.label }}</label>
+              </div>
+              {% if field.errors %}
+                <div class="text-danger small">
+                  {% for error in field.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endfor %}
+            <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+              <button type="submit" class="btn btn-success">Сохранить</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
 {% endblock %}
 
 {% block custom_js %}
-  <script>
-    flatpickr('#StartDatePicker', {
-      dateFormat: 'd.m.Y'
-    })
-    
-    flatpickr('#LessonTimePicker', {
-      enableTime: true, 
-      noCalendar: true, 
-      dateFormat: 'H:i', 
-      time_24hr: true, 
-    })
-  </script>
+<script>
+  flatpickr('#LessonTimePicker', {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: 'H:i',
+    time_24hr: true
+  })
+  
+  $(document).ready(function () {
+    $('select').select2() // Apply select2 to all select elements
+  })
+</script>
 {% endblock %}

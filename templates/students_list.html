@@ -7,8 +7,8 @@
   {% include 'layout/navbar.html' %}
 
   <div class="container courses-list">
-    <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
-      <h4 class="">Все Ученики</h4>
+    <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
+      <h5 class="m-0">Ученики</h5>
       <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>
     </div>
     {% comment %} <hr class="table-group-divider" /> {% endcomment %}
@@ -58,25 +58,28 @@
       </div>
     </form> {% endcomment %}
     <hr class="table-group-divider" />
+    <table class="table data-list">
     {% for obj in students %}
-      <a href="{% url 'students:student_update' pk=obj.id %}" class="border-2 border p-3 d-block course-list-item my-3">
-        <div class="row">
-          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
-            <p class="text-dark m-0">{{ obj.full_name|capfirst }}</p>
-          </div>
-          <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
-            <p class="text-dark m-0">--:--</p>
-          </div>
-          <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
-            <p class="main-lesson-days m-0 text-dark">
-              <span class="bandge text-secondary opacity-50">{{ obj.student_id }}</span>
-            </p>
-          </div>
-        </div>
-      </a>
-    {% empty %}
-      <p class="text-center text-secondary">Нет Учеников.</p>
-    {% endfor %}
+      <tr class="border {% if obj.has_debt %}has-debt{% endif %}">
+        <td class="p-1 ">
+
+          <a href="{% url 'students:student_update' pk=obj.id %}" class="p-1 d-block course-list-item">
+            <div class="row">
+              <div class="col-12 d-flex align-items-center">
+                <p class="text-dark m-0">{{ obj.full_name|capfirst }}</p>
+              </div>
+            </div>
+          </a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td>
+          <p class="text-center text-secondary">Нет Учеников.</p>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
 
 
     {% if page_obj.paginator.count > 20 %}

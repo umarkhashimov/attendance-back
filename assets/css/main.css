@@ -292,3 +292,8 @@ table.enrollments tr:not(.trial-lesson):hover td {
     border: 1px solid lightgray !important;
     width: 100%;
 }
+
+.data-list .has-debt td,
+.enrollments .has-debt:hover td{
+    background-color: rgba(255, 0, 0, 0.1) !important;
+}

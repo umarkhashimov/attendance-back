@@ -7,135 +7,133 @@
   {% include 'layout/navbar.html' %}
 
   <div class="container courses-list">
-    <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
-      <h4 class="">Все Группы</h4>
+    <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
+      <h5 class="m-0">Группы</h5>
       <a href="{% url 'courses:create_course' %}" class="btn btn-primary">Создать</a>
     </div>
     <hr class="table-group-divider" />
-    <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">
-      <div class="row">
-        <div class="col-12 col-sm-7 col-md-6 col-lg-3">
-          <label for="teacherName" class="mb-2 ms-1">Учителя</label>
-          <select name="teacher" onchange="submit()" class="form-select border-3 {% if request.GET.teacher %} border-primary{% endif %} w-100" id="teacherName">
-            <option value="">--</option>
-            {% for teacher in teachers %}
-              <option {% if request.GET.teacher == teacher.id|stringformat:"i" %}selected{% endif %} value="{{ teacher.id }}" class="text-dark">
-                {{ teacher.username }} {% if teacher.first_name or teacher.last_name %}
+    <div class="row m-0 p-0 ">
+      <div class="col-2 bg-light rounded py-3 px-2 border">
+        <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">
+          <div class="row">
+            <div class="col-12 col-sm-7 col-md-6 col-lg-12">
+              <label for="teacherName" class="mb-2 ms-1">Учителя</label>
+              <select name="teacher" onchange="submit()" class="form-select border-3 {% if request.GET.teacher %} border-primary{% endif %} w-100" id="teacherName">
+                <option value="">--</option>
+                {% for teacher in teachers %}
+                <option {% if request.GET.teacher == teacher.id|stringformat:"i" %}selected{% endif %} value="{{ teacher.id }}" class="text-dark">
+                  {{ teacher.username }} {% if teacher.first_name or teacher.last_name %}
                   - {{ teacher.get_full_name }}
-                {% endif %}
-              </option>
-              {% endfor %}
-            </select>
+                  {% endif %}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12 col-sm-5 col-md-3 col-lg-12 mt-2">
+              <label for="daySelect" class="mb-2 ms-1">Дни</label>
+              {% comment %} <select name="day" class="form-select border-3 {% if request.GET.day %} border-primary{% endif %}" id="daySelect">
+                <option value="">--</option>
+                {% for day in days %}
+                <option {% if request.GET.day == day.0 %}selected{% endif %} value="{{ day.0 }}">{{ day.1 }}</option>
+                {% endfor %}
+                </select> {% endcomment %}
+                {{days_form}}
+              </div>
+              <div class="col-12 col-sm-5 col-md-3 col-lg-12 mt-2">
+                <label for="statusSelect" class="mb-2 ms-1">Курс</label>
+                <select onchange="submit()" name="subject" class="form-select border-3 {% if request.GET.subject %} border-primary{% endif %}" id="daySelect">
+                  <option value="">--</option>
+                  {% for subject in subjects %}
+                  <option {% if request.GET.subject == subject.id|stringformat:"i" %}selected{% endif %} value="{{subject.id}}">{{subject.name}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-12 col-sm-7 col-md-10 col-lg-12 mt-2">
+                <label for="courseName" class="mb-2 ms-1">Имя курса</label>
+                <input onchange="submit()" value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="--" type="text" class="form-control border-3 w-100 {% if request.GET.course_name %} border-primary{% endif %}" />
+              </div>
+              <div class="col-12 col-md-2 col-lg-12 mt-3">
+                <div class="d-flex align-items-end gap-4 gap-lg-2 h-100">
+                  <button type="reset" class="btn btn-outline-danger w-100 border-3 px-2">Очистить</button>
+                  {% comment %} <button type="submit" class="btn btn-success w-100 border-3 px-2"><i class="bi bi-check-lg"></i></button> {% endcomment %}
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="col-10 pe-0">
+
+          {% for obj in courses %}
+          <div class="col-12 pe-0">
+            <div class="position-relative px-0">
+              {% if obj.get_last_topic %}<span class="position-absolute top-0 topic-label">{{obj.get_last_topic}}</span> {% endif %}
+              <a href="{% url 'courses:course_update' pk=obj.id %}" class="border-2 border px-3 py-2 d-block course-list-item my-2">
+                <div class="row">
+                  <div class="col-10 gap-2">
+                      <p class="text-dark m-0 mt-2">
+                        <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
+                        {{ obj.subject|capfirst }}, 
+                        {{obj.get_name}} - 
+                        {{ obj.course_name|capfirst }}
+                      </p>
+                  </div>
+                    <div class="col-2 d-flex align-items-end justify-content-end h-100">
+                      <p class="m-0"><span class="badge text-bg-light border border-1" >{{ obj.lesson_time|time:'H:i' }}</span></p>
+                      <p class="badge text-bg-light border border-1 border-primary my-0 mx-3">{{obj.get_enrolled_count}}</p>
+                    </div>
+                </div>
+              </a>
+            </div>
           </div>
-          <div class="col-12 col-sm-5 col-md-3 col-lg-2 mt-2 mt-sm-0">
-            <label for="daySelect" class="mb-2 ms-1">Дни</label>
-            {% comment %} <select name="day" class="form-select border-3 {% if request.GET.day %} border-primary{% endif %}" id="daySelect">
-              <option value="">--</option>
-              {% for day in days %}
-              <option {% if request.GET.day == day.0 %}selected{% endif %} value="{{ day.0 }}">{{ day.1 }}</option>
-              {% endfor %}
-            </select> {% endcomment %}
-            {{days_form}}
-        </div>
-        <div class="col-12 col-sm-5 col-md-3 col-lg-2 mt-2 mt-lg-0">
-          <label for="statusSelect" class="mb-2 ms-1">Курс</label>
-          <select onchange="submit()" name="subject" class="form-select border-3 {% if request.GET.subject %} border-primary{% endif %}" id="daySelect">
-            <option value="">--</option>
-            {% for subject in subjects %}
-              <option {% if request.GET.subject == subject.id|stringformat:"i" %}selected{% endif %} value="{{subject.id}}">{{subject.name}}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-12 col-sm-7 col-md-10 col-lg-4 mt-2 mt-lg-0">
-          <label for="courseName" class="mb-2 ms-1">Имя курса</label>
-          <input onchange="submit()" value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="--" type="text" class="form-control border-3 w-100 {% if request.GET.course_name %} border-primary{% endif %}" />
-        </div>
-        <div class="col-12 col-md-2 col-lg-1 mt-3 mt-md-2">
-          <div class="d-flex align-items-end gap-4 gap-lg-2 h-100">
-            <button type="reset" class="btn btn-danger w-100 border-3 px-2"><i class="bi bi-x-lg"></i></button>
-            {% comment %} <button type="submit" class="btn btn-success w-100 border-3 px-2"><i class="bi bi-check-lg"></i></button> {% endcomment %}
+          {% empty %}
+          <p class="text-center text-secondary">Нет груп.</p>
+          {% endfor %}
+          
+          {% if page_obj.paginator.count > 10 %}
+        <div class="row mt-5">
+          <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination ">
+                {% if page_obj.has_previous %}
+                <li class="page-item">
+                  <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+                  aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+              {% endif %}
+              {% for page in paginator.page_range %}
+              {% if page_obj.number == page %}
+              <li class="page-item ms-1"><a class="page-link active"
+                href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
+                {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
+                <li class="page-item ms-1"><a class="page-link"
+                  href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
+                  {% endif %}
+                  {% endfor %}
+                  {% if page_obj.has_next %}
+                  <li class="page-item ms-1">
+                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+                    aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+                {% endif %}
+              </ul>
+            </nav>
           </div>
         </div>
       </div>
-    </form>
-    <hr class="table-group-divider border-2" />
-    {% for obj in courses %}
-    <div class="position-relative">
-      {% if obj.get_last_topic %}<span class="position-absolute top-0 topic-label">{{obj.get_last_topic}}</span> {% endif %}
-      <a href="{% url 'courses:course_update' pk=obj.id %}" class="border-2 border px-3 py-3 d-block course-list-item my-2">
-        <div class="row">
-          <div class="col-12 col-md-7 d-flex flex-row-reverse flex-md-row gap-2">
-            <div class="col-10 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center h-100">
-              <p class="text-dark m-0">
-                <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
-                {{ obj.subject|capfirst }}, 
-                {{ obj.course_name|capfirst }}
-                
-              </p>
-              <p class="badge text-bg-light border border-1 border-primary my-0 mx-3">{{obj.get_enrolled_count}}</p>
-            </div>
-            <div class="col-2 d-flex align-items-center justify-content-center h-100">
-              <p class="m-0"><span class="badge text-bg-light border border-1" >{{ obj.lesson_time|time:'H:i' }}</span></p>
-            </div>
-          </div>
-          <div class="col-12 col-sm-10 col-md-5 px-3 d-flex align-items-center">
-            <p class="main-lesson-days m-0 text-dark">
-              {% for key, value in obj.weekdays.choices.items %}
-              {% if key in obj.weekdays %}
-                  <span>{{ value }}</span>
-                  {% endif %}
-                  {% endfor %}
-            </p>
-          </div>
-        </div>
-      </a>
     </div>
-      {% empty %}
-      <p class="text-center text-secondary">Нет груп.</p>
-      {% endfor %}
-
-    {% if page_obj.paginator.count > 10 %}
-    <div class="row mt-5">
-        <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination ">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
-                               aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                    {% endif %}
-                    {% for page in paginator.page_range %}
-                        {% if page_obj.number == page %}
-                            <li class="page-item ms-1"><a class="page-link active"
-                                                          href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
-                        {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
-                            <li class="page-item ms-1"><a class="page-link"
-                                                          href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                    {% if page_obj.has_next %}
-                        <li class="page-item ms-1">
-                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
-                               aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
-        </div>
-    </div>
-    {% endif %}
-    
-  </div>
-
-  <script>
-    let filterForm = document.querySelector('form#filterForm')
-    filterForm.addEventListener('reset', (event) => {
-      event.preventDefault();
+        {% endif %}
+        
+      </div>
+      
+      <script>
+        let filterForm = document.querySelector('form#filterForm')
+        filterForm.addEventListener('reset', (event) => {
+          event.preventDefault();
       event.target.reset()
       event.target.querySelectorAll('input').forEach((inp)=>{inp.removeAttribute('value')})
       event.target.querySelectorAll('option').forEach((select)=>{select.removeAttribute('selected')})

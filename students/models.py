@@ -13,6 +13,12 @@ class StudentModel(models.Model):
     enrollment_date = models.DateField(auto_now_add=True, verbose_name='Имя')  # Date the student was enrolled
     courses = models.ManyToManyField(CourseModel, through='Enrollment', verbose_name='Записанные курсы')
 
+    def has_debt(self):
+        debt_enrollments = Enrollment.objects.all().filter(student=self, balance__lte=0).count()
+        if debt_enrollments > 0:
+            return True
+        return False
+
     @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"

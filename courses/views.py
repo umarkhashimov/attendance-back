@@ -86,7 +86,7 @@ class RedirectCourseToCloseSession(View):
 class CreateCourseView(AdminRequired, CreateView):
     model = CourseModel
     template_name = 'create_course.html'
-    form_class = CourseCreateForm
+    form_class = CourseUpdateForm
 
     def get_success_url(self):
         return reverse('main:courses_list')
