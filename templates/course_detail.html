@@ -151,6 +151,10 @@
                                   <input type="number" class="form-control" required value="{{enrollment.hold|default:"0"}}" min="0" id="dicountInp{{ enrollment.id }}" placeholder="123" name="hold" />
                                   <label for="dicountInp{{ enrollment.id }}">Заморозка</label>
                                 </div>
+                                <div class="form-floating mb-3">
+                                  <input type="text" class="form-control" value="{{enrollment.debt_note|default:""}}" min="0" id="debtNoteInp{{ enrollment.id }}" placeholder="123" name="debt_note" />
+                                  <label for="debtNoteInp{{ enrollment.id }}">Заметка для долга</label>
+                                </div>
                                 <div class="d-flex align-items-center">
                                   <input type="checkbox" name="trial_lesson" class="form-check-input fs-5 m-0" {% if enrollment.trial_lesson %}checked{% endif %} id="trialInp{{ enrollment.id }}">
                                   <label for="trialInp{{ enrollment.id }}" class="ms-2">Пробный урок</label>
