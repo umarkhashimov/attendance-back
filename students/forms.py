@@ -107,4 +107,5 @@ class UpdateEnrollmentForm(forms.Form):
     discount = forms.IntegerField(min_value=0, max_value=100)
     hold = forms.IntegerField(required=False)
     trial_lesson = forms.BooleanField(required=False)
+    debt_note = forms.CharField(max_length=100, required=False)
 

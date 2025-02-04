@@ -9,6 +9,7 @@ from users.filters import AdminRequired
 from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
 from courses.forms import DaysMultiselectForm
 from users.models import UsersModel
+from .forms import CoursesListFilterForm
 
 class MainPageView(TemplateView):
     template_name = 'main.html'
@@ -82,6 +83,7 @@ class CoursesListView(AdminRequired, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["teachers"] = UsersModel.objects.all().filter(role='1')
+        context['filter_form'] = CoursesListFilterForm
         days = self.request.GET.getlist('weekdays')
         context["days_form"] = DaysMultiselectForm(initial={'weekdays': days})
         context['subjects'] = SubjectModel.objects.all()

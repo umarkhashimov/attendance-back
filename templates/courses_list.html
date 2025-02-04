@@ -17,6 +17,7 @@
         <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">
           <div class="row">
             <div class="col-12 col-sm-7 col-md-6 col-lg-12">
+              {{filter_form}}
               <label for="teacherName" class="mb-2 ms-1">Учителя</label>
               <select name="teacher" onchange="submit()" class="form-select border-3 {% if request.GET.teacher %} border-primary{% endif %} w-100" id="teacherName">
                 <option value="">--</option>
@@ -151,5 +152,8 @@
         placeholder: 'Дни'
       })
     });
+    $(document).ready(function () {
+      $('select').select2() // Apply select2 to all select elements
+    })
   </script>
 {% endblock  %}

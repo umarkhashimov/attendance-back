@@ -41,6 +41,7 @@ class Enrollment(models.Model):
     trial_lesson = models.BooleanField(default=True, verbose_name="Пробный урок")
     hold = models.PositiveIntegerField(default=0, null=True, verbose_name="Заморозка")
     discount = models.PositiveIntegerField(default=0, verbose_name="Скидка %", validators=[MaxValueValidator(100)])
+    debt_note = models.CharField(max_length=100, null=True, blank=True, verbose_name="Заметка должника")
 
     def __str__(self):
         return f"{self.student} - {self.course}"
