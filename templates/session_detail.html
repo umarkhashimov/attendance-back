@@ -54,29 +54,33 @@
       <table class="table border students-attendance-list">
         <tbody>
           {% for obj in attendance %}
-          <tr class="attendance-item {% if obj.enrollment.trial_lesson %}trial-lesson{% endif %}" status='{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}' stid="{{obj.enrollment.student.student_id}}" class="attendance-item absent">
-            <td class="w-100 align-middle ps-3 name">{{obj.enrollment.student.first_name|default:""}} {{obj.enrollment.student.last_name|default:""}}
-              <span class="ms-3">
+          <tr class="d-flex attendance-item {% if obj.enrollment.trial_lesson %}trial-lesson{% endif %}" status='{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}' stid="{{obj.enrollment.student.student_id}}" class="attendance-item absent">
+            <td class="w-100 d-flex align-items-center ps-3 name">
+              {{obj.enrollment.student.first_name|default:""}} {{obj.enrollment.student.last_name|default:""}}
+              <span class="ms-2">
                 {% if obj.enrollment.hold >= 1 %}<span  data-bs-toggle="tooltip" data-bs-placement="top" title="Заморожен {{obj.enrollment.hold}} " role='button' class="text-primary"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                 {% if obj.enrollment.balance <= 0 and obj.enrollment.trial_lesson == False %}<span  data-bs-toggle="tooltip" data-bs-placement="top" title="Баланс ({{obj.enrollment.balance}})  {{obj.enrollment.debt_note|default:""}}" role='button' class="text-danger"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
               </span>
             </td>
-            <td class="d-flex justify-content-end text-end">
-              <input hidden class="studentStatusInput" type="text" name="stid_{{obj.enrollment.student.student_id}}" value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">
-              <div class="gradesInp d-flex gap-2 me-2">
-                <input type="number" name="ga_{{obj.enrollment.student.student_id}}" value="{{obj.participation_grade}}" class="form-control grade-inp border-2" title="Оценка за посещаемость">
-                <input type="number" name="ghw_{{obj.enrollment.student.student_id}}" value="{{obj.homework_grade}}" class="form-control grade-inp border-2" title="Оценка за домашнее задание">
-              </div>
-              <div class="d-flex marked-conf">
-                <div class="d-flex align-items-center h-100 mx-2 marked-status-badge">
-                  <p class="badge present text-bg-success rounded-5 m-0 my-auto"><i class="bi bi-check"></i></p>
-                  <p class="badge absent text-bg-danger rounded-5 m-0 my-auto"><i class="bi bi-x"></i></p>
+            <td>
+              <div class="d-flex justify-content-end text-end align-items-center h-100">
+
+                <input hidden class="studentStatusInput" type="text" name="stid_{{obj.enrollment.student.student_id}}" value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">
+                <div class="gradesInp d-flex me-1 gap-1">
+                  <input type="number" name="ga_{{obj.enrollment.student.student_id}}" value="{{obj.participation_grade}}" class="form-control grade-inp border-2" title="Оценка за посещаемость">
+                  <input type="number" name="ghw_{{obj.enrollment.student.student_id}}" value="{{obj.homework_grade}}" class="form-control grade-inp border-2" title="Оценка за домашнее задание">
                 </div>
-                <button type="button" onclick="unmarkStudent({{obj.enrollment.student.student_id}})" class="btn btn-light border border-dark px-2"><i class="bi bi-pencil-fill"></i></button>
-              </div>
-              <div class="btn-group gap-1 choose check-buttons">
-                <button type="button" onclick="markStudent('absent', {{obj.enrollment.student.student_id}})" class="btn btn-danger px-3"><i class="bi bi-x-lg"></i></button>
-                <button type="button" onclick="markStudent('present', {{obj.enrollment.student.student_id}})" class="btn btn-success px-3"><i class="bi bi-check-lg"></i></button>
+                <div class="d-flex marked-conf  align-items-center">
+                  <div class="d-flex align-items-center h-100 mx-2 marked-status-badge">
+                    <p class="badge present text-bg-success rounded-5 m-0 my-auto"><i class="bi bi-check"></i></p>
+                    <p class="badge absent text-bg-danger rounded-5 m-0 my-auto"><i class="bi bi-x"></i></p>
+                  </div>
+                  <button type="button" onclick="unmarkStudent({{obj.enrollment.student.student_id}})" class="btn btn-light border border-dark px-2"><i class="bi bi-pencil-fill"></i></button>
+                </div>
+                <div class="btn-group gap-1 choose check-buttons">
+                  <button type="button" onclick="markStudent('absent', {{obj.enrollment.student.student_id}})" class="btn btn-danger px-3"><i class="bi bi-x-lg"></i></button>
+                  <button type="button" onclick="markStudent('present', {{obj.enrollment.student.student_id}})" class="btn btn-success px-3"><i class="bi bi-check-lg"></i></button>
+                </div>
               </div>
             </td>
           </tr>
@@ -190,19 +194,7 @@
       })
     }
 
-    function uncheckAll() {
-      checkInputs.forEach((inp) => {
-        inp.checked = false;
-        inp.dispatchEvent(new Event('change'))
-      })
-    }
-
-    function checkAll() {
-      checkInputs.forEach((inp) => {
-        inp.checked = true
-        inp.dispatchEvent(new Event('change'))
-      })
-    }
+   
   </script>
   <script src="{% static 'js/attendance.js' %}"></script>
   {% endblock %}
