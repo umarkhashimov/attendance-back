@@ -57,7 +57,7 @@ class CoursesListView(AdminRequired, ListView):
     queryset = CourseModel.objects.all()
     template_name = "courses_list.html"
     context_object_name = 'courses'
-    paginate_by = 10
+    paginate_by = 30
     ordering = ['-id']
 
     def get_queryset(self):
@@ -68,8 +68,6 @@ class CoursesListView(AdminRequired, ListView):
 
         queryset = super().get_queryset()
         
-        if course_name:
-            queryset = queryset.filter(course_name__icontains=course_name)
         if days:
             queryset = queryset.filter(weekdays__contains=','.join(days))
         if teacher:
@@ -83,7 +81,7 @@ class CoursesListView(AdminRequired, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["teachers"] = UsersModel.objects.all().filter(role='1')
-        context['filter_form'] = CoursesListFilterForm
+        context['filter_form'] = CoursesListFilterForm(self.request.GET)
         days = self.request.GET.getlist('weekdays')
         context["days_form"] = DaysMultiselectForm(initial={'weekdays': days})
         context['subjects'] = SubjectModel.objects.all()
