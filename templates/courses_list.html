@@ -13,75 +13,75 @@
     </div>
     <hr class="table-group-divider" />
     <div class="row m-0 p-0 ">
-      <div class="col-2 bg-light rounded py-3 px-2 border">
+      <div class="col-12 bg-light rounded py-3 px-2 border">
         <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">
           <div class="row">
-            <div class="col-12 col-sm-7 col-md-6 col-lg-12">
-              {{filter_form}}
+            <div class="col-12 col-sm-7 col-md-6 col-lg-3">
               <label for="teacherName" class="mb-2 ms-1">Учителя</label>
               <select name="teacher" onchange="submit()" class="form-select border-3 {% if request.GET.teacher %} border-primary{% endif %} w-100" id="teacherName">
                 <option value="">--</option>
                 {% for teacher in teachers %}
-                <option {% if request.GET.teacher == teacher.id|stringformat:"i" %}selected{% endif %} value="{{ teacher.id }}" class="text-dark">
-                  {{ teacher.username }} {% if teacher.first_name or teacher.last_name %}
-                  - {{ teacher.get_full_name }}
-                  {% endif %}
-                </option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-12 col-sm-5 col-md-3 col-lg-12 mt-2">
-              <label for="daySelect" class="mb-2 ms-1">Дни</label>
-              {% comment %} <select name="day" class="form-select border-3 {% if request.GET.day %} border-primary{% endif %}" id="daySelect">
-                <option value="">--</option>
-                {% for day in days %}
-                <option {% if request.GET.day == day.0 %}selected{% endif %} value="{{ day.0 }}">{{ day.1 }}</option>
-                {% endfor %}
-                </select> {% endcomment %}
-                {{days_form}}
-              </div>
-              <div class="col-12 col-sm-5 col-md-3 col-lg-12 mt-2">
-                <label for="statusSelect" class="mb-2 ms-1">Курс</label>
-                <select onchange="submit()" name="subject" class="form-select border-3 {% if request.GET.subject %} border-primary{% endif %}" id="daySelect">
-                  <option value="">--</option>
-                  {% for subject in subjects %}
-                  <option {% if request.GET.subject == subject.id|stringformat:"i" %}selected{% endif %} value="{{subject.id}}">{{subject.name}}</option>
+                  <option {% if request.GET.teacher == teacher.id|stringformat:"i" %}selected{% endif %} value="{{ teacher.id }}" class="text-dark">
+                    {{ teacher.username }} {% if teacher.first_name or teacher.last_name %}
+                      - {{ teacher.get_full_name }}
+                    {% endif %}
+                  </option>
                   {% endfor %}
                 </select>
               </div>
-              <div class="col-12 col-sm-7 col-md-10 col-lg-12 mt-2">
-                <label for="courseName" class="mb-2 ms-1">Имя курса</label>
-                <input onchange="submit()" value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="--" type="text" class="form-control border-3 w-100 {% if request.GET.course_name %} border-primary{% endif %}" />
-              </div>
-              <div class="col-12 col-md-2 col-lg-12 mt-3">
-                <div class="d-flex align-items-end gap-4 gap-lg-2 h-100">
-                  <button type="reset" class="btn btn-outline-danger w-100 border-3 px-2">Очистить</button>
-                  {% comment %} <button type="submit" class="btn btn-success w-100 border-3 px-2"><i class="bi bi-check-lg"></i></button> {% endcomment %}
-                </div>
+              <div class="col-12 col-sm-5 col-md-3 col-lg-2 mt-2 mt-sm-0">
+                <label for="daySelect" class="mb-2 ms-1">Дни</label>
+                {% comment %} <select name="day" class="form-select border-3 {% if request.GET.day %} border-primary{% endif %}" id="daySelect">
+                  <option value="">--</option>
+                  {% for day in days %}
+                  <option {% if request.GET.day == day.0 %}selected{% endif %} value="{{ day.0 }}">{{ day.1 }}</option>
+                  {% endfor %}
+                </select> {% endcomment %}
+                {{days_form}}
+            </div>
+            <div class="col-12 col-sm-5 col-md-3 col-lg-2 mt-2 mt-lg-0">
+              <label for="statusSelect" class="mb-2 ms-1">Курс</label>
+              <select onchange="submit()" name="subject" class="form-select border-3 {% if request.GET.subject %} border-primary{% endif %}" id="daySelect">
+                <option value="">--</option>
+                {% for subject in subjects %}
+                  <option {% if request.GET.subject == subject.id|stringformat:"i" %}selected{% endif %} value="{{subject.id}}">{{subject.name}}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12 col-sm-7 col-md-10 col-lg-4 mt-2 mt-lg-0">
+              <label for="courseName" class="mb-2 ms-1">Имя курса</label>
+              <input onchange="submit()" value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="--" type="text" class="form-control border-3 w-100 {% if request.GET.course_name %} border-primary{% endif %}" />
+            </div>
+            <div class="col-12 col-md-2 col-lg-1 mt-3 mt-md-2">
+              <div class="d-flex align-items-end gap-4 gap-lg-2 h-100">
+                <button type="reset" class="btn btn-danger w-100 border-3 px-2"><i class="bi bi-x-lg"></i></button>
+                {% comment %} <button type="submit" class="btn btn-success w-100 border-3 px-2"><i class="bi bi-check-lg"></i></button> {% endcomment %}
               </div>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
+      </div>
+    </div>
 
-        <div class="col-10 pe-0">
+
+        <div class="row px-2 mt-3">
 
           {% for obj in courses %}
-          <div class="col-12 pe-0">
+          <div class="col-12 col-md-6 col-lg-4 px-1">
             <div class="position-relative px-0">
-              {% if obj.get_last_topic %}<span class="position-absolute top-0 topic-label">{{obj.get_last_topic}}</span> {% endif %}
-              <a href="{% url 'courses:course_update' pk=obj.id %}" class="border-2 border px-3 py-2 d-block course-list-item my-2">
+              <span class="position-absolute top-0 topic-label">{{obj.get_last_topic|default:"---"}}</span>
+              <a href="{% url 'courses:course_update' pk=obj.id %}" class="border-2 border px-2 py-2 d-block course-list-item mt-2 mb-1">
                 <div class="row">
                   <div class="col-10 gap-2">
-                      <p class="text-dark m-0 mt-2">
-                        <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
+                      <p class="text-dark m-0 mt-1 course-name">
+                        <span class="fs-6 text-secondary opacity-50 course-id">{{ obj.id }}</span>
                         {{ obj.subject|capfirst }}, 
-                        {{obj.get_name}} - 
-                        {{ obj.course_name|capfirst }}
+                        {{obj.get_name}}
                       </p>
                   </div>
                     <div class="col-2 d-flex align-items-end justify-content-end h-100">
+                      <p class="badge text-bg-light border border-1 border-primary my-0 mx-2">{{obj.get_enrolled_count}}</p>
                       <p class="m-0"><span class="badge text-bg-light border border-1" >{{ obj.lesson_time|time:'H:i' }}</span></p>
-                      <p class="badge text-bg-light border border-1 border-primary my-0 mx-3">{{obj.get_enrolled_count}}</p>
                     </div>
                 </div>
               </a>

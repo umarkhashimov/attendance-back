@@ -50,7 +50,13 @@
     transition: 0.1s;
 }
 
+.course-list-item .course-name{
+    font-size: 14px;
+}
 
+.course-list-item .course-name .course-id{
+    font-size: 10px !important;
+}
 
 .course-list-item:hover:not(.marked) :where(p, span) {
     color: black !important;
@@ -219,8 +225,10 @@ tr.trial-lesson td {
     left: 10px;
     padding: 0 5px;
     border-radius: 2px;
-    border: 1px solid black;
+    border: 1px solid grey;
     background-color: white;
+    color: darkorange;
+    letter-spacing: 1px;
 }
 
 .requiredField .asteriskField {
