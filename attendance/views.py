@@ -75,7 +75,7 @@ class GetSessionView(View):
         sessions = SessionsModel.objects.filter(course=course)
        
         if session.date == datetime.today().date():
-            fresh_enrolled = Enrollment.objects.filter(course=session.course).exclude(student_id__in=attendance.values_list('enrollment__student_id', flat=True))
+            fresh_enrolled = Enrollment.objects.filter(course=session.course, status=True).exclude(student_id__in=attendance.values_list('enrollment__student_id', flat=True))
             for enroll in fresh_enrolled:
                 if not AttendanceModel.objects.filter(session=session, enrollment__student_id=enroll.student.id).exists():
                     AttendanceModel.objects.create(enrollment=enroll, session=session)
