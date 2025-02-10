@@ -1,9 +1,7 @@
-from courses.models import SessionsModel
 from students.models import Enrollment
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-import json
 
 from courses.filters import course_date_match
 from courses.models import SessionsModel, CourseModel
@@ -108,15 +106,12 @@ class GetSessionView(View):
             return redirect("main:main")
 
         keys = {key: value for key, value in request.POST.items()}.keys()
-        enrollments = Enrollment.objects.all().filter(course=course, status=True)
         attendances = AttendanceModel.objects.all().filter(session=session)
 
         session.topic = request.POST.get('topic', '')
         session.save()
 
         for obj in attendances:
-            attendance_grade = None
-            homework_grade = None
 
             if f"stid_{obj.enrollment.student.student_id}" in keys:
 
@@ -129,7 +124,7 @@ class GetSessionView(View):
                     obj.status = 1
                 elif status == 'absent':
                     obj.status = 0
-            
+
             obj.save()
 
         if request.user.role == '1':

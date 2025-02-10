@@ -121,14 +121,15 @@ class ConductSession(View):
     def get(self, request, course_id):
         today = datetime.now().date()
         course= get_object_or_404(CourseModel, id=course_id)
-        session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': True, 'record_by_id': self.request.user.id, 'topic': course.get_last_topic()})
+        session, created = SessionsModel.objects.get_or_create(course=course, date=today, defaults={'status': True, 'record_by_id': self.request.user.id, 'topic': course.get_last_topic()})
 
-        # generate empty attendance based on enrollment status
-        enrollments = Enrollment.objects.filter(course=course, status=True)
-        for obj in enrollments:
-            enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
-            AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
-            obj.substract_one_session()
+        if created:
+            # generate empty attendance based on enrollment status
+            enrollments = Enrollment.objects.filter(course=course, status=True)
+            for obj in enrollments:
+                enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
+                AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session)
+                obj.substract_one_session()
 
         return redirect('attendance:session_detail', course_id=course_id)
 

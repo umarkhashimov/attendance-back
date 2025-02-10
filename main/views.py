@@ -47,6 +47,7 @@ class StudentsListView(AdminRequired, ListView):
     template_name = 'students_list.html'
     context_object_name = 'students'
     paginate_by = 20
+
     
 class TeachersListView(AdminRequired, ListView):
     queryset = UsersModel.objects.all().filter(role='1')
