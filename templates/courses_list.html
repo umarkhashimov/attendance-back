@@ -50,7 +50,7 @@
           <div class="col-12 col-md-6 col-lg-4 px-1">
             <div class="position-relative px-0">
               <span class="position-absolute top-0 topic-label">{{obj.get_last_topic|default:"---"}}</span>
-              <span class="position-absolute top-0 teacher-name-label">{{obj.teacher.first_name|default:"-"}} {{obj.teacher.last_name|default:"-"}}</span>
+              <span class="position-absolute top-0 teacher-name-label">{% if obj.teacher.first_name %}{{obj.teacher.first_name|default:'-'}} {{obj.teacher.last_name|default:"-"}}{% else %}{{ obj.teacher.username }}{% endif %}</span>
               <a href="{% url 'courses:course_update' pk=obj.id %}" class="border-2 border px-2 py-2 d-block course-list-item mt-2 mb-1">
                 <div class="row">
                   <div class="col-9 gap-2 align-right pt-1">
