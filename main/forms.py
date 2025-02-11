@@ -11,9 +11,9 @@ class CoursesListFilterForm(forms.Form):
         required=False, label="Учитель"
     )
 
-    weekdays = forms.MultipleChoiceField(
-        choices=WEEKDAY_CHOICES,
-        widget=Select2MultipleWidget(attrs={'class': 'form-control multiplechoices', 'onchange':'submit()'}),
+    weekdays = forms.ChoiceField(
+        choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")],
+        widget=Select2Widget(attrs={'class': 'form-control', 'onchange':'submit()'}),
         required=False, label="Дни"
     )
 

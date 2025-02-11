@@ -50,17 +50,18 @@
           <div class="col-12 col-md-6 col-lg-4 px-1">
             <div class="position-relative px-0">
               <span class="position-absolute top-0 topic-label">{{obj.get_last_topic|default:"---"}}</span>
+              <span class="position-absolute top-0 teacher-name-label">{{obj.teacher.first_name|default:"-"}} {{obj.teacher.last_name|default:"-"}}</span>
               <a href="{% url 'courses:course_update' pk=obj.id %}" class="border-2 border px-2 py-2 d-block course-list-item mt-2 mb-1">
                 <div class="row">
-                  <div class="col-10 gap-2">
-                      <p class="text-dark m-0 mt-1 course-name">
+                  <div class="col-9 gap-2 align-right pt-1">
+                      <p class="text-dark mb-0 course-name mt-1 align-end h-100 w-100">
                         <span class="fs-6 text-secondary opacity-50 course-id">{{ obj.id }}</span>
-                        {{ obj.subject|capfirst }}, 
+                        {{ obj.subject|capfirst }} -
                         {{obj.get_name}}
                       </p>
                   </div>
-                    <div class="col-2 d-flex align-items-end justify-content-end h-100">
-                      <p class="badge text-bg-light border border-1 border-primary my-0 mx-2">{{obj.get_enrolled_count}}</p>
+                    <div class="col-3 d-flex align-items-end justify-content-end h-100 pt-1 p-0 pe-3">
+                      <p class="badge text-bg-light border border-1 border-primary my-0 me-1">{{obj.get_enrolled_count}}</p>
                       <p class="m-0"><span class="badge text-bg-light border border-1" >{{ obj.lesson_time|time:'H:i' }}</span></p>
                     </div>
                 </div>

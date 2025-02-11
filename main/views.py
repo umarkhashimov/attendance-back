@@ -59,18 +59,23 @@ class CoursesListView(AdminRequired, ListView):
     template_name = "courses_list.html"
     context_object_name = 'courses'
     paginate_by = 30
-    ordering = ['-id']
+    ordering = ['teacher', 'lesson_time']
 
     def get_queryset(self):
         course_name = self.request.GET.get('course_name')
-        days =  self.request.GET.getlist('weekdays')
+        days =  self.request.GET.get('weekdays')
         teacher = self.request.GET.get('teacher')
         subject = self.request.GET.get('subject')
 
         queryset = super().get_queryset()
         
         if days:
-            queryset = queryset.filter(weekdays__contains=','.join(days))
+            if days == "1":
+                queryset = queryset.filter(weekdays__contains='0,2,4')
+            elif days == "2":
+                queryset = queryset.filter(weekdays__contains='1,3,5')
+            elif days == "3":
+                queryset = queryset.exclude(Q(weekdays__contains="0,2,4") | Q(weekdays__contains="1,3,5"))
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
         if subject:

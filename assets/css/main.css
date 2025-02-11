@@ -52,6 +52,13 @@
 
 .course-list-item .course-name{
     font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.course-list-item .course-name .course-name{
+    font-size: 13px;
 }
 
 .course-list-item .course-name .course-id{
@@ -220,14 +227,36 @@ tr.trial-lesson td {
 
 .topic-label {
     position: absolute;
-    top: -3px !important;
+    max-width: 57%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    top: -5px !important;
     font-size: 10px;
-    left: 10px;
+    right: 2%;
+    font-weight: 500;
+    padding: 0 5px;
+    border-radius: 2px;
+    border: 1px solid darkorange;
+    color: white;
+    background: darkorange;
+    letter-spacing: 1px;
+}
+
+.teacher-name-label {
+    position: absolute;
+    max-width: 38%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    top: -5px !important;
+    font-size: 10px;
+    left: 2%;
     padding: 0 5px;
     border-radius: 2px;
     border: 1px solid grey;
     background-color: white;
-    color: darkorange;
+    color: darkred;
     letter-spacing: 1px;
 }
 
@@ -324,7 +353,7 @@ table.enrollments tr:not(.trial-lesson):hover td {
 }
 
 .custom-select-2 > select + .select2 > .selection > .select2-selection{
-    min-height: 40px;
+    min-height: 30px;
     font-size: 16px;
     border: 1px solid lightgray;
 }
@@ -338,4 +367,8 @@ table.enrollments tr:not(.trial-lesson):hover td {
     .attendance-item {
         font-size: 17px;
     }
+}
+
+.table-obj-name-link:hover{
+    text-decoration: 1px solid underline black !important;
 }

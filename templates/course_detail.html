@@ -93,7 +93,7 @@
             <tbody>
               {% for enrollment in enrollments %}
                 <tr {% if enrollment.trial_lesson %}class="trial-lesson"{% endif %}>
-                  <td class="py-0 align-middle">{{ enrollment.student.full_name }}</td>
+                <td class="py-0 align-middle"><a class="text-decoration-none text-dark opacity-100 table-obj-name-link" href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a></td>
                   <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
                   <td class="d-flex justify-content-end p-0 h-100">
                     <div class="btn-group rounded-0 w-100 p-0 h-100">
