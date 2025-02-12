@@ -62,7 +62,7 @@ class Enrollment(models.Model):
     def substract_one_session(self):
         if self.hold > 0:
             self.hold -= 1
-        elif self.trial_lesson == True:
+        elif self.trial_lesson:
             self.trial_lesson = False
         else:
             self.balance -= 1

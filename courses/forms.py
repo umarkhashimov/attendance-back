@@ -104,7 +104,7 @@ class CancelCauseForm(forms.Form):
         ("2", 'Другая причина')
     ]
 
-    cause = forms.ChoiceField(choices=CAUSE_OPTIONS, widget=forms.RadioSelect, label="Причина", initial='1')
+    cause = forms.ChoiceField(choices=CAUSE_OPTIONS, widget=forms.RadioSelect, label="", initial='1')
 
 
 class DaysMultiselectForm(forms.Form):

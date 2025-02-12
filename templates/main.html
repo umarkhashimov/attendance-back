@@ -1,104 +1,249 @@
 {% extends 'layout/base.html' %}
-
+{% load static %}
 {% block title %}
   <title>Панель Управления</title>
 {% endblock %}
 {% block content %}
   {% include 'layout/navbar.html' %}
 
-  <h2 class="text-center mt-5 mb-3">Добро пожаловать {{ user.first_name }}</h2>
-  <div class="container courses-list">
-    <h4>Сегодня</h4>
-    <hr class="table-group-divider" />
-    
+  <div class="container courses-list mt-5">
+    <p class="text-dark ms-1 fs-6 m-0">Отмеченные</p>
+    <hr class="table-group-divider mt-2" />
     {% for obj in marked_sessions %}
-      <a {% if obj.course.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.course.id session_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border marked conducted {% if obj.status %}border-success btn btn-success text-white {% else %}border-danger btn btn-danger{% endif %} p-3 d-block course-list-item my-3">
-        <div class="row">
-          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center border-5">
-            <p class="m-0">
-              <span class="bandge text-white opacity-50">{{ obj.course.id }}</span>
-              {{ obj.course.subject|capfirst }}, 
-              {{ obj.course.course_name|capfirst }}
-            </p>
-          </div>
-          <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
-            <p class="m-0">{{ obj.course.lesson_time|time:'H:i' }}</p>
-          </div>
-          <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
-            <p class="main-lesson-days m-0">
-              {% for key, value in obj.course.weekdays.choices.items %}
-                {% if key in obj.course.weekdays %}
-                  <span>{{ value }}</span>
+{#      <a {% if obj.course.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.course.id session_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border marked conducted {% if obj.status %}border-success btn btn-success text-white {% else %}border-danger btn btn-danger{% endif %} p-3 d-block course-list-item my-3">#}
+        <div class="{% if obj.status %}border-success bg-success text-white {% else %}border-danger border bg-danger text-white{% endif %} col-12 border-2 border ps-2 pe-0 marked py-0 d-block course-list-item mt-2 mb-1 position-relative">
+            {% if user.role == "2" %}
+                <span class="position-absolute top-0 teacher-name-label">{% if obj.course.teacher.first_name %}{{obj.course.teacher.first_name|default:'-'}} {{obj.course.teacher.last_name|default:"-"}}{% else %}{{ obj.course.teacher.username }}{% endif %}</span>
+            {% endif %}
+            <div class="d-flex flex-row justify-content-between">
+                <div class="d-flex w-100 align-items-center py-2">
+                    <p class="text-dark mb-0 course-name w-100 align-items-center py-1">
+                    <span class="opacity-50 course-id">{{ obj.course.id }}</span>
+                        <span class="">
+                        {{ obj.course.subject|capfirst }} -
+                        {{ obj.course.get_name }}
+                        </span>
+                        <span class="badge text-bg-light border border-1 ms-2" >{{ obj.course.lesson_time|time:'H:i' }}</span>
+                    </p>
+                </div>
+                {% if obj.course.check_time and obj.status or user.role == '2' and obj.status %}
+                <div class="d-flex btn-group rounded-0">
+                    <button type="button" class="btn btn-warning px-3 rounded-0 rounded-end-1 " data-bs-toggle="modal" data-bs-target="#attendanceModal{{ obj.id }}">
+                      <i class="bi bi-pencil-fill"></i>
+                    </button>
+                </div>
                 {% endif %}
-              {% endfor %}
-            </p>
-          </div>
+            </div>
         </div>
-      </a>
-      
+        {%empty%}
+          <p class="text-center text-secondary">Пусто</p>
       {% endfor %}
 
+  {% for conducted in conducted_sessions %}
+      {% if conducted.course.check_time or user.role == '2'  %}
+    <!-- Attendance Modal -->
+  <form action="{% url 'attendance:session_detail' course_id=conducted.course.id session_id=conducted.id %}" method='post'>
+    <div data-bs-backdrop="static" class="modal fade" id="attendanceModal{{ conducted.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Посещение {{ conducted.date }}</h1>
+                <button type="submit" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            {% csrf_token %}
+            <div class="modal-body">
+                <p><b>Группа:</b> {{ conducted.course.subject }}, {{ conducted.course.get_name }} - {{ conducted.course.lesson_time }} </p>
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <input type="text" name="topic" class="form-control" placeholder="..." value="{{ conducted.topic|default:"" }}" maxlength="250" id="id_topic">
+                        <label>Тема урока</label>
+                    </div>
+                </div>
+                <table class="table border students-attendance-list">
+        <tbody>
+
+          {% for obj in conducted.attendancemodel_set.all %}
+          <tr class="d-flex attendance-item {% if obj.enrollment.trial_lesson %}trial-lesson{% endif %}" status='{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}' stid="{{obj.enrollment.student.student_id}}" class="attendance-item absent">
+            <td class="w-100 d-flex align-items-center ps-3 name">
+              {{obj.enrollment.student.first_name|default:""}} {{obj.enrollment.student.last_name|default:""}}
+              <span class="ms-2">
+                {% if obj.enrollment.hold >= 1 %}<span  data-bs-toggle="tooltip" data-bs-placement="top" title="Заморожен {{obj.enrollment.hold}} " role='button' class="text-primary"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                {% if obj.enrollment.balance <= 0 and obj.enrollment.trial_lesson == False %}<span  data-bs-toggle="tooltip" data-bs-placement="top" title="Баланс ({{obj.enrollment.balance}})  {{obj.enrollment.debt_note|default:""}}" role='button' class="text-danger"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex justify-content-end text-end align-items-center h-100">
+
+                <input hidden class="studentStatusInput" type="text" name="stid_{{obj.enrollment.student.student_id}}" value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">
+                <div class="gradesInp d-flex me-1 gap-1">
+                  <input type="number" name="ga_{{obj.enrollment.student.student_id}}" value="{{obj.participation_grade}}" class="form-control grade-inp border-2" title="Оценка за посещаемость">
+                  <input type="number" name="ghw_{{obj.enrollment.student.student_id}}" value="{{obj.homework_grade}}" class="form-control grade-inp border-2" title="Оценка за домашнее задание">
+                </div>
+                <div class="d-flex marked-conf  align-items-center">
+                  <div class="d-flex align-items-center h-100 mx-2 marked-status-badge">
+                    <p class="badge present text-bg-success rounded-5 m-0 my-auto"><i class="bi bi-check"></i></p>
+                    <p class="badge absent text-bg-danger rounded-5 m-0 my-auto"><i class="bi bi-x"></i></p>
+                  </div>
+                  <button type="button" onclick="unmarkStudent({{obj.enrollment.student.student_id}})" class="btn btn-light border border-dark px-2"><i class="bi bi-pencil-fill"></i></button>
+                </div>
+                <div class="btn-group gap-1 choose check-buttons">
+                  <button type="button" onclick="markStudent('absent', {{obj.enrollment.student.student_id}})" class="btn btn-danger px-3"><i class="bi bi-x-lg"></i></button>
+                  <button type="button" onclick="markStudent('present', {{obj.enrollment.student.student_id}})" class="btn btn-success px-3"><i class="bi bi-check-lg"></i></button>
+                </div>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="submit" class="btn btn-success">Сохранить</button>
+            </div>
+      </div>
+    </div>
+  </div>
+</form>
+      {% endif %}
+  {% endfor %}
+
+    <p class="text-dark ms-1 fs-6 m-0 mt-3">Не отмеченные</p>
+    <hr class="table-group-divider mt-2" />
     {% for obj in sessions_today %}
-      <a {% if obj.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
-        <div class="row">
-          <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
-            <p class="text-dark m-0">
-              <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
-              {{ obj.subject|capfirst }}, 
-              {{ obj.course_name|capfirst }}
-            </p>
-          </div>
-          <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
-            <p class="text-dark m-0">{{ obj.lesson_time|time:'H:i' }}</p>
-          </div>
-          <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
-            <p class="main-lesson-days m-0 text-dark">
-              {% for key, value in obj.weekdays.choices.items %}
-                {% if key in obj.weekdays %}
-                  <span>{{ value }}</span>
+        <div class="col-12 border-2 border ps-2 pe-0  py-0 d-block course-list-item mt-2 mb-1 position-relative">
+            {% if user.role == "2" %}
+                <span class="position-absolute top-0 teacher-name-label">{% if obj.teacher.first_name %}{{obj.teacher.first_name|default:'-'}} {{obj.teacher.last_name|default:"-"}}{% else %}{{ obj.teacher.username }}{% endif %}</span>
+            {% endif %}
+            <div class="d-flex flex-row justify-content-between">
+                <div class="d-flex w-100 align-items-center py-2">
+                    <p class="text-dark mb-0 course-name w-100 py-1">
+                    <span class="fs-6 text-secondary opacity-50 course-id">{{ obj.id }}</span>
+                    {{ obj.subject|capfirst }} -
+                    {{ obj.get_name }}
+                        <span class="badge text-bg-light border border-1 ms-2" >{{ obj.lesson_time|time:'H:i' }}</span>
+                    </p>
+                </div>
+                {% if obj.check_time or user.role == '2'  %}
+                <div class="d-flex btn-group rounded-0">
+                    <button type="button" class="btn btn-danger px-3  rounded-0 " data-bs-toggle="modal" data-bs-target="#cancelModal{{ obj.id }}">
+                      <i class="bi bi-x-lg"></i>
+                    </button>
+                    <button type="button" class="btn btn-success px-3 py-2 rounded-end-1" data-bs-toggle="modal" data-bs-target="#conductModal{{ obj.id }}">
+                      <i class="bi bi-check-lg"></i>
+                    </button>
+{#                    <a href="{% url "courses:conduct_session" course_id=obj.id %}" class="btn btn-success px-3 py-2 rounded-end-1"><i#}
+{#                      class="bi bi-check-lg"></i></a>#}
+                    {# Cancel session modal #}
+                    <div data-bs-backdrop="static" class="modal fade" id="cancelModal{{ obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <form action="{% url "courses:cancel_session" course_id=obj.id %}" method='post'>
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Отмена урока</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <p class="m-0"><b>Группа</b>: {{ obj.subject }}, {{ obj.get_name }}</p>
+                                    <p class="m-0"><b>Время</b>: {{ obj.lesson_time }}</p>
+                                    <p class="m-0"><b>Учитель</b>: {{ obj.teacher.get_full_name }}</p>
+                                    <p class="mt-3 mb-1">Выберите причину для отмены урока:</p>
+                                  {{cancel_cause_form}}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Подтвердить</button>
+                                </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    {#  Conduct session model #}
+                    <div data-bs-backdrop="static" class="modal fade" id="conductModal{{ obj.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <form action="{% url "courses:conduct_session" course_id=obj.id %}" method='get'>
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Урок проведень</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <p class="m-0"><b>Группа</b>: {{ obj.subject }}, {{ obj.get_name }}</p>
+                                    <p class="m-0"><b>Время</b>: {{ obj.lesson_time }}</p>
+                                    <p class="m-0"><b>Учитель</b>: {{ obj.teacher.get_full_name }}</p>
+                                    <p class="mt-3 mb-1">Подтвердить проведение урока:</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-success">Подтвердить</button>
+                                </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                </div>
                 {% endif %}
-              {% endfor %}
-            </p>
-          </div>
+            </div>
         </div>
-      </a>
+
       {%empty%}
-      {% if not marked_sessions %}
-      <p class="text-center text-secondary">Нет груп на сегодня.</p>
-      {%endif%}
+      <p class="text-center text-secondary">Пусто</p>
     {% endfor %}
 
-    {% comment %} <h4 class="mt-5">Все Группы</h4>
-    <hr class="table-group-divider" />
-    {% for obj in page_obj.object_list %}
-        <a {% if user.role != '1'  %} href="" {% else %}disabled{% endif %} class="border-2 border p-3 d-block course-list-item my-3">
-          <div class="row">
-            <div class="col-12 col-md-6 mb-3 mb-sm-4 mb-md-0 d-flex align-items-center">
-              <p class="text-dark m-0">
-                <span class="bandge text-secondary opacity-50">{{ obj.id }}</span>
-                {{ obj.subject|capfirst }}, 
-                {{ obj.course_name|capfirst }}
-              </p>
-            </div>
-            <div class="col-12 col-sm-2 col-md-1 d-flex align-items-center">
-              <p class="text-dark m-0">{{ obj.lesson_time|time:'H:i' }}</p>
-            </div>
-            <div class="col-12 col-sm-10 col-md-5 d-flex align-items-center">
-              <p class="main-lesson-days m-0 text-dark">
-                {% for key, value in obj.weekdays.choices.items %}
-                  {% if key in obj.weekdays %}
-                    <span>{{ value }}</span>
-                  {% endif %}
-                {% endfor %}
-              </p>
-            </div>
-          </div>
-        </a>
-    {% empty %}
-        <p class="text-center text-secondary">У вас нет груп.</p>
-    {% endfor %} {% endcomment %}
-
-
-    
   </div>
 {% endblock %}
+
+{% block custom_js %}
+  <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+  </script>
+  <script>
+    {% comment %} {% if user.role == '2' %}
+    document.getElementById('customDatePicker').addEventListener('change', () => {
+      document.getElementById('customDateForm').submit()
+    })
+    let dates = JSON.parse('{{all_session_dates|safe}}')
+    flatpickr("#customDatePicker", {
+      dateFormat: "Y-m-d",
+      enable: dates,
+
+    });
+    {% endif %} {% endcomment %}
+
+    window.onload = () => {
+      checkInputs = document.querySelectorAll('input.checkStatus')
+
+      document.querySelectorAll('input[type="number"].grade-inp').forEach((inp) => {
+        inp.addEventListener('input', () => {
+        // Ensure the input value is a number
+        let value = inp.value;
+
+        // If the value is not a number or is outside the range of 0 to 5, reset it to an empty string or limit it.
+        if (isNaN(value) || value < 0 || value > 5) {
+          inp.value = ''; // Clear the input if the value is invalid
+        } else {
+          // Optionally, if you want to ensure only valid values are shown, limit the decimal places or sanitize input here
+          inp.value = value; // Set back the valid value
+        }
+      });
+      })
+
+      document.querySelectorAll('input[type="checkbox"].checkStatus').forEach((inp) => {
+        inp.addEventListener('change', () => {
+          let gradeDiv = document.querySelector(`div#${inp.getAttribute("gradeFor")}`)
+          console.log(inp.checked, gradeDiv);
+          if (inp.checked) {
+            gradeDiv.classList.remove('hiddenDiv')
+          }else{
+            gradeDiv.classList.add('hiddenDiv')
+          }
+        })
+      })
+    }
+
+
+  </script>
+  <script src="{% static 'js/attendance.js' %}"></script>
+  {% endblock %}

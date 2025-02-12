@@ -7,10 +7,11 @@ from django.db.models import Q
 
 from users.filters import AdminRequired
 from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
-from courses.forms import DaysMultiselectForm
+from courses.forms import DaysMultiselectForm, CancelCauseForm
 from users.models import UsersModel
+from students.models import Enrollment
 from .forms import CoursesListFilterForm
-
+from attendance.models import AttendanceModel
 class MainPageView(TemplateView):
     template_name = 'main.html'
 
@@ -35,10 +36,25 @@ class MainPageView(TemplateView):
             courses = courses.filter(teacher__id=self.request.user.id)
             sessions_today = sessions_today.filter(teacher__id=self.request.user.id)
             marked_sessions = marked_sessions.filter(course__in=courses)
-            print(marked_sessions.values_list('course_id', flat=True))
 
+        # attendance data test
+
+        conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
+
+        for session in conducted_sessions:
+            if session.date == today:
+                attendance = AttendanceModel.objects.all().filter(session=session)
+                fresh_enrolled = Enrollment.objects.filter(course=session.course, status=True).exclude(student_id__in=attendance.values_list('enrollment__student_id', flat=True))
+                for enroll in fresh_enrolled:
+                    if not AttendanceModel.objects.filter(session=session, enrollment__student_id=enroll.student.id).exists():
+                        AttendanceModel.objects.create(enrollment=enroll, session=session)
+
+        conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
+
+        context["conducted_sessions"] = conducted_sessions
         context['sessions_today'] = sessions_today
         context['marked_sessions'] = marked_sessions
+        context['cancel_cause_form'] = CancelCauseForm
         return context
     
 

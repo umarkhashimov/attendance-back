@@ -102,4 +102,4 @@ class SessionsModel(models.Model):
         verbose_name = 'session'
         verbose_name_plural = 'sessions'
         unique_together = ('course', 'date')
-        ordering = ['course__id']
+        ordering = ['-id']

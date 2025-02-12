@@ -100,22 +100,20 @@ class CancelSessionView(View):
             cause = form.cleaned_data['cause']
             today = datetime.now().date()
             course= get_object_or_404(CourseModel, id=course_id)
-            session = SessionsModel.objects.update_or_create(course=course, date=today, defaults={'status': False, 'record_by_id': self.request.user.id, 'cause': cause})
-
+            session, created = SessionsModel.objects.get_or_create(course=course, date=today, defaults={'status': False, 'record_by_id': self.request.user.id, 'cause': cause})
             # generate empty attendance based on enrollment status
             enrollments = Enrollment.objects.filter(course=course, status=True)
-            for obj in enrollments:
-                enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
-                AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session[0])
-            
-                if str(cause) == "1" and obj.trial_lesson == False:
-                    obj.substract_one_session()
 
-            
+            if created:
+                for obj in enrollments:
+                    enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
+                    AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session)
 
+                    if str(cause) == "1" and obj.trial_lesson == False:
+                        obj.substract_one_session()
 
-        return redirect('attendance:session_detail', course_id=course_id)
-        
+        # return redirect('attendance:session_detail', course_id=course_id)
+        return redirect("main:main")
 class ConductSession(View):
 
     def get(self, request, course_id):
@@ -129,9 +127,12 @@ class ConductSession(View):
             for obj in enrollments:
                 enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
                 AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session)
-                obj.substract_one_session()
 
-        return redirect('attendance:session_detail', course_id=course_id)
+                if not obj.trial_lesson:
+                    obj.substract_one_session()
+
+        # return redirect('attendance:session_detail', course_id=course_id)
+        return redirect("main:main")
 
 
 class MyCoursesView(ListView):

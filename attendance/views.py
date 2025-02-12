@@ -63,40 +63,35 @@ class GetSessionView(View):
     template_name = 'session_detail.html'
 
     def get(self, request, course_id, session_id):
-        course = get_object_or_404(CourseModel, id=course_id)
-        session = get_object_or_404(SessionsModel, id=session_id)
+        # course = get_object_or_404(CourseModel, id=course_id)
+        # session = get_object_or_404(SessionsModel, id=session_id)
+        #
+        # if request.user.role == '1' and not course_date_match(course):
+        #     return redirect("main:main")
+        #
+        # attendance = AttendanceModel.objects.all().filter(session=session)
+        # sessions = SessionsModel.objects.filter(course=course)
+        #
+        # if session.date == datetime.today().date():
+        #     fresh_enrolled = Enrollment.objects.filter(course=session.course, status=True).exclude(student_id__in=attendance.values_list('enrollment__student_id', flat=True))
+        #     for enroll in fresh_enrolled:
+        #         if not AttendanceModel.objects.filter(session=session, enrollment__student_id=enroll.student.id).exists():
+        #             AttendanceModel.objects.create(enrollment=enroll, session=session)
+        #
+        #     attendance = AttendanceModel.objects.all().filter(session=session)
+        #
+        # context = {
+        #     'session': session,
+        #     'course': course,
+        #     'attendance': attendance,
+        #     'all_session_dates': sessions,
+        #     'cancel_cause_form': CancelCauseForm,
+        #     'session_topic': SessionTopicFieldForm(instance=session)
+        # }
 
-        if request.user.role == '1' and not course_date_match(course):
-            return redirect("main:main")
-        
-        attendance = AttendanceModel.objects.all().filter(session=session)
-        sessions = SessionsModel.objects.filter(course=course)
-       
-        if session.date == datetime.today().date():
-            fresh_enrolled = Enrollment.objects.filter(course=session.course, status=True).exclude(student_id__in=attendance.values_list('enrollment__student_id', flat=True))
-            for enroll in fresh_enrolled:
-                if not AttendanceModel.objects.filter(session=session, enrollment__student_id=enroll.student.id).exists():
-                    AttendanceModel.objects.create(enrollment=enroll, session=session)
 
-            attendance = AttendanceModel.objects.all().filter(session=session)
-
-        context = {
-            'session': session,
-            'course': course,
-            'attendance': attendance,
-            'all_session_dates': sessions,
-            'cancel_cause_form': CancelCauseForm,
-            'session_topic': SessionTopicFieldForm(instance=session)
-        }
-
-        if session:
-            context.update({
-                'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
-                'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
-            })
-
-        return render(request, self.template_name, context)
-    
+        # return render(request, self.template_name, context)
+        return  redirect("main:main")
 
     def post(self, request, course_id, session_id):
         course = get_object_or_404(CourseModel, id=course_id)
@@ -116,11 +111,14 @@ class GetSessionView(View):
             if f"stid_{obj.enrollment.student.student_id}" in keys:
 
                 status = request.POST.get(str(f'stid_{obj.enrollment.student.student_id}'), None)
+                print(obj.status)
                 if status == 'present':
                     attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'), None)
                     homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'), None)
                     obj.participation_grade = attendance_grade if attendance_grade else None
                     obj.homework_grade = homework_grade if homework_grade else None
+                    if obj.status is None and obj.enrollment.trial_lesson:
+                        obj.enrollment.substract_one_session()
                     obj.status = 1
                 elif status == 'absent':
                     obj.status = 0
@@ -130,4 +128,5 @@ class GetSessionView(View):
         if request.user.role == '1':
             return redirect('main:main')
 
-        return redirect(request.path, pk=session.course.id)
+        # return redirect(request.path, pk=session.course.id)
+        return redirect("main:main")
