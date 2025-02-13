@@ -89,7 +89,7 @@ class CreateCourseView(AdminRequired, CreateView):
     form_class = CourseUpdateForm
 
     def get_success_url(self):
-        return reverse('main:courses_list')
+        return reverse('courses:course_update', kwargs={'pk': self.object.id})
 
         
 class CancelSessionView(View):

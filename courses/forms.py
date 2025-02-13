@@ -2,12 +2,14 @@ from django import forms
 from .models import CourseModel, WEEKDAY_CHOICES, SessionsModel, SubjectModel
 from django_select2.forms import Select2Widget, Select2MultipleWidget
 from multiselectfield import MultiSelectField
+from users.models import UsersModel
 
 class CourseUpdateForm(forms.ModelForm):
 
     subject = forms.ModelChoiceField(
         queryset=SubjectModel.objects.all(),
-        widget=Select2Widget(),
+        widget=Select2Widget(attrs={'class':'form-control w-100'}),
+        label="Курс"
     )
 
     weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
@@ -26,10 +28,7 @@ class CourseUpdateForm(forms.ModelForm):
                     'id': 'LessonTimePicker',
                 }
             ),
-            'subject': forms.ModelChoiceField(
-                queryset=SubjectModel.objects.all(),
-                widget=Select2Widget(attrs={'class':'form-control'}),
-            ),
+            'teacher': Select2Widget(attrs={'class':'form-control'}),
             'course_name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Введите имя курса'}),
             'weekdays': Select2MultipleWidget(attrs={'class':'form-control multiplechoices'}),
             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),

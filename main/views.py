@@ -7,7 +7,7 @@ from django.db.models import Q
 
 from users.filters import AdminRequired
 from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
-from courses.forms import DaysMultiselectForm, CancelCauseForm
+from courses.forms import DaysMultiselectForm, CancelCauseForm, CourseUpdateForm
 from users.models import UsersModel
 from students.models import Enrollment
 from .forms import CoursesListFilterForm
@@ -107,5 +107,6 @@ class CoursesListView(AdminRequired, ListView):
         days = self.request.GET.getlist('weekdays')
         context["days_form"] = DaysMultiselectForm(initial={'weekdays': days})
         context['subjects'] = SubjectModel.objects.all()
+        context["create_course_form"] = CourseUpdateForm
         return context
     
