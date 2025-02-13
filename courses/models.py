@@ -69,8 +69,7 @@ class CourseModel(models.Model):
         return weekdays
 
     def __str__(self):
-        name = self.course_name if self.course_name else f"{self.get_name()} {self.lesson_time.strftime(format="%H:%M")}"
-        return f"{self.id}. {name}"
+        return f"{self.id}. {self.get_name()} - {self.lesson_time.strftime(format="%H:%M")}. {self.subject}"
     
     class Meta:
         verbose_name = 'course'
