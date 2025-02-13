@@ -33,3 +33,10 @@ class TeacherUpdateForm(forms.ModelForm):
         # fields = "__all__"
         fields = ['first_name', 'last_name', 'phone_number']
         # exclude = ['password', 'last_login']'
+
+class TeacherSelectForm(forms.Form):
+    teacher = forms.ModelChoiceField(
+        queryset=UsersModel.objects.all().filter(role='1'),
+        widget=forms.Select(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
+        label="Учитель"
+    )

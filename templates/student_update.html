@@ -140,7 +140,12 @@
       <div class="col-12 col-md-4">
         <div class="bg-light rounded py-3 mt-3 px-2 border">
           <p class="text-dark ms-1">Записать на новый курс</p>
-
+            <form method="get">
+                <div class="form-floating mb-3">
+                    {{ teacher_select_form.teacher }}
+                  <label for="floatingInput">{{ teacher_select_form.teacher.label }}</label>
+                </div>
+            </form>
           <form method="post" action="{% url 'students:create_enrollment_from_student' student_id=student.id %}">
             {% csrf_token %}
             {% comment %} {{ enrollment_form|crispy }} {% endcomment %}

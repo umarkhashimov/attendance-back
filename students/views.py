@@ -1,9 +1,11 @@
+from django.template.context_processors import request
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db import IntegrityError
 
 from users.filters import AdminRequired
+from users.forms import TeacherSelectForm
 from .models import StudentModel, Enrollment
 from .forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import CourseModel
@@ -22,9 +24,10 @@ class StudentUpdateView(AdminRequired, UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["student"] = self.get_object()
+        context["teacher_select_form"] = TeacherSelectForm(initial=self.request.GET)
         context['enrollment_update_form'] = UpdateEnrollmentForm
         context['enrollments'] = Enrollment.objects.all().filter(student=self.get_object(), status=True)
-        context['enrollment_form'] = StudentEnrollmentForm(student=self.get_object())
+        context['enrollment_form'] = StudentEnrollmentForm(student=self.get_object(), teacher=self.request.GET.get('teacher', None))
         return context
     
     

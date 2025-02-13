@@ -52,7 +52,7 @@ class StudentEnrollmentForm(ModelForm):
             })
         }
 
-    def __init__(self, *args, student=None, course=None, **kwargs):
+    def __init__(self, *args, student=None, teacher=None, **kwargs):
         super().__init__(*args, **kwargs)
         # Add attributes to all fields
         for field_name, field in self.fields.items():
@@ -63,9 +63,14 @@ class StudentEnrollmentForm(ModelForm):
                 "placeholder": ' ',  # Optional: Use label as placeholder
             })
 
+
         if student:
             enrolled = Enrollment.objects.filter(student=student, status=True).values_list('course__id', flat=True)
-            self.fields['course'].queryset = CourseModel.objects.all().exclude(id__in=enrolled)
+            queryset = CourseModel.objects.all().exclude(id__in=enrolled)
+            if teacher:
+                queryset = queryset.filter(teacher_id=teacher)
+
+            self.fields['course'].queryset = queryset
 
 
 class CourseEnrollmentForm(ModelForm):
@@ -108,4 +113,3 @@ class UpdateEnrollmentForm(forms.Form):
     hold = forms.IntegerField(required=False)
     trial_lesson = forms.BooleanField(required=False)
     debt_note = forms.CharField(max_length=100, required=False)
-
