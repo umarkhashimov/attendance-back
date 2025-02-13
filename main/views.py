@@ -52,8 +52,8 @@ class MainPageView(TemplateView):
         conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
 
         context["conducted_sessions"] = conducted_sessions
-        context['sessions_today'] = sessions_today
-        context['marked_sessions'] = marked_sessions
+        context['sessions_today'] = sessions_today.order_by("lesson_time")
+        context['marked_sessions'] = marked_sessions.order_by('course__lesson_time')
         context['cancel_cause_form'] = CancelCauseForm
         return context
     
