@@ -97,6 +97,11 @@ class SessionsModel(models.Model):
     def __str__(self):
         return f"{self.course.course_name} - Session on {self.date}"
 
+    def has_unmarked_attendance(self):
+        attendance_model = apps.get_model('attendance', 'AttendanceModel')
+        unmarked_attendance_count = attendance_model.objects.filter(session=self, status=None).count()
+        return unmarked_attendance_count > 0
+
     class Meta:
         verbose_name = 'session'
         verbose_name_plural = 'sessions'
