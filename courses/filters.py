@@ -5,7 +5,7 @@ def course_date_match(course) -> bool:
 
     course_weekdays = [x for x in course.weekdays]
     lesson_time = datetime.combine(datetime.today(), course.lesson_time)
-    lesson_endtime = lesson_time + timedelta(minutes=course.duration)
+    lesson_endtime = lesson_time + timedelta(minutes=course.duration + 10)
     time_now = datetime.now().time().strftime("%H:%M")
 
     weekday_match = str(now.weekday()) in course_weekdays
