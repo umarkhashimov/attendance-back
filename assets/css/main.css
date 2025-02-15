@@ -363,6 +363,13 @@ table.enrollments tr:not(.trial-lesson):hover td {
     color: black;
 }
 
+#filterForm :where(input, select + .select2 > .selection > .select2-selection){
+    min-height: 35px !important;
+    align-items: center;
+    padding: 3px 6px;
+    border: 1px solid lightgray;
+}
+
 @media screen and (max-width: 480px) {
     .attendance-item {
         font-size: 17px;

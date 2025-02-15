@@ -14,7 +14,7 @@ class StudentModel(models.Model):
     courses = models.ManyToManyField(CourseModel, through='Enrollment', verbose_name='Записанные курсы')
 
     def has_debt(self):
-        debt_enrollments = Enrollment.objects.all().filter(student=self, balance__lte=0).count()
+        debt_enrollments = Enrollment.objects.all().filter(student=self, balance__lte=0, status=True, trial_lesson=False).count()
         if debt_enrollments > 0:
             return True
         return False

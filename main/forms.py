@@ -1,3 +1,5 @@
+from cProfile import label
+
 from django import forms
 from django_select2.forms import Select2Widget, Select2MultipleWidget, ModelSelect2Widget
 
@@ -22,3 +24,22 @@ class CoursesListFilterForm(forms.Form):
         widget=Select2Widget(attrs={'class':'form-control', 'onchange':'submit()', 'id':'subjectFilter'}),
         required=False
     )
+
+class StudentsListFilterForm(forms.Form):
+    text = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control shadow-none rounded-1 py-0', 'onchange': 'submit()'}),
+        required=False, label="Имя/Номер"
+    )
+
+    teacher = forms.ModelChoiceField(
+        queryset=UsersModel.objects.filter(role='1'),
+        widget=Select2Widget(attrs={'class': 'form-select', 'onchange': 'submit()'}),
+        required=False, label="Учитель"
+    )
+
+    # weekdays = forms.ChoiceField(
+    #     choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")],
+    #     widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+    #     required=False, label="Дни"
+    # )

@@ -1,16 +1,17 @@
+from django.template.defaultfilters import first
 from django.views.generic import TemplateView, ListView
 from datetime import date
-from courses.models import CourseModel, SessionsModel
-from students.models import StudentModel
-from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Q, Value
+from django.db.models.functions import Concat
 
+from courses.models import CourseModel
+from students.models import StudentModel
 from users.filters import AdminRequired
-from courses.models import SessionsModel, WEEKDAY_CHOICES, SubjectModel
+from courses.models import SessionsModel, SubjectModel
 from courses.forms import DaysMultiselectForm, CancelCauseForm, CourseUpdateForm
 from users.models import UsersModel
 from students.models import Enrollment
-from .forms import CoursesListFilterForm
+from .forms import CoursesListFilterForm, StudentsListFilterForm
 from attendance.models import AttendanceModel
 class MainPageView(TemplateView):
     template_name = 'main.html'
@@ -62,8 +63,26 @@ class StudentsListView(AdminRequired, ListView):
     model = StudentModel
     template_name = 'students_list.html'
     context_object_name = 'students'
-    paginate_by = 20
+    paginate_by = 30
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = StudentsListFilterForm(self.request.GET)
+        return context
+
+    def get_queryset(self):
+        text = self.request.GET.get('text')
+        teacher = self.request.GET.get('teacher')
+
+        queryset = super().get_queryset()
+
+        if text:
+            words= text.split()
+            queryset = queryset.filter(Q(last_name__in=words) | Q(first_name__in=words) | Q(last_name__icontains=text) | Q(phone_number__icontains=text) | Q(additional_number__icontains=text))
+        if teacher:
+            queryset = queryset.filter(courses__teacher=teacher).distinct()
+
+        return queryset
     
 class TeachersListView(AdminRequired, ListView):
     queryset = UsersModel.objects.all().filter(role='1')

@@ -12,8 +12,6 @@ def course_date_match(course) -> bool:
     time_match = time_now >= lesson_time.strftime("%H:%M") and time_now <= lesson_endtime.strftime("%H:%M")
 
     return time_match and weekday_match
-
-    
     
     
 def early_to_conduct_session(session) -> bool:
@@ -23,4 +21,5 @@ def early_to_conduct_session(session) -> bool:
     if time_now < session_datetime:
         return True
     else:
-        return False 
+        return False
+

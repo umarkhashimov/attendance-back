@@ -1,121 +1,133 @@
 {% extends 'layout/base.html' %}
 
 {% block title %}
-  <title>Панель Управления</title>
+    <title>Панель Управления</title>
 {% endblock %}
 {% block content %}
-  {% include 'layout/navbar.html' %}
+    {% include 'layout/navbar.html' %}
 
-  <div class="container courses-list">
-    <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
-      <h5 class="m-0">Ученики</h5>
-      <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>
-    </div>
-    {% comment %} <hr class="table-group-divider" /> {% endcomment %}
-    {% comment %} <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">
-      <div class="row">
-        <div class="col-12 col-sm-7 col-md-6 col-lg-3">
-          <label for="teacherName" class="mb-2 ms-1">Учителя</label>
-          <select name="teacher" class="form-select border-3 {% if request.GET.teacher %} border-primary{% endif %} w-100" id="teacherName">
-            <option value="">--</option>
-            {% for teacher in teachers %}
-            <option {% if request.GET.teacher == teacher.id|stringformat:"i" %}selected{% endif %} value="{{ teacher.id }}" class="text-dark">
-              {{ teacher.username }} {% if teacher.first_name or teacher.last_name %}
-              - {{ teacher.get_full_name }}
-              {% endif %}
-            </option>
-            {% endfor %}
-          </select>
+    <div class="container courses-list">
+        <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
+            <h5 class="m-0">Ученики</h5>
+            <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>
         </div>
-        <div class="col-12 col-sm-5 col-md-3 col-lg-2 mt-2 mt-sm-0">
-          <label for="daySelect" class="mb-2 ms-1">Дни</label>
-          <select name="day" class="form-select border-3 {% if request.GET.day %} border-primary{% endif %}" id="daySelect">
-            <option value="">--</option>
-            {% for day in days %}
-            <option {% if request.GET.day == day.0 %}selected{% endif %} value="{{ day.0 }}">{{ day.1 }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-12 col-sm-5 col-md-3 col-lg-2 mt-2 mt-lg-0">
-          <label for="statusSelect" class="mb-2 ms-1">Курс</label>
-          <select name="subject" class="form-select border-3 {% if request.GET.subject %} border-primary{% endif %}" id="daySelect">
-            <option value="">--</option>
-            {% for subject in subjects %}
-            <option {% if request.GET.subject == subject.id|stringformat:"i" %}selected{% endif %} value="{{subject.id}}">{{subject.name}}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="col-12 col-sm-7 col-md-9 col-lg-3 mt-2 mt-lg-0">
-          <label for="courseName" class="mb-2 ms-1">Имя курса</label>
-          <input value="{{request.GET.course_name}}" id="courseName" name="course_name" placeholder="--" type="text" class="form-control border-3 w-100 {% if request.GET.course_name %} border-primary{% endif %}" />
-        </div>
-        <div class="col-12 col-md-3 col-lg-2 mt-3 mt-md-2">
-          <div class="d-flex align-items-end gap-4 gap-lg-2 h-100">
-            <button type="reset" class="btn btn-danger w-100 border-3 px-2"><i class="bi bi-x-lg"></i></button>
-            <button type="submit" class="btn btn-success w-100 border-3 px-2"><i class="bi bi-check-lg"></i></button>
-          </div>
-        </div>
-      </div>
-    </form> {% endcomment %}
-    <hr class="table-group-divider" />
-    <table class="table data-list">
-    {% for obj in students %}
-      <tr class="border {% if obj.has_debt %}has-debt{% endif %}">
-        <td class="p-1 ">
-
-          <a href="{% url 'students:student_update' pk=obj.id %}" class="p-1 d-block course-list-item">
-            <div class="row">
-              <div class="col-12 d-flex align-items-center">
-                <p class="text-dark m-0">{{ obj.full_name|capfirst }}</p>
-              </div>
+        <hr class="table-group-divider"/>
+        <div class="row m-0 p-0 ">
+            <div class="col-12 bg-light rounded pt-2 px-2 border">
+                <form id="filterForm" method="get" class="student-filter-form">
+                    <div class="">
+                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
+                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                        </h6>
+                    </div>
+                    <div class="row mt-2 pb-3">
+                        <div class="col-12 col-md-7">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
+                                {{ filter_form.text }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-5">
+                            <div class="custom-select-2">
+                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
+                                {{ filter_form.teacher }}
+                            </div>
+                        </div>
+{#                        <div class="col-12 col-md-4">#}
+{#                            <div class="custom-select-2">#}
+{#                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.weekdays.label }}</label>#}
+{#                                {{ filter_form.weekdays }}#}
+{#                            </div>#}
+{#                        </div>#}
+                    </div>
+                </form>
             </div>
-          </a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr>
-        <td>
-          <p class="text-center text-secondary">Нет Учеников.</p>
-        </td>
-      </tr>
-      {% endfor %}
-    </table>
-
-
-    {% if page_obj.paginator.count > 20 %}
-    <div class="row mt-5">
-        <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination ">
-                    {% if page_obj.has_previous %}
-                        <li class="page-item">
-                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
-                               aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                    {% endif %}
-                    {% for page in paginator.page_range %}
-                        {% if page_obj.number == page %}
-                            <li class="page-item ms-1"><a class="page-link active"
-                                                          href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
-                        {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
-                            <li class="page-item ms-1"><a class="page-link"
-                                                          href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a></li>
-                        {% endif %}
-                    {% endfor %}
-                    {% if page_obj.has_next %}
-                        <li class="page-item ms-1">
-                            <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
-                               aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </nav>
         </div>
+
+        <div class="row px-2 mt-3">
+            {% for obj in students %}
+                <div class="col-12 col-md-6 col-lg-4 px-1 my-1">
+                    <a href="{% url 'students:student_update' pk=obj.id %}"
+                       class="border-2 border px-2 py-2 d-block course-list-item {% if obj.has_debt %} border-danger-subtle bg-danger-subtle {% endif %}">
+                        <p class="text-dark mb-0 course-name">
+                            <span class="text-secondary course-id">{{ obj.id }}</span>
+                            {{ obj.full_name|capfirst }}
+                        </p>
+                    </a>
+                </div>
+            {% empty %}
+                <p class="text-center text-secondary">Нет груп.</p>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.paginator.count > 30 %}
+            <div class="row mt-4">
+                <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination ">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?
+
+
+                                            {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for page in paginator.page_range %}
+                                {% if page_obj.number == page %}
+                                    <li class="page-item ms-1"><a class="page-link active"
+                                                                  href="?
+
+
+                                                                          {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
+                                    </li>
+                                {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
+                                    <li class="page-item ms-1"><a class="page-link"
+                                                                  href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item ms-1">
+                                    <a class="page-link" href="?
+
+
+                                            {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        {% endif %}
     </div>
-{% endif %}
-  </div>
+
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        let filterForm = document.querySelector('form#filterForm')
+        filterForm.addEventListener('reset', (event) => {
+            event.preventDefault();
+            event.target.reset()
+            event.target.querySelectorAll('input').forEach((inp) => {
+                inp.removeAttribute('value')
+            })
+            event.target.querySelectorAll('option').forEach((select) => {
+                select.removeAttribute('selected')
+            })
+            event.target.submit()
+        })
+
+        $(document).ready(function () {
+            $('select').select2() // Apply select2 to all select elements
+        })
+
+    </script>
 {% endblock %}
