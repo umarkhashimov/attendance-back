@@ -1,16 +1,14 @@
 from django.template.defaultfilters import first
 from django.views.generic import TemplateView, ListView
 from datetime import date
-from django.db.models import Q, Value
-from django.db.models.functions import Concat
+from django.db.models import Q
 
-from courses.models import CourseModel
-from students.models import StudentModel
+from students.forms import StudentInfoForm
+from students.models import StudentModel, Enrollment
 from users.filters import AdminRequired
 from courses.models import SessionsModel, SubjectModel
 from courses.forms import DaysMultiselectForm, CancelCauseForm, CourseUpdateForm
-from users.models import UsersModel
-from students.models import Enrollment
+from courses.models import CourseModel, UsersModel
 from .forms import CoursesListFilterForm, StudentsListFilterForm
 from attendance.models import AttendanceModel
 class MainPageView(TemplateView):
@@ -64,10 +62,12 @@ class StudentsListView(AdminRequired, ListView):
     template_name = 'students_list.html'
     context_object_name = 'students'
     paginate_by = 30
+    ordering = ['first_name', 'last_name']
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter_form'] = StudentsListFilterForm(self.request.GET)
+        context['create_student_form'] = StudentInfoForm
         return context
 
     def get_queryset(self):

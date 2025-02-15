@@ -9,7 +9,46 @@
     <div class="container courses-list">
         <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
             <h5 class="m-0">Ученики</h5>
-            <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>
+{#            <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>#}
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#studentCreateModal">
+                Создать
+            </button>
+            <!-- Group create modal -->
+        <div class="modal fade" id="studentCreateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form method="post" action="{% url 'students:create_student' %}">
+                    {% csrf_token %}
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Добавить Ученика</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% for field in create_student_form %}
+                              <div class="form-floating my-1">
+                                {{ field }}
+                                <label aria-required="{{ field.field.required }}" {{ field.required }} for="{{ field.id_for_label }}">{{ field.label }}</label>
+                              </div>
+                              {% if field.errors %}
+                                <div class="text-danger small">
+                                  {% for error in field.errors %}
+                                    {{ error }}
+                                  {% endfor %}
+                                </div>
+                              {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="modal-footer pt-1">
+                            <div class="d-flex justify-content-md-end flex-column-reverse w-100 flex-md-row gap-2">
+                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-success">Сохранить</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         </div>
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">

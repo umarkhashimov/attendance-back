@@ -19,7 +19,7 @@ class StudentUpdateView(AdminRequired, UpdateView):
     form_class = StudentInfoForm
 
     def get_success_url(self):
-        return reverse('main:students_list')
+        return self.request.path
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
