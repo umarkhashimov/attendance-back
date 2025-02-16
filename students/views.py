@@ -9,6 +9,7 @@ from users.forms import TeacherSelectForm
 from .models import StudentModel, Enrollment
 from .forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import CourseModel
+from payment.forms import CreatePaymentForm
 from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
 from attendance.models import AttendanceModel
 
@@ -28,6 +29,7 @@ class StudentUpdateView(AdminRequired, UpdateView):
         context['enrollment_update_form'] = UpdateEnrollmentForm
         context['enrollments'] = Enrollment.objects.all().filter(student=self.get_object(), status=True)
         context['enrollment_form'] = StudentEnrollmentForm(student=self.get_object(), teacher=self.request.GET.get('teacher', None))
+        context['payment_form'] = CreatePaymentForm
         return context
     
     

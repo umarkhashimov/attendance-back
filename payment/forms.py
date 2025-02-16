@@ -1,27 +1,24 @@
+from calendar import month
+
 from django import forms
+from django_select2.forms import Select2Widget
+
 from .models import PaymentModel
-from students.forms import EnrollmentForm
-from students.models import Enrollment
 
 class CreatePaymentForm(forms.ModelForm):
     class Meta:
         model = PaymentModel
-        fields = ['enrollment', 'lessons_covered'] 
+        fields = ['months', 'amount']
 
         widgets = {
-        'lessons_covered':  forms.NumberInput(
-            attrs={
-                'oninput': 'this.value = this.value.replace(/[^0-9]/g, '');',
-                'placeholder': 'Кол-во занатий',
-            }
-        ),
-    }
-        
+            'months': Select2Widget(attrs={'class':'form-control mt-2'}),
+            'amount': forms.NumberInput(attrs={'readonly':True}),
+        }
 
 class ConfirmPaymentForm(forms.ModelForm):
     class Meta:
         model = PaymentModel
-        fields = ['enrollment', 'lessons_covered', 'amount', 'status'] 
+        fields = ['enrollment', 'months', 'amount']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

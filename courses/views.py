@@ -5,13 +5,12 @@ from .models import CourseModel, SessionsModel
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime
-from django.contrib import messages
 
-from .filters import course_date_match, early_to_conduct_session
 from students.models import Enrollment
 from students.forms import CourseEnrollmentForm
 from attendance.models import AttendanceModel
-from .forms import CourseUpdateForm, CourseCreateForm, LessonsWeekdaysForm, CancelCauseForm
+from .forms import CourseUpdateForm, CancelCauseForm
+from payment.forms import CreatePaymentForm
 
 class CourseUpdateView(AdminRequired, UpdateView):
     model = CourseModel
@@ -26,6 +25,7 @@ class CourseUpdateView(AdminRequired, UpdateView):
         context['obj'] = self.get_object()
         context['enrollment_form'] = CourseEnrollmentForm(course=self.get_object().id)
         context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True)
+        context['payment_form'] = CreatePaymentForm
         return context
 
 

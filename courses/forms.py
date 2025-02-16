@@ -28,6 +28,7 @@ class CourseUpdateForm(forms.ModelForm):
                     'id': 'LessonTimePicker',
                 }
             ),
+            'subject': forms.Select(attrs={'class':'form-control'}),
             'teacher': Select2Widget(attrs={'class':'form-control'}),
             'course_name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Введите имя курса'}),
             'weekdays': Select2MultipleWidget(attrs={'class':'form-control multiplechoices'}),

@@ -13,32 +13,44 @@ class PaymentsListView(ListView):
 
 class CreatePaymentView(View):
 
-    def get(self, request, student_id=None, course_id=None, enrollment_id=None):
-        form = CreatePaymentForm()
-        queryset = Enrollment.objects.all().filter(status=True)
-        
-        if student_id:
-            queryset = queryset.filter(student=student_id)
+    def get(self, request):
+        # form = CreatePaymentForm()
+        # queryset = Enrollment.objects.all().filter(status=True)
+        #
+        # if student_id:
+        #     queryset = queryset.filter(student=student_id)
+        #
+        # if course_id:
+        #     queryset = queryset.filter(course=course_id)
+        #
+        # if enrollment_id:
+        #     queryset = queryset.filter(id=enrollment_id)
+        #     form.initial['enrollment'] = queryset.first()
+        #
+        # form.fields['enrollment'].queryset = queryset
+        #
+        # return render(request, 'payment/create_payment.html', {'form': form})
+        return redirect('main:main')
 
-        if course_id:
-            queryset = queryset.filter(course=course_id)
-        
-        if enrollment_id:
-            queryset = queryset.filter(id=enrollment_id)
-            form.initial['enrollment'] = queryset.first()
-
-        form.fields['enrollment'].queryset = queryset
-
-        return render(request, 'payment/create_payment.html', {'form': form})
-
-    def post(self, request, student_id=None, course_id=None, enrollment_id=None):
-    
+    def post(self, request, enrollment_id):
+        enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         form = CreatePaymentForm(request.POST)
+
         if form.is_valid():
-            payment = form.save(commit=True)
-            payment.amount = calculate_payment_amount(payment.enrollment, payment.lessons_covered)
+            payment = PaymentModel.objects.create(enrollment=enrollment, months=form.cleaned_data['months'])
+            payment.amount = calculate_payment_amount(enrollment, payment.months)
+            payment.enrollment.add_balance(payment.months * 12)
             payment.save()
-            return redirect('payment:view_payment', payment_id=payment.id)  
+
+        next_url = self.request.GET.get('next', '/')
+        print(next_url)
+        return redirect(next_url)
+        # form = CreatePaymentForm(request.POST)
+        # if form.is_valid():
+        #     payment = form.save(commit=True)
+        #     payment.amount = calculate_payment_amount(payment.enrollment, payment.lessons_covered)
+        #     payment.save()
+        #     return redirect('payment:view_payment', payment_id=payment.id)
      
     
 class ConfirmPaymentView(View):

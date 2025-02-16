@@ -93,7 +93,7 @@
                                   <b>Группа:</b> {{ enrollment.course }}, {{ enrollment.subject }}
                                 </p>
                                 <p>
-                                  <b>Ученик:</b> {{ enrollment }}, {{ enrollment.subject }}
+                                  <b>Ученик:</b> {{ enrollment.student }}
                                 </p>
                                 <div class="form-floating mb-3">
                                   <input type="number" class="form-control" name="balance" value="{{enrollment.balance|default:"0"}}" required id="balanceInp{{ enrollment.id }}" placeholder="123" />
@@ -117,13 +117,60 @@
                                 </div>
                               </div>
                               <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                                <button type="submit" class="btn btn-primary">Сохранить</button>
+                                  <div class="w-100 flex-column-reverse d-flex flex-sm-row justify-content-between gap-2 px-4 px-sm-0">
+                                      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#payment{{ enrollment.id }}">Оплата</button>
+                                      <div class="d-flex flex-column-reverse flex-sm-row gap-2">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                                      </div>
+                                  </div>
                               </div>
                             </form>
                           </div>
                         </div>
                       </div>
+                        <!-- Payment Modal -->
+                        <div class="modal fade paymentModal" data-bs-keyboard="false" data-bs-backdrop="static" id="payment{{ enrollment.id }}" tabindex="2">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <form method="post" action="{% url "payment:create_payment_enrollment" enrollment_id=enrollment.id %}?next={{request.path}}" class="d-flex flex-column gap-2">
+                                  {% csrf_token %}
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Оплата</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <p class="mb-1">
+                                  <b>Группа:</b> {{ enrollment.course }}, {{ enrollment.subject }}
+                                </p>
+                                <p class="mb-1">
+                                  <b>Ученик:</b> {{ enrollment.student }}
+                                </p>
+                                <p class="mb-1">
+                                  <b>Цена:</b> <input type="number" id="priceInp{{ enrollment.id }}" class="bg-transparent border-0 text-black d-inline-block" readonly disabled value="{{enrollment.course.session_cost|default:"0"}}" id="priceInp{{ enrollment.id }}"/>
+                                </p>
+                                <p>
+                                  <b>Скидка:</b> <input type="number" class="bg-transparent border-0 text-black d-inline-block" readonly disabled value="{{enrollment.discount|default:"0"}}" id="dicountInp{{ enrollment.id }}"/>
+                                </p>
+                                  <label class="mb-2">{{ payment_form.months.label }}</label>
+                                  <div paymentModal="payment{{ enrollment.id }}">
+                                  </div>
+                                  <select class="form-select" name="months" forPayment="{{ enrollment.id }}" id="paymentTypeInp{{ enrollment.id }}" onchange="calculateAmount(this)" required>
+                                      {% for opt in payment_form.months.field.choices %}
+                                          <option value="{{ opt.0 }}">{{ opt.1 }}</option>
+                                      {% endfor %}
+                                  </select>
+                                  <label class="mt-3 mb-2" for="amountInp{{ enrollment.id }}">{{ payment_form.amount.label }}</label>
+                                  <input type="number" class="form-control" readonly name="amount" id="amountInp{{ enrollment.id }}">
+                              </div>
+                              <div class="modal-footer">
+                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                                <button type="submit" class="btn btn-success">Оплатить</button>
+                              </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
                     </div>
                   </td>
                 </tr>
@@ -182,8 +229,15 @@
 
 {% block custom_js %}
   <script>
-    $(document).ready(function () {
-      $('select').select2() // Apply select2 to all select elements
-    })
+
+    function calculateAmount(selectMonth) {
+        const modal = document.querySelector(`div.modal#payment${selectMonth.getAttribute('forPayment')}`)
+        const price = Number(modal.querySelector(`#priceInp${selectMonth.getAttribute('forPayment')}`).value)
+        const discount = Number(modal.querySelector(`#dicountInp${selectMonth.getAttribute('forPayment')}`).value)
+
+        const result = (price - ((price / 100) * discount)) * Number(selectMonth.value)
+        modal.querySelector(`#amountInp${selectMonth.getAttribute('forPayment')}`).value = result
+    }
+
   </script>
 {% endblock %}

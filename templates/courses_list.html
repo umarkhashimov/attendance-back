@@ -206,7 +206,7 @@
         })
 
         $(document).ready(function () {
-            $('select').select2() // Apply select2 to all select elements
+            $('.django-select2').select2() // Apply select2 to all select elements
         })
 
         $('#groupCreateModal').on('shown.bs.modal', function () {
@@ -215,7 +215,7 @@
                     dropdownParent: $('#groupCreateModal'),
                 });
             });
-            $('select.multiplechoices').select2({
+            $('.django-select2.multiplechoices').select2({
                 dropdownParent: $('#groupCreateModal'),
                 multiple: true  // Ensure multiple selection is enabled
             });
