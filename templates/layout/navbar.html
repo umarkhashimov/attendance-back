@@ -30,8 +30,7 @@
             <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'main:teachers_list' %}">Учителя</a>
           </li>
           <li class="nav-item">
-            {% url 'payment:payments_list' as cpath %}
-            <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'payment:payments_list' %}">Оплата</a>
+            <a class="nav-link {% if request.path|slice:':9' == '/payments' %}active{% endif %}" aria-current="page" href="{% url 'payment:debt_payments_list' %}">Оплата</a>
           </li>
         {% endif %}
       </ul>

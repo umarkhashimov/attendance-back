@@ -10,12 +10,27 @@
     
     <h4 class="mt-5">Учитель - {{teacher.username}} {{teacher.status}}</h4>
     <hr class="table-group-divider" />
-    <form method="post">
-      {% csrf_token %}
-      {{form|crispy}}
-      <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
-        <button type="submit" class="btn btn-primary">Сохранить</button>
-      </div>
-    </form>
+    <div class="bg-light rounded py-3 mt-3 px-2 border">
+      <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+          <div class="form-floating my-1">
+            {{ field }}
+            <label aria-required="{{ field.field.required }}" {{ field.required }} for="{{ field.id_for_label }}">{{ field.label }}</label>
+          </div>
+          {% if field.errors %}
+            <div class="text-danger small">
+              {% for error in field.errors %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+          <button type="submit" class="btn btn-success">Сохранить</button>
+        </div>
+      </form>
+    </div>
   </div>
 {% endblock %}

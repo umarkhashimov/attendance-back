@@ -387,3 +387,11 @@ table.enrollments tr:not(.trial-lesson):hover td {
 .modal * {
     z-index: 9999 !important; /* Ensure it appears above the modal */
 }
+
+.list-items-hover{
+    transition: 0.2s;
+}
+
+.list-items-hover:hover{
+    background: rgba(0, 0, 0, 0.05);
+}

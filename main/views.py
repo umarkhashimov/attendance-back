@@ -88,6 +88,7 @@ class TeachersListView(AdminRequired, ListView):
     queryset = UsersModel.objects.all().filter(role='1')
     template_name = 'teachers_list.html'
     context_object_name = 'teachers'
+    ordering = ['first_name', 'last_name']
     
 class CoursesListView(AdminRequired, ListView):
     queryset = CourseModel.objects.all()

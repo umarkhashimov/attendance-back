@@ -34,6 +34,15 @@ class TeacherUpdateForm(forms.ModelForm):
         fields = ['first_name', 'last_name', 'phone_number']
         # exclude = ['password', 'last_login']'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add attributes to all fields
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                "class": "form-control",  # Add Bootstrap class
+                "placeholder": ' ',  # Optional: Use label as placeholder
+            })
+
 class TeacherSelectForm(forms.Form):
     teacher = forms.ModelChoiceField(
         queryset=UsersModel.objects.all().filter(role='1'),

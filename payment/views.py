@@ -5,6 +5,7 @@ from .models import PaymentModel
 from .forms import CreatePaymentForm, ConfirmPaymentForm
 from students.models import Enrollment
 from .helpers import calculate_payment_amount
+from collections import defaultdict
 
 class PaymentsListView(ListView):
     model = PaymentModel
@@ -37,7 +38,21 @@ class CreatePaymentView(View):
         #     payment.amount = calculate_payment_amount(payment.enrollment, payment.lessons_covered)
         #     payment.save()
         #     return redirect('payment:view_payment', payment_id=payment.id)
-     
+
+class DebtPaymentsListView(View):
+    template_name = 'payment/debt_payments_list.html'
+
+    def get(self, request):
+        enrollments = Enrollment.objects.filter(balance__lt=0).select_related('course__teacher')
+
+        # Group enrollments by teacher
+        enrollments_grouped = defaultdict(list)
+        for enrollment in enrollments:
+            teacher = enrollment.course.teacher
+            enrollments_grouped[teacher].append(enrollment)
+
+        context = {'enrollments_grouped': dict(enrollments_grouped)}
+        return render(request, self.template_name, context)
     
 class ConfirmPaymentView(View):
     

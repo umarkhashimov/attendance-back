@@ -8,16 +8,14 @@
 
   <div class="container courses-list">
     <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
-      <h4 class="">Все Оплаты</h4>
-{#      <a href="{% url "payment:create_payment" %}" class="btn btn-primary">Создать</a>#}
     </div>
   <div class="">
       <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="#">История оплат</a>
+        <a class="nav-link" href="{% url 'payment:debt_payments_list' %}">Должники</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Список должников</a>
+        <a class="nav-link active" aria-current="page" href="{{ request.path }}">История оплат</a>
       </li>
     </ul>
   </div>

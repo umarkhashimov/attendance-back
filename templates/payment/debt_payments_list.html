@@ -1,0 +1,62 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+    <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+    {% include 'layout/navbar.html' %}
+
+    <div class="container courses-list">
+        <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
+        </div>
+        <div class="">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{{ request.path }}">Должники</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'payment:payments_list' %}">История оплат</a>
+                </li>
+            </ul>
+        </div>
+        <hr class="table-group-divider mt-0"/>
+        <div class="row px-2 mt-3">
+            {% for teacher, enrollments in enrollments_grouped.items %}
+                <div class="accordion accordion-flush" id="accordionExample">
+                    <div class="accordion-item my-1">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button shadow-none collapsed border py-2" type="button"
+                                    data-bs-toggle="collapse" data-bs-target="#accordion{{ teacher.id }}"
+                                    aria-expanded="false">
+                                {{ teacher }}
+                            </button>
+                        </h2>
+                        <div id="accordion{{ teacher.id }}" class="accordion-collapse collapse  "
+                             data-bs-parent="#accordionExample">
+                            <div class="accordion-body bg-opacity-50 bg-light">
+                                <ul class="list-group list-unstyled">
+
+                                    {% for enrollment in enrollments %}
+                                    <li class="list-group-item list-items-hover py-0">
+                                        <a href="{% url 'students:student_update' pk=enrollment.student.id %}" class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">
+
+                                        <div class="ms-2 w-100 pe-2 d-flex justify-content-between">
+                                            <p class="mb-0 text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</p>
+{#                                            <p class="ms-auto mb-0">{{ enrollment.student.phone_number }}</p>#}
+                                        </div>
+                                        <span class="badge text-bg-danger text-white rounded-pill bg-opacity-100">{{ enrollment.balance }}</span>
+                                        </a>
+                                    </li>
+                                        {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-secondary">Нет Должников.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}
