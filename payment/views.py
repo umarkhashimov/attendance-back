@@ -10,26 +10,12 @@ class PaymentsListView(ListView):
     model = PaymentModel
     template_name = 'payment/payments_list.html'
     context_object_name = 'payments'
+    ordering = ['-id']
+    paginate_by = 10
 
 class CreatePaymentView(View):
 
     def get(self, request):
-        # form = CreatePaymentForm()
-        # queryset = Enrollment.objects.all().filter(status=True)
-        #
-        # if student_id:
-        #     queryset = queryset.filter(student=student_id)
-        #
-        # if course_id:
-        #     queryset = queryset.filter(course=course_id)
-        #
-        # if enrollment_id:
-        #     queryset = queryset.filter(id=enrollment_id)
-        #     form.initial['enrollment'] = queryset.first()
-        #
-        # form.fields['enrollment'].queryset = queryset
-        #
-        # return render(request, 'payment/create_payment.html', {'form': form})
         return redirect('main:main')
 
     def post(self, request, enrollment_id):
