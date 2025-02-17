@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
+from django_select2.forms import Select2Widget
 
 from .models import UsersModel
 
@@ -46,6 +47,6 @@ class TeacherUpdateForm(forms.ModelForm):
 class TeacherSelectForm(forms.Form):
     teacher = forms.ModelChoiceField(
         queryset=UsersModel.objects.all().filter(role='1'),
-        widget=forms.Select(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
+        widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
         label="Учитель"
     )

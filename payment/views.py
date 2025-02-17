@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, ListView
 
+from users.filters import AdminRequired
 from .models import PaymentModel
 from .forms import CreatePaymentForm, ConfirmPaymentForm
 from students.models import Enrollment
@@ -39,7 +40,7 @@ class CreatePaymentView(View):
         #     payment.save()
         #     return redirect('payment:view_payment', payment_id=payment.id)
 
-class DebtPaymentsListView(View):
+class DebtPaymentsListView(View, AdminRequired):
     template_name = 'payment/debt_payments_list.html'
 
     def get(self, request):

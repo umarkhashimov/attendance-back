@@ -239,5 +239,8 @@
         modal.querySelector(`#amountInp${selectMonth.getAttribute('forPayment')}`).value = result
     }
 
+    $(document).ready(function () {
+      $('.django-select2').select2() // Apply select2 to all select elements
+    })
   </script>
 {% endblock %}
