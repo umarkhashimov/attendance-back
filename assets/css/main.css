@@ -395,3 +395,39 @@ table.enrollments tr:not(.trial-lesson):hover td {
 .list-items-hover:hover{
     background: rgba(0, 0, 0, 0.05);
 }
+
+.attendance-record-table .student-name-cell{
+    max-width: 200px;
+    min-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.attendance-record-table :where(.status-cell, .date-cell){
+    max-width: 100px !important;
+    min-width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* width */
+.attendance-table-wrapper>div::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+.attendance-table-wrapper>div::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.attendance-table-wrapper>div::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.attendance-table-wrapper>div::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

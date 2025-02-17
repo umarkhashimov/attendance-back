@@ -157,6 +157,42 @@ class GroupInfoView(DetailView):
         
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["enrollments"] = Enrollment.objects.filter(course=self.get_object(), status=True)
+
+        enrollments = Enrollment.objects.filter(course=self.get_object(), status=True)
+
+        # Get the course and its related sessions
+        course = CourseModel.objects.get(id=self.get_object().id)
+        sessions = SessionsModel.objects.filter(course=course)
+
+        # Get all enrollments for the course
+        enrollments = Enrollment.objects.filter(course=course)
+
+        # Get the attendance records for the sessions
+        attendance_data = []
+        for enrollment in enrollments:
+            student_attendance = []
+            for session in sessions:
+                attendance = AttendanceModel.objects.filter(
+                    session=session,
+                    enrollment=enrollment
+                ).first()
+                student_attendance.append(
+                    {
+                        'status': attendance.status if attendance else None,
+                        'homework_grade': attendance.homework_grade if attendance else None,
+                        'participation_grade': attendance.participation_grade if attendance else None,
+                    })
+
+            attendance_data.append({
+                'student': enrollment.student.full_name,
+                'attendance': student_attendance,
+            })
+
+        context.update({
+            'course': course,
+            'sessions': sessions,
+            'attendance_data': attendance_data
+        })
+
         return context
     
