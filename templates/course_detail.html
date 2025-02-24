@@ -2,23 +2,24 @@
 {% load crispy_forms_tags %}
 
 {% block title %}
-  <title>Панель Управления</title>
+    <title>Панель Управления</title>
 {% endblock %}
 {% block content %}
-  {% include 'layout/navbar.html' %}
+    {% include 'layout/navbar.html' %}
 
-  <div class="container pt-2">
-    <div class="row">
-      <div class="col-12 col-md-4">
-        <div class="col-12">
-          <div class="bg-light rounded py-3 mt-3 px-2 border">
-            <p class="text-dark ms-1">Записать нового Ученика</p>
-  
-            <form method="post" action="{% url 'students:create_enrollment_from_course' course_id=obj.id %}">
-              {% csrf_token %}
-              {% comment %} {{ enrollment_form|crispy }} {% endcomment %}
-              {% for field in enrollment_form %}
-                <div class="my-1 {% if field.name != 'trial_lesson' %}
+    <div class="container pt-2">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="col-12">
+                    <div class="bg-light rounded py-3 mt-3 px-2 border">
+                        <p class="text-dark ms-1">Записать нового Ученика</p>
+
+                        <form method="post"
+                              action="{% url 'students:create_enrollment_from_course' course_id=obj.id %}">
+                            {% csrf_token %}
+                            {% comment %} {{ enrollment_form|crispy }} {% endcomment %}
+                            {% for field in enrollment_form %}
+                                <div class="my-1 {% if field.name != 'trial_lesson' %}
                     
                     form-floating
   
@@ -27,31 +28,92 @@
                     ms-1
   
                   {% endif %}">
-                  {{ field }}
-                  <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                </div>
+                                {% if field.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="d-flex justify-content-end flex-column flex-md-row mt-2">
+                                <button type="submit" class="btn btn-success">Сохранить</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                {% if field.errors %}
-                  <div class="text-danger small">
-                    {% for error in field.errors %}
-                      {{ error }}
-                    {% endfor %}
-                  </div>
-                {% endif %}
-              {% endfor %}
-              <div class="d-flex justify-content-end flex-column flex-md-row mt-2">
-                <button type="submit" class="btn btn-success">Сохранить</button>
-              </div>
-            </form>
-          </div>
-        </div>
-        <div class="col-12" id="editGroupInfo">
-          <div class="bg-light rounded py-3 mt-3 px-2 border">
-            <p class="text-black ms-1">Изменить инфорамацию группы #{{ obj.id }}</p>
-            {% comment %} {{ form.as_p }} {% endcomment %}
-            <form method="post">
-              {% csrf_token %}
-              {% for field in form %}
-                <div class="my-1 {% if field.name not in 'weekday,status' %}
+                {#      Group additional tools     #}
+                <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
+                    <button type="button" class="btn btn-secondary py-1" data-bs-toggle="modal"
+                            data-bs-target="#overallAttendanceModal">
+                        Посещаемость
+                    </button>
+                    <!-- Overall Attendance modal -->
+                    <div class="modal fade" id="overallAttendanceModal" data-bs-backdrop="static"
+                         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Посещаемость</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-12 attendance-table-wrapper">
+                                        <div class="overflow-x-scroll pb-2">
+                                            <table class="border table-bordered w-100 attendance-record-table">
+                                                <thead>
+                                                <tr>
+                                                    <th class="px-2 border border-secondary border-1 student-name-cell">
+                                                        Имя студента
+                                                    </th>
+                                                    {% for session in sessions %}
+                                                        <td class="text-center border border-secondary border-1 date-cell">
+                                                            <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
+                                                        </td>
+                                                    {% endfor %}
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for record in attendance_data %}
+                                                    <tr>
+                                                        <td class="px-2 py-1 border border-secondary border-1 status-cell">{{ record.student }}</td>
+                                                        {% for info in record.attendance %}
+                                                            <td class="border border-secondary border-1 text-center status-cell {% if info.status == True %} bg-success bg-opacity-50 {% elif info.status == False %} bg-danger bg-opacity-50 {% else %} bg-secondary-subtle {% endif %}">
+                                                                {% if info.status == True %}
+                                                                    <span title="оценка за дом.зад./посещение">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
+                                                                {% elif info.status == False %}
+                                                                    <span class="text-danger"><i
+                                                                            class="bi bi-x"></i></span>
+                                                                {% elif info.status == None %}
+                                                                    <i class="bi bi-question"></i>
+                                                                {% endif %}
+                                                            </td>
+
+                                                        {% endfor %}
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12" id="editGroupInfo">
+                    <div class="bg-light rounded py-3 mt-3 px-2 border">
+                        <p class="text-black ms-1">Изменить инфорамацию группы #{{ obj.id }}</p>
+                        {% comment %} {{ form.as_p }} {% endcomment %}
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="my-1 {% if field.name not in 'weekday,status' %}
                     
                     form-floating
 
@@ -60,197 +122,270 @@
                      ms-1
 
                   {% endif %}">
-                  {{ field }}
-                  <label aria-required="{{ field.field.required }}" {{ field.required }} for="{{ field.id_for_label }}">{{ field.label }}</label>
-                </div>
-                {% if field.errors %}
-                  <div class="text-danger small">
-                    {% for error in field.errors %}
-                      {{ error }}
-                    {% endfor %}
-                  </div>
-                {% endif %}
-              {% endfor %}
-              <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
-                <button type="submit" class="btn btn-success">Сохранить</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-md-8">
-        <div class="rounded py-2 mt-3 mt-md-0">
-          <p class="mt-2 text-dark ms-1 mb-2">Записанные ученики</p>
-
-          <table class="table border border-2 enrollments">
-            <thead>
-              <tr>
-                <th class="w-50">Курс</th>
-                <th class="w-50">Баланс</th>
-                <th class="w-50">Управления</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for enrollment in enrollments %}
-                <tr {% if enrollment.trial_lesson %}class="trial-lesson"{% endif %}>
-                    <td class="py-0 align-middle"><a class="text-decoration-none text-dark opacity-100 table-obj-name-link" href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a></td>
-                  <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
-                  <td class="d-flex justify-content-end p-0 h-100">
-                    <div class="btn-group rounded-0 w-100 p-0 h-100">
-                      <button type="button" class="btn rounded-0 btn-warning px-3 py-1" data-bs-toggle="modal" data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i class="bi bi-pencil-fill"></i></button>
-                      <button type="button" class="rounded-0 btn btn-danger px-3 py-1" data-bs-toggle="modal" data-bs-target="#deleteEnrollmentModal{{ enrollment.id }}"><i class="bi bi-trash3"></i></button>
-                      <!-- Enrollment delete modal -->
-                      <div class="modal fade" id="deleteEnrollmentModal{{ enrollment.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить Запись</h1>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                              <p>
-                                Вы действительно хотите удалить ученика <b>{{ enrollment.student.full_name }}</b> из группы <b>{{ enrollment.course }}</b>
-                              </p>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                              <form method="post" action="{% url 'students:delete_enrollment' enrollment_id=enrollment.id %}?next={{ request.path }}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Да</button>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <!-- Edit Enrollment modal -->
-                      <div class="modal fade" data-bs-backdrop="static" id="editEnrollmentModal{{ enrollment.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h1 class="modal-title fs-5" id="exampleModalLabel">Изменить информацию о Записе</h1>
-                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form method="post" action="{% url "students:update_enrollment" pk=enrollment.id %}?next={{request.path}}">
-                              {% csrf_token %}
-                              <div class="modal-body">
-                                <p>
-                                  <b>Группа:</b> {{ enrollment.course }}, {{ enrollment.subject }}
-                                </p>
-                                <p>
-                                  <b>Ученик:</b> {{ enrollment.student }}
-                                </p>
-                                <div class="form-floating mb-3">
-                                  <input type="number" class="form-control" name="balance" value="{{enrollment.balance|default:"0"}}" required id="balanceInp{{ enrollment.id }}" placeholder="123" />
-                                  <label for="balanceInp{{ enrollment.id }}">Баланс</label>
+                                    {{ field }}
+                                    <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 </div>
-                                <div class="form-floating mb-3">
-                                  <input type="number" class="form-control" name="discount" value="{{enrollment.discount|default:"0"}}" required min="0" max="100" id="dicountInp{{ enrollment.id }}" placeholder="123" />
-                                  <label for="dicountInp{{ enrollment.id }}">Скидка (0 - 100)%</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                  <input type="number" class="form-control" required value="{{enrollment.hold|default:"0"}}" min="0" id="dicountInp{{ enrollment.id }}" placeholder="123" name="hold" />
-                                  <label for="dicountInp{{ enrollment.id }}">Заморозка</label>
-                                </div>
-                                <div class="form-floating mb-3">
-                                  <input type="text" class="form-control" value="{{enrollment.debt_note|default:""}}" min="0" id="debtNoteInp{{ enrollment.id }}" placeholder="123" name="debt_note" />
-                                  <label for="debtNoteInp{{ enrollment.id }}">Заметка для долга</label>
-                                </div>
-                                <div class="d-flex align-items-center">
-                                  <input type="checkbox" name="trial_lesson" class="form-check-input fs-5 m-0" {% if enrollment.trial_lesson %}checked{% endif %} id="trialInp{{ enrollment.id }}">
-                                  <label for="trialInp{{ enrollment.id }}" class="ms-2">Пробный урок</label>
-                                </div>
-                              </div>
-                              <div class="modal-footer">
-                                  <div class="w-100 flex-column-reverse d-flex flex-sm-row justify-content-between gap-2 px-4 px-sm-0">
-                                      <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#payment{{ enrollment.id }}">Оплата</button>
-                                      <div class="d-flex flex-column-reverse flex-sm-row gap-2">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                                        <button type="submit" class="btn btn-primary">Сохранить</button>
-                                      </div>
-                                  </div>
-                              </div>
-                            </form>
-                          </div>
-                        </div>
-                      </div>
-                        <!-- Payment Modal -->
-                        <div class="modal fade paymentModal" data-bs-keyboard="false" data-bs-backdrop="static" id="payment{{ enrollment.id }}" tabindex="2">
-                          <div class="modal-dialog">
-                            <div class="modal-content">
-                              <form method="post" action="{% url "payment:create_payment_enrollment" enrollment_id=enrollment.id %}?next={{request.path}}" class="d-flex flex-column gap-2">
-                                  {% csrf_token %}
-                              <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Оплата</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                              </div>
-                              <div class="modal-body">
-                                <p class="mb-1">
-                                  <b>Группа:</b> {{ enrollment.course }}, {{ enrollment.subject }}
-                                </p>
-                                <p class="mb-1">
-                                  <b>Ученик:</b> {{ enrollment.student }}
-                                </p>
-                                <p class="mb-1">
-                                  <b>Цена:</b> <input type="number" id="priceInp{{ enrollment.id }}" class="bg-transparent border-0 text-black d-inline-block" readonly disabled value="{{enrollment.course.session_cost|default:"0"}}" id="priceInp{{ enrollment.id }}"/>
-                                </p>
-                                <p>
-                                  <b>Скидка:</b> <input type="number" class="bg-transparent border-0 text-black d-inline-block" readonly disabled value="{{enrollment.discount|default:"0"}}" id="dicountInp{{ enrollment.id }}"/>
-                                </p>
-                                  <label class="mb-2">{{ payment_form.months.label }}</label>
-                                  <div paymentModal="payment{{ enrollment.id }}">
-                                  </div>
-                                  <select class="form-select" name="months" forPayment="{{ enrollment.id }}" id="paymentTypeInp{{ enrollment.id }}" onchange="calculateAmount(this)" required>
-                                      {% for opt in payment_form.months.field.choices %}
-                                          <option value="{{ opt.0 }}">{{ opt.1 }}</option>
-                                      {% endfor %}
-                                  </select>
-                                  <label class="mt-3 mb-2" for="amountInp{{ enrollment.id }}">{{ payment_form.amount.label }}</label>
-                                  <input type="number" class="form-control" readonly name="amount" id="amountInp{{ enrollment.id }}">
-                              </div>
-                              <div class="modal-footer">
-                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                                <button type="submit" class="btn btn-success">Оплатить</button>
-                              </div>
-                              </form>
+                                {% if field.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+                                <button type="submit" class="btn btn-success">Сохранить</button>
                             </div>
-                          </div>
-                        </div>
+                        </form>
                     </div>
-                  </td>
-                </tr>
-              {% empty %}
-                <tr>
-                  <td colspan="3" class="text-center w-100">нет записей</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="rounded py-2 mt-3 mt-md-0">
+                    <p class="mt-2 text-dark ms-1 mb-2">Записанные ученики</p>
+
+                    <table class="table border border-2 enrollments">
+                        <thead>
+                        <tr>
+                            <th class="w-50">Курс</th>
+                            <th class="w-50">Баланс</th>
+                            <th class="w-50">Управления</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for enrollment in enrollments %}
+                            <tr {% if enrollment.trial_lesson %}class="trial-lesson"{% endif %}>
+                                <td class="py-0 align-middle"><a
+                                        class="text-decoration-none text-dark opacity-100 table-obj-name-link"
+                                        href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a>
+                                </td>
+                                <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
+                                <td class="d-flex justify-content-end p-0 h-100">
+                                    <div class="btn-group rounded-0 w-100 p-0 h-100">
+                                        <button type="button" class="btn rounded-0 btn-warning px-3 py-1"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i
+                                                class="bi bi-pencil-fill"></i></button>
+                                        <button type="button" class="rounded-0 btn btn-danger px-3 py-1"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteEnrollmentModal{{ enrollment.id }}"><i
+                                                class="bi bi-trash3"></i></button>
+                                        <!-- Enrollment delete modal -->
+                                        <div class="modal fade" id="deleteEnrollmentModal{{ enrollment.id }}"
+                                             tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить
+                                                            Запись</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>
+                                                            Вы действительно хотите удалить ученика
+                                                            <b>{{ enrollment.student.full_name }}</b> из группы
+                                                            <b>{{ enrollment.course }}</b>
+                                                        </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Отмена
+                                                        </button>
+                                                        <form method="post"
+                                                              action="{% url 'students:delete_enrollment' enrollment_id=enrollment.id %}?next={{ request.path }}">
+                                                            {% csrf_token %}
+                                                            <button type="submit" class="btn btn-danger">Да</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Edit Enrollment modal -->
+                                        <div class="modal fade" data-bs-backdrop="static"
+                                             id="editEnrollmentModal{{ enrollment.id }}" tabindex="-1"
+                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Изменить
+                                                            информацию о Записе</h1>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                                aria-label="Close"></button>
+                                                    </div>
+                                                    <form method="post"
+                                                          action="{% url "students:update_enrollment" pk=enrollment.id %}?next={{ request.path }}">
+                                                        {% csrf_token %}
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                <b>Группа:</b> {{ enrollment.course }}, {{ enrollment.subject }}
+                                                            </p>
+                                                            <p>
+                                                                <b>Ученик:</b> {{ enrollment.student }}
+                                                            </p>
+                                                            <div class="form-floating mb-3">
+                                                                <input type="number" class="form-control" name="balance"
+                                                                       value="{{ enrollment.balance|default:"0" }}"
+                                                                       required id="balanceInp{{ enrollment.id }}"
+                                                                       placeholder="123"/>
+                                                                <label for="balanceInp{{ enrollment.id }}">Баланс</label>
+                                                            </div>
+                                                            <div class="form-floating mb-3">
+                                                                <input type="number" class="form-control"
+                                                                       name="discount"
+                                                                       value="{{ enrollment.discount|default:"0" }}"
+                                                                       required min="0" max="100"
+                                                                       id="dicountInp{{ enrollment.id }}"
+                                                                       placeholder="123"/>
+                                                                <label for="dicountInp{{ enrollment.id }}">Скидка (0 -
+                                                                    100)%</label>
+                                                            </div>
+                                                            <div class="form-floating mb-3">
+                                                                <input type="number" class="form-control" required
+                                                                       value="{{ enrollment.hold|default:"0" }}" min="0"
+                                                                       id="dicountInp{{ enrollment.id }}"
+                                                                       placeholder="123" name="hold"/>
+                                                                <label for="dicountInp{{ enrollment.id }}">Заморозка</label>
+                                                            </div>
+                                                            <div class="form-floating mb-3">
+                                                                <input type="text" class="form-control"
+                                                                       value="{{ enrollment.debt_note|default:"" }}"
+                                                                       min="0" id="debtNoteInp{{ enrollment.id }}"
+                                                                       placeholder="123" name="debt_note"/>
+                                                                <label for="debtNoteInp{{ enrollment.id }}">Заметка для
+                                                                    долга</label>
+                                                            </div>
+                                                            <div class="d-flex align-items-center">
+                                                                <input type="checkbox" name="trial_lesson"
+                                                                       class="form-check-input fs-5 m-0"
+                                                                       {% if enrollment.trial_lesson %}checked{% endif %}
+                                                                       id="trialInp{{ enrollment.id }}">
+                                                                <label for="trialInp{{ enrollment.id }}" class="ms-2">Пробный
+                                                                    урок</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <div class="w-100 flex-column-reverse d-flex flex-sm-row justify-content-between gap-2 px-4 px-sm-0">
+                                                                <button type="button" class="btn btn-success"
+                                                                        data-bs-toggle="modal"
+                                                                        data-bs-target="#payment{{ enrollment.id }}">
+                                                                    Оплата
+                                                                </button>
+                                                                <div class="d-flex flex-column-reverse flex-sm-row gap-2">
+                                                                    <button type="button" class="btn btn-secondary"
+                                                                            data-bs-dismiss="modal">Отмена
+                                                                    </button>
+                                                                    <button type="submit" class="btn btn-primary">
+                                                                        Сохранить
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Payment Modal -->
+                                        <div class="modal fade paymentModal" data-bs-keyboard="false"
+                                             data-bs-backdrop="static" id="payment{{ enrollment.id }}" tabindex="2">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form method="post"
+                                                          action="{% url "payment:create_payment_enrollment" enrollment_id=enrollment.id %}?next={{ request.path }}"
+                                                          class="d-flex flex-column gap-2">
+                                                        {% csrf_token %}
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">
+                                                                Оплата</h1>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p class="mb-1">
+                                                                <b>Группа:</b> {{ enrollment.course }}, {{ enrollment.subject }}
+                                                            </p>
+                                                            <p class="mb-1">
+                                                                <b>Ученик:</b> {{ enrollment.student }}
+                                                            </p>
+                                                            <p class="mb-1">
+                                                                <b>Цена:</b> <input type="number"
+                                                                                    id="priceInp{{ enrollment.id }}"
+                                                                                    class="bg-transparent border-0 text-black d-inline-block"
+                                                                                    readonly disabled
+                                                                                    value="{{ enrollment.course.session_cost|default:"0" }}"
+                                                                                    id="priceInp{{ enrollment.id }}"/>
+                                                            </p>
+                                                            <p>
+                                                                <b>Скидка:</b> <input type="number"
+                                                                                      class="bg-transparent border-0 text-black d-inline-block"
+                                                                                      readonly disabled
+                                                                                      value="{{ enrollment.discount|default:"0" }}"
+                                                                                      id="dicountInp{{ enrollment.id }}"/>
+                                                            </p>
+                                                            <label class="mb-2">{{ payment_form.months.label }}</label>
+                                                            <div paymentModal="payment{{ enrollment.id }}">
+                                                            </div>
+                                                            <select class="form-select" name="months"
+                                                                    forPayment="{{ enrollment.id }}"
+                                                                    id="paymentTypeInp{{ enrollment.id }}"
+                                                                    onchange="calculateAmount(this)" required>
+                                                                {% for opt in payment_form.months.field.choices %}
+                                                                    <option value="{{ opt.0 }}">{{ opt.1 }}</option>
+                                                                {% endfor %}
+                                                            </select>
+                                                            <label class="mt-3 mb-2"
+                                                                   for="amountInp{{ enrollment.id }}">{{ payment_form.amount.label }}</label>
+                                                            <input type="number" class="form-control" readonly
+                                                                   name="amount" id="amountInp{{ enrollment.id }}">
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="reset" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Отмена
+                                                            </button>
+                                                            <button type="submit" class="btn btn-success">Оплатить
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center w-100">нет записей</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 {% endblock %}
 
 {% block custom_js %}
-  <script>
-    flatpickr('#LessonTimePicker', {
-      enableTime: true,
-      noCalendar: true,
-      dateFormat: 'H:i',
-      time_24hr: true
-    })
+    <script>
+        flatpickr('#LessonTimePicker', {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: 'H:i',
+            time_24hr: true
+        })
 
-     function calculateAmount(selectMonth) {
-        const modal = document.querySelector(`div.modal#payment${selectMonth.getAttribute('forPayment')}`)
-        const price = Number(modal.querySelector(`#priceInp${selectMonth.getAttribute('forPayment')}`).value)
-        const discount = Number(modal.querySelector(`#dicountInp${selectMonth.getAttribute('forPayment')}`).value)
+        function calculateAmount(selectMonth) {
+            const modal = document.querySelector(`div.modal#payment${selectMonth.getAttribute('forPayment')}`)
+            const price = Number(modal.querySelector(`#priceInp${selectMonth.getAttribute('forPayment')}`).value)
+            const discount = Number(modal.querySelector(`#dicountInp${selectMonth.getAttribute('forPayment')}`).value)
 
-        const result = (price - ((price / 100) * discount)) * Number(selectMonth.value)
-        modal.querySelector(`#amountInp${selectMonth.getAttribute('forPayment')}`).value = result
-    }
-    
-    $(document).ready(function () {
-      $('.django-select2').select2() // Apply select2 to all select elements
-    })
-  </script>
+            const result = (price - ((price / 100) * discount)) * Number(selectMonth.value)
+            modal.querySelector(`#amountInp${selectMonth.getAttribute('forPayment')}`).value = result
+        }
+
+        $(document).ready(function () {
+            $('.django-select2').select2() // Apply select2 to all select elements
+        })
+    </script>
 {% endblock %}

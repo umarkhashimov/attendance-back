@@ -50,18 +50,18 @@
     transition: 0.1s;
 }
 
-.course-list-item .course-name{
+.course-list-item .course-name {
     font-size: 14px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.course-list-item .course-name .course-name{
+.course-list-item .course-name .course-name {
     font-size: 13px;
 }
 
-.course-list-item .course-name .course-id{
+.course-list-item .course-name .course-id {
     font-size: 10px !important;
 }
 
@@ -140,8 +140,8 @@
 }
 
 .grade-inp {
-    min-width: 40px;
-    max-width: 60px;
+    min-width: 30px;
+    max-width: 50px;
     margin: 0 !important;
     box-shadow: none !important;
     text-align: center !important;
@@ -225,6 +225,11 @@ tr.trial-lesson td {
     display: none !important;
 }
 
+.gradesInp input{
+    padding: 5px !important;
+    width: 30px !important;
+}
+
 .topic-label {
     position: absolute;
     max-width: 57%;
@@ -297,7 +302,7 @@ tr.trial-lesson td {
     font-size: 14px;
 }
 
-.form-floating :where(input, textarea):placeholder-shown+label[aria-required="True"] {
+.form-floating :where(input, textarea):placeholder-shown + label[aria-required="True"] {
     color: #a00000 !important;
 }
 
@@ -315,14 +320,14 @@ table.enrollments tr:not(.trial-lesson):hover td {
     background-color: rgba(0, 0, 0, 0.02) !important;
 }
 
-.form-floating > select:not(.multiplechoices) + .select2 > .selection > .select2-selection{
+.form-floating > select:not(.multiplechoices) + .select2 > .selection > .select2-selection {
     height: 50px;
     padding-top: 20px;
     border: 1px solid lightgray;
     width: 100%;
 }
 
-.form-floating select.multiplechoices + .select2 .select2-selection{
+.form-floating select.multiplechoices + .select2 .select2-selection {
     /* height: 50px; */
     padding-top: 20px;
     font-size: 15px;
@@ -331,11 +336,11 @@ table.enrollments tr:not(.trial-lesson):hover td {
 }
 
 .data-list .has-debt td,
-.enrollments .has-debt:hover td{
+.enrollments .has-debt:hover td {
     background-color: rgba(255, 0, 0, 0.1) !important;
 }
 
-.filter-reset-btn{
+.filter-reset-btn {
     background-color: transparent;
     font-size: 14px !important;
     font-weight: 600;
@@ -347,40 +352,35 @@ table.enrollments tr:not(.trial-lesson):hover td {
     color: grey;
 }
 
-.filter-reset-btn:hover{
+.filter-reset-btn:hover {
     color: red;
     text-decoration-color: red;
 }
 
-.custom-select-2 > select + .select2 > .selection > .select2-selection{
+.custom-select-2 > select + .select2 > .selection > .select2-selection {
     min-height: 30px;
     font-size: 16px;
     border: 1px solid lightgray;
 }
 
-#filterForm label{
+#filterForm label {
     font-size: 14px !important;
     color: black;
 }
 
-#filterForm :where(input, select + .select2 > .selection > .select2-selection){
+#filterForm :where(input, select + .select2 > .selection > .select2-selection) {
     min-height: 35px !important;
     align-items: center;
     padding: 3px 6px;
     border: 1px solid lightgray;
 }
 
-@media screen and (max-width: 480px) {
-    .attendance-item {
-        font-size: 17px;
-    }
-}
 
-.table-obj-name-link:hover{
+.table-obj-name-link:hover {
     text-decoration: 1px solid underline black !important;
 }
 
-.text-white p.course-name{
+.text-white p.course-name {
     color: white !important;
 }
 
@@ -388,15 +388,15 @@ table.enrollments tr:not(.trial-lesson):hover td {
     z-index: 9999 !important; /* Ensure it appears above the modal */
 }
 
-.list-items-hover{
+.list-items-hover {
     transition: 0.2s;
 }
 
-.list-items-hover:hover{
+.list-items-hover:hover {
     background: rgba(0, 0, 0, 0.05);
 }
 
-.attendance-record-table .student-name-cell{
+.attendance-record-table .student-name-cell {
     max-width: 200px;
     min-width: 150px;
     white-space: nowrap;
@@ -404,7 +404,7 @@ table.enrollments tr:not(.trial-lesson):hover td {
     text-overflow: ellipsis;
 }
 
-.attendance-record-table :where(.status-cell, .date-cell){
+.attendance-record-table :where(.status-cell, .date-cell) {
     max-width: 100px !important;
     min-width: 60px;
     white-space: nowrap;
@@ -413,21 +413,67 @@ table.enrollments tr:not(.trial-lesson):hover td {
 }
 
 /* width */
-.attendance-table-wrapper>div::-webkit-scrollbar {
-  width: 10px;
+.attendance-table-wrapper > div::-webkit-scrollbar {
+    width: 10px;
 }
 
 /* Track */
-.attendance-table-wrapper>div::-webkit-scrollbar-track {
-  background: #f1f1f1;
+.attendance-table-wrapper > div::-webkit-scrollbar-track {
+    background: #f1f1f1;
 }
 
 /* Handle */
-.attendance-table-wrapper>div::-webkit-scrollbar-thumb {
-  background: #888;
+.attendance-table-wrapper > div::-webkit-scrollbar-thumb {
+    background: #888;
 }
 
 /* Handle on hover */
-.attendance-table-wrapper>div::-webkit-scrollbar-thumb:hover {
-  background: #555;
+.attendance-table-wrapper > div::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.attendance-form .name {
+    font-size: 16px;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 480px) {
+    .attendance-item {
+        font-size: 17px;
+    }
+
+    .attendance-form .name {
+        font-size: 13px;
+        text-after-overflow: ellipsis;
+    }
+
+    .gradesInp input{
+        padding:2px !important;
+        width: 20px !important;
+    }
+
+    .attendance-form p.badge{
+        display: none !important;
+    }
+
+    .attendance-form button{
+        padding: 5px !important;
+        font-size: 14px !important;
+        max-width: 50px;
+        min-width: 30px;
+    }
+}
+
+
+.course-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fixed-width-btn {
+    width: 50px; /* Fixed width */
+    height: 40px;
 }

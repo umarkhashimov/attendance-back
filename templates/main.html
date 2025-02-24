@@ -10,40 +10,51 @@
     <p class="text-dark ms-1 fs-6 m-0">Отмеченные</p>
     <hr class="table-group-divider mt-2" />
     {% for obj in marked_sessions %}
-{#      <a {% if obj.course.check_time or user.role == '2'  %} href="{% url 'attendance:session_detail' course_id=obj.course.id session_id=obj.id %}" {% else %}disabled{% endif %} class="border-2 border marked conducted {% if obj.status %}border-success btn btn-success text-white {% else %}border-danger btn btn-danger{% endif %} p-3 d-block course-list-item my-3">#}
-        <div class="{% if obj.status %}border-success bg-success text-white {% else %}border-danger border bg-danger text-white{% endif %} col-12 border-2 border ps-2 pe-0 marked py-0 d-block course-list-item mt-2 mb-1 position-relative">
-            {% if user.role == "2" %}
-                <span class="position-absolute top-0 teacher-name-label">{% if obj.course.teacher.first_name %}{{obj.course.teacher.first_name|default:'-'}} {{obj.course.teacher.last_name|default:"-"}}{% else %}{{ obj.course.teacher.username }}{% endif %}</span>
-            {% endif %}
-            <div class="d-flex flex-row justify-content-between">
-                <div class="d-flex w-100 align-items-center py-2">
-                    <p class="text-dark mb-0 course-name w-100 align-items-center py-1">
+    <div class="{% if obj.status %}border-success bg-success text-white {% else %}border-danger border bg-danger text-white{% endif %} col-12 border-2 border ps-2 pe-0 marked py-0 d-block course-list-item mt-2 mb-1 position-relative">
+        {% if user.role == "2" %}
+            <span class="position-absolute top-0 teacher-name-label">
+                {% if obj.course.teacher.first_name %}
+                    {{ obj.course.teacher.first_name|default:'-' }} {{ obj.course.teacher.last_name|default:"-" }}
+                {% else %}
+                    {{ obj.course.teacher.username }}
+                {% endif %}
+            </span>
+        {% endif %}
+
+        <div class="d-flex flex-row justify-content-between align-items-center">
+            <div class="d-flex w-100 align-items-center py-2 overflow-hidden text-truncate">
+                <p class="text-dark mb-0 course-name text-truncate w-100">
                     <span class="opacity-50 course-id">{{ obj.course.id }}</span>
-                        <span class="">
-                        {{ obj.course.subject|capfirst }} -
-                        {{ obj.course.get_name }}
+                    <span>
+                        {{ obj.course.subject|capfirst }} - <span class="d-none d-sm-inline-block">{{ obj.course.get_name }}</span>
+                    </span>
+                    <span class="badge text-bg-light border border-1 ms-2">{{ obj.course.lesson_time|time:'H:i' }}</span>
+                    {% if obj.has_unmarked_attendance %}
+                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Есть не отмеченные" role='button' class="text-warning ms-2">
+                            <i class="bi bi-exclamation-circle-fill"></i>
                         </span>
-                        <span class="badge text-bg-light border border-1 ms-2" >{{ obj.course.lesson_time|time:'H:i' }}</span>
-                         {% if obj.has_unmarked_attendance  %}<span  data-bs-toggle="tooltip" data-bs-placement="top" title="Есть не отмеченные" role='button' class="text-warning ms-2"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
-                    </p>
-                </div>
-                {% if obj.course.check_time and obj.status or user.role == '2' and obj.status %}
-                <div class="d-flex btn-group rounded-0">
-                    <button type="button" class="btn btn-warning px-3 rounded-0 rounded-end-1 " data-bs-toggle="modal" data-bs-target="#attendanceModal{{ obj.id }}">
-                      <i class="bi bi-pencil-fill"></i>
+                    {% endif %}
+                </p>
+            </div>
+
+            {% if obj.course.check_time and obj.status or user.role == '2' and obj.status %}
+                <div class="btn-group flex-shrink-0">
+                    <button type="button" class="btn btn-warning px-3 rounded-0 rounded-end-1 fixed-width-btn" data-bs-toggle="modal" data-bs-target="#attendanceModal{{ obj.id }}">
+                        <i class="bi bi-pencil-fill"></i>
                     </button>
                 </div>
-                {% endif %}
-            </div>
+            {% endif %}
         </div>
-        {%empty%}
-          <p class="text-center text-secondary">Пусто</p>
-      {% endfor %}
+    </div>
+{% empty %}
+    <p class="text-center text-secondary">Пусто</p>
+{% endfor %}
+
 
   {% for conducted in conducted_sessions %}
       {% if conducted.course.check_time or user.role == '2'  %}
     <!-- Attendance Modal -->
-  <form action="{% url 'attendance:session_detail' course_id=conducted.course.id session_id=conducted.id %}" method='post'>
+  <form class="attendance-form" action="{% url 'attendance:session_detail' course_id=conducted.course.id session_id=conducted.id %}" method='post'>
     <div data-bs-backdrop="static" class="modal fade" id="attendanceModal{{ conducted.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -76,16 +87,16 @@
               <div class="d-flex justify-content-end text-end align-items-center h-100">
 
                 <input hidden class="studentStatusInput" type="text" name="stid_{{obj.enrollment.student.student_id}}" value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">
-                <div class="gradesInp d-flex me-1 gap-1">
-                  <input type="number" name="ga_{{obj.enrollment.student.student_id}}" value="{{obj.participation_grade}}" class="form-control grade-inp border-2" title="Оценка за посещаемость">
-                  <input type="number" name="ghw_{{obj.enrollment.student.student_id}}" value="{{obj.homework_grade}}" class="form-control grade-inp border-2" title="Оценка за домашнее задание">
+                <div class="gradesInp btn-group d-flex me-1">
+                  <input type="number" name="ga_{{obj.enrollment.student.student_id}}" value="{{obj.participation_grade}}" class="form-control grade-inp border-2 rounded-end-0" title="Оценка за посещаемость">
+                  <input type="number" name="ghw_{{obj.enrollment.student.student_id}}" value="{{obj.homework_grade}}" class="form-control grade-inp border-2 rounded-start-0" title="Оценка за домашнее задание">
                 </div>
-                <div class="d-flex marked-conf  align-items-center">
-                  <div class="d-flex align-items-center h-100 mx-2 marked-status-badge">
+                <div class="marked-conf d-flex align-items-center">
+                  <div class="d-flex align-items-center h-100 marked-status-badge">
                     <p class="badge present text-bg-success rounded-5 m-0 my-auto"><i class="bi bi-check"></i></p>
                     <p class="badge absent text-bg-danger rounded-5 m-0 my-auto"><i class="bi bi-x"></i></p>
-                  </div>
-                  <button type="button" onclick="unmarkStudent({{obj.enrollment.student.student_id}})" class="btn btn-light border border-dark px-2"><i class="bi bi-pencil-fill"></i></button>
+                  <button type="button" onclick="unmarkStudent({{obj.enrollment.student.student_id}})" class="btn btn-light border border-dark px-2 ms-1    "><i class="bi bi-pencil-fill"></i></button>
+                </div>
                 </div>
                 <div class="btn-group gap-1 choose check-buttons">
                   <button type="button" onclick="markStudent('absent', {{obj.enrollment.student.student_id}})" class="btn btn-danger px-3"><i class="bi bi-x-lg"></i></button>
@@ -95,6 +106,7 @@
             </td>
           </tr>
           {% endfor %}
+
         </tbody>
       </table>
             </div>

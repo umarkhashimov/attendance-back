@@ -23,29 +23,6 @@
             <h4 class="group-intro">Группа - {{ object }}</h4>
         </div>
         <hr class="table-group-divider"/>
-        {#        <table class="table border border-2">#}
-        {#            <thead>#}
-        {#            <tr>#}
-        {#                <th class="w-50">Имя</th>#}
-        {#                <th class="w-50">Фамилия</th>#}
-        {#            </tr>#}
-        {#            </thead>#}
-        {#            <tbody>#}
-        {#            {% for enrollment in enrollments %}#}
-        {#                <tr {% if enrollment.balance <= 0 %}class=" border-2 border-danger"#}
-        {#                    title='Должник {{ enrollment.balance }}'{% endif %}>#}
-        {#                    <td class="">{{ enrollment.student.first_name }}</td>#}
-        {#                    <td class="">{{ enrollment.student.last_name }}</td>#}
-        {#                </tr>#}
-        {#            {% empty %}#}
-        {#                <tr>#}
-        {#                    <td colspan="2" class="text-center w-100">Нет записанных учеников</td>#}
-        {#                </tr>#}
-        {#            {% endfor %}#}
-        {#            </tbody>#}
-        {#        </table>#}
-
-
         <div class="row">
             <div class="col-12 attendance-table-wrapper">
                 <div class="overflow-x-scroll pb-2">
@@ -65,10 +42,12 @@
                             <tr>
                                 <td class="px-2 py-1 border border-secondary border-1 status-cell">{{ record.student }}</td>
                                 {% for info in record.attendance %}
-                                    <td class="border border-secondary border-1 text-center status-cell {% if info.status == True %} bg-success-subtle {% elif info.status == False %} bg-danger-subtle {% else %} bg-secondary-subtle {% endif %}">
-                                        {% if info.status != None %}
+                                    <td class="border border-secondary border-1 text-center status-cell {% if info.status == True %} bg-success bg-opacity-50 {% elif info.status == False %} bg-danger bg-opacity-50 {% else %} bg-secondary-subtle {% endif %}">
+                                        {% if info.status == True %}
                                             <span title="оценка за дом.зад./посещение">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
-                                        {% else %}
+                                        {% elif info.status == False %}
+                                            <span class="text-danger"><i class="bi bi-x"></i></span>
+                                        {% elif info.status == None %}
                                             <i class="bi bi-question"></i>
                                         {% endif %}
                                     </td>
