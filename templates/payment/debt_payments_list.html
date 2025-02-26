@@ -20,7 +20,7 @@
             </ul>
         </div>
         <hr class="table-group-divider mt-0"/>
-        <div class="row px-2 mt-3">
+        <div class="row px-2 mt-3 debt-accordions">
             {% for teacher, courses in teacher_enrollments.items %}
                 <div class="accordion accordion-flush" id="accordionExample">
                     <div class="accordion-item my-1">
@@ -55,7 +55,7 @@
 
                                                             <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">
                                                                 <p class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</p>
-                                                                <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row debt-students-phone-numbers"><span>{{ enrollment.student.phone_number }}</span><span>{{ enrollment.student.additional_number }}</span></p>
+                                                                <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row gap-md-3 debt-students-phone-numbers"><span>{{ enrollment.student.phone_number }}</span><span>{{ enrollment.student.additional_number|default_if_none:"---" }}</span></p>
                                                             </div>
                                                             <span class="badge text-bg-danger text-white rounded-pill bg-opacity-100">{{ enrollment.balance }}</span>
                                                         </a>

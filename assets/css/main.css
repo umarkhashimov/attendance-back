@@ -484,3 +484,7 @@ table.enrollments tr:not(.trial-lesson):hover td {
         flex-direction: column !important;
     }
 }
+
+.debt-accordions .accordion-button:hover {
+    border-color: black !important;
+}
