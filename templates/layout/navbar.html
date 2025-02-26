@@ -13,7 +13,7 @@
         {% if user.role == '1' %}
         {% url 'courses:mygroups' as cpath %}
         <li class="nav-item">
-          <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'courses:mygroups' %}">Мои Группы</a>
+          <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'courses:mygroups' %}">Посещаемость</a>
         </li>      
         {% endif %}
         {% if user.role == '2' %}

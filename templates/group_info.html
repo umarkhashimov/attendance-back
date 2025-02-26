@@ -27,26 +27,27 @@
             <div class="col-12 attendance-table-wrapper">
                 <div class="overflow-x-scroll pb-2">
                     <table class="border table-bordered w-100 attendance-record-table">
-                        <thead>
                         <tr>
-                            <th class="px-2 border border-secondary border-1 student-name-cell">Имя студента</th>
+                            <td class="px-2 border border-secondary border-1 border-black student-name-cell fw-bold">Имя студента</td>
                             {% for session in sessions %}
-                                <td class="text-center border border-secondary border-1 date-cell">
+                                <td class="text-center border border-secondary border-black border-1 date-cell px-1">
                                     <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
                                 </td>
+                                {% empty %}
+                                {% if attendance_data|length > 1 %}
+                                    <td  rowspan="{{ attendance_data|length|add:1 }}" class="text-center border border-secondary border-1 date-cell">нет записей</td>
+                                {% endif %}
                             {% endfor %}
                         </tr>
-                        </thead>
-                        <tbody>
                         {% for record in attendance_data %}
                             <tr>
-                                <td class="px-2 py-1 border border-secondary border-1 status-cell">{{ record.student }}</td>
+                                <td class="px-2 py-1 border border-black border-secondary border-1 status-cell">{{ record.student }}</td>
                                 {% for info in record.attendance %}
-                                    <td class="border border-secondary border-1 text-center status-cell {% if info.status == True %} bg-success bg-opacity-50 {% elif info.status == False %} bg-danger bg-opacity-50 {% else %} bg-secondary-subtle {% endif %}">
+                                    <td class="border border-secondary border-1 border-black text-center status-cell {% if info.status == True %} bg-success bg-opacity-75 {% elif info.status == False %} bg-danger bg-opacity-75 {% else %} bg-secondary-subtle {% endif %}">
                                         {% if info.status == True %}
-                                            <span title="оценка за дом.зад./посещение">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
+                                            <span title="оценка за дом.зад./посещение" class="text-black">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
                                         {% elif info.status == False %}
-                                            <span class="text-danger"><i class="bi bi-x"></i></span>
+                                            <span class="text-dark"><i class="bi bi-x"></i></span>
                                         {% elif info.status == None %}
                                             <i class="bi bi-question"></i>
                                         {% endif %}
@@ -54,8 +55,11 @@
 
                                 {% endfor %}
                             </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="text-center w-100">нет записей</td>
+                            </tr>
                         {% endfor %}
-                        </tbody>
                     </table>
                 </div>
             </div>
