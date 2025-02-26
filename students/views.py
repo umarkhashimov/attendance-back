@@ -1,17 +1,16 @@
-from django.template.context_processors import request
 from django.views.generic import UpdateView, CreateView, View
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db import IntegrityError
+from collections import defaultdict
 
 from users.filters import AdminRequired
 from users.forms import TeacherSelectForm
 from .models import StudentModel, Enrollment
-from .forms import StudentInfoForm, StudentEnrollmentForm
+from .forms import StudentInfoForm
 from courses.models import CourseModel
 from payment.forms import CreatePaymentForm
+from payment.models import PaymentModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
-from attendance.models import AttendanceModel
 
 
 class StudentUpdateView(AdminRequired, UpdateView):
@@ -30,6 +29,15 @@ class StudentUpdateView(AdminRequired, UpdateView):
         context['enrollments'] = Enrollment.objects.all().filter(student=self.get_object(), status=True)
         context['enrollment_form'] = StudentEnrollmentForm(student=self.get_object(), teacher=self.request.GET.get('teacher', None))
         context['payment_form'] = CreatePaymentForm
+
+        # Payment history
+        enrolled = Enrollment.objects.filter(student=self.get_object())
+
+        payments_grouped = defaultdict(list)
+        for enrollment in enrolled:
+            course = enrollment.course
+            payments_grouped[course] = [payment for payment in PaymentModel.objects.filter(enrollment=enrollment)]
+        context['payments_grouped'] = dict(payments_grouped)
         return context
     
     
