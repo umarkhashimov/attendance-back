@@ -477,3 +477,10 @@ table.enrollments tr:not(.trial-lesson):hover td {
     width: 50px; /* Fixed width */
     height: 40px;
 }
+
+
+@media screen and (max-width: 380px) {
+    .debt-students-phone-numbers{
+        flex-direction: column !important;
+    }
+}
