@@ -9,7 +9,7 @@ from users.filters import AdminRequired
 from courses.models import SessionsModel, SubjectModel
 from courses.forms import DaysMultiselectForm, CancelCauseForm, CourseUpdateForm
 from courses.models import CourseModel, UsersModel
-from .forms import CoursesListFilterForm, StudentsListFilterForm
+from .forms import CoursesListFilterForm, StudentsListFilterForm, TeachersListFilterForm
 from attendance.models import AttendanceModel
 class MainPageView(TemplateView):
     template_name = 'main.html'
@@ -108,6 +108,20 @@ class TeachersListView(AdminRequired, ListView):
     template_name = 'teachers_list.html'
     context_object_name = 'teachers'
     ordering = ['first_name', 'last_name']
+    paginate_by = 30
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["filter_form"] = TeachersListFilterForm(self.request.GET)
+        return context
+
+    def get_queryset(self):
+        text = self.request.GET.get('text')
+        queryset = super().get_queryset()
+        if text:
+            queryset = queryset.filter(Q(username__icontains=text) | Q(first_name__icontains=text) | Q(last_name__icontains=text))
+
+        return queryset
     
 class CoursesListView(AdminRequired, ListView):
     queryset = CourseModel.objects.all()

@@ -22,7 +22,7 @@ class CoursesListFilterForm(forms.Form):
     subject = forms.ModelChoiceField(
         queryset=SubjectModel.objects.all(),
         widget=Select2Widget(attrs={'class':'form-control', 'onchange':'submit()', 'id':'subjectFilter'}),
-        required=False
+        required=False, label="Курс"
     )
 
 class StudentsListFilterForm(forms.Form):
@@ -44,8 +44,9 @@ class StudentsListFilterForm(forms.Form):
         label="Сортировать по", required=False
     )
 
-    # weekdays = forms.ChoiceField(
-    #     choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")],
-    #     widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
-    #     required=False, label="Дни"
-    # )
+class TeachersListFilterForm(forms.Form):
+    text = forms.CharField(
+        max_length=300,
+        widget=forms.TextInput(attrs={'class': 'form-control shadow-none rounded-1 py-0', 'onchange': 'submit()'}),
+        required=False, label="Имя пользователя / Имя / Фамилия"
+    )

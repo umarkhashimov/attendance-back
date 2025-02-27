@@ -98,7 +98,7 @@
                             class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                                                         {% if obj.enrollment.balance <= 0 and obj.enrollment.trial_lesson == False %}
                                                             <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                  title="Баланс ({{ obj.enrollment.balance }})  {{ obj.enrollment.debt_note|default:"" }}"
+                                                                  title="{{ obj.enrollment.balance }} {% if obj.enrollment.debt_note %}|| {{ obj.enrollment.debt_note|default:"" }}{% endif %}"
                                                                   role='button' class="text-danger"><i
                                                                     class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
               </span>
@@ -161,117 +161,34 @@
         <p class="text-dark ms-1 fs-6 m-0 mt-3">Не отмеченные</p>
         <hr class="table-group-divider mt-2"/>
         {% for obj in sessions_today %}
-{#            <div class="col-12 border-2 border ps-2 pe-0  py-0 d-block course-list-item mt-2 mb-1 position-relative">#}
-{#                {% if user.role == "2" %}#}
-{#                    <span class="position-absolute top-0 teacher-name-label">{% if obj.teacher.first_name %}#}
-{#                        {{ obj.teacher.first_name|default:'-' }} {{ obj.teacher.last_name|default:"-" }}{% else %}#}
-{#                        {{ obj.teacher.username }}{% endif %}</span>#}
-{#                {% endif %}#}
-{#                <div class="d-flex flex-row justify-content-between">#}
-{#                    <div class="d-flex w-100 align-items-center py-2">#}
-{#                        <p class="text-dark mb-0 course-name w-100 py-1">#}
-{#                            <span class="fs-6 text-secondary opacity-50 course-id">{{ obj.id }}</span>#}
-{#                            {{ obj.subject|capfirst }} -#}
-{#                            {{ obj.get_name }}#}
-{#                            <span class="badge text-bg-light border border-1 ms-2">{{ obj.lesson_time|time:'H:i' }}</span>#}
-{#                        </p>#}
-{#                    </div>#}
-{#                    {% if obj.check_time or user.role == '2' %}#}
-{#                        <div class="d-flex btn-group rounded-0">#}
-{#                            <button type="button" class="btn btn-danger px-3  rounded-0 " data-bs-toggle="modal"#}
-{#                                    data-bs-target="#cancelModal{{ obj.id }}">#}
-{#                                <i class="bi bi-x-lg"></i>#}
-{#                            </button>#}
-{#                            <button type="button" class="btn btn-success px-3 py-2 rounded-end-1" data-bs-toggle="modal"#}
-{#                                    data-bs-target="#conductModal{{ obj.id }}">#}
-{#                                <i class="bi bi-check-lg"></i>#}
-{#                            </button>#}
-                            {#                    <a href="{% url "courses:conduct_session" course_id=obj.id %}" class="btn btn-success px-3 py-2 rounded-end-1"><i#}
-                            {#                      class="bi bi-check-lg"></i></a>#}
-                            {# Cancel session modal #}
-{#                            <div data-bs-backdrop="static" class="modal fade" id="cancelModal{{ obj.id }}" tabindex="-1"#}
-{#                                 aria-labelledby="exampleModalLabel" aria-hidden="true">#}
-{#                                <div class="modal-dialog">#}
-{#                                    <div class="modal-content">#}
-{#                                        <form action="{% url "courses:cancel_session" course_id=obj.id %}"#}
-{#                                              method='post'>#}
-{#                                            <div class="modal-header">#}
-{#                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Отмена урока</h1>#}
-{#                                                <button type="button" class="btn-close" data-bs-dismiss="modal"#}
-{#                                                        aria-label="Close"></button>#}
-{#                                            </div>#}
-{#                                            {% csrf_token %}#}
-{#                                            <div class="modal-body">#}
-{#                                                <p class="m-0"><b>Группа</b>: {{ obj.subject }}, {{ obj.get_name }}</p>#}
-{#                                                <p class="m-0"><b>Время</b>: {{ obj.lesson_time }}</p>#}
-{#                                                <p class="m-0"><b>Учитель</b>: {{ obj.teacher.get_full_name }}</p>#}
-{#                                                <p class="mt-3 mb-1">Выберите причину для отмены урока:</p>#}
-{#                                                {{ cancel_cause_form }}#}
-{#                                            </div>#}
-{#                                            <div class="modal-footer">#}
-{#                                                <button type="submit" class="btn btn-primary">Подтвердить</button>#}
-{#                                            </div>#}
-{#                                        </form>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-                            {#  Conduct session model #}
-{#                            <div data-bs-backdrop="static" class="modal fade" id="conductModal{{ obj.id }}"#}
-{#                                 tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
-{#                                <div class="modal-dialog">#}
-{#                                    <div class="modal-content">#}
-{#                                        <form action="{% url "courses:conduct_session" course_id=obj.id %}"#}
-{#                                              method='get'>#}
-{#                                            <div class="modal-header">#}
-{#                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Урок проведень</h1>#}
-{#                                                <button type="button" class="btn-close" data-bs-dismiss="modal"#}
-{#                                                        aria-label="Close"></button>#}
-{#                                            </div>#}
-{#                                            {% csrf_token %}#}
-{#                                            <div class="modal-body">#}
-{#                                                <p class="m-0"><b>Группа</b>: {{ obj.subject }}, {{ obj.get_name }}</p>#}
-{#                                                <p class="m-0"><b>Время</b>: {{ obj.lesson_time }}</p>#}
-{#                                                <p class="m-0"><b>Учитель</b>: {{ obj.teacher.get_full_name }}</p>#}
-{#                                                <p class="mt-3 mb-1">Подтвердить проведение урока:</p>#}
-{#                                            </div>#}
-{#                                            <div class="modal-footer">#}
-{#                                                <button type="submit" class="btn btn-success">Подтвердить</button>#}
-{#                                            </div>#}
-{#                                        </form>#}
-{#                                    </div>#}
-{#                                </div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    {% endif %}#}
-{#                </div>#}
-{#            </div>#}
             <div class="col-12 border-2 border ps-2 pe-0 marked py-0 d-block course-list-item mt-2 mb-1 position-relative">
-        {% if user.role == "2" %}
-            <span class="position-absolute top-0 teacher-name-label">
+                {% if user.role == "2" %}
+                    <span class="position-absolute top-0 teacher-name-label">
                 {% if obj.teacher.first_name %}
                     {{ obj.teacher.first_name|default:'-' }} {{ obj.teacher.last_name|default:"-" }}
                 {% else %}
                     {{ obj.teacher.username }}
                 {% endif %}
             </span>
-        {% endif %}
+                {% endif %}
 
-        <div class="d-flex flex-row justify-content-between align-items-center text-dark">
-            <div class="d-flex w-100 align-items-center py-2 overflow-hidden text-truncate">
-                <p class="text-dark mb-0 course-name text-truncate w-100">
-                    <span class="opacity-50 course-id">{{ obj.id }}</span>
-                    <span>
+                <div class="d-flex flex-row justify-content-between align-items-center text-dark">
+                    <div class="d-flex w-100 align-items-center py-2 overflow-hidden text-truncate">
+                        <p class="text-dark mb-0 course-name text-truncate w-100">
+                            <span class="opacity-50 course-id">{{ obj.id }}</span>
+                            <span>
                         {{ obj.subject|capfirst }} - <span class="d-none d-sm-inline-block">{{ obj.get_name }}</span>
                     </span>
-                    <span class="badge text-bg-light border border-1 ms-2">{{ obj.lesson_time|time:'H:i' }}</span>
-                    {% if obj.has_unmarked_attendance %}
-                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Есть не отмеченные" role='button' class="text-warning ms-2">
+                            <span class="badge text-bg-light border border-1 ms-2">{{ obj.lesson_time|time:'H:i' }}</span>
+                            {% if obj.has_unmarked_attendance %}
+                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="Есть не отмеченные"
+                                      role='button' class="text-warning ms-2">
                             <i class="bi bi-exclamation-circle-fill"></i>
                         </span>
-                    {% endif %}
-                </p>
-            </div>
-            {% if obj.check_time or user.role == '2' %}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% if obj.check_time or user.role == '2' %}
                         <div class="d-flex btn-group rounded-0">
                             <button type="button" class="btn btn-danger px-3  rounded-0 " data-bs-toggle="modal"
                                     data-bs-target="#cancelModal{{ obj.id }}">
@@ -326,7 +243,10 @@
                                             <div class="modal-body">
                                                 <p class="m-0"><b>Группа</b>: {{ obj.subject }}, {{ obj.get_name }}</p>
                                                 <p class="m-0"><b>Время</b>: {{ obj.lesson_time }}</p>
-                                                <p class="m-0"><b>Учитель</b>: {% if obj.teacher.first_name and obj.teacher.last_name  %}{{ obj.teacher.get_full_name }}{% else %}{{ obj.teacher.username }}{% endif %}</p>
+                                                <p class="m-0"><b>Учитель</b>:
+                                                    {% if obj.teacher.first_name and obj.teacher.last_name %}
+                                                        {{ obj.teacher.get_full_name }}{% else %}
+                                                        {{ obj.teacher.username }}{% endif %}</p>
                                                 <p class="mt-3 mb-1">Подтвердить проведение урока:</p>
                                             </div>
                                             <div class="modal-footer">
@@ -338,8 +258,8 @@
                             </div>
                         </div>
                     {% endif %}
-        </div>
-    </div>
+                </div>
+            </div>
 
         {% empty %}
             <p class="text-center text-secondary">Пусто</p>
@@ -356,17 +276,6 @@
         })
     </script>
     <script>
-        {% comment %} {% if user.role == '2' %}
-        document.getElementById('customDatePicker').addEventListener('change', () => {
-          document.getElementById('customDateForm').submit()
-        })
-        let dates = JSON.parse('{{all_session_dates|safe}}')
-        flatpickr("#customDatePicker", {
-          dateFormat: "Y-m-d",
-          enable: dates,
-
-        });
-        {% endif %} {% endcomment %}
 
         window.onload = () => {
             checkInputs = document.querySelectorAll('input.checkStatus')
