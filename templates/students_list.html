@@ -52,14 +52,14 @@
         </div>
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">
-            <div class="col-12 bg-light rounded pt-2 px-2 border">
+            <div class="col-12 bg-light rounded pt-2 px-2 pb-1 border">
                 <form id="filterForm" method="get" class="student-filter-form">
                     <div class="">
-                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
+                        <h6 class="text-dark ms-1 fs-6 m-0">Фильтры
                             <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
                         </h6>
                     </div>
-                    <div class="row mt-2 pb-3">
+                    <div class="row mt-2 pb-2">
                         <div class="col-12 col-md-4">
                             <div class="custom-select-2">
                                 <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
@@ -80,6 +80,7 @@
                         </div>
                     </div>
                 </form>
+                <p class="text-secondary fw-normal m-0">Найдено: {{ students|length }}</p>
             </div>
         </div>
 
