@@ -96,9 +96,9 @@ class StudentsListView(AdminRequired, ListView):
             elif ordering == "5":
                 queryset = queryset.filter(Q(courses__isnull=True) | Q(enrollment__status=False)).exclude(enrollment__status=True).order_by('first_name', 'last_name').distinct()
             elif ordering == "6":
-                queryset = queryset.order_by('id')
-            elif ordering == "7":
                 queryset = queryset.order_by('-id')
+            elif ordering == "7":
+                queryset = queryset.order_by('id')
         return queryset
     
 class TeachersListView(AdminRequired, ListView):
