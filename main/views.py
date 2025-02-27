@@ -68,6 +68,7 @@ class StudentsListView(AdminRequired, ListView):
         context = super().get_context_data(**kwargs)
         context['filter_form'] = StudentsListFilterForm(self.request.GET)
         context['create_student_form'] = StudentInfoForm
+        context['queryset_length'] = self.get_queryset().count()
         return context
 
     def get_queryset(self):
@@ -99,6 +100,7 @@ class StudentsListView(AdminRequired, ListView):
                 queryset = queryset.order_by('-id')
             elif ordering == "7":
                 queryset = queryset.order_by('id')
+
         return queryset
     
 class TeachersListView(AdminRequired, ListView):
