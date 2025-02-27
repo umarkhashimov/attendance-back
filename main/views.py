@@ -1,6 +1,6 @@
 from django.template.defaultfilters import first
 from django.views.generic import TemplateView, ListView
-from datetime import date
+from datetime import date, datetime, timedelta
 from django.db.models import Q
 
 from students.forms import StudentInfoForm
@@ -73,6 +73,7 @@ class StudentsListView(AdminRequired, ListView):
     def get_queryset(self):
         text = self.request.GET.get('text')
         teacher = self.request.GET.get('teacher')
+        ordering = self.request.GET.get('order_by')
 
         queryset = super().get_queryset()
 
@@ -81,7 +82,23 @@ class StudentsListView(AdminRequired, ListView):
             queryset = queryset.filter(Q(last_name__in=words) | Q(first_name__in=words) | Q(last_name__icontains=text) | Q(phone_number__icontains=text) | Q(additional_number__icontains=text))
         if teacher:
             queryset = queryset.filter(courses__teacher=teacher).distinct()
-
+        if ordering:
+            if ordering == "1":
+                queryset = queryset.order_by('first_name', 'last_name')
+            elif ordering == "2":
+                queryset = queryset.filter(enrollment__balance__lte=0, courses__isnull=False, enrollment__trial_lesson=False, enrollment__status=True).order_by('first_name', 'last_name').distinct()
+            elif ordering == "3":
+                thirty_days_ago = datetime.now() - timedelta(days=30)
+                queryset = queryset.filter(enrollment_date__gte=thirty_days_ago).order_by('-id')
+            elif ordering == '4':
+                thirty_days_ago = datetime.now() - timedelta(days=60)
+                queryset = queryset.filter(enrollment_date__gte=thirty_days_ago).order_by('-id')
+            elif ordering == "5":
+                queryset = queryset.filter(Q(courses__isnull=True) | Q(enrollment__status=False)).exclude(enrollment__status=True).order_by('first_name', 'last_name').distinct()
+            elif ordering == "6":
+                queryset = queryset.order_by('id')
+            elif ordering == "7":
+                queryset = queryset.order_by('-id')
         return queryset
     
 class TeachersListView(AdminRequired, ListView):

@@ -38,6 +38,12 @@ class StudentsListFilterForm(forms.Form):
         required=False, label="Учитель"
     )
 
+    order_by = forms.ChoiceField(
+        choices=[(1, "Имя Фамилия"), (2, "Должники"), (3, "Новые за 30 дней"), (4, "Новые за 60 дней"), (5, "Не активные"), (6, "Последние"), (7, "Ранние"),],
+        widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
+        label="Сортировать по", required=False
+    )
+
     # weekdays = forms.ChoiceField(
     #     choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")],
     #     widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),

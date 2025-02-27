@@ -13,12 +13,12 @@
     <hr class="table-group-divider" />
       <div class="row px-2 mt-3">
                 {% for obj in teachers %}
-                    <div class="col-12 px-1 my-1">
+                    <div class="col-12 col-md-6 col-lg-4 px-1 my-1">
                         <a href="{% url 'users:teacher_update' pk=obj.id %}"
                            class="border-2 border px-2 py-2 d-block course-list-item">
                             <p class="text-dark mb-0 course-name">
                                 <span class="text-secondary course-id me-1">{{ obj.id }}</span>
-                                  {{ obj.username }}
+                                <span class="text-primary fw-medium font-monospace">{{ obj.username }}</span>
                                   <span class="ms-1">-
                                     {{ obj.get_full_name }}
                                   </span>
