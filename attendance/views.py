@@ -113,6 +113,7 @@ class GetSessionView(View):
                 status = request.POST.get(str(f'stid_{obj.enrollment.student.student_id}'), None)
                 print(obj.status)
                 if status == 'present':
+                    obj.trial_attendance = obj.enrollment.trial_lesson
                     attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'), None)
                     homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'), None)
                     obj.participation_grade = attendance_grade if attendance_grade else None
@@ -122,6 +123,7 @@ class GetSessionView(View):
                     obj.status = 1
                 elif status == 'absent':
                     obj.status = 0
+
 
             obj.save()
 

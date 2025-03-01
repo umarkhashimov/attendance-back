@@ -9,6 +9,7 @@ class AttendanceModel(models.Model):
     status = models.BooleanField(null=True) 
     homework_grade = models.IntegerField(null=True)
     participation_grade = models.IntegerField(null=True)
+    trial_attendance = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.enrollment} - {self.session} - {self.status}"
@@ -18,4 +19,4 @@ class AttendanceModel(models.Model):
         verbose_name = 'attendance record'
         verbose_name_plural = 'attendance records'
         unique_together = ('enrollment', 'session') 
-        ordering = [ '-enrollment__trial_lesson','enrollment__student__first_name', 'enrollment__student__last_name']
+        ordering = [ '-enrollment__trial_lesson', '-trial_attendance','enrollment__student__first_name', 'enrollment__student__last_name']
