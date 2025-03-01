@@ -25,7 +25,7 @@ class CourseUpdateView(AdminRequired, UpdateView):
         context = super().get_context_data(**kwargs)
         context['obj'] = self.get_object()
         context['enrollment_form'] = CourseEnrollmentForm(course=self.get_object().id)
-        context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True)
+        context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True).order_by('student__first_name', 'student__last_name')
         context['payment_form'] = CreatePaymentForm
 
         # Get the course and its related sessions
