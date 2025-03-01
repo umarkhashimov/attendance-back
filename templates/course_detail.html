@@ -51,6 +51,10 @@
                             data-bs-target="#overallAttendanceModal">
                         Посещаемость
                     </button>
+                    <button type="button" class="btn btn-success py-1 mt-2 mt-lg-0 ms-lg-1" data-bs-toggle="modal"
+                            data-bs-target="#paymentHistoryModal">
+                        История оплат
+                    </button>
                     <!-- Overall Attendance modal -->
                     <div class="modal fade" id="overallAttendanceModal" data-bs-backdrop="static"
                          data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
@@ -106,6 +110,47 @@
                                                         <td colspan="3" class="text-center w-100">нет записей</td>
                                                     </tr>
                                                 {% endfor %}
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Payment History modal -->
+                    <div class="modal fade" id="paymentHistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">История оплат</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="history-wrapper">
+                                        <div class="accordion" id="accordionPaymentHistoryModal">
+                                            <table class="table-bordered w-100 border-1 table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <td class="px-1 fw-bold">Ученик</td>
+                                                        <td class="px-1 fw-bold">Дата</td>
+                                                        <td class="px-1 fw-bold">Месяцы</td>
+                                                        <td class="px-1 fw-bold">Сумма</td>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for payment in payment_history %}
+                                                    <tr class="list-items-hover">
+                                                        <td class="px-1">{{ payment.enrollment.student }}</td>
+                                                        <td class="px-1">{{ payment.date|date:"d-m-y H:m" }}</td>
+                                                        <td class="px-1">{{ payment.months }}</td>
+                                                        <td class="px-1">{{ payment.amount }}</td>
+                                                    </tr>
+                                                    {% empty %}
+                                                        <td class="px- text-center">Нет записей.</td>
+                                                {% endfor %}
+                                                </tbody>
                                             </table>
                                         </div>
                                     </div>

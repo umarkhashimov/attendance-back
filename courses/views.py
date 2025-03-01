@@ -11,6 +11,7 @@ from students.forms import CourseEnrollmentForm
 from attendance.models import AttendanceModel
 from .forms import CourseUpdateForm, CancelCauseForm
 from payment.forms import CreatePaymentForm
+from payment.models import PaymentModel
 
 class CourseUpdateView(AdminRequired, UpdateView):
     model = CourseModel
@@ -60,6 +61,11 @@ class CourseUpdateView(AdminRequired, UpdateView):
             'sessions': sessions,
             'attendance_data': attendance_data
         })
+
+        # Payment History
+        payments = PaymentModel.objects.all().filter(enrollment__course=course).order_by('-date')
+        context['payment_history'] = payments
+
         return context
 
 
