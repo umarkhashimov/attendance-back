@@ -11,7 +11,7 @@ from courses.models import CourseModel
 from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
-
+from attendance.models import AttendanceModel
 
 class StudentUpdateView(AdminRequired, UpdateView):
     model = StudentModel
@@ -38,6 +38,13 @@ class StudentUpdateView(AdminRequired, UpdateView):
             course = enrollment.course
             payments_grouped[course] = [payment for payment in PaymentModel.objects.filter(enrollment=enrollment)]
         context['payments_grouped'] = dict(payments_grouped)
+
+        attendance_grouped = defaultdict(list)
+        for enrollment in enrolled:
+            course = enrollment.course
+            attendance_grouped[course] = AttendanceModel.objects.filter(enrollment=enrollment).order_by('session__date').values('session__date', 'status', 'homework_grade', 'participation_grade' )
+        context['attendance_grouped'] = dict(attendance_grouped)
+
         return context
     
     

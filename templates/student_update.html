@@ -8,103 +8,103 @@
     {% include 'layout/navbar.html' %}
 
     <div class="container pt-2">
-    <div class="row d-flex">
-        <div class="col-12">
-            <div class="bg-light rounded py-3 px-2 mt-3 border">
-                <p class="text-black ms-1">Изменить информацию ученика #{{ student.id }}
-                    - {{ student.first_name|default:'нет Имени' }} {{ student.last_name|default:'нет Фамилии' }}</p>
-                <form method="post">
-                    {% csrf_token %}
+        <div class="row d-flex">
+            <div class="col-12">
+                <div class="bg-light rounded py-3 px-2 mt-3 border">
+                    <p class="text-black ms-1">Изменить информацию ученика #{{ student.id }}
+                        - {{ student.first_name|default:'нет Имени' }} {{ student.last_name|default:'нет Фамилии' }}</p>
+                    <form method="post">
+                        {% csrf_token %}
 
-                    {% for field in form %}
-                        <div class="form-floating my-1">
-                            {{ field }}
-                            <label aria-required="{{ field.field.required }}" {{ field.required }}
-                                   for="{{ field.id_for_label }}">{{ field.label }}</label>
-                        </div>
-                        {% if field.errors %}
-                            <div class="text-danger small">
-                                {% for error in field.errors %}
-                                    {{ error }}
-                                {% endfor %}
+                        {% for field in form %}
+                            <div class="form-floating my-1">
+                                {{ field }}
+                                <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
                             </div>
-                        {% endif %}
-                    {% endfor %}
-                    <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
-                        <button type="submit" class="btn btn-success">Сохранить</button>
-                    </div>
-                </form>
+                            {% if field.errors %}
+                                <div class="text-danger small">
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+                            <button type="submit" class="btn btn-success">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="row flex-row">
-        <div class="col-12 col-md-4">
-            <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
-                <button type="button" class="btn btn-secondary py-1 m-1" data-bs-toggle="modal"
-                        data-bs-target="#overallAttendanceModal">
-                    Посещаемость
-                </button>
-                <button type="button" class="btn btn-success py-1 m-1" data-bs-toggle="modal"
-                        data-bs-target="#paymentHistoryModal">
-                    История оплат
-                </button>
-                <!-- Payment History modal -->
-                <div class="modal fade" id="paymentHistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                     aria-hidden="true">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">История оплат</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                        aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <div class="history-wrapper">
-                                    <div class="accordion" id="accordionExample">
-                                        {% for course, payments in payments_grouped.items %}
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header">
-                                                    <button class="accordion-button collapsed" type="button"
-                                                            data-bs-toggle="collapse"
-                                                            data-bs-target="#paymentHistoryAccordion{{ course.id }}"
-                                                            aria-expanded="false" aria-controls="collapseOne">
-                                                        {{ course }} | {{ course.teacher }}
-                                                    </button>
-                                                </h2>
-                                                <div id="paymentHistoryAccordion{{ course.id }}"
-                                                     class="accordion-collapse collapse">
-                                                    <div class="accordion-body">
-                                                        <table class="table-bordered w-100">
-                                                            <thead>
-                                                            <tr>
-                                                                <th class="text-center">Дата и время</th>
-                                                                <th class="text-center">Кол-во месяцев</th>
-                                                                <th class="text-center">Сумма</th>
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for payment in payments %}
+        <div class="row flex-row">
+            <div class="col-12 col-md-4">
+                <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
+                    <button type="button" class="btn btn-secondary py-1 m-1" data-bs-toggle="modal"
+                            data-bs-target="#overallAttendanceModal">
+                        Посещаемость
+                    </button>
+                    <button type="button" class="btn btn-success py-1 m-1" data-bs-toggle="modal"
+                            data-bs-target="#paymentHistoryModal">
+                        История оплат
+                    </button>
+                    <!-- Payment History modal -->
+                    <div class="modal fade" id="paymentHistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog modal-xl">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">История оплат</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="history-wrapper">
+                                        <div class="accordion" id="accordionPaymentHistoryModal">
+                                            {% for course, payments in payments_grouped.items %}
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header">
+                                                        <button class="accordion-button collapsed" type="button"
+                                                                data-bs-toggle="collapse"
+                                                                data-bs-target="#paymentHistoryAccordion{{ course.id }}"
+                                                                aria-expanded="false" aria-controls="collapseOne">
+                                                            {{ course }} | {{ course.teacher }}
+                                                        </button>
+                                                    </h2>
+                                                    <div id="paymentHistoryAccordion{{ course.id }}"
+                                                         class="accordion-collapse collapse" data-bs-parent="#accordionPaymentHistoryModal">
+                                                        <div class="accordion-body">
+                                                            <table class="table-bordered w-100">
+                                                                <thead>
                                                                 <tr>
-                                                                    <td class="px-1">{{ payment.date }}</td>
-                                                                    <td class="px-1">{{ payment.months }}</td>
-                                                                    <td class="px-1">{{ payment.amount }}</td>
+                                                                    <th class="text-center">Дата и время</th>
+                                                                    <th class="text-center">Кол-во месяцев</th>
+                                                                    <th class="text-center">Сумма</th>
                                                                 </tr>
-                                                            {% empty %}
-                                                                <tr>
-                                                                    <td colspan="3" class="text-center w-100">нет
-                                                                        записей
-                                                                    </td>
-                                                                </tr>
-                                                            {% endfor %}
+                                                                </thead>
+                                                                <tbody>
+                                                                {% for payment in payments %}
+                                                                    <tr>
+                                                                        <td class="px-1">{{ payment.date }}</td>
+                                                                        <td class="px-1">{{ payment.months }}</td>
+                                                                        <td class="px-1">{{ payment.amount }}</td>
+                                                                    </tr>
+                                                                {% empty %}
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-center w-100">нет
+                                                                            записей
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
 
-                                                            </tbody>
-                                                        </table>
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        {% endfor %}
+                                            {% endfor %}
+                                        </div>
                                     </div>
-                                </div>
                                 </div>
                             </div>
                         </div>
@@ -113,7 +113,7 @@
                     <div class="modal fade" id="overallAttendanceModal" data-bs-backdrop="static"
                          data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                          aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
+                        <div class="modal-dialog modal-lg">
                             <div class="modal-content">
                                 <div class="modal-header">
                                     <h1 class="modal-title fs-5" id="staticBackdropLabel">Посещаемость</h1>
@@ -121,7 +121,58 @@
                                             aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <p class="text-center">Скоро</p>
+                                    <div class="accordion" id="accordionAttendanceModal">
+                                        {% for course, attendance_data in attendance_grouped.items %}
+                                            <div class="accordion-item">
+                                                <h2 class="accordion-header">
+                                                    <button class="accordion-button collapsed" type="button"
+                                                            data-bs-toggle="collapse" data-bs-target="#attendanceTable{{ course.id }}"
+                                                            aria-expanded="false" >
+                                                        {{ course }} | {{ course.teacher }}
+                                                    </button>
+                                                </h2>
+                                                <div id="attendanceTable{{ course.id }}" class="accordion-collapse collapse"
+                                                     data-bs-parent="#accordionAttendanceModal">
+                                                    <div class="accordion-body">
+
+                                                        <table class="border table-bordered w-100 attendance-record-table">
+                                                            <tr>
+                                                                <td class="px-2 border border-secondary border-1 border-black fw-bold w-100">
+                                                                    Дата
+                                                                </td>
+                                                                <td class="px-2 border border-secondary border-1 border-black fw-bold w-25">
+                                                                    Статус
+                                                                </td>
+                                                            </tr>
+                                                            {% for record in attendance_data %}
+                                                                <tr class="attendance-item">
+                                                                    <td class="px-2 py-1 border border-black border-secondary border-1 status-cell">{{ record.session__date }}</td>
+                                                                    <td class="border border-secondary border-1 border-black text-center status-cell {% if record.status == True %} bg-success bg-opacity-75 {% elif record.status == False %} bg-danger bg-opacity-75 {% else %} bg-secondary-subtle {% endif %}">
+                                                                        {% if record.status == True %}
+                                                                            <span title="оценка за дом.зад./посещение"
+                                                                                  class="text-white">{{ record.homework_grade|default:"-" }}/{{ record.participation_grade|default:"-" }}</span>
+                                                                        {% elif record.status == False %}
+                                                                            <span class="text-dark"><i
+                                                                                    class="bi bi-x"></i></span>
+                                                                        {% elif record.status == None %}
+                                                                            <i class="bi bi-question"></i>
+                                                                        {% endif %}
+                                                                    </td>
+
+                                                                </tr>
+                                                            {% empty %}
+                                                                <tr>
+                                                                    <td colspan="3" class="text-center w-100">нет
+                                                                        записей
+                                                                    </td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
