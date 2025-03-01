@@ -72,7 +72,8 @@
                                                         </button>
                                                     </h2>
                                                     <div id="paymentHistoryAccordion{{ course.id }}"
-                                                         class="accordion-collapse collapse" data-bs-parent="#accordionPaymentHistoryModal">
+                                                         class="accordion-collapse collapse"
+                                                         data-bs-parent="#accordionPaymentHistoryModal">
                                                         <div class="accordion-body">
                                                             <table class="table-bordered w-100">
                                                                 <thead>
@@ -126,12 +127,14 @@
                                             <div class="accordion-item">
                                                 <h2 class="accordion-header">
                                                     <button class="accordion-button collapsed" type="button"
-                                                            data-bs-toggle="collapse" data-bs-target="#attendanceTable{{ course.id }}"
-                                                            aria-expanded="false" >
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#attendanceTable{{ course.id }}"
+                                                            aria-expanded="false">
                                                         {{ course }} | {{ course.teacher }}
                                                     </button>
                                                 </h2>
-                                                <div id="attendanceTable{{ course.id }}" class="accordion-collapse collapse"
+                                                <div id="attendanceTable{{ course.id }}"
+                                                     class="accordion-collapse collapse"
                                                      data-bs-parent="#accordionAttendanceModal">
                                                     <div class="accordion-body">
 
@@ -233,11 +236,12 @@
                             <tr {% if enrollment.trial_lesson %}class="trial-lesson"{% endif %}>
                                 <td class="py-0 align-middle"><a
                                         class="text-decoration-none text-dark opacity-100 table-obj-name-link"
-                                        href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}, {{ enrollment.course.subject }}</a>
+                                        href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}</a>
                                 </td>
                                 <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
-                                <td class="d-flex justify-content-end p-0 h-100">
-                                    <div class="btn-group rounded-0 w-100 p-0 h-100">
+                                <td class="align-middle p-0 bg-light">
+
+                                    <div class="btn-group rounded-0 w-100 p-0 h-100 ">
                                         <button type="button" class="btn rounded-0 btn-warning px-3 py-1"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i

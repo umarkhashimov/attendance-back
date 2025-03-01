@@ -169,7 +169,7 @@
                                         href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a>
                                 </td>
                                 <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
-                                <td class="d-flex justify-content-end p-0 h-100">
+                                <td class="align-middle p-0 bg-light">
                                     <div class="btn-group rounded-0 w-100 p-0 h-100">
                                         <button type="button" class="btn rounded-0 btn-warning px-3 py-1"
                                                 data-bs-toggle="modal"
