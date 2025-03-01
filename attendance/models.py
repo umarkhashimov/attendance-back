@@ -18,4 +18,4 @@ class AttendanceModel(models.Model):
         verbose_name = 'attendance record'
         verbose_name_plural = 'attendance records'
         unique_together = ('enrollment', 'session') 
-        ordering = ['-id']
+        ordering = [ '-enrollment__trial_lesson','enrollment__student__first_name', 'enrollment__student__last_name']
