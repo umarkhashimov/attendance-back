@@ -1,21 +1,35 @@
 {% extends 'layout/base.html' %}
 
 {% block title %}
-  <title>Профиль</title>
+    <title>Профиль</title>
 {% endblock %}
 {% block content %}
-  {% include 'layout/navbar.html' %}
+    {% include 'layout/navbar.html' %}
 
-  <h2 class="text-center mt-5 mb-3">Профиль: {{ user.username }}</h2>
-  
-  <div class="container courses-list">
-    
-    <hr class="table-group-divider" />
-    <form action="{% url 'users:logout' %}" method="post">
-      {% csrf_token %}
-      <div class="d-flex justify-content-end flex-column-reverse flex-md-row pt-3 gap-3">
-        <button type="submit" class="btn btn-primary">Выйти</button>
-      </div>
-    </form>
-  </div>
+    <h4 class="text-center mt-5 mb-3">Профиль: {{ user.username }}</h4>
+
+    <div class="container courses-list">
+
+        <hr class="table-group-divider"/>
+        <div class="account-info">
+            <p class="fs-6"><span class="fw-bold">Имя:</span> {{ user.first_name|default:"---" }}</p>
+            <p class="fs-6"><span class="fw-bold">Фамилия:</span> {{ user.last_name|default:"---" }}</p>
+            <p class="fs-6"><span class="fw-bold">Номер Телефона:</span> {{ user.phone_number|default:"---" }}</p>
+        </div>
+        {% if messages %}
+            {% for message in messages %}
+            <hr class="table-group-divider"/>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {#    <form action="{% url 'users:logout' %}" method="post">#}
+        {#      {% csrf_token %}#}
+        {#      <div class="d-flex justify-content-end flex-column-reverse flex-md-row pt-3 gap-3">#}
+        {#        <button type="submit" class="btn btn-primary">Выйти</button>#}
+        {#      </div>#}
+        {#    </form>#}
+    </div>
 {% endblock %}

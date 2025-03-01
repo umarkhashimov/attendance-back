@@ -4,30 +4,30 @@
 
 {% block title %}
     <title>Аутентификация</title>
-{% endblock  %}
+{% endblock %}
 
 {% block custom_css %}
-<style>
-  form > div.alert {
-    display: none;
-  }
-  </style>
-{% endblock  %}
+    <style>
+        form > div.alert {
+            display: none;
+        }
+    </style>
+{% endblock %}
 {% block content %}
-  <div class="container mt-5 pt-5">
-    <div class="loginFormContainer mx-auto">
-      {% if form.errors %}
-        <div class="alert alert-danger mb-3" role="alert">Неверное имя пользователя или пароль</div>
-      {% endif %}
-      <form method="post" class="loginForm mx-auto p-4 border-2 border">
-        {% csrf_token %}
+    <div class="container mt-5 pt-5">
+        <div class="loginFormContainer mx-auto">
+            {% if form.errors %}
+                <div class="alert alert-danger mb-3" role="alert">Неверное имя пользователя или пароль</div>
+            {% endif %}
+            <form method="post" class="loginForm mx-auto p-4 border-2 border">
+                {% csrf_token %}
 
-        {{form|crispy}}
+                {{ form|crispy }}
 
-        <div class="mt-4 d-flex justify-content-end">
-          <button type="submit" class="btn btn-primary w-100">Войти</button>
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary w-100">Войти</button>
+                </div>
+            </form>
         </div>
-      </form>
     </div>
-  </div>
 {% endblock %}

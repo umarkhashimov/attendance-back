@@ -1,40 +1,100 @@
 {% load static %}
 
 <nav class="navbar nav-underline navbar-expand-lg py-0 border border-2">
-  <div class="container py-0">
-    <a class="navbar-brand py-0" href="{% url 'main:main' %}"><img src="{% static 'img/logo.png' %}" alt="" /></a>
-    <a href="{% url 'users:profile' %}" class="profile-navbtn d-block d-lg-none ms-auto me-4"><img src="{% static 'img/user.webp' %}" alt="" /></a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto text-center mb-2 pb-2 mb-lg-0 gap-2">
-        <li class="nav-item">
-          <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page" href="{% url 'main:main' %}">Сегодня</a>
-        </li>
-        {% if user.role == '1' %}
-        {% url 'courses:mygroups' as cpath %}
-        <li class="nav-item">
-          <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'courses:mygroups' %}">Посещаемость</a>
-        </li>      
-        {% endif %}
-        {% if user.role == '2' %}
-          <li class="nav-item">
-            {% url 'main:courses_list' as cpath %}
-            <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'main:courses_list' %}">Группы</a>
-          </li>
-          <li class="nav-item">
-            {% url 'main:students_list' as cpath %}
-            <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'main:students_list' %}">Ученики</a>
-          </li>
-          <li class="nav-item">
-            {% url 'main:teachers_list' as cpath %}
-            <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page" href="{% url 'main:teachers_list' %}">Учителя</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link {% if request.path|slice:':9' == '/payments' %}active{% endif %}" aria-current="page" href="{% url 'payment:debt_payments_list' %}">Оплата</a>
-          </li>
-        {% endif %}
-      </ul>
+    <div class="container py-0">
+        <a class="navbar-brand py-0" href="{% url 'main:main' %}"><img src="{% static 'img/logo.png' %}" alt=""/></a>
+        {#    <a href="{% url 'users:profile' %}" class="profile-navbtn d-block d-lg-none ms-auto me-4"><img src="{% static 'img/user.webp' %}" alt="" /></a>#}
+
+        <div class="d-flex align-items-center gap-3">
+
+            <div class="d-block d-lg-none">
+                <ul class="list-unstyled my-auto">
+                    <li class="dropdown-center">
+                        <a class="nav-link dropdown-toggle {% if request.path|slice:9 == '/profile/' %}active{% endif %}"
+                           href="#"
+                           role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu-end dropdown-menu">
+                            <li><a href="{% url 'users:profile' %}" class="dropdown-item">Профиль</a></li>
+                            <li><a class="dropdown-item" href="{% url 'users:update_password' %}">Пароль</a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li>
+                                <form class="" method="post" action="{% url 'users:logout' %}">{% csrf_token %}
+                                    <button class="dropdown-item text-danger" type="submit">Выйти</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span
+                    class="navbar-toggler-icon"></span></button>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto text-center mb-2 pb-2 mb-lg-0 gap-2">
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == '/' %}active{% endif %}" aria-current="page"
+                       href="{% url 'main:main' %}">Сегодня</a>
+                </li>
+                {% if user.role == '1' %}
+                    {% url 'courses:mygroups' as cpath %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page"
+                           href="{% url 'courses:mygroups' %}">Посещаемость</a>
+                    </li>
+                {% endif %}
+                {% if user.role == '2' %}
+                    <li class="nav-item">
+                        {% url 'main:courses_list' as cpath %}
+                        <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page"
+                           href="{% url 'main:courses_list' %}">Группы</a>
+                    </li>
+                    <li class="nav-item">
+                        {% url 'main:students_list' as cpath %}
+                        <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page"
+                           href="{% url 'main:students_list' %}">Ученики</a>
+                    </li>
+                    <li class="nav-item">
+                        {% url 'main:teachers_list' as cpath %}
+                        <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page"
+                           href="{% url 'main:teachers_list' %}">Учителя</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path|slice:':9' == '/payments' %}active{% endif %}"
+                           aria-current="page" href="{% url 'payment:debt_payments_list' %}">Оплата</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="d-none d-lg-block">
+            <ul class="list-unstyled my-auto">
+                <li class="dropdown-center">
+                    <a class="nav-link dropdown-toggle {% if request.path|slice:9 == '/profile/' %}active{% endif %}"
+                       href="#"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ user.username }}
+                    </a>
+                    <ul class="dropdown-menu-end dropdown-menu">
+                        <li><a href="{% url 'users:profile' %}" class="dropdown-item">Профиль</a></li>
+                        <li><a class="dropdown-item" href="{% url 'users:update_password' %}">Пароль</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <form class="" method="post" action="{% url 'users:logout' %}">{% csrf_token %}
+                                <button class="dropdown-item text-danger" type="submit">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
-    <a href="{% url 'users:profile' %}" class="profile-navbtn d-none d-lg-block"><img src="{% static 'img/user.webp' %}" alt="" /></a>
-  </div>
 </nav>
