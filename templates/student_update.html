@@ -87,7 +87,7 @@
                                                                 </thead>
                                                                 <tbody>
                                                                 {% for payment in payments %}
-                                                                    <tr>
+                                                                    <tr class="list-items-hover">
                                                                         <td class="px-1">{{ payment.amount }}</td>
                                                                         <td class="px-1">{{ payment.months }}</td>
                                                                         <td class="px-1">{{ payment.payed_from|default:'?' }}</td>

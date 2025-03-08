@@ -131,26 +131,34 @@
                                     <div class="history-wrapper">
                                         <div class="accordion" id="accordionPaymentHistoryModal">
                                             <table class="table-bordered w-100 border-1 table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <td class="px-1 fw-bold">Ученик</td>
-                                                        <td class="px-1 fw-bold">Дата</td>
-                                                        <td class="px-1 fw-bold">Месяцы</td>
-                                                        <td class="px-1 fw-bold">Сумма</td>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                {% for payment in payment_history %}
-                                                    <tr class="list-items-hover">
-                                                        <td class="px-1">{{ payment.enrollment.student }}</td>
-                                                        <td class="px-1">{{ payment.date|date:"d-m-y H:m" }}</td>
-                                                        <td class="px-1">{{ payment.months }}</td>
-                                                        <td class="px-1">{{ payment.amount }}</td>
-                                                    </tr>
-                                                    {% empty %}
-                                                        <td class="px- text-center">Нет записей.</td>
-                                                {% endfor %}
-                                                </tbody>
+                                                <table class="table-bordered w-100">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th class="text-center">Сумма</th>
+                                                                    <th class="text-center">Месяц</th>
+                                                                    <th class="text-center">Начало</th>
+                                                                    <th class="text-center">Конец</th>
+                                                                    <th class="text-center">Оплачено</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% for payment in payment_history %}
+                                                                    <tr class="list-items-hover">
+                                                                        <td class="px-1">{{ payment.amount }}</td>
+                                                                        <td class="px-1">{{ payment.months }}</td>
+                                                                        <td class="px-1">{{ payment.payed_from|date:'d-m-Y'|default:'?' }}</td>
+                                                                        <td class="px-1">{{ payment.payed_due|date:'d-m-Y'|default:'?' }}</td>
+                                                                        <td class="px-1">{{ payment.date|date:'d-m-Y' }}</td>
+                                                                    </tr>
+                                                                {% empty %}
+                                                                    <tr>
+                                                                        <td colspan="3" class="text-center w-100">нет
+                                                                            записей
+                                                                        </td>
+                                                                    </tr>
+                                                                {% endfor %}
+
+                                                                </tbody>
                                             </table>
                                         </div>
                                     </div>
