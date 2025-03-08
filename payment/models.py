@@ -12,6 +12,8 @@ class PaymentModel(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, verbose_name="Запись")
     months = models.PositiveIntegerField(choices=MONTHS_CHOICES, verbose_name="Кол-во месяйев")
     amount = models.FloatField(null=True, blank=True, verbose_name="Сумма оплаты")
+    payed_from = models.DateField(null=True, blank=True, verbose_name="Начало абонимента")
+    payed_due = models.DateField(null=True, blank=True, verbose_name="Конец абонимента")
     date = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время оплаты")
 
     def __str__(self):

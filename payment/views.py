@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, ListView
 
@@ -7,7 +9,7 @@ from users.models import UsersModel
 from .models import PaymentModel
 from .forms import CreatePaymentForm, ConfirmPaymentForm
 from students.models import Enrollment
-from .helpers import calculate_payment_amount
+from .helpers import calculate_payment_due_date, calculate_payment_amount
 from collections import defaultdict
 
 class PaymentsListView(ListView):
@@ -27,9 +29,16 @@ class CreatePaymentView(View):
         form = CreatePaymentForm(request.POST)
 
         if form.is_valid():
+            calculate_payment_due_date(enrollment)
+            last_payment_due = PaymentModel.objects.filter(enrollment=enrollment).order_by('-date').first()
             payment = PaymentModel.objects.create(enrollment=enrollment, months=form.cleaned_data['months'])
             payment.amount = calculate_payment_amount(enrollment, payment.months)
+            if last_payment_due:
+                payment.payed_from = last_payment_due.payed_due if last_payment_due.payed_due else datetime.now().date()
+            else :
+                payment.payed_from = datetime.now().date()
             payment.enrollment.add_balance(payment.months * 12)
+            payment.payed_due = calculate_payment_due_date(enrollment)
             payment.save()
 
         next_url = self.request.GET.get('next', '/')

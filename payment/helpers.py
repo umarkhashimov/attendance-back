@@ -1,4 +1,5 @@
-import math
+from datetime import date, timedelta
+import datetime
 
 def calculate_payment_amount(enrollment, count):
     cost = enrollment.course.session_cost # 940000 - 12
@@ -11,3 +12,16 @@ def calculate_payment_amount(enrollment, count):
 
     return float(overall)
 
+def calculate_payment_due_date(enrollment):
+    weekdays = [x for x in enrollment.course.weekdays]
+
+    due_date = current_date = date.today()
+
+    iterations = 0
+    while iterations < enrollment.balance:
+        if str(current_date.weekday()) in weekdays:
+            due_date = current_date
+            iterations += 1
+        current_date += timedelta(days=1)
+
+    return due_date
