@@ -412,6 +412,14 @@ table.enrollments tr:not(.trial-lesson):hover td {
     text-overflow: ellipsis;
 }
 
+.attendance-record-table :where(.status-cell) {
+    max-width: 350px !important;
+    min-width: 60px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 /* width */
 .attendance-table-wrapper > div::-webkit-scrollbar {
     width: 10px;
