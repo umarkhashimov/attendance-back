@@ -134,6 +134,7 @@
                                                 <table class="table-bordered w-100">
                                                                 <thead>
                                                                 <tr>
+                                                                    <th class="text-center">Ученик</th>
                                                                     <th class="text-center">Сумма</th>
                                                                     <th class="text-center">Месяц</th>
                                                                     <th class="text-center">Начало</th>
@@ -144,6 +145,7 @@
                                                                 <tbody>
                                                                 {% for payment in payment_history %}
                                                                     <tr class="list-items-hover">
+                                                                        <td class="px-1">{{ payment.enrollment.student }}</td>
                                                                         <td class="px-1">{{ payment.amount }}</td>
                                                                         <td class="px-1">{{ payment.months }}</td>
                                                                         <td class="px-1">{{ payment.payed_from|date:'d-m-Y'|default:'?' }}</td>

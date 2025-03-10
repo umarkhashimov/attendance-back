@@ -33,7 +33,7 @@ class CourseUpdateView(AdminRequired, UpdateView):
         sessions = SessionsModel.objects.filter(course=course)
 
         # Get all enrollments for the course
-        enrollments = Enrollment.objects.filter(course=course)
+        enrollments = Enrollment.objects.filter(course=course, status=True).order_by('student__first_name', 'student__last_name')
 
         # Get the attendance records for the sessions
         attendance_data = []
@@ -198,14 +198,12 @@ class GroupInfoView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        enrollments = Enrollment.objects.filter(course=self.get_object(), status=True)
-
         # Get the course and its related sessions
         course = CourseModel.objects.get(id=self.get_object().id)
         sessions = SessionsModel.objects.filter(course=course)
 
         # Get all enrollments for the course
-        enrollments = Enrollment.objects.filter(course=course)
+        enrollments = Enrollment.objects.filter(course=course, status=True).order_by('student__first_name', 'student__last_name')
 
         # Get the attendance records for the sessions
         attendance_data = []
