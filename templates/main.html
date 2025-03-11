@@ -7,11 +7,12 @@
     {% include 'layout/navbar.html' %}
 
     <div class="container courses-list mt-5">
-        <div class="d-flex align-items-center mb-3">
+        {% if request.user.role == '2' %}
+        <div class="d-flex flex-column flex-md-row mb-3">
             <div class="bg-light bg-light rounded py-2 px-2 border">
                 <form method="get">
                     <div class="mb-3">
-                        <h6 class="text-dark ms-1 fs-6 m-0">Фильтр по дате
+                        <h6 class="text-dark ms-1 fs-6 m-0">Просмотр по дате
                             <a href="?date={{ today }}" type="reset" class="filter-reset-btn ms-2 mb-1"><p>Сбросить</p></a>
                         </h6>
                     </div>
@@ -21,11 +22,12 @@
                                 class="bi bi-caret-left-fill"></i></a>
                         <input type="date" name="date" max="{{ today }}" value="{{ filter_date }}"
                                class="form-control border-primary" onchange="this.form.submit()">
-                        <a href="?date={{ next_date|date:"Y-m-d" }}" class="btn btn-outline-primary {% if next_date|date:"Y-m-d" == request.GET.date %} disabled{% endif %}"><i class="bi bi-caret-right-fill"></i></a>
+                        <a href="?date={{ next_date|date:"Y-m-d" }}" class="btn btn-outline-primary {% if filter_date == today %} disabled{% endif %}"><i class="bi bi-caret-right-fill"></i></a>
                     </div>
                 </form>
             </div>
         </div>
+        {% endif %}
         <p class="text-dark ms-1 fs-6 m-0">Отмеченные</p>
         <hr class="table-group-divider mt-2"/>
         {% for obj in marked_sessions %}
@@ -77,7 +79,7 @@
             {% if conducted.course.check_time or user.role == '2' %}
                 <!-- Attendance Modal -->
                 <form class="attendance-form"
-                      action="{% url 'attendance:session_detail' course_id=conducted.course.id session_id=conducted.id %}"
+                      action="{% url 'attendance:session_detail' course_id=conducted.course.id session_id=conducted.id session_date=filter_date %}"
                       method='post'>
                     <div data-bs-backdrop="static" class="modal fade" id="attendanceModal{{ conducted.id }}"
                          tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -225,7 +227,7 @@
                                  aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <form action="{% url "courses:cancel_session" course_id=obj.id %}"
+                                        <form action="{% url "courses:cancel_session" course_id=obj.id session_date=filter_date %}"
                                               method='post'>
                                             <div class="modal-header">
                                                 <h1 class="modal-title fs-5" id="exampleModalLabel">Отмена урока</h1>
@@ -252,7 +254,7 @@
                                  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
-                                        <form action="{% url "courses:conduct_session" course_id=obj.id %}"
+                                        <form action="{% url "courses:conduct_session" course_id=obj.id session_date=filter_date %}"
                                               method='get'>
                                             <div class="modal-header">
                                                 <h1 class="modal-title fs-5" id="exampleModalLabel">Урок проведень</h1>

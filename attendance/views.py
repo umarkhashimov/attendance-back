@@ -93,9 +93,9 @@ class GetSessionView(View):
         # return render(request, self.template_name, context)
         return  redirect("main:main")
 
-    def post(self, request, course_id, session_id):
+    def post(self, request, course_id, session_id, session_date):
         course = get_object_or_404(CourseModel, id=course_id)
-        session = get_object_or_404(SessionsModel, id=session_id)
+        session = get_object_or_404(SessionsModel, id=session_id, date=session_date)
 
         if request.user.role == '1' and not course_date_match(course=course):
             return redirect("main:main")
@@ -111,7 +111,6 @@ class GetSessionView(View):
             if f"stid_{obj.enrollment.student.student_id}" in keys:
 
                 status = request.POST.get(str(f'stid_{obj.enrollment.student.student_id}'), None)
-                print(obj.status)
                 if status == 'present':
                     obj.trial_attendance = obj.enrollment.trial_lesson
                     attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'), None)
@@ -127,8 +126,7 @@ class GetSessionView(View):
 
             obj.save()
 
-        if request.user.role == '1':
-            return redirect('main:main')
+
 
         # return redirect(request.path, pk=session.course.id)
-        return redirect("main:main")
+        return redirect('/?date=' + session_date)

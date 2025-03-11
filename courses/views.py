@@ -116,7 +116,6 @@ class RedirectCourseToCloseSession(View):
                     .order_by('-date')
                     .first()
                 )
-            print(closest_session)
             return redirect('attendance:session_detail', session_id=closest_session.id)
         
         else:
@@ -134,13 +133,13 @@ class CreateCourseView(AdminRequired, CreateView):
         
 class CancelSessionView(View):
 
-    def post(self, request, course_id):
+    def post(self, request, course_id, session_date):
         form = CancelCauseForm(request.POST)
         if form.is_valid():
             cause = form.cleaned_data['cause']
             today = datetime.now().date()
             course= get_object_or_404(CourseModel, id=course_id)
-            session, created = SessionsModel.objects.get_or_create(course=course, date=today, defaults={'status': False, 'record_by_id': self.request.user.id, 'cause': cause})
+            session, created = SessionsModel.objects.get_or_create(course=course, date=session_date, defaults={'status': False, 'record_by_id': self.request.user.id, 'cause': cause})
             # generate empty attendance based on enrollment status
             enrollments = Enrollment.objects.filter(course=course, status=True)
 
@@ -153,13 +152,14 @@ class CancelSessionView(View):
                         obj.substract_one_session()
 
         # return redirect('attendance:session_detail', course_id=course_id)
-        return redirect("main:main")
+        return redirect('/?date=' + session_date)
+
 class ConductSession(View):
 
-    def get(self, request, course_id):
+    def get(self, request, course_id, session_date):
         today = datetime.now().date()
         course= get_object_or_404(CourseModel, id=course_id)
-        session, created = SessionsModel.objects.get_or_create(course=course, date=today, defaults={'status': True, 'record_by_id': self.request.user.id, 'topic': course.get_last_topic()})
+        session, created = SessionsModel.objects.get_or_create(course=course, date=session_date, defaults={'status': True, 'record_by_id': self.request.user.id, 'topic': course.get_last_topic()})
 
         if created:
             # generate empty attendance based on enrollment status
@@ -172,7 +172,7 @@ class ConductSession(View):
                     obj.substract_one_session()
 
         # return redirect('attendance:session_detail', course_id=course_id)
-        return redirect("main:main")
+        return redirect('/?date=' + session_date)
 
 
 class MyCoursesView(ListView):

@@ -35,8 +35,8 @@ class MainPageView(TemplateView):
             today = datetime.strptime(t, '%Y-%m-%d').date()
             if today > date.today():
                 today = date.today()
-            context['prev_date'] = today - timedelta(days=1)
-            context['next_date'] = date.today() if today == date.today() else today + timedelta(days=1)
+        context['prev_date'] = today - timedelta(days=1)
+        context['next_date'] = date.today() if today == date.today() else today + timedelta(days=1)
 
 
         # Get sessions already marked today
