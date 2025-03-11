@@ -2,6 +2,7 @@ from django.template.defaultfilters import first
 from django.views.generic import TemplateView, ListView
 from datetime import date, datetime, timedelta
 from django.db.models import Q
+from django.shortcuts import redirect
 
 from students.forms import StudentInfoForm
 from students.models import StudentModel, Enrollment
@@ -14,9 +15,29 @@ from attendance.models import AttendanceModel
 class MainPageView(TemplateView):
     template_name = 'main.html'
 
+    def dispatch(self, request, *args, **kwargs):
+        # Condition to redirect
+
+        t = self.request.GET.get('date', '')
+        if t:
+            try:
+                today = datetime.strptime(t, '%Y-%m-%d').date()
+            except ValueError:
+                return redirect('main:main')
+
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        t = self.request.GET.get('date')
         today = date.today()
+        if t and self.request.user.role != '1':
+            today = datetime.strptime(t, '%Y-%m-%d').date()
+            if today > date.today():
+                today = date.today()
+            context['prev_date'] = today - timedelta(days=1)
+            context['next_date'] = date.today() if today == date.today() else today + timedelta(days=1)
+
 
         # Get sessions already marked today
         marked_sessions = SessionsModel.objects.filter(date=today)
@@ -50,6 +71,8 @@ class MainPageView(TemplateView):
 
         conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
 
+        context['today'] = date.today().strftime("%Y-%m-%d")
+        context['filter_date'] = today.strftime("%Y-%m-%d")
         context["conducted_sessions"] = conducted_sessions
         context['sessions_today'] = sessions_today.order_by("lesson_time")
         context['marked_sessions'] = marked_sessions.order_by('course__lesson_time')

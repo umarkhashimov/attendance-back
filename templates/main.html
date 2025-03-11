@@ -7,6 +7,25 @@
     {% include 'layout/navbar.html' %}
 
     <div class="container courses-list mt-5">
+        <div class="d-flex align-items-center mb-3">
+            <div class="bg-light bg-light rounded py-2 px-2 border">
+                <form method="get">
+                    <div class="mb-3">
+                        <h6 class="text-dark ms-1 fs-6 m-0">Фильтр по дате
+                            <a href="?date={{ today }}" type="reset" class="filter-reset-btn ms-2 mb-1"><p>Сбросить</p></a>
+                        </h6>
+                    </div>
+                    <div class="d-flex gap-2">
+
+                        <a href="?date={{ prev_date|date:"Y-m-d" }}" class="btn btn-outline-primary"><i
+                                class="bi bi-caret-left-fill"></i></a>
+                        <input type="date" name="date" max="{{ today }}" value="{{ filter_date }}"
+                               class="form-control border-primary" onchange="this.form.submit()">
+                        <a href="?date={{ next_date|date:"Y-m-d" }}" class="btn btn-outline-primary {% if next_date|date:"Y-m-d" == request.GET.date %} disabled{% endif %}"><i class="bi bi-caret-right-fill"></i></a>
+                    </div>
+                </form>
+            </div>
+        </div>
         <p class="text-dark ms-1 fs-6 m-0">Отмеченные</p>
         <hr class="table-group-divider mt-2"/>
         {% for obj in marked_sessions %}
@@ -93,14 +112,15 @@
                                                     {{ obj.enrollment.student.first_name|default:"" }} {{ obj.enrollment.student.last_name|default:"" }}
                                                     <span class="ms-2">
                                                     {% if obj.enrollment.hold >= 1 %}
-                                                        <span data-bs-toggle="tooltip" data-bs-placement="top" title="Заморожен {{ obj.enrollment.hold }} "
+                                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                                              title="Заморожен {{ obj.enrollment.hold }} "
                                                               role='button' class="text-primary"><i
                                                                 class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
-                                                    {% if obj.enrollment.trial_lesson == False and obj.trial_attendance == False and obj.enrollment.balance <= 0 and obj.enrollment.trial_lesson == False %}
-                                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                                              title="{{ obj.enrollment.balance }} {% if obj.enrollment.debt_note %}|| {{ obj.enrollment.debt_note|default:"" }}{% endif %}"
-                                                              role='button' class="text-danger"><i
-                                                                class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                                                        {% if obj.enrollment.trial_lesson == False and obj.trial_attendance == False and obj.enrollment.balance <= 0 and obj.enrollment.trial_lesson == False %}
+                                                            <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                                                  title="{{ obj.enrollment.balance }} {% if obj.enrollment.debt_note %}|| {{ obj.enrollment.debt_note|default:"" }}{% endif %}"
+                                                                  role='button' class="text-danger"><i
+                                                                    class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                                                     </span>
                                                 </td>
                                                 <td>
