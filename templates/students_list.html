@@ -10,9 +10,9 @@
         <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
             <h5 class="m-0">Ученики</h5>
 {#            <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>#}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#studentCreateModal">
-                Создать
-            </button>
+            <a href="{% url 'students:create_student' %}" class="btn btn-primary">
+                Создать Ученика
+            </a>
         </div>
             <!-- Group create modal -->
         <div class="modal fade" id="studentCreateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

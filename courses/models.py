@@ -55,7 +55,7 @@ class CourseModel(models.Model):
     
     def get_enrolled_count(self):
         Enrollments = apps.get_model('students', 'Enrollment')
-        count = Enrollments.objects.filter(course=self, status=True).count()
+        count = Enrollments.objects.filter(course=self, status=True, trial_lesson=False).count()
         return count
 
     def get_last_topic(self):

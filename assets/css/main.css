@@ -486,6 +486,13 @@ table.enrollments tr:not(.trial-lesson):hover td {
     height: 40px;
 }
 
+.debt-students-phone-numbers span.copied{
+    color: green;
+}
+
+.debt-students-phone-numbers span.copied:after{
+    content: '✅';
+}
 
 @media screen and (max-width: 380px) {
     .debt-students-phone-numbers{
@@ -496,3 +503,4 @@ table.enrollments tr:not(.trial-lesson):hover td {
 .debt-accordions .accordion-button:hover {
     border-color: black !important;
 }
+

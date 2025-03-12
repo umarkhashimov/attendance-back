@@ -50,15 +50,16 @@
 
                                                 {% for enrollment in enrollments %}
                                                     <li class="list-group-item list-items-hover py-0">
-                                                        <a href="{% url 'students:student_update' pk=enrollment.student.id %}"
-                                                           class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">
+                                                        <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">
 
                                                             <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">
-                                                                <p class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</p>
-                                                                <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row gap-md-3 debt-students-phone-numbers"><span>{{ enrollment.student.phone_number }}</span><span>{{ enrollment.student.additional_number|default_if_none:"---" }}</span></p>
+                                                                <a href="{% url 'students:student_update' pk=enrollment.student.id %}" class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>
+                                                                <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row gap-md-3 debt-students-phone-numbers">
+                                                                    <span type="button" copy="{{ enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>
+                                                                    <span type="button" copy="{{ enrollment.student.additional_number|default_if_none:"---" }}" {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>
                                                             </div>
                                                             <span class="badge text-bg-danger text-white rounded-pill bg-opacity-100">{{ enrollment.balance }}</span>
-                                                        </a>
+                                                        </div>
                                                     </li>
                                                 {% endfor %}
                                             </ul>
