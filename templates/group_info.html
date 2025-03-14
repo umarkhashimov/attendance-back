@@ -23,19 +23,42 @@
             <h4 class="group-intro">Группа - {{ object }}</h4>
         </div>
         <hr class="table-group-divider"/>
+        <div class="bg-light rounded py-2 px-2 border">
+            <div class="">
+                <h6 class="text-dark ms-1 fs-6 mb-2">Тема</h6>
+            </div>
+            <form action="{% url 'courses:group_topic_update' pk=object.id %}" method="post">
+                {% csrf_token %}
+                <div class="d-flex flex-column flex-md-row gap-2">
+                    <input class="form-control" name="topic" placeholder="Введите название темы"
+                           value="{{ object.get_last_topic }}">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                </div>
+            </form>
+            {% if messages %}
+                {% for message in messages %}
+                    <p class="alert py-1 mt-2 mb-0  alert-{{ message.tags }}">{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <hr class="table-group-divider"/>
         <div class="row">
             <div class="col-12 attendance-table-wrapper">
                 <div class="overflow-x-scroll pb-2">
                     <table class="border table-bordered w-100 attendance-record-table">
                         <tr>
-                            <td class="px-2 border border-secondary border-1 border-black student-name-cell fw-bold">Имя студента</td>
+                            <td class="px-2 border border-secondary border-1 border-black student-name-cell fw-bold">Имя
+                                студента
+                            </td>
                             {% for session in sessions %}
                                 <td class="text-center border border-secondary border-black border-1 date-cell px-1">
                                     <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
                                 </td>
-                                {% empty %}
+                            {% empty %}
                                 {% if attendance_data|length > 1 %}
-                                    <td  rowspan="{{ attendance_data|length|add:1 }}" class="text-center border border-secondary border-1 date-cell">нет записей</td>
+                                    <td rowspan="{{ attendance_data|length|add:1 }}"
+                                        class="text-center border border-secondary border-1 date-cell">нет записей
+                                    </td>
                                 {% endif %}
                             {% endfor %}
                         </tr>
@@ -45,7 +68,8 @@
                                 {% for info in record.attendance %}
                                     <td class="border border-secondary border-1 border-black text-center status-cell {% if info.status == True %} bg-success bg-opacity-75 {% elif info.status == False %} bg-danger bg-opacity-75 {% else %} bg-secondary-subtle {% endif %}">
                                         {% if info.status == True %}
-                                            <span title="оценка за дом.зад./посещение" class="text-black">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
+                                            <span title="оценка за дом.зад./посещение"
+                                                  class="text-black">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
                                         {% elif info.status == False %}
                                             <span class="text-dark"><i class="bi bi-x"></i></span>
                                         {% elif info.status == None %}
@@ -55,7 +79,7 @@
 
                                 {% endfor %}
                             </tr>
-                            {% empty %}
+                        {% empty %}
                             <tr>
                                 <td colspan="3" class="text-center w-100">нет записей</td>
                             </tr>

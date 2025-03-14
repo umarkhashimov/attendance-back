@@ -1,3 +1,5 @@
+from pyexpat.errors import messages
+from django.contrib import messages
 from users.filters import AdminRequired
 from django.views.generic import DetailView,  UpdateView, View, CreateView, ListView, TemplateView
 from django.core.exceptions import PermissionDenied
@@ -233,4 +235,19 @@ class GroupInfoView(DetailView):
         })
 
         return context
-    
+
+class UpdateGroupTopicView(View):
+
+    def post(self, request, pk):
+        course = get_object_or_404(CourseModel, id=pk)
+
+        new_topic = request.POST['topic']
+        print("HIII", new_topic)
+
+        if new_topic:
+            session = SessionsModel.objects.filter(course=course).order_by('-id').first()
+            session.topic = new_topic
+            session.save()
+
+        messages.success(request, 'Успешно сохранено')
+        return redirect("courses:groupinfo", pk=course.id)
