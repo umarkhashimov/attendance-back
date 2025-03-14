@@ -105,6 +105,7 @@ class GetSessionView(View):
 
         session.topic = request.POST.get('topic', '')
         session.save()
+        session.course.set_topic()
 
         for obj in attendances:
 

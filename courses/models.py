@@ -47,6 +47,7 @@ class CourseModel(models.Model):
     lesson_time = models.TimeField(verbose_name="время урока")
     duration = models.PositiveIntegerField(verbose_name="длительность урока (мин)")
     session_cost = models.IntegerField(verbose_name="цена курса за 12 уроков")
+    last_topic = models.CharField(max_length=250, null=True, blank=True, verbose_name='Тема')
     status = models.BooleanField(default=False, verbose_name="Статус курса")
     enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)
 
@@ -59,10 +60,14 @@ class CourseModel(models.Model):
         return count
 
     def get_last_topic(self):
-        last_session = SessionsModel.objects.all().filter(course=self, status=True).order_by('id').last()
+        last_session = SessionsModel.objects.all().filter(course=self, status=True).order_by('date').last()
         topic = last_session.topic if last_session else None 
         return topic
-    
+
+    def set_topic(self):
+        self.last_topic = self.get_last_topic()
+        self.save()
+
     def get_name(self):
         course_weekdays = [x for x in self.weekdays]
         weekdays = ','.join(weekdays_short[num] for num in course_weekdays)

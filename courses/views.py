@@ -161,7 +161,7 @@ class ConductSession(View):
     def get(self, request, course_id, session_date):
         today = datetime.now().date()
         course= get_object_or_404(CourseModel, id=course_id)
-        session, created = SessionsModel.objects.get_or_create(course=course, date=session_date, defaults={'status': True, 'record_by_id': self.request.user.id, 'topic': course.get_last_topic()})
+        session, created = SessionsModel.objects.get_or_create(course=course, date=session_date, defaults={'status': True, 'record_by_id': self.request.user.id, 'topic': course.last_topic})
 
         if created:
             # generate empty attendance based on enrollment status
@@ -245,9 +245,8 @@ class UpdateGroupTopicView(View):
         print("HIII", new_topic)
 
         if new_topic:
-            session = SessionsModel.objects.filter(course=course).order_by('-id').first()
-            session.topic = new_topic
-            session.save()
+            course.last_topic = new_topic
+            course.save()
 
         messages.success(request, 'Успешно сохранено')
         return redirect("courses:groupinfo", pk=course.id)

@@ -31,7 +31,7 @@
                 {% csrf_token %}
                 <div class="d-flex flex-column flex-md-row gap-2">
                     <input class="form-control" name="topic" placeholder="Введите название темы"
-                           value="{{ object.get_last_topic }}">
+                           value="{{ object.last_topic }}">
                     <button type="submit" class="btn btn-success">Сохранить</button>
                 </div>
             </form>

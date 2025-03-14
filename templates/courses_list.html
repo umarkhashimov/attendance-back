@@ -103,7 +103,7 @@
             {% for obj in courses %}
                 <div class="col-12 col-md-6 col-lg-4 px-1">
                     <div class="position-relative px-0">
-                        <span class="position-absolute top-0 topic-label">{{ obj.get_last_topic|default:"---" }}</span>
+                        <span class="position-absolute top-0 topic-label">{{ obj.last_topic|default:"---" }}</span>
                         <span class="position-absolute top-0 teacher-name-label">{% if obj.teacher.first_name %}
                             {{ obj.teacher.first_name|default:'-' }} {{ obj.teacher.last_name|default:"-" }}{% else %}
                             {{ obj.teacher.username }}{% endif %}</span>
