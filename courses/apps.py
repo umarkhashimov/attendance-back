@@ -1,9 +1,10 @@
 from django.apps import AppConfig
 
-
 class CoursesConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'courses'
 
     def ready(self):
-        import courses.signals
+        # import courses.signals
+        from .tasks import start
+        start()
