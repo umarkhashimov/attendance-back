@@ -16,7 +16,6 @@
                             {{ user.username }}
                         </a>
                         <ul class="dropdown-menu-end dropdown-menu">
-                            <li><a href="{% url 'users:profile' %}" class="dropdown-item">Профиль</a></li>
                             <li><a class="dropdown-item" href="{% url 'users:update_password' %}">Пароль</a></li>
                             <li>
                                 <hr class="dropdown-divider">
@@ -82,7 +81,6 @@
                         {{ user.username }}
                     </a>
                     <ul class="dropdown-menu-end dropdown-menu">
-                        <li><a href="{% url 'users:profile' %}" class="dropdown-item">Профиль</a></li>
                         <li><a class="dropdown-item" href="{% url 'users:update_password' %}">Пароль</a></li>
                         <li>
                             <hr class="dropdown-divider">
