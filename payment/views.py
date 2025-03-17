@@ -27,29 +27,30 @@ class CreatePaymentView(View):
     def post(self, request, enrollment_id):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         form = CreatePaymentForm(request.POST)
-
         if form.is_valid():
-            calculate_payment_due_date(enrollment)
             last_payment_due = PaymentModel.objects.filter(enrollment=enrollment).order_by('-date').first()
             payment = PaymentModel.objects.create(enrollment=enrollment, months=form.cleaned_data['months'])
             payment.amount = calculate_payment_amount(enrollment, payment.months)
-            if last_payment_due:
+
+            if form.cleaned_data['start_date']:
+                payment.payed_from = form.cleaned_data['start_date']
+            elif last_payment_due:
                 payment.payed_from = last_payment_due.payed_due if last_payment_due.payed_due else datetime.now().date()
             else :
                 payment.payed_from = datetime.now().date()
+
             payment.enrollment.add_balance(payment.months * 12)
-            payment.payed_due = calculate_payment_due_date(enrollment)
+
+            if form.cleaned_data['end_date']:
+                payment.payed_due = form.cleaned_data['end_date']
+            else:
+                payment.payed_due = calculate_payment_due_date(enrollment)
+
             payment.save()
 
         next_url = self.request.GET.get('next', '/')
         print(next_url)
         return redirect(next_url)
-        # form = CreatePaymentForm(request.POST)
-        # if form.is_valid():
-        #     payment = form.save(commit=True)
-        #     payment.amount = calculate_payment_amount(payment.enrollment, payment.lessons_covered)
-        #     payment.save()
-        #     return redirect('payment:view_payment', payment_id=payment.id)
 
 class DebtPaymentsListView(View, AdminRequired):
     template_name = 'payment/debt_payments_list.html'
