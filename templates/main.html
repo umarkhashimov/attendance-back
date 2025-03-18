@@ -210,7 +210,7 @@
                             {% endif %}
                         </p>
                     </div>
-                    {% if obj.check_time or user.role == '2' %}
+                    {% if obj.check_time or user.role == '2' and today == filter_date %}
                         <div class="d-flex btn-group rounded-0">
                             <button type="button" class="btn btn-danger px-3  rounded-0 " data-bs-toggle="modal"
                                     data-bs-target="#cancelModal{{ obj.id }}">
@@ -249,7 +249,7 @@
                                     </div>
                                 </div>
                             </div>
-                            {#  Conduct session model #}
+                            {#  Conduct session modal #}
                             <div data-bs-backdrop="static" class="modal fade" id="conductModal{{ obj.id }}"
                                  tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                 <div class="modal-dialog">

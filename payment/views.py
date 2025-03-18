@@ -57,23 +57,12 @@ class DebtPaymentsListView(View, AdminRequired):
     template_name = 'payment/debt_payments_list.html'
 
     def get(self, request):
-        # enrollments = Enrollment.objects.filter(balance__lt=0).select_related('course__teacher')
-        #
-        # # Group enrollments by teacher
-        # enrollments_grouped = defaultdict(list)
-        # for enrollment in enrollments:
-        #     teacher = enrollment.course.teacher
-        #     enrollments_grouped[teacher].append(enrollment)
-        #
-        # # print((enrollments_grouped))
-        # context = {'enrollments_grouped': dict(enrollments_grouped)}
-
         teachers = UsersModel.objects.filter(role='1').distinct()
 
         teacher_enrollments = {}
 
         for teacher in teachers:
-            courses = CourseModel.objects.filter(teacher=teacher, enrollment__balance__lt=0, enrolled__enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
+            courses = CourseModel.objects.filter(teacher=teacher, enrollment__balance__lt=0, enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
             if len(courses) > 0:
                 teacher_enrollments[teacher] = {
                     course: list(Enrollment.objects.filter(course=course, balance__lt=0, status=True))
@@ -82,7 +71,26 @@ class DebtPaymentsListView(View, AdminRequired):
 
         context = {'teacher_enrollments': teacher_enrollments}
         return render(request, self.template_name, context)
-    
+
+class TrialEnrollmentsView(View, AdminRequired):
+    template_name = 'payment/trial_students_list.html'
+
+    def get(self, request):
+        teachers = UsersModel.objects.filter(role='1').distinct()
+
+        teacher_enrollments = {}
+
+        for teacher in teachers:
+            courses = CourseModel.objects.filter(teacher=teacher, enrollment__trial_lesson=True, enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
+            if len(courses) > 0:
+                teacher_enrollments[teacher] = {
+                    course: list(Enrollment.objects.filter(course=course, trial_lesson=True, status=True))
+                    for course in courses
+                }
+
+        context = {'teacher_enrollments': teacher_enrollments}
+        return render(request, self.template_name, context)
+
 class ConfirmPaymentView(View):
     
     def get(self, request, payment_id):

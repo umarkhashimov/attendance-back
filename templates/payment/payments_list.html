@@ -9,16 +9,7 @@
   <div class="container courses-list">
     <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
     </div>
-  <div class="">
-      <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a class="nav-link" href="{% url 'payment:debt_payments_list' %}">Должники</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="{{ request.path }}">История оплат</a>
-      </li>
-    </ul>
-  </div>
+    {% include './payments_page_navbar.html' %}
     <hr class="table-group-divider mt-0" />
     <div class="row px-2 mt-3">
             {% for obj in payments %}
