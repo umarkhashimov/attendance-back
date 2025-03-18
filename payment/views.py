@@ -62,10 +62,10 @@ class DebtPaymentsListView(View, AdminRequired):
         teacher_enrollments = {}
 
         for teacher in teachers:
-            courses = CourseModel.objects.filter(teacher=teacher, enrollment__balance__lt=0, enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
+            courses = CourseModel.objects.filter(teacher=teacher, enrollment__balance__lte=0, enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
             if len(courses) > 0:
                 teacher_enrollments[teacher] = {
-                    course: list(Enrollment.objects.filter(course=course, balance__lt=0, status=True))
+                    course: list(Enrollment.objects.filter(course=course, balance__lte=0, status=True))
                     for course in courses
                 }
 
