@@ -9,7 +9,7 @@ from users.models import UsersModel
 from .models import PaymentModel
 from .forms import CreatePaymentForm, ConfirmPaymentForm
 from students.models import Enrollment
-from .helpers import calculate_payment_due_date, calculate_payment_amount
+from .helpers import calculate_payment_due_date, calculate_payment_amount, next_closest_session_date
 from collections import defaultdict
 
 class PaymentsListView(ListView):
@@ -28,6 +28,7 @@ class CreatePaymentView(View):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         form = CreatePaymentForm(request.POST)
         if form.is_valid():
+            date = next_closest_session_date(course=enrollment.course)
             last_payment_due = PaymentModel.objects.filter(enrollment=enrollment).order_by('-date').first()
             payment = PaymentModel.objects.create(enrollment=enrollment, months=form.cleaned_data['months'])
             payment.amount = calculate_payment_amount(enrollment, payment.months)
@@ -35,9 +36,9 @@ class CreatePaymentView(View):
             if form.cleaned_data['start_date']:
                 payment.payed_from = form.cleaned_data['start_date']
             elif last_payment_due:
-                payment.payed_from = last_payment_due.payed_due if last_payment_due.payed_due else datetime.now().date()
-            else :
-                payment.payed_from = datetime.now().date()
+                payment.payed_from = next_closest_session_date(course=enrollment.course, today=last_payment_due.payed_due) if last_payment_due.payed_due else datetime.now().date()
+            else:
+                payment.payed_from = next_closest_session_date(course=enrollment.course)
 
             payment.enrollment.add_balance(payment.months * 12)
 
