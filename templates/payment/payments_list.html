@@ -46,7 +46,6 @@
                 <table class="table-bordered w-100">
                     <thead>
                     <tr>
-                        <th class="text-center">ID</th>
                         <th class="text-center">Ученик</th>
                         <th class="text-center">Сумма</th>
                         <th class="text-center">Месяц</th>
@@ -58,7 +57,6 @@
                     <tbody>
                     {% for payment in payments %}
                         <tr class="list-items-hover">
-                            <td class="px-1">{{ payment.id }}</td>
                             <td class="px-1"><a class="link-dark text-decoration-none table-obj-name-link"
                                                 href="{% url 'students:student_update' pk=payment.enrollment.student.id %}">{{ payment.enrollment.student }}</a>
                             </td>

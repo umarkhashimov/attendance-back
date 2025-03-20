@@ -46,6 +46,7 @@
                     <div class="d-flex w-100 align-items-center py-2 overflow-hidden text-truncate">
                         <p class="text-dark mb-0 course-name text-truncate w-100">
                             <span class="opacity-50 course-id">{{ obj.course.id }}</span>
+                            {% if obj.record_by.role == '2' %}<span class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Отмечено администратором"><i class="bi bi-person-fill-exclamation"></i></span>{% elif obj.record_by == None %}<span class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Отмечено роботом"><i class="bi bi-robot"></i></span>{% endif %}
                             <span>
                         {{ obj.course.subject|capfirst }} - <span
                                     class="d-none d-sm-inline-block">{{ obj.course.get_name }}</span>
