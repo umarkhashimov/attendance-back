@@ -1,68 +1,126 @@
 {% extends 'layout/base.html' %}
 
 {% block title %}
-  <title>Панель Управления</title>
+    <title>Панель Управления</title>
 {% endblock %}
 {% block content %}
-  {% include 'layout/navbar.html' %}
+    {% include 'layout/navbar.html' %}
 
-  <div class="container courses-list">
-    <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
-    </div>
-    {% include './payments_page_navbar.html' %}
-    <hr class="table-group-divider mt-0" />
-    <div class="row px-2 mt-3">
-            {% for obj in payments %}
-                <div class="col-12 col-md-6  px-1 my-1">
-                    <a href=""
-                       class="border-2 border px-2 py-2 d-block course-list-item">
-                        <p class="text-dark mb-0 course-name">
-                            <span class="text-secondary course-id">{{ obj.id }}</span>
-                            {{ obj.enrollment.student }} - <span class="text-danger">{{ obj.months }}</span> - <span class="text-primary">{{ obj.date|date:"d-m-Y" }}</span>
-                        </p>
-                    </a>
-                </div>
-            {% empty %}
-                <p class="text-center text-secondary">Нет Оплат.</p>
-            {% endfor %}
+    <div class="container courses-list">
+        <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
+        </div>
+        {% include './payments_page_navbar.html' %}
+        <hr class="table-group-divider mt-0"/>
+        <div class="row px-2 mt-3">
+            <div class="col-12 bg-light rounded pt-2 pb-1 border">
+                <form id="filterForm" method="get" class="student-filter-form">
+                    <div class="">
+                        <h6 class="text-dark ms-1 fs-6 m-0">Фильтры
+                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                        </h6>
+                    </div>
+                    <div class="row mt-2 pb-2">
+                        <div class="col-12 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
+                                {{ filter_form.text }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
+                                {{ filter_form.teacher }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.order_by.label }}</label>
+                                {{ filter_form.order_by }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <p class="text-secondary fw-normal m-0">Найдено: {{ queryset_length }}</p>
+            </div>
+            <div class="col-12 px-0 mt-3">
+                <table class="table-bordered w-100">
+                    <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Ученик</th>
+                        <th class="text-center">Сумма</th>
+                        <th class="text-center">Месяц</th>
+                        <th class="text-center">Начало</th>
+                        <th class="text-center">Конец</th>
+                        <th class="text-center">Оплачено</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for payment in payments %}
+                        <tr class="list-items-hover">
+                            <td class="px-1">{{ payment.id }}</td>
+                            <td class="px-1"><a class="link-dark text-decoration-none table-obj-name-link"
+                                                href="{% url 'students:student_update' pk=payment.enrollment.student.id %}">{{ payment.enrollment.student }}</a>
+                            </td>
+                            <td class="px-1">{{ payment.amount }}</td>
+                            <td class="px-1">{{ payment.months }}</td>
+                            <td class="px-1">{{ payment.payed_from|date:'d-m-Y'|default:'?' }}</td>
+                            <td class="px-1">{{ payment.payed_due|date:'d-m-Y'|default:'?' }}</td>
+                            <td class="px-1">{{ payment.date|date:'d-m-Y' }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center w-100">нет
+                                записей
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
         </div>
 
-        {% if page_obj.paginator.count > 10  %}
-                <div class="row mt-5">
-                    <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination ">
-                                {% if page_obj.has_previous %}
-                                    <li class="page-item">
-                                        <a class="page-link"  href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
-                                           aria-label="Previous">
-                                            <span aria-hidden="true">&laquo;</span>
-                                        </a>
+        {% if page_obj.paginator.count > 2 %}
+            <div class="row mt-5">
+                <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination ">
+                            {% if page_obj.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?
+                                            {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                            {% for page in paginator.page_range %}
+                                {% if page_obj.number == page %}
+                                    <li class="page-item ms-1"><a class="page-link active"
+                                                                  href="?
+                                                                          {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
+                                    </li>
+                                {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
+                                    <li class="page-item ms-1"><a class="page-link"
+                                                                  href="?
+                                                                          {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
                                     </li>
                                 {% endif %}
-                                {% for page in paginator.page_range %}
-                                    {% if page_obj.number == page %}
-                                        <li class="page-item ms-1"><a class="page-link active"
-                                                                      href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
-                                        </li>
-                                    {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
-                                        <li class="page-item ms-1"><a class="page-link"
-                                                                      href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                                {% if page_obj.has_next %}
-                                    <li class="page-item ms-1">
-                                        <a class="page-link"  href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
-                                           aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </nav>
-                    </div>
+                            {% endfor %}
+                            {% if page_obj.has_next %}
+                                <li class="page-item ms-1">
+                                    <a class="page-link" href="?
+                                            {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
                 </div>
-            {% endif %}
-  </div>
+            </div>
+        {% endif %}
+    </div>
 {% endblock %}
