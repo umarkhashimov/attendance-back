@@ -83,7 +83,7 @@ class StudentsListView(AdminRequired, ListView):
     model = StudentModel
     template_name = 'students_list.html'
     context_object_name = 'students'
-    paginate_by = 2
+    paginate_by = 30
     ordering = ['first_name', 'last_name']
 
     def get_context_data(self, **kwargs):
