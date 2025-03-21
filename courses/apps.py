@@ -6,6 +6,5 @@ class CoursesConfig(AppConfig):
 
     def ready(self):
         # import courses.signals
-        # from .tasks import start
-        # start()
-        pass
+        from .tasks import start
+        start()
