@@ -54,6 +54,6 @@ def start():
     if os.environ.get('RUN_MAIN') == 'true':
         scheduler = BackgroundScheduler()
         scheduler.add_job(mark_unmarked_sessions, CronTrigger(hour=23, minute=00))  # 11 PM
-        # scheduler.add_job(send_test_message, IntervalTrigger(seconds=5), max_instances=1)  # 11 PM
+        scheduler.add_job(send_test_message, IntervalTrigger(seconds=5), max_instances=1)  # 11 PM
         scheduler.start()
 
