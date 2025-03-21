@@ -17,7 +17,7 @@ class PaymentsListView(ListView):
     template_name = 'payment/payments_list.html'
     context_object_name = 'payments'
     ordering = ['-id']
-    paginate_by = 30
+    paginate_by = 2
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
