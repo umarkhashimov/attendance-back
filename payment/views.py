@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, ListView
@@ -60,7 +60,8 @@ class PaymentsListView(ListView):
             queryset = queryset.filter(date__gt=payment_date_start)
 
         if payment_date_end:
-            queryset = queryset.filter(date__lt=payment_date_end)
+            end_date = datetime.strptime(payment_date_end, '%Y-%m-%d')
+            queryset = queryset.filter(date__lte=end_date+timedelta(days=1))
 
         return queryset.order_by('-id')
 
