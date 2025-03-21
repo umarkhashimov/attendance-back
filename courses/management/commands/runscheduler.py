@@ -1,4 +1,7 @@
-from multiprocessing.pool import job_counter
+import time
+import logging
+from django.core.management.base import BaseCommand
+
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -7,7 +10,7 @@ from decouple import config
 import requests, os, datetime
 from pyexpat.errors import messages
 
-from .models import SessionsModel, CourseModel
+from courses.models import SessionsModel, CourseModel
 from students.models import Enrollment
 from attendance.models import AttendanceModel
 
@@ -50,10 +53,21 @@ def send_test_message():
     data = {"chat_id": 5811454533, 'text': "test message"}
     requests.post(url=url, data=data)
 
-def start():
-    if os.environ.get('RUN_MAIN') == 'true':
+
+class Command(BaseCommand):
+    help = "Runs the APScheduler for Django"
+
+    def handle(self, *args, **options):
         scheduler = BackgroundScheduler()
         scheduler.add_job(mark_unmarked_sessions, CronTrigger(hour=23, minute=00))  # 11 PM
-        # scheduler.add_job(send_test_message, IntervalTrigger(seconds=5), max_instances=1)  # 11 PM
+        scheduler.add_job(send_test_message, IntervalTrigger(seconds=5), max_instances=1)  # 11 PM
         scheduler.start()
 
+        self.stdout.write(self.style.SUCCESS("APScheduler started..."))
+
+        try:
+            while True:  # Keep the process alive
+                time.sleep(10)
+        except (KeyboardInterrupt, SystemExit):
+            self.stdout.write(self.style.WARNING("Stopping scheduler..."))
+            scheduler.shutdown()
