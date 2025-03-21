@@ -16,10 +16,11 @@
                 <div class="accordion accordion-flush" id="accordionExample">
                     <div class="accordion-item my-1">
                         <h2 class="accordion-header">
+
                             <button class="accordion-button shadow-none collapsed border py-2" type="button"
                                     data-bs-toggle="collapse" data-bs-target="#accordion{{ teacher.id }}"
                                     aria-expanded="false">
-                                {{ teacher }}
+                                <span class="me-1 text-secondary opacity-75">{{ forloop.counter }}. </span>{{ teacher }}
                             </button>
                         </h2>
                         <div id="accordion{{ teacher.id }}" class="accordion-collapse collapse border">
