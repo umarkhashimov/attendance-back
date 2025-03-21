@@ -142,5 +142,18 @@
         $(document).ready(function () {
             $('select').select2() // Apply select2 to all select elements
         })
+
+        let filterForm = document.querySelector('form#filterForm')
+        filterForm.addEventListener('reset', (event) => {
+            event.preventDefault();
+            event.target.reset()
+            event.target.querySelectorAll('input').forEach((inp) => {
+                inp.removeAttribute('value')
+            })
+            event.target.querySelectorAll('option').forEach((select) => {
+                select.removeAttribute('selected')
+            })
+            event.target.submit()
+        })
     </script>
 {% endblock %}
