@@ -11,48 +11,32 @@
             <h5 class="mt-1 mb-2">Учителя</h5>
         </div>
         <hr class="table-group-divider"/>
-{#        <div class="row m-0 p-0 ">#}
-{#            <div class="col-12 bg-light rounded pt-2 px-2 border">#}
-{#                <form id="filterForm" method="get" action="{% url 'main:teachers_list' %}" class="">#}
-{#                    <div class="">#}
-{#                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры#}
-{#                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>#}
-{#                        </h6>#}
-{#                    </div>#}
-{#                    <div class="row mt-2 pb-3">#}
-{#                        <div class="col-12 col-md-6">#}
-{#                            <div class="custom-select-2">#}
-{#                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>#}
-{#                                {{ filter_form.text }}#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </form>#}
-{#            </div>#}
-{#        </div>#}
+        <div class="row m-0 p-0 ">
+            <div class="col-12 bg-light rounded pt-2 px-2 border">
+                <form id="filterForm" method="get" action="{% url 'main:teachers_list' %}" class="">
+                    <div class="">
+                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
+                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                        </h6>
+                    </div>
+                    <div class="row mt-2 pb-3">
+                        <div class="col-12 col-md-6">
+                            <div class="custom-select-2">
+                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
+                                {{ filter_form.text }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
         <div class="row px-2 mt-3">
-            {#            {% for obj in teachers %}#}
-            {#                <div class="col-12 col-md-6 col-lg-4 px-1 my-1">#}
-            {#                    <a href="{% url 'users:teacher_update' pk=obj.id %}"#}
-            {#                       class="border-2 border px-2 py-2 d-block course-list-item">#}
-            {#                        <p class="text-dark mb-0 course-name">#}
-            {#                            <span class="text-secondary course-id me-1">{{ obj.id }}</span>#}
-            {#                            <span class="text-primary fw-medium font-monospace">{{ obj.username }}</span>#}
-            {#                            <span class="ms-1">-#}
-            {#                                    {{ obj.get_full_name }}#}
-            {#                                  </span>#}
-            {#                        </p>#}
-            {#                    </a>#}
-            {#                </div>#}
-            {#            {% empty %}#}
-            {#                <p class="text-center text-secondary">Пусто</p>#}
-            {#            {% endfor %}#}
-            {% for teacher, courses in teacher_enrollments.items %}
+            {% for teacher in teachers %}
                 <div class="accordion accordion-flush px-1" id="accordionExample">
                     <div class="accordion-item my-1">
                         <div class="accordion-header">
                             <div class="d-flex justify-content-between align-items-center border">
-                                <a href="{% url 'users:teacher_update' pk=teacher.id %}" class="py-2 ps-2 text-dark text-decoration-none m-0 w-100 h-100" type="button">
+                                <a href="{% url 'users:teacher_update' pk=teacher.id %}" class="py-2 ps-2 text-dark text-decoration-none table-obj-name-link m-0 w-100 h-100" type="button">
                                     <span class="text-primary fw-medium font-monospace">{{ teacher.username }}</span>
                                         <span class="ms-1">-
                                                 {{ teacher.get_full_name }}
@@ -69,46 +53,30 @@
                         </div>
                         <div id="accordion{{ teacher.id }}" class="accordion-collapse collapse border">
                             <div class="accordion-body bg-opacity-25 bg-light">
-                                {% for course, enrollments in courses.items %}
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button shadow-none collapsed border py-2" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#accordion{{ course.id }}Teacher{{ teacher.id }}"
-                                                aria-expanded="false">
-                                            {{ course }}<span
-                                                class="badge text-light mx-2 bg-primary p-1">{{ enrollments|length }}</span>
-                                        </button>
-                                    </h2>
-                                    <div id="accordion{{ course.id }}Teacher{{ teacher.id }}"
-                                         class="accordion-collapse collapse">
-                                        <div class="accordion-body bg-opacity-50 bg-light border">
-                                            <ul class="list-group list-unstyled">
-
-                                                {% for enrollment in enrollments %}
+                                    <ul class="list-group list-unstyled">
+                                {% for course in teacher.coursemodel_set.all %}
+{#                                    <h2 class="accordion-header">#}
+{#                                        <button class="accordion-button shadow-none collapsed border py-2" type="button"#}
+{#                                                data-bs-toggle="collapse"#}
+{#                                                data-bs-target="#accordion{{ course.id }}Teacher{{ teacher.id }}"#}
+{#                                                aria-expanded="false">#}
+{#                                            {{ course }}<span#}
+{#                                                class="badge text-light mx-2 bg-primary p-1">{{ enrollments|length }}</span>#}
+{#                                        </button>#}
+{#                                    </h2>#}
+                                                <a href="{% url 'courses:course_update' pk=course.id %}" class="my-auto text-dark table-obj-name-link text-decoration-none">
                                                     <li class="list-group-item list-items-hover py-0">
                                                         <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">
 
                                                             <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">
-                                                                <a href="{% url 'students:student_update' pk=enrollment.student.id %}"
-                                                                   class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>
-                                                                <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row gap-md-3 debt-students-phone-numbers">
-                                                                    <span type="button"
-                                                                          copy="{{ enrollment.student.phone_number }}"
-                                                                          onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>
-                                                                    <span type="button"
-                                                                          copy="{{ enrollment.student.additional_number|default_if_none:"---" }}"
-                                                                          {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>
+                                                                {{ course }}
                                                             </div>
-                                                            <span class="badge {% if enrollment.balance <= 0 %} text-bg-danger {% else %} text-bg-success {% endif %} text-white rounded-pill bg-opacity-100">{{ enrollment.balance }}</span>
+                                                            <span class="badge text-bg-primary text-white rounded-pill bg-opacity-100">{{ course.enrolled.count }}</span>
                                                         </div>
                                                     </li>
-                                                {% endfor %}
-                                            </ul>
-
-                                        </div>
-                                    </div>
-
+                                                </a>
                                 {% endfor %}
+                                    </ul>
                             </div>
                         </div>
                     </div>
@@ -163,4 +131,21 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+    let filterForm = document.querySelector('form#filterForm')
+        filterForm.addEventListener('reset', (event) => {
+            event.preventDefault();
+            event.target.reset()
+            event.target.querySelectorAll('input').forEach((inp) => {
+                inp.removeAttribute('value')
+            })
+            event.target.querySelectorAll('option').forEach((select) => {
+                select.removeAttribute('selected')
+            })
+            event.target.submit()
+        })
+    </script>
 {% endblock %}

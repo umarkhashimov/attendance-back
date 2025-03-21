@@ -126,7 +126,7 @@ class StudentsListView(AdminRequired, ListView):
         return queryset
     
 class TeachersListView(AdminRequired, ListView):
-    queryset = UsersModel.objects.all().filter(role='1')
+    queryset = UsersModel.objects.all().filter(role='1').order_by('first_name', 'last_name').prefetch_related('coursemodel_set')
     template_name = 'teachers_list.html'
     context_object_name = 'teachers'
     ordering = ['first_name', 'last_name']
@@ -143,21 +143,6 @@ class TeachersListView(AdminRequired, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["filter_form"] = TeachersListFilterForm(self.request.GET)
-
-        teachers = self.queryset.order_by('first_name', 'last_name')
-
-        teacher_enrollments = {}
-
-        for teacher in teachers:
-            courses = CourseModel.objects.filter(teacher=teacher).distinct().order_by('weekdays',
-                                                                                                        'lesson_time')
-            if len(courses) > 0:
-                teacher_enrollments[teacher] = {
-                    course: list(Enrollment.objects.filter(course=course, status=True))
-                    for course in courses
-                }
-
-        context['teacher_enrollments']=teacher_enrollments
         return context
 
 
