@@ -47,13 +47,14 @@ def mark_unmarked_sessions():
 
 def send_test_message():
     url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
-    data = {"chat_id": 5811454533, 'text': "test message"}
+    data = {"chat_id": 5811454533, 'text': f"scheduler is working!\ndatetime: {datetime.datetime.now()}"}
     requests.post(url=url, data=data)
 
 def start():
     if os.environ.get('RUN_MAIN') == 'true':
         scheduler = BackgroundScheduler()
         scheduler.add_job(mark_unmarked_sessions, CronTrigger(hour=23, minute=00))  # 11 PM
-        scheduler.add_job(send_test_message, IntervalTrigger(seconds=5), max_instances=1)  # 11 PM
+        scheduler.add_job(send_test_message, IntervalTrigger(seconds=10), max_instances=1)  # 11 PM
+        scheduler.add_job(send_test_message, CronTrigger(hour=8, minute=00))  # 11 PM
         scheduler.start()
 
