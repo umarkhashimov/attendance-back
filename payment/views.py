@@ -7,7 +7,7 @@ from courses.models import CourseModel
 from users.filters import AdminRequired
 from users.models import UsersModel
 from .models import PaymentModel
-from .forms import CreatePaymentForm, ConfirmPaymentForm
+from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm
 from students.models import Enrollment
 from .helpers import calculate_payment_due_date, calculate_payment_amount, next_closest_session_date
 from collections import defaultdict
@@ -18,6 +18,52 @@ class PaymentsListView(ListView):
     context_object_name = 'payments'
     ordering = ['-id']
     paginate_by = 30
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        data = self.request.GET.copy()
+        teacher_id = data.get('teacher')
+
+        # payment_date_start = data.get('payment_date_start')
+        # payment_date_end = data.get('payment_date_end')
+        # print((payment_date_start, payment_date_end))
+        # # if payment_date_start and payment_date_end:
+        # #     payment_date_start =  datetime.strptime(data['payment_date_start'], '%Y-%m-%d')
+        # #     payment_date_end = datetime.strptime(data['payment_date_end'], '%Y-%m-%d')
+        # #     print("worked")
+        # #     if payment_date_start > payment_date_end:
+        # #         print('comparing')
+        # #
+        # #         data['payment_date_end'] = data.get('payment_date_start')
+
+        context['filter_form'] = PaymentHistoryFilterForm(initial=data, teacher_id=teacher_id)
+        context['queryset_length'] = self.get_queryset().count()
+        return context
+
+    def get_queryset(self):
+        queryset = PaymentModel.objects.all()
+        teacher = self.request.GET.get('teacher', None)
+        course = self.request.GET.get('course', None)
+        payment_date_start = self.request.GET.get('payment_date_start', None)
+        payment_date_end = self.request.GET.get('payment_date_end', None)
+
+        if teacher:
+            queryset = queryset.filter(enrollment__course__teacher=teacher)
+
+        if course:
+            courses_teacher = CourseModel.objects.filter(id=course).values_list('teacher_id', flat=True)
+            if str(teacher) in str(courses_teacher):
+                queryset = queryset.filter(enrollment__course=course)
+
+        if payment_date_start:
+            queryset = queryset.filter(date__gt=payment_date_start)
+
+        if payment_date_end:
+            queryset = queryset.filter(date__lt=payment_date_end)
+
+        return queryset.order_by('-id')
+
 
 class CreatePaymentView(View):
 

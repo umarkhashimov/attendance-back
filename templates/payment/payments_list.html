@@ -19,23 +19,34 @@
                             <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
                         </h6>
                     </div>
+                    {#                    {{ filter_form }}#}
                     <div class="row mt-2 pb-2">
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-6">
                             <div class="custom-select-2">
-                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
-                                {{ filter_form.text }}
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-6 col-md-4">
-                            <div class="custom-select-2">
-                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
                                 {{ filter_form.teacher }}
                             </div>
                         </div>
-                        <div class="col-12 col-sm-6 col-md-4">
+                        <div class="col-12 col-md-6">
                             <div class="custom-select-2">
-                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.order_by.label }}</label>
-                                {{ filter_form.order_by }}
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.course.label }}</label>
+                                {{ filter_form.course }}
+                            </div>
+                        </div>
+
+                        <p class="mt-3 mb-1">Фильтр по дате, выбор по периоду</p>
+                        <div class="col-12 col-md-6">
+                            <div class="custom-select-2">
+                                <label for="subject"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.payment_date_start.label }}</label>
+                                {{ filter_form.payment_date_start }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="custom-select-2">
+                                <label for="subject"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.payment_date_end.label }}</label>
+                                {{ filter_form.payment_date_end }}
                             </div>
                         </div>
                     </div>
@@ -68,7 +79,7 @@
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="3" class="text-center w-100">нет
+                            <td colspan="6" class="text-center w-100">нет
                                 записей
                             </td>
                         </tr>
@@ -87,6 +98,7 @@
                             {% if page_obj.has_previous %}
                                 <li class="page-item">
                                     <a class="page-link" href="?
+
                                             {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
                                        aria-label="Previous">
                                         <span aria-hidden="true">&laquo;</span>
@@ -97,11 +109,13 @@
                                 {% if page_obj.number == page %}
                                     <li class="page-item ms-1"><a class="page-link active"
                                                                   href="?
+
                                                                           {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
                                     </li>
                                 {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
                                     <li class="page-item ms-1"><a class="page-link"
                                                                   href="?
+
                                                                           {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
                                     </li>
                                 {% endif %}
@@ -109,6 +123,7 @@
                             {% if page_obj.has_next %}
                                 <li class="page-item ms-1">
                                     <a class="page-link" href="?
+
                                             {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
                                        aria-label="Next">
                                         <span aria-hidden="true">&raquo;</span>
@@ -121,4 +136,11 @@
             </div>
         {% endif %}
     </div>
+{% endblock %}
+{% block custom_js %}
+    <script>
+        $(document).ready(function () {
+            $('select').select2() // Apply select2 to all select elements
+        })
+    </script>
 {% endblock %}
