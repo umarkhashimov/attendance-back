@@ -55,6 +55,7 @@ def start():
         scheduler = BackgroundScheduler()
         scheduler.add_job(mark_unmarked_sessions, CronTrigger(hour=23, minute=00))  # 11 PM
         # scheduler.add_job(send_test_message, IntervalTrigger(seconds=10), max_instances=1)  # 11 PM
-        scheduler.add_job(send_test_message, CronTrigger(hour=2, minute=55))  # 11 PM
+        scheduler.add_job(send_test_message, CronTrigger(hour=23, minute=00))  # 11 PM
+        scheduler.add_job(send_test_message, CronTrigger(hour=8, minute=00))  # 11 PM
         scheduler.start()
 
