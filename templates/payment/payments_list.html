@@ -33,16 +33,21 @@
                                 {{ filter_form.course }}
                             </div>
                         </div>
-
-                        <p class="mt-3 mb-1">Фильтр по дате, выбор по периоду</p>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-6 mt-2">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.student.label }}</label>
+                                {{ filter_form.student }}
+                            </div>
+                        </div>
+{#                        <p class="mt-3 mb-1">Фильтр по дате, выбор по периоду</p>#}
+                        <div class="col-12 col-md-3 mt-2">
                             <div class="custom-select-2">
                                 <label for="subject"
                                        class="me-2 ms-1 mb-1">{{ filter_form.payment_date_start.label }}</label>
                                 {{ filter_form.payment_date_start }}
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-3 mt-2">
                             <div class="custom-select-2">
                                 <label for="subject"
                                        class="me-2 ms-1 mb-1">{{ filter_form.payment_date_end.label }}</label>
@@ -58,6 +63,7 @@
                     <thead>
                     <tr>
                         <th class="text-center">Ученик</th>
+                        <th class="text-center">Курс</th>
                         <th class="text-center">Сумма</th>
                         <th class="text-center">Месяц</th>
                         <th class="text-center">Начало</th>
@@ -71,6 +77,9 @@
                             <td class="px-1"><a class="link-dark text-decoration-none table-obj-name-link"
                                                 href="{% url 'students:student_update' pk=payment.enrollment.student.id %}">{{ payment.enrollment.student }}</a>
                             </td>
+                            <td class="px-1"><a class="link-dark text-decoration-none table-obj-name-link"
+                                                href="{% url 'courses:course_update' pk=payment.enrollment.course.id %}">{{ payment.enrollment.course }}</a>
+                            </td>
                             <td class="px-1">{{ payment.amount }}</td>
                             <td class="px-1">{{ payment.months }}</td>
                             <td class="px-1">{{ payment.payed_from|date:'d-m-Y'|default:'?' }}</td>
@@ -79,7 +88,7 @@
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center w-100">нет
+                            <td colspan="7" class="text-center w-100">нет
                                 записей
                             </td>
                         </tr>

@@ -8,7 +8,7 @@ from users.filters import AdminRequired
 from users.models import UsersModel
 from .models import PaymentModel
 from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm
-from students.models import Enrollment
+from students.models import Enrollment, StudentModel
 from .helpers import calculate_payment_due_date, calculate_payment_amount, next_closest_session_date
 from collections import defaultdict
 
@@ -24,6 +24,7 @@ class PaymentsListView(ListView):
 
         data = self.request.GET.copy()
         teacher_id = data.get('teacher')
+        course_id = data.get('course')
 
         # payment_date_start = data.get('payment_date_start')
         # payment_date_end = data.get('payment_date_end')
@@ -37,7 +38,7 @@ class PaymentsListView(ListView):
         # #
         # #         data['payment_date_end'] = data.get('payment_date_start')
 
-        context['filter_form'] = PaymentHistoryFilterForm(initial=data, teacher_id=teacher_id)
+        context['filter_form'] = PaymentHistoryFilterForm(initial=data, teacher_id=teacher_id, course_id=course_id)
         context['queryset_length'] = self.get_queryset().count()
         return context
 
@@ -45,16 +46,47 @@ class PaymentsListView(ListView):
         queryset = PaymentModel.objects.all()
         teacher = self.request.GET.get('teacher', None)
         course = self.request.GET.get('course', None)
+        student_id = self.request.GET.get('student', None)
         payment_date_start = self.request.GET.get('payment_date_start', None)
         payment_date_end = self.request.GET.get('payment_date_end', None)
 
         if teacher:
             queryset = queryset.filter(enrollment__course__teacher=teacher)
 
+            # if course:
+            #     teacher_courses = CourseModel.objects.filter(teacher=teacher).values_list('id', flat=True)
+            #     if str(course) in str(teacher_courses):
+            #         queryset = queryset.filter(enrollment__course=course)
+            #
+            # if student_id:
+            #     teacher_students = StudentModel.objects.filter(enrollment__course__teacher=teacher).distinct().values_list('id', flat=True)
+            #     if str(student_id) in str(teacher_students):
+            #         queryset = queryset.filter(enrollment__student_id=student_id)
+
+
         if course:
             courses_teacher = CourseModel.objects.filter(id=course).values_list('teacher_id', flat=True)
             if str(teacher) in str(courses_teacher):
                 queryset = queryset.filter(enrollment__course=course)
+
+        if student_id and not teacher:
+            # student = StudentModel.objects.filter(id=student_id)
+            # print(student, student_id)
+            # course_students = CourseModel.objects.filter(enrollment__student_id=student).distinct()
+            # print('>>>', course_students)
+            # if str(student) in str(course_students):
+            #     print(('yes'))
+            #     queryset = queryset.filter(enrollment__course__student=student)
+            # if course:
+            #     student_courses = CourseModel.objects.filter(id=course).distinct().values_list('enrollment__student_id', flat=True)
+            #     if str(student_id) in str(student_courses):
+            #         queryset = queryset.filter(enrollment__student_id=student_id)
+            # elif teacher:
+            #     student_teachers = CourseModel.objects.filter(teacher=teacher).distinct().values_list('enrollment__student_id', flat=True)
+            #     if str(student_id) in str(student_teachers):
+            #         queryset = queryset.filter(enrollment__student_id=student_id)
+            # else:
+            queryset = queryset.filter(enrollment__student=student_id)
 
         if payment_date_start:
             queryset = queryset.filter(date__gt=payment_date_start)
@@ -97,7 +129,6 @@ class CreatePaymentView(View):
             payment.save()
 
         next_url = self.request.GET.get('next', '/')
-        print(next_url)
         return redirect(next_url)
 
 class DebtPaymentsListView(View, AdminRequired):
