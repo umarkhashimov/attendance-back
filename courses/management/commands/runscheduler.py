@@ -60,7 +60,7 @@ class Command(BaseCommand):
  def handle(self, *args, **options):
      scheduler = BackgroundScheduler()
      scheduler.add_job(mark_unmarked_sessions, CronTrigger(hour=23, minute=00))  # 11 PM
-     scheduler.add_job(send_test_message, IntervalTrigger(seconds=10), max_instances=1)  # 11 PM
+     scheduler.add_job(send_test_message, IntervalTrigger(hours=1), max_instances=1)  # 11 PM
      scheduler.start()
 
      self.stdout.write(self.style.SUCCESS("APScheduler started..."))
