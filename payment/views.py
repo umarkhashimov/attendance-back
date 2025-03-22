@@ -53,15 +53,15 @@ class PaymentsListView(ListView):
         if teacher:
             queryset = queryset.filter(enrollment__course__teacher=teacher)
 
-            # if course:
-            #     teacher_courses = CourseModel.objects.filter(teacher=teacher).values_list('id', flat=True)
-            #     if str(course) in str(teacher_courses):
-            #         queryset = queryset.filter(enrollment__course=course)
-            #
-            # if student_id:
-            #     teacher_students = StudentModel.objects.filter(enrollment__course__teacher=teacher).distinct().values_list('id', flat=True)
-            #     if str(student_id) in str(teacher_students):
-            #         queryset = queryset.filter(enrollment__student_id=student_id)
+            if course:
+                teacher_courses = CourseModel.objects.filter(teacher=teacher).values_list('id', flat=True)
+                if str(course) in str(teacher_courses):
+                    queryset = queryset.filter(enrollment__course=course)
+
+            if student_id:
+                teacher_students = StudentModel.objects.filter(enrollment__course__teacher=teacher).distinct().values_list('id', flat=True)
+                if str(student_id) in str(teacher_students):
+                    queryset = queryset.filter(enrollment__student_id=student_id)
 
 
         if course:
