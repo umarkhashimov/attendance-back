@@ -119,6 +119,8 @@ class StudentsListView(AdminRequired, ListView):
                 queryset = queryset.filter(enrollment_date__gte=thirty_days_ago).order_by('-id')
             elif ordering == "5":
                 queryset = queryset.filter(Q(courses__isnull=True) | Q(enrollment__status=False)).exclude(enrollment__status=True).order_by('first_name', 'last_name').distinct()
+            elif ordering == "8":
+                queryset = queryset.filter(Q(courses__isnull=False) | Q(enrollment__status=True)).exclude(enrollment__status=False).order_by('first_name', 'last_name').distinct()
             elif ordering == "6":
                 queryset = queryset.order_by('-id')
             elif ordering == "7":
