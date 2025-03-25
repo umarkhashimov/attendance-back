@@ -25,10 +25,9 @@ def mark_unmarked_sessions(date=None):
     try:
         close_old_connections()  #  ensures dead connections are closed
 
-        today = datetime.date.today() if not date else date
+        today = date if date else datetime.date.today()
 
         marked_sessions = SessionsModel.objects.filter(date=today)
-
         sessions_today = CourseModel.objects.filter(
             status=True,
             weekdays__contains=str(today.weekday())
@@ -48,7 +47,6 @@ def mark_unmarked_sessions(date=None):
                     date=today,
                     defaults={'status': True, 'record_by_id': None, 'topic': course.last_topic}
                 )
-
                 if created:
                     enrollments = Enrollment.objects.filter(course=course, status=True).select_related('student')
 
@@ -60,7 +58,7 @@ def mark_unmarked_sessions(date=None):
 
                     text = (
                         f'Группа: {course}\n'
-                        f'Учитель: #{course.teacher.username} - {course.teacher.get_full_name()}\n\n'
+                        f'Учитель: #{course.teacher.username} - {course.teacher.get_full_name}\n\n'
                     )
                     message += text
 
@@ -69,9 +67,11 @@ def mark_unmarked_sessions(date=None):
         close_old_connections()  #  cleanup again
 
     except Exception as e:
+        import traceback
         import requests
-        from decouple import config
+
+        error_message = f"marking error: {e}"
 
         url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
-        data = {"chat_id": 5811454533, 'text': f"marking error {e}"}
+        data = {"chat_id": 5811454533, 'text': error_message}
         requests.post(url=url, data=data)
