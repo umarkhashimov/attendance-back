@@ -66,3 +66,11 @@ function unmarkStudent(stid, session_id) {
     studentData.setAttribute('status', '');
     studentData.querySelector(`#statusInp${stid}`).value = '';
 }
+
+document.querySelectorAll('form').forEach((form) => {
+    form.addEventListener('submit', (f) => {
+        f.preventDefault()
+        f.target.querySelector('button[type="submit"]').disabled = true
+        f.target.submit()
+    })
+})
