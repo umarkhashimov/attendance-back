@@ -47,29 +47,32 @@ class PaymentsListView(ListView):
         teacher = self.request.GET.get('teacher', None)
         course = self.request.GET.get('course', None)
         student_id = self.request.GET.get('student', None)
+        sort_by = self.request.GET.get('sort_by', None)
         payment_date_start = self.request.GET.get('payment_date_start', None)
         payment_date_end = self.request.GET.get('payment_date_end', None)
 
         if teacher:
             queryset = queryset.filter(enrollment__course__teacher=teacher)
-
-            if course:
-                teacher_courses = CourseModel.objects.filter(teacher=teacher).values_list('id', flat=True)
-                if str(course) in str(teacher_courses):
-                    queryset = queryset.filter(enrollment__course=course)
-
-            if student_id:
-                teacher_students = StudentModel.objects.filter(enrollment__course__teacher=teacher).distinct().values_list('id', flat=True)
-                if str(student_id) in str(teacher_students):
-                    queryset = queryset.filter(enrollment__student_id=student_id)
-
-
+        #
+        #     if course:
+        #         teacher_courses = CourseModel.objects.filter(teacher=teacher).values_list('id', flat=True)
+        #         if str(course) in str(teacher_courses):
+        #             queryset = queryset.filter(enrollment__course=course)
+        #
+        #     if student_id:
+        #         teacher_students = StudentModel.objects.filter(enrollment__course__teacher=teacher).distinct().values_list('id', flat=True)
+        #         if str(student_id) in str(teacher_students):
+        #             queryset = queryset.filter(enrollment__student_id=student_id)
+        #
+        #
         if course:
-            courses_teacher = CourseModel.objects.filter(id=course).values_list('teacher_id', flat=True)
-            if str(teacher) in str(courses_teacher):
+            # courses_teacher = CourseModel.objects.filter(id=course).values_list('teacher_id', flat=True)
+        #     if str(teacher) in str(courses_teacher):
                 queryset = queryset.filter(enrollment__course=course)
-
-        if student_id and not teacher:
+        #
+        if student_id:
+            queryset = queryset.filter(enrollment__student_id=student_id)
+        # if student_id and not teacher:
             # student = StudentModel.objects.filter(id=student_id)
             # print(student, student_id)
             # course_students = CourseModel.objects.filter(enrollment__student_id=student).distinct()
@@ -86,7 +89,7 @@ class PaymentsListView(ListView):
             #     if str(student_id) in str(student_teachers):
             #         queryset = queryset.filter(enrollment__student_id=student_id)
             # else:
-            queryset = queryset.filter(enrollment__student=student_id)
+            # queryset = queryset.filter(enrollment__student=student_id)
 
         if payment_date_start:
             queryset = queryset.filter(date__gt=payment_date_start)
@@ -95,7 +98,19 @@ class PaymentsListView(ListView):
             end_date = datetime.strptime(payment_date_end, '%Y-%m-%d')
             queryset = queryset.filter(date__lte=end_date+timedelta(days=1))
 
-        return queryset.order_by('-id')
+        if sort_by:
+            if sort_by == '1':
+                queryset = queryset.order_by('-id')
+            elif sort_by == '2':
+                queryset = queryset.order_by('id')
+            elif sort_by == '3':
+                queryset = queryset.filter(enrollment__status=False).order_by('-id')
+            elif sort_by == '4':
+                queryset = queryset.order_by('-months')
+        else:
+            queryset = queryset.order_by('-id')
+
+        return queryset
 
 
 class CreatePaymentView(View):
