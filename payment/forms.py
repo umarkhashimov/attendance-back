@@ -44,15 +44,12 @@ class PaymentHistoryFilterForm(forms.Form):
 
     def __init__(self, teacher_id=None, course_id=None,  *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # if teacher_id:
-        #     self.fields['course'].queryset = CourseModel.objects.filter(teacher=teacher_id)
-        #
-        # if course_id:
-        #     self.fields['student'].queryset = StudentModel.objects.filter(enrollment__course=course_id).distinct()
-        #     # self.fields['teacher'].widget.attrs.update({'disabled': True})
-        # elif teacher_id:
-        #     self.fields['student'].queryset = StudentModel.objects.filter(enrollment__course__teacher=teacher_id).distinct()
-        #
+
+        if course_id:
+            if teacher_id:
+                course = CourseModel.objects.filter(id=course_id)
+                if course and str(course.first().teacher.id) != str(teacher_id):
+                    self.initial['teacher'] = None
 
         start_date = self.initial.get("payment_date_start")
         end_date = self.initial.get("payment_date_end")
