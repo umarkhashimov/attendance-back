@@ -35,7 +35,6 @@ class StudentModel(models.Model):
 
 
 class Enrollment(models.Model):
-    
     student = models.ForeignKey(StudentModel, on_delete=models.CASCADE, verbose_name="Студент")
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE, verbose_name="Курс")
     status = models.BooleanField(default=True, verbose_name="Статус Активности")

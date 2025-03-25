@@ -33,17 +33,21 @@ class TeacherUpdateForm(forms.ModelForm):
     class Meta:
         model = UsersModel
         # fields = "__all__"
-        fields = ['first_name', 'last_name', 'phone_number']
+        fields = ['first_name', 'last_name', 'phone_number', 'color']
         # exclude = ['password', 'last_login']'
+        widgets = {
+            'color': forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Add attributes to all fields
         for field_name, field in self.fields.items():
-            field.widget.attrs.update({
-                "class": "form-control",  # Add Bootstrap class
-                "placeholder": ' ',  # Optional: Use label as placeholder
-            })
+            if field_name != 'color':
+                field.widget.attrs.update({
+                    "class": "form-control",  # Add Bootstrap class
+                    "placeholder": ' ',  # Optional: Use label as placeholder
+                })
 
 class TeacherSelectForm(forms.Form):
     teacher = forms.ModelChoiceField(

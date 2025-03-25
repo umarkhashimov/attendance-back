@@ -11,6 +11,7 @@ class UsersModel(AbstractUser):
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1', verbose_name='Роль')
     phone_number = models.CharField(max_length=13, null=True, blank=True, verbose_name="Номер Телефона")
+    color = models.CharField(max_length=7, default='#ffffff', null=True, blank=True, verbose_name="Цвет выделения")
 
     @property
     def get_full_name(self) -> str:
