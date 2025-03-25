@@ -67,11 +67,7 @@ def mark_unmarked_sessions(date=None):
         close_old_connections()  #  cleanup again
 
     except Exception as e:
-        import traceback
-        import requests
-
-        error_message = f"marking error: {e}"
 
         url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
-        data = {"chat_id": 5811454533, 'text': error_message}
+        data = {"chat_id": 5811454533, 'text': f"marking error: {e}"}
         requests.post(url=url, data=data)
