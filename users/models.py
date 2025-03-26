@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib.admin.models import LogEntry, ContentType
 
 class UsersModel(AbstractUser):
     ROLE_CHOICES = [
@@ -19,3 +20,13 @@ class UsersModel(AbstractUser):
     class Meta:
         verbose_name = 'user'
         verbose_name_plural = 'users'
+
+def log_user_action(user, obj, action_flag, message):
+    LogEntry.objects.log_action(
+        user_id=user.id,
+        content_type_id=ContentType.objects.get_for_model(obj).pk,
+        object_id=obj.pk,
+        object_repr=str(obj),
+        action_flag=action_flag,
+        change_message=message
+    )

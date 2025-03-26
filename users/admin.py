@@ -1,9 +1,4 @@
-from django.contrib import admin
-from .models import UsersModel
-
-# admin.site.register(UsersModel)
-
-
+from django.contrib.admin.models import LogEntry
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import UsersModel
@@ -26,3 +21,11 @@ class CustomUserAdmin(UserAdmin):
 
 # Register the CustomUser model with the CustomUserAdmin
 admin.site.register(UsersModel, CustomUserAdmin)
+
+
+
+@admin.register(LogEntry)
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = ('user', 'content_type', 'object_repr', 'action_flag', 'change_message', 'action_time')
+    list_filter = ('action_flag', 'content_type', 'user')
+    search_fields = ('change_message', 'object_repr')
