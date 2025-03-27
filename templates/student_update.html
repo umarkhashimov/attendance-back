@@ -342,7 +342,17 @@
                                                             <form method="post"
                                                                   action="{% url "students:update_enrollment" pk=enrollment.id %}?next={{ request.path }}">
                                                             {% csrf_token %}
-
+                                                               {% if request.user.is_superuser %}
+                                                                <div class="form-floating mb-3">
+                                                                    <input type="number" class="form-control"
+                                                                           name="balance"
+                                                                           value="{{ enrollment.balance|default:"0" }}"
+                                                                           required
+                                                                           id="balanceInp{{ enrollment.id }}"
+                                                                           placeholder="123"/>
+                                                                    <label for="balanceInp{{ enrollment.id }}">Баланс</label>
+                                                                </div>
+                                                                {% endif %}
                                                                 <div class="form-floating mb-3">
                                                                     <input type="number" class="form-control"
                                                                            name="discount"
