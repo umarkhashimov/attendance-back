@@ -59,6 +59,8 @@ class CourseModel(models.Model):
         count = Enrollments.objects.filter(course=self, status=True, trial_lesson=False).count()
         return count
 
+    get_enrolled_count.short_description = 'Кол-во Учеников'
+
     def get_last_topic(self):
         last_session = SessionsModel.objects.all().filter(course=self, status=True).order_by('date').last()
         topic = last_session.topic if last_session else None 
@@ -73,12 +75,14 @@ class CourseModel(models.Model):
         weekdays = ','.join(weekdays_short[num] for num in course_weekdays)
         return weekdays
 
+    get_name.short_description = 'Дни занятий'
+
     def __str__(self):
         return f"{self.id}. {self.get_name()} - {self.lesson_time.strftime(format="%H:%M")}. {self.subject}"
     
     class Meta:
-        verbose_name = 'course'
-        verbose_name_plural = 'courses'
+        verbose_name = 'Курс'
+        verbose_name_plural = 'Курсы'
         ordering = ['id']
 
 
@@ -108,7 +112,7 @@ class SessionsModel(models.Model):
         return unmarked_attendance_count > 0
 
     class Meta:
-        verbose_name = 'session'
-        verbose_name_plural = 'sessions'
+        verbose_name = 'урок'
+        verbose_name_plural = 'уроки'
         unique_together = ('course', 'date')
         ordering = ['-id']

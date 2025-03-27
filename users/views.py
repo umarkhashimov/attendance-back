@@ -1,10 +1,10 @@
-from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.views.generic import TemplateView, UpdateView
+from django.views.generic import TemplateView, UpdateView, ListView
 from django.urls import reverse, reverse_lazy
 
 from .filters import AdminRequired
-from .models import UsersModel
+from .models import UsersModel, LogAdminActionsModel
 from .forms import LoginForm, TeacherUpdateForm
 
 class LoginPageView(LoginView):
@@ -33,3 +33,10 @@ class CustomPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
     template_name = 'auth/update_password.html'  # Create this template
     success_url = reverse_lazy('users:profile')  # Redirect after success
     success_message = "Пароль успешно обновлен!"
+
+class AdminActionsView(ListView):
+    template_name = 'admin_actions.html'
+    model = LogAdminActionsModel
+    context_object_name = 'actions'
+    ordering = ['-id']
+    paginate_by = 30

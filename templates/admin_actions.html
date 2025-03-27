@@ -1,0 +1,156 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+    <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+    {% include 'layout/navbar.html' %}
+
+    <div class="container pt-1">
+        <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
+            <h5 class="mt-1 mb-2">История действий</h5>
+        </div>
+        <hr class="table-group-divider"/>
+        <div class="row px-2 mt-3">
+{#            <div class="accordion accordion-flush px-1" id="accordionExample">#}
+{#                {% for action in actions %}#}
+{#                    <div class="accordion-item border-1">#}
+{#                        <div class="accordion-header">#}
+{#                            <div class="d-flex justify-content-between align-items-center border border-1">#}
+{##}
+{#                                <button class="accordion-button shadow-none collapsed border py-2 ps-1" type="button"#}
+{#                                        data-bs-toggle="collapse" data-bs-target="#accordion{{ action.id }}"#}
+{#                                        aria-expanded="false">#}
+{#                                <span class="pe-3 d-flex justify-content-between w-100">#}
+{##}
+{#                                <span>#}
+{##}
+{#                                {% if action.action_number == 1 %}#}
+{#                                    <span class="badge text-success fs-5 py-0"><i#}
+{#                                            class="bi bi-plus-square-fill"></i></span>#}
+{#                                {% elif action.action_number == 2 %}#}
+{#                                    <span class="badge text-warning fs-5 py-0"><i#}
+{#                                            class="bi bi-pencil-square"></i></span>#}
+{#                                {% elif action.action_number == 3 %}#}
+{#                                    <span class="badge text-danger fs-5 py-0"><i class="bi bi-trash3-fill"></i></span>#}
+{#                                {% endif %}#}
+{#                                    <span class="text-primary">{{ action.user.username }}</span>#}
+{#                                </span>#}
+{#                                    <span>{{ action.content_type.name }}</span>#}
+{#                                    <span>{{ action.datetime }}</span>#}
+{#                                </span>#}
+{#                                </button>#}
+{#                            </div>#}
+{##}
+{#                        </div>#}
+{#                        <div id="accordion{{ action.id }}" class="accordion-collapse collapse border border-1 p-0"#}
+{#                             data-bs-parent="#accordionExample">#}
+{#                            <div class="accordion-body bg-opacity-25 bg-light">#}
+{#                                {{ action.message|safe }}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% empty %}#}
+{#                    <p class="text-center text-secondary">Пусто</p>#}
+{#                {% endfor %}#}
+{#            </div>#}
+
+            <div class="accordion accordion-flush px-0" id="accordionExample">
+                {% for action in actions %}
+                <div class="accordion-item border">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button py-2 collapsed" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapse{{ action.id }}" aria-expanded="true" aria-controls="collapse{{ action.id }}">
+
+                                <span class="pe-3 d-flex justify-content-between w-100">
+
+                                <span>
+
+                                {% if action.action_number == 1 %}
+                                    <span class="badge text-success fs-5 py-0"><i
+                                            class="bi bi-plus-square-fill"></i></span>
+                                {% elif action.action_number == 2 %}
+                                    <span class="badge text-warning fs-5 py-0"><i
+                                            class="bi bi-pencil-square"></i></span>
+                                {% elif action.action_number == 3 %}
+                                    <span class="badge text-danger fs-5 py-0"><i class="bi bi-trash3-fill"></i></span>
+                                {% endif %}
+                                    <span class="text-primary">{{ action.user.username }}</span>
+                                </span>
+                                    <span>{{ action.content_type.name }}</span>
+                                    <span>{{ action.datetime }}</span>
+                                </span>
+                        </button>
+                    </h2>
+                    <div id="collapse{{ action.id }}" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                        <div class="accordion-body">
+                             <div class="accordion-body bg-opacity-25 bg-light">
+                                {{ action.message|safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if page_obj.paginator.count > 30 %}
+                <div class="row mt-5">
+                    <div class="col-12 col-lg-8 offset-lg-2 d-flex justify-content-center">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination ">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?
+
+
+
+
+                                                {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}"
+                                           aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% for page in paginator.page_range %}
+                                    {% if page_obj.number == page %}
+                                        <li class="page-item ms-1"><a class="page-link active"
+                                                                      href="?
+
+
+
+
+                                                                              {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
+                                        </li>
+                                    {% elif page > page_obj.number|add:-4 and page < page_obj.number|add:4 %}
+                                        <li class="page-item ms-1"><a class="page-link"
+                                                                      href="?
+
+
+
+
+                                                                              {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page }}">{{ page }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if page_obj.has_next %}
+                                    <li class="page-item ms-1">
+                                        <a class="page-link" href="?
+
+
+
+
+                                                {% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
+                                           aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+

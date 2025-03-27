@@ -5,6 +5,7 @@ from collections import defaultdict
 
 from users.filters import AdminRequired
 from users.forms import TeacherSelectForm
+from users.helpers import record_action
 from .models import StudentModel, Enrollment
 from .forms import StudentInfoForm
 from courses.models import CourseModel
@@ -12,7 +13,6 @@ from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
 from attendance.models import AttendanceModel
-
 class StudentUpdateView(AdminRequired, UpdateView):
     model = StudentModel
     template_name = 'student_update.html'
@@ -57,6 +57,8 @@ class CreateStudentView(AdminRequired, CreateView):
     exclude = ['courses']
 
     def get_success_url(self):
+        action_message = f"Создал ученика: <b>{self.object.id} - {self.object.full_name}</b>"
+        record_action(1, self.request.user, self.object, self.object.id, action_message)
         return reverse('students:student_update', kwargs={'pk': self.object.id})
     
 

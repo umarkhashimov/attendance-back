@@ -27,8 +27,8 @@ class StudentModel(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
-        verbose_name = 'student'
-        verbose_name_plural = 'students'
+        verbose_name = 'ученик'
+        verbose_name_plural = 'ученики'
         ordering = ['-id'] 
 
 
@@ -71,6 +71,6 @@ class Enrollment(models.Model):
         self.save()
 
     class Meta:
-        verbose_name = "enrollment"
-        verbose_name_plural = "enrollments"
+        verbose_name = "зачисление"
+        verbose_name_plural = "зачислении"
         # unique_together = ("student", "course")

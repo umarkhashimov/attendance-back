@@ -1,7 +1,9 @@
 from django.contrib.admin.models import LogEntry
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import UsersModel
+from .models import UsersModel, LogAdminActionsModel
+
+admin.site.register(LogAdminActionsModel)
 
 class CustomUserAdmin(UserAdmin):
     # Specify the fields in the desired order
@@ -21,7 +23,6 @@ class CustomUserAdmin(UserAdmin):
 
 # Register the CustomUser model with the CustomUserAdmin
 admin.site.register(UsersModel, CustomUserAdmin)
-
 
 
 @admin.register(LogEntry)

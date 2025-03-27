@@ -1,5 +1,7 @@
+from random import choices
+
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, User
 from django.contrib.admin.models import LogEntry, ContentType
 
 class UsersModel(AbstractUser):
@@ -30,3 +32,20 @@ def log_user_action(user, obj, action_flag, message):
         action_flag=action_flag,
         change_message=message
     )
+
+ACTION_FLAG_CHOICES = [
+    (1, "Создать"),
+    (2, "Изменить"),
+    (3, "Удалить"),
+]
+
+class LogAdminActionsModel(models.Model):
+    action_number = models.PositiveSmallIntegerField(choices=ACTION_FLAG_CHOICES)
+    user = models.ForeignKey(UsersModel, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    message = models.TextField()
+    datetime = models.DateTimeField(auto_now_add=True)
+
+    def action_type(self):
+        return self.get_action_number_display()
