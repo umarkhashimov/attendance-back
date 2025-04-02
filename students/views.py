@@ -124,7 +124,7 @@ class UpdateEnrollmentView(View, AdminRequired):
         enrollment = get_object_or_404(Enrollment, id=pk)
         form = UpdateEnrollmentForm(request.POST)
         if form.is_valid():
-            if not form.cleaned_data['balance']:
+            if form.cleaned_data['balance'] is None:
                 form.cleaned_data['balance'] = enrollment.balance
             enrollment, created = Enrollment.objects.update_or_create(
                 course=enrollment.course,
