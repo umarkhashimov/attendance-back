@@ -12,13 +12,14 @@ def calculate_payment_amount(enrollment, count):
 
     return float(overall)
 
-def calculate_payment_due_date(enrollment):
+def calculate_payment_due_date(enrollment, iterate_balance=None, count_from=None):
     weekdays = [x for x in enrollment.course.weekdays]
 
-    due_date = current_date = date.today()
+    due_date = current_date = date.today() if count_from is None else count_from
 
+    iterator = enrollment.balance if iterate_balance is None else iterate_balance
     iterations = 0
-    while iterations < enrollment.balance:
+    while iterations < iterator:
         if str(current_date.weekday()) in weekdays:
             due_date = current_date
             iterations += 1

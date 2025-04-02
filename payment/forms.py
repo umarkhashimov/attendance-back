@@ -66,3 +66,11 @@ class PaymentHistoryFilterForm(forms.Form):
             else:
                 self.initial['payment_date_end'] = datetime.date.today().strftime('%Y-%m-%d')
 
+class UpdatePaymentDatesForm(forms.ModelForm):
+
+    class Meta:
+        model = PaymentModel
+        fields = ['payed_from']
+        widgets = {
+            'payed_from': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
+        }

@@ -1,0 +1,31 @@
+{% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+  <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+  <div class="container courses-list">
+
+    <h4 class="mt-5">Обновить даты оплаты</h4>
+    <hr class="table-group-divider" />
+    <form method="post">
+        <p><b>Ученик:</b> {{ object.enrollment.student.full_name }}</p>
+        <p><b>Курс:</b> {{ object.enrollment.course }}</p>
+        <p><b>Месяцы:</b> {{ object.months }}</p>
+        {% if object.current_balance %}
+            <p><b>Баланс после оплаты:</b> {{ object.current_balance }}</p>
+        {% else %}
+            <p class="m-0">(баланс при оплате не найдено)</p>
+            <p><b>Нынешный баланс:</b> {{ object.enrollment.balance }}</p>
+        {% endif %}
+      {% csrf_token %}
+        <p><b>Дата оплаты:</b> {{ object.date }}</p>
+      {{form|crispy}}
+      <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

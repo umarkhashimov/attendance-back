@@ -1,5 +1,7 @@
 from django.urls import path
-from .views import PaymentsListView, CreatePaymentView, ConfirmPaymentView, DebtPaymentsListView, TrialEnrollmentsView
+
+from .forms import UpdatePaymentDatesForm
+from .views import PaymentsListView, CreatePaymentView, ConfirmPaymentView, DebtPaymentsListView, TrialEnrollmentsView, UpdatePaymentDatesView
 
 app_name = 'payment'
 
@@ -11,5 +13,6 @@ urlpatterns = [
     # path('payments/create/student/<int:student_id>', CreatePaymentView.as_view(), name='create_payment_student'),
     # path('payments/create/course/<int:course_id>', CreatePaymentView.as_view(), name='create_payment_course'),
     path('payments/create/enrollment/<int:enrollment_id>', CreatePaymentView.as_view(), name='create_payment_enrollment'),
+    path('payment/<int:pk>/update/', UpdatePaymentDatesView.as_view(), name='update_payment_dates'),
     # path('payments/<int:payment_id>', ConfirmPaymentView.as_view(), name='view_payment'),
 ]

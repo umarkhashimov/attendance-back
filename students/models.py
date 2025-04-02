@@ -2,6 +2,8 @@ from django.db import models
 from courses.models import CourseModel
 from django.core.validators import MaxValueValidator
 
+from users.models import UsersModel
+
 
 class StudentModel(models.Model):
     student_id = models.PositiveBigIntegerField(null=True, blank=True, unique=True, editable=False)
@@ -43,6 +45,8 @@ class Enrollment(models.Model):
     discount = models.PositiveIntegerField(default=0, verbose_name="Скидка %", validators=[MaxValueValidator(100)])
     debt_note = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка для учителя")
     note = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка")
+    enrolled_at = models.DateTimeField(auto_now_add=True)
+    enrolled_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, limit_choices_to={'role': '2'}, null=True, blank=True)
 
     def __str__(self):
         return f"{self.student} - {self.course}"

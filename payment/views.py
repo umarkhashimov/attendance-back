@@ -1,13 +1,15 @@
 from datetime import datetime, timedelta
 
+from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, ListView
+from django.urls import reverse
+from django.views.generic import View, ListView, UpdateView
 
 from courses.models import CourseModel
 from users.filters import AdminRequired
 from users.models import UsersModel
 from .models import PaymentModel
-from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm
+from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm, UpdatePaymentDatesForm
 from students.models import Enrollment, StudentModel
 from .helpers import calculate_payment_due_date, calculate_payment_amount, next_closest_session_date
 from collections import defaultdict
@@ -101,6 +103,7 @@ class CreatePaymentView(View):
                 payment.payed_from = next_closest_session_date(course=enrollment.course)
 
             payment.enrollment.add_balance(payment.months * 12)
+            payment.current_balance = payment.enrollment.balance
 
             if form.cleaned_data['end_date']:
                 payment.payed_due = form.cleaned_data['end_date']
@@ -170,3 +173,21 @@ class ConfirmPaymentView(View):
                 payment.enrollment.add_balance(payment.lessons_covered * 12)
 
         return redirect('payment:payments_list')
+
+class UpdatePaymentDatesView(UpdateView):
+    model = PaymentModel
+    form_class = UpdatePaymentDatesForm
+    template_name = 'payment/update_dates.html'
+
+    def form_valid(self, form):
+        # Perform any custom actions before saving
+        instance = form.save(commit=False)
+
+        instance.payed_due = calculate_payment_due_date(instance.enrollment, iterate_balance=instance.current_balance if instance.current_balance else None, count_from=instance.payed_from)
+        # Save the instance
+        instance.save()
+
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return  reverse('students:student_update', kwargs={'pk': self.object.enrollment.student.id})
