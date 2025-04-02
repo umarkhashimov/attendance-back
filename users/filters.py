@@ -10,4 +10,13 @@ class AdminRequired(UserPassesTestMixin):
         return user.role == '2'
 
     def handle_no_permission(self):
-        return redirect('main:main')  
+        return redirect('main:main')
+
+class SuperUserRequired(UserPassesTestMixin):
+
+    def test_func(self):
+        user = UsersModel.objects.get(id=self.request.user.id)
+        return user.is_superuser
+
+    def handle_no_permission(self):
+        return redirect('main:main')

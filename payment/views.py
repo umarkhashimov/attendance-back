@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.views.generic import View, ListView, UpdateView
 
 from courses.models import CourseModel
-from users.filters import AdminRequired
+from users.filters import AdminRequired, SuperUserRequired
 from users.models import UsersModel
 from .models import PaymentModel
 from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm, UpdatePaymentDatesForm
@@ -174,7 +174,7 @@ class ConfirmPaymentView(View):
 
         return redirect('payment:payments_list')
 
-class UpdatePaymentDatesView(UpdateView):
+class UpdatePaymentDatesView(SuperUserRequired, UpdateView):
     model = PaymentModel
     form_class = UpdatePaymentDatesForm
     template_name = 'payment/update_dates.html'

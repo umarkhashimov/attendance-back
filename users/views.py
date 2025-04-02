@@ -3,7 +3,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import TemplateView, UpdateView, ListView
 from django.urls import reverse, reverse_lazy
 
-from .filters import AdminRequired
+from .filters import AdminRequired, SuperUserRequired
 from .models import UsersModel, LogAdminActionsModel
 from .forms import LoginForm, TeacherUpdateForm
 
@@ -34,7 +34,7 @@ class CustomPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
     success_url = reverse_lazy('users:profile')  # Redirect after success
     success_message = "Пароль успешно обновлен!"
 
-class AdminActionsView(ListView):
+class AdminActionsView(SuperUserRequired, ListView):
     template_name = 'admin_actions.html'
     model = LogAdminActionsModel
     context_object_name = 'actions'

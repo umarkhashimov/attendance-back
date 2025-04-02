@@ -95,11 +95,13 @@
                                                                         <td class="px-1">{{ payment.payed_from|default:'?' }}</td>
                                                                         <td class="px-1">{{ payment.payed_due|default:'?' }}</td>
                                                                         <td class="px-1">{{ payment.date|date:'d-m-Y' }}</td>
-                                                                        <td class=""><a href="{% url 'payment:update_payment_dates' pk=payment.id %}" class="btn py-1 px-2 w-100 btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                                                                        {% if user.is_superuser %}
+                                                                            <td class=""><a href="{% url 'payment:update_payment_dates' pk=payment.id %}" class="btn py-1 px-2 w-100 btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                                                                        {% endif %}
                                                                     </tr>
                                                                 {% empty %}
                                                                     <tr>
-                                                                        <td colspan="5" class="text-center w-100">нет
+                                                                        <td colspan="6" class="text-center w-100">нет
                                                                             записей
                                                                         </td>
                                                                     </tr>
