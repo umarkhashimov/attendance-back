@@ -21,5 +21,5 @@ class PaymentModel(models.Model):
         return f"{self.enrollment.student} - {self.enrollment.course.subject}, {self.enrollment.course}"
 
     class Meta:
-        verbose_name = "payment"
-        verbose_name_plural = "payments"
+        verbose_name = "оплата"
+        verbose_name_plural = "оплаты"

@@ -211,7 +211,7 @@
                             {% endif %}
                         </p>
                     </div>
-                    {% if obj.check_time or user.role == '2' and today == filter_date %}
+                    {% if obj.check_time and today == filter_date or request.user.role == '2' and today == filter_date %}
                         <div class="d-flex btn-group rounded-0">
                             <button type="button" class="btn btn-danger px-3  rounded-0 " data-bs-toggle="modal"
                                     data-bs-target="#cancelModal{{ obj.id }}">

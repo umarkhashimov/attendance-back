@@ -106,13 +106,14 @@ class CreateEnrollmentView(AdminRequired, View):
                 defaults={**form.cleaned_data, 'status': True}
             )
 
+            action_message = f"Записал ученика <b>{enrollment.student}</b> в группу <b>{enrollment.course}</b>"
+            record_action(1, self.request.user, enrollment, enrollment.id, action_message)
             if course_id:
                 return redirect('courses:course_update', pk=course_id)
             elif student_id:
                 return redirect('students:student_update', pk=student_id)
             else:
                 return redirect('main:main')
-
 
         return render(request, self.template_name, {'form': form})
     
@@ -140,5 +141,7 @@ class DeactivateEnrollmentView(View):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         enrollment.status = False
         enrollment.save()
+        action_message = f"Удалил ученика <b>{enrollment.student}</b> из группы <b>{enrollment.course}</b>"
+        record_action(3, self.request.user, enrollment, enrollment.id, action_message)
         next_url  = self.request.GET.get('next', '/')
         return redirect(next_url)

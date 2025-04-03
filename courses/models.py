@@ -81,10 +81,9 @@ class CourseModel(models.Model):
         return f"{self.id}. {self.get_name()} - {self.lesson_time.strftime(format="%H:%M")}. {self.subject}"
     
     class Meta:
-        verbose_name = 'Курс'
-        verbose_name_plural = 'Курсы'
+        verbose_name = 'курс'
+        verbose_name_plural = 'курсы'
         ordering = ['id']
-
 
 
 class SessionsModel(models.Model):
@@ -104,7 +103,7 @@ class SessionsModel(models.Model):
         self.save()
 
     def __str__(self):
-        return f"{self.course.course_name} - Session on {self.date}"
+        return f"{self.course} - Дата: {self.date}"
 
     def has_unmarked_attendance(self):
         attendance_model = apps.get_model('attendance', 'AttendanceModel')

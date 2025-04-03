@@ -3,6 +3,8 @@ from django.contrib import messages
 from users.filters import AdminRequired
 from django.views.generic import DetailView,  UpdateView, View, CreateView, ListView, TemplateView
 from django.core.exceptions import PermissionDenied
+
+from users.helpers import record_action
 from .models import CourseModel, SessionsModel
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
@@ -130,6 +132,8 @@ class CreateCourseView(AdminRequired, CreateView):
     form_class = CourseUpdateForm
 
     def get_success_url(self):
+        action_message = f"Создал группу <b>{self.object}</b>"
+        record_action(1, self.request.user, self.object, self.object.id, action_message)
         return reverse('courses:course_update', kwargs={'pk': self.object.id})
 
         
@@ -153,6 +157,10 @@ class CancelSessionView(View):
                     if str(cause) == "1" and obj.trial_lesson == False:
                         obj.substract_one_session()
 
+                if self.request.user.is_superuser:
+                    action_message = f"Отметил урок <b>{session}</b> как отмененный"
+                    record_action(1, self.request.user, session, session.id, action_message)
+
         # return redirect('attendance:session_detail', course_id=course_id)
         return redirect('/?date=' + session_date)
 
@@ -172,6 +180,10 @@ class ConductSession(View):
 
                 if not obj.trial_lesson:
                     obj.substract_one_session()
+
+            if self.request.user.is_superuser:
+                action_message = f"Отметил урок <b>{session}</b> как проведенный"
+                record_action(1, self.request.user, session, session.id, action_message)
 
         # return redirect('attendance:session_detail', course_id=course_id)
         return redirect('/?date=' + session_date)

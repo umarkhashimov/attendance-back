@@ -7,6 +7,7 @@ from django.views.generic import View, ListView, UpdateView
 
 from courses.models import CourseModel
 from users.filters import AdminRequired, SuperUserRequired
+from users.helpers import record_action
 from users.models import UsersModel
 from .models import PaymentModel
 from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm, UpdatePaymentDatesForm
@@ -111,6 +112,9 @@ class CreatePaymentView(View):
                 payment.payed_due = calculate_payment_due_date(enrollment)
 
             payment.save()
+
+            action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
+            record_action(1, self.request.user, payment, payment.id, action_message)
 
         next_url = self.request.GET.get('next', '/')
         return redirect(next_url)
