@@ -91,7 +91,7 @@ class StudentsListView(AdminRequired, ListView):
         context['filter_form'] = StudentsListFilterForm(self.request.GET)
         context['create_student_form'] = StudentInfoForm
         context['queryset_length'] = self.get_queryset().count()
-        context['active_students_count'] = StudentModel.objects.filter(enrollment__status=True).distinct().count()
+        context['active_students_count'] = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False).distinct().count()
         return context
 
     def get_queryset(self):
