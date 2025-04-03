@@ -17,6 +17,9 @@
                         </a>
                         <ul class="dropdown-menu-end dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'users:update_password' %}">Пароль</a></li>
+                            {% if request.user.is_superuser %}
+                                <li><a class="dropdown-item" href="{% url 'users:admin_actions' %}">История</a></li>
+                            {% endif %}
                             <li>
                                 <hr class="dropdown-divider">
                             </li>
