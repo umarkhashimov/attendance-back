@@ -1,3 +1,4 @@
+from calendar import month
 from datetime import datetime, timedelta
 
 from django import forms
@@ -84,34 +85,32 @@ class PaymentsListView(ListView):
 
 class CreatePaymentView(View):
 
-    def get(self, request):
-        return redirect('main:main')
-
     def post(self, request, enrollment_id):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         form = CreatePaymentForm(request.POST)
         if form.is_valid():
-            date = next_closest_session_date(course=enrollment.course)
             last_payment_due = PaymentModel.objects.filter(enrollment=enrollment).order_by('-date').first()
             payment = PaymentModel.objects.create(enrollment=enrollment, months=form.cleaned_data['months'])
             payment.amount = calculate_payment_amount(enrollment, payment.months)
 
             if form.cleaned_data['start_date']:
                 payment.payed_from = form.cleaned_data['start_date']
-            # elif last_payment_due:
-            #     payment.payed_from = next_closest_session_date(course=enrollment.course, today=last_payment_due.payed_due) if last_payment_due.payed_due else datetime.now().date()
+            elif last_payment_due:
+                payment.payed_from = next_closest_session_date(course=enrollment.course, today=last_payment_due.payed_due) if last_payment_due.payed_due else datetime.now().date()
             else:
                 payment.payed_from = next_closest_session_date(course=enrollment.course)
 
-            payment.enrollment.add_balance(payment.months * 12)
-            payment.current_balance = payment.enrollment.balance
 
             if form.cleaned_data['end_date']:
                 payment.payed_due = form.cleaned_data['end_date']
             else:
-                payment.payed_due = calculate_payment_due_date(enrollment)
+                payment.payed_due = calculate_payment_due_date(enrollment, 12 * payment.months, payment.payed_from)
 
             payment.save()
+
+            if payment.payed_due > payment.enrollment.payment_due:
+                payment.enrollment.payment_due = payment.payed_due
+                payment.enrollment.save()
 
             action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
             record_action(1, self.request.user, payment, payment.id, action_message)
@@ -128,10 +127,10 @@ class DebtPaymentsListView(View, AdminRequired):
         teacher_enrollments = {}
 
         for teacher in teachers:
-            courses = CourseModel.objects.filter(teacher=teacher, enrollment__balance__lte=0, enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
+            courses = CourseModel.objects.filter(teacher=teacher, enrollment__payment_due__lt=datetime.today().date(), enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
             if len(courses) > 0:
                 teacher_enrollments[teacher] = {
-                    course: list(Enrollment.objects.filter(course=course, balance__lte=0, status=True))
+                    course: list(Enrollment.objects.filter(course=course, payment_due__lt=datetime.today().date(), status=True))
                     for course in courses
                 }
 

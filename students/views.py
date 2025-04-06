@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -66,28 +68,6 @@ class CreateStudentView(AdminRequired, CreateView):
 class CreateEnrollmentView(AdminRequired, View):
     template_name = 'create_enrollment.html'
 
-    # def get(self, request, course_id=None, student_id=None):
-    #     # Get the course or student based on the URL parameters
-    #     course = None
-    #     student = None
-
-    #     if course_id:
-    #         course = CourseModel.objects.get(id=course_id)
-    #     if student_id:
-    #         student = StudentModel.objects.get(id=student_id)
-
-    #     # Create a new EnrollmentForm instance, pre-filling course or student if necessary
-    #     form = EnrollmentForm(initial={
-    #         'course': course,
-    #         'student': student
-    #     })
-
-    #     return render(request, self.template_name, {
-    #         'form': form,
-    #         'course': course,
-    #         'student': student
-    #     })
-    
     def post(self, request, course_id=None, student_id=None):
         form = EnrollmentForm(request.POST)
         if student_id:
@@ -105,6 +85,14 @@ class CreateEnrollmentView(AdminRequired, View):
                 student=student if student else form.cleaned_data['student'],
                 defaults={**form.cleaned_data, 'status': True}
             )
+
+            if not enrollment.payment_due and enrollment.trial_lesson == False:
+                enrollment.payment_due = datetime.today().date()
+                enrollment.save()
+
+            if not created:
+                enrollment.payment_due = None
+                enrollment.save()
 
             action_message = f"Записал ученика <b>{enrollment.student}</b> в группу <b>{enrollment.course}</b>"
             record_action(1, self.request.user, enrollment, enrollment.id, action_message)
@@ -125,14 +113,17 @@ class UpdateEnrollmentView(View, AdminRequired):
         enrollment = get_object_or_404(Enrollment, id=pk)
         form = UpdateEnrollmentForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data['balance'] is None:
-                form.cleaned_data['balance'] = enrollment.balance
             enrollment, created = Enrollment.objects.update_or_create(
                 course=enrollment.course,
                 student=enrollment.student,
                 defaults={**form.cleaned_data}
             )
-        
+
+            if not enrollment.payment_due and enrollment.trial_lesson == False:
+                enrollment.payment_due = datetime.today().date()
+                enrollment.save()
+
+
         next_url  = self.request.GET.get('next', '/')
         return redirect(next_url)
 

@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="row flex-row">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
                     <button type="button" class="btn btn-secondary py-1 my-1" data-bs-toggle="modal"
                         data-bs-target="#overallAttendanceModal">
@@ -232,15 +232,16 @@
                     </form>
                 </div>
             </div>
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-9">
                 <div class="rounded py-2 mt-3 mt-md-0">
-                    <p class="mt-2 text-dark ms-1 mb-2">Записанные курсы</p>
+                    <p class="mt-2 text-dark ms-1 mb-2">Записанные Курсы</p>
 
                     <table class="table border border-2 enrollments">
                         <thead>
                         <tr>
                             <th class="w-50">Курс</th>
-                            <th class="w-50">Баланс</th>
+                            <th class="w-25">Баланс</th>
+                            <th class="w-25">Конец</th>
                             <th class="w-50">Управления</th>
                         </tr>
                         </thead>
@@ -250,18 +251,18 @@
                                 <td class="py-0 align-middle">
                                     <span class="me-1 text-secondary opacity-75">{{ forloop.counter }}. </span>
                                     <a
-                                        class="text-decoration-none text-dark opacity-100 table-obj-name-link"
-                                        href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}</a>
+                                            class="text-decoration-none text-dark opacity-100 table-obj-name-link"
+                                        href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.course }}</a>
                                     {% if enrollment.note %}
                                     <span data-bs-toggle="tooltip" data-bs-placement="top"
                                                                   title="{{ enrollment.note }}"
                                                                   role='button' class="text-warning ms-1"><i
                                                                     class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                                 </td>
-                                <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
+                                <td class="py-0 align-middle  {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
+                                <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.payment_due }}</td>
                                 <td class="align-middle p-0 bg-light">
-
-                                    <div class="btn-group rounded-0 w-100 p-0 h-100 ">
+                                    <div class="btn-group rounded-0 w-100 p-0 h-100">
                                         <button type="button" class="btn rounded-0 btn-warning px-3 py-1"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i
@@ -302,7 +303,7 @@
                                             </div>
                                         </div>
                                         <!-- Edit Enrollment modal -->
-                                       <div class="modal fade" data-bs-backdrop="static"
+                                        <div class="modal fade" data-bs-backdrop="static"
                                              id="editEnrollmentModal{{ enrollment.id }}" tabindex="-1"
                                              aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -323,6 +324,9 @@
                                                         </p>
                                                         <p class="mb-2">
                                                             <b>Баланс:</b> {{ enrollment.balance }}
+                                                        </p>
+                                                        <p class="mb-2">
+                                                            <b>Конец абонимента:</b> {{ enrollment.payment_due }}
                                                         </p>
                                                         <div>
                                                             <ul class="nav nav-tabs">
@@ -347,15 +351,14 @@
                                                             <form method="post"
                                                                   action="{% url "students:update_enrollment" pk=enrollment.id %}?next={{ request.path }}">
                                                             {% csrf_token %}
-                                                               {% if request.user.is_superuser %}
-                                                                <div class="form-floating mb-3">
-                                                                    <input type="number" class="form-control"
-                                                                           name="balance"
-                                                                           value="{{ enrollment.balance|default:"0" }}"
-                                                                           required
-                                                                           id="balanceInp{{ enrollment.id }}"
+                                                                {% if request.user.is_superuser %}
+                                                                <div class="mb-3">
+                                                                    <label for="paymentdueInp{{ enrollment.id }}" class="fw-light fs-6">Конец абонимента</label>
+                                                                    <input type="date" class="form-control"
+                                                                           name="payment_due"
+                                                                           value="{{ enrollment.payment_due|date:"Y-m-d" }}"
+                                                                           id="paymentdueInp{{ enrollment.id }}"
                                                                            placeholder="123"/>
-                                                                    <label for="balanceInp{{ enrollment.id }}">Баланс</label>
                                                                 </div>
                                                                 {% endif %}
                                                                 <div class="form-floating mb-3">

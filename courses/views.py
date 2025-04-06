@@ -154,8 +154,6 @@ class CancelSessionView(View):
                     enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
                     AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session)
 
-                    if str(cause) == "1" and obj.trial_lesson == False:
-                        obj.substract_one_session()
 
                 if self.request.user.is_superuser:
                     action_message = f"Отметил урок <b>{session}</b> как отмененный"
@@ -178,9 +176,7 @@ class ConductSession(View):
                 enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
                 AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session)
 
-                if not obj.trial_lesson:
-                    obj.substract_one_session()
-
+            # Record Action
             if self.request.user.is_superuser:
                 action_message = f"Отметил урок <b>{session}</b> как проведенный"
                 record_action(1, self.request.user, session, session.id, action_message)

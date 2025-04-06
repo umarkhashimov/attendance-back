@@ -1,9 +1,11 @@
+import datetime
+
 from django.db import models
 from courses.models import CourseModel
 from django.core.validators import MaxValueValidator
-
+from django.utils import timezone
 from users.models import UsersModel
-
+from .helpers import calculate_balance
 
 class StudentModel(models.Model):
     student_id = models.PositiveBigIntegerField(null=True, blank=True, unique=True, editable=False)
@@ -14,12 +16,6 @@ class StudentModel(models.Model):
     notes = models.TextField(blank=True, null=True, verbose_name='Заметка')
     enrollment_date = models.DateField(auto_now_add=True, verbose_name='Имя')  # Date the student was enrolled
     courses = models.ManyToManyField(CourseModel, through='Enrollment', verbose_name='Записанные курсы')
-
-    def has_debt(self):
-        debt_enrollments = Enrollment.objects.all().filter(student=self, balance__lte=0, status=True, trial_lesson=False).count()
-        if debt_enrollments > 0:
-            return True
-        return False
 
     @property
     def full_name(self):
@@ -38,41 +34,33 @@ class Enrollment(models.Model):
     
     student = models.ForeignKey(StudentModel, on_delete=models.CASCADE, verbose_name="Студент")
     course = models.ForeignKey(CourseModel, on_delete=models.CASCADE, verbose_name="Курс", limit_choices_to={'status': True})
-    balance = models.IntegerField(default=0, verbose_name="Баланс")  # Balance per course
     status = models.BooleanField(default=True, verbose_name="Статус Активности")
     trial_lesson = models.BooleanField(default=True, verbose_name="Пробный урок")
     hold = models.PositiveIntegerField(default=0, null=True, verbose_name="Заморозка")
     discount = models.PositiveIntegerField(default=0, verbose_name="Скидка %", validators=[MaxValueValidator(100)])
     debt_note = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка для учителя")
     note = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка")
-    enrolled_at = models.DateTimeField(auto_now_add=True)
+    payment_due = models.DateField(null=True, blank=True, verbose_name="Оплачно до")
     enrolled_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, limit_choices_to={'role': '2'}, null=True, blank=True)
+    enrolled_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.student} - {self.course}"
-    
-    def add_balance(self, amount):
-        self.balance += amount
-        self.save()
 
-    def substract_balance(self, amount):
-        self.balance -= amount
-        self.save()
+    def in_debt(self):
+        return self.payment_due and self.payment_due < datetime.date.today()
+
+    @property
+    def balance(self):
+        if self.payment_due:
+            return calculate_balance(self.payment_due, self.course)
+        else:
+            return None
 
     def calc_session_cost_discount(self):
         # return cost of one session with discount
         cost = self.course.session_cost - ((self.course.session_cost / 100) * self.discount)
         return cost
-    
-    def substract_one_session(self):
-        if self.hold > 0:
-            self.hold -= 1
-        elif self.trial_lesson:
-            self.trial_lesson = False
-        else:
-            self.balance -= 1
-
-        self.save()
 
     class Meta:
         verbose_name = "зачисление"

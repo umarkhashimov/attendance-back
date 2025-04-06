@@ -52,7 +52,7 @@
                                     class="d-none d-sm-inline-block">{{ obj.course.get_name }}</span>
                     </span>
                             <span class="badge text-bg-light border border-1 ms-2">{{ obj.course.lesson_time|time:'H:i' }}</span>
-                            {% if obj.has_unmarked_attendance %}
+                            {% if obj.has_unmarked_attendance and obj.status == True %}
                                 <span data-bs-toggle="tooltip" data-bs-placement="top" title="Есть не отмеченные"
                                       role='button' class="text-warning ms-2">
                             <i class="bi bi-exclamation-circle-fill"></i>
@@ -119,7 +119,7 @@
                                                               title="Заморожен {{ obj.enrollment.hold }} "
                                                               role='button' class="text-primary"><i
                                                                 class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
-                                                        {% if obj.enrollment.trial_lesson == False and obj.trial_attendance == False and obj.enrollment.balance <= 0 and obj.enrollment.trial_lesson == False %}
+                                                        {% if obj.enrollment.trial_lesson == False and obj.trial_attendance == False and obj.enrollment.in_debt and obj.enrollment.trial_lesson == False %}
                                                             <span data-bs-toggle="tooltip" data-bs-placement="top"
                                                                   title="{{ obj.enrollment.balance }} {% if obj.enrollment.debt_note %}|| {{ obj.enrollment.debt_note|default:"" }}{% endif %}"
                                                                   role='button' class="text-danger"><i
@@ -203,12 +203,6 @@
                         {{ obj.subject|capfirst }} - <span class="d-none d-sm-inline-block">{{ obj.get_name }}</span>
                     </span>
                             <span class="badge text-bg-light border border-1 ms-2">{{ obj.lesson_time|time:'H:i' }}</span>
-                            {% if obj.has_unmarked_attendance %}
-                                <span data-bs-toggle="tooltip" data-bs-placement="top" title="Есть не отмеченные"
-                                      role='button' class="text-warning ms-2">
-                            <i class="bi bi-exclamation-circle-fill"></i>
-                        </span>
-                            {% endif %}
                         </p>
                     </div>
                     {% if obj.check_time and today == filter_date or request.user.role == '2' and today == filter_date %}

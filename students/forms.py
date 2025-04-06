@@ -32,7 +32,7 @@ class EnrollmentForm(ModelForm):
 
     class Meta:
         model = Enrollment
-        fields = ['course', 'student', 'balance', 'discount', 'trial_lesson']
+        fields = ['course', 'student', 'discount', 'trial_lesson']
 
 class StudentEnrollmentForm(ModelForm):
     
@@ -44,7 +44,7 @@ class StudentEnrollmentForm(ModelForm):
 
     class Meta:
         model = Enrollment
-        fields = ['course', 'balance', 'discount', 'trial_lesson']
+        fields = ['course', 'discount', 'trial_lesson']
         widgets = {
             'trial_lesson': forms.CheckboxInput(
                 attrs={
@@ -83,7 +83,7 @@ class CourseEnrollmentForm(ModelForm):
 
     class Meta:
         model = Enrollment
-        fields = ['student', 'balance', 'discount', 'trial_lesson']
+        fields = ['student',  'discount', 'trial_lesson']
         widgets = {
             'trial_lesson': forms.CheckboxInput(
                 attrs={
@@ -109,7 +109,8 @@ class CourseEnrollmentForm(ModelForm):
 
 class UpdateEnrollmentForm(forms.Form):
     discount = forms.IntegerField(min_value=0, max_value=100)
-    balance = forms.IntegerField(required=False)
+    # balance = forms.IntegerField(required=False)
+    payment_due = forms.DateField(required=False)
     hold = forms.IntegerField(required=False)
     trial_lesson = forms.BooleanField(required=False)
     debt_note = forms.CharField(max_length=200, required=False)

@@ -9,7 +9,7 @@
 
     <div class="container pt-2">
         <div class="row">
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <div class="col-12">
                     <div class="bg-light rounded py-3 mt-3 px-2 border">
                         <p class="text-dark ms-1">Записать нового Ученика</p>
@@ -203,7 +203,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-md-9">
                 <div class="rounded py-2 mt-3 mt-md-0">
                     <p class="mt-2 text-dark ms-1 mb-2">Записанные ученики</p>
 
@@ -211,7 +211,8 @@
                         <thead>
                         <tr>
                             <th class="w-50">Курс</th>
-                            <th class="w-50">Баланс</th>
+                            <th class="w-25">Баланс</th>
+                            <th class="w-25">Конец</th>
                             <th class="w-50">Управления</th>
                         </tr>
                         </thead>
@@ -229,7 +230,8 @@
                                                                   role='button' class="text-warning ms-1"><i
                                                                     class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                                 </td>
-                                <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
+                                <td class="py-0 align-middle  {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
+                                <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.payment_due }}</td>
                                 <td class="align-middle p-0 bg-light">
                                     <div class="btn-group rounded-0 w-100 p-0 h-100">
                                         <button type="button" class="btn rounded-0 btn-warning px-3 py-1"
@@ -294,6 +296,9 @@
                                                         <p class="mb-2">
                                                             <b>Баланс:</b> {{ enrollment.balance }}
                                                         </p>
+                                                        <p class="mb-2">
+                                                            <b>Конец абонимента:</b> {{ enrollment.payment_due }}
+                                                        </p>
                                                         <div>
                                                             <ul class="nav nav-tabs">
                                                                 <li class="nav-item">
@@ -318,14 +323,13 @@
                                                                   action="{% url "students:update_enrollment" pk=enrollment.id %}?next={{ request.path }}">
                                                             {% csrf_token %}
                                                                 {% if request.user.is_superuser %}
-                                                                <div class="form-floating mb-3">
-                                                                    <input type="number" class="form-control"
-                                                                           name="balance"
-                                                                           value="{{ enrollment.balance|default:"0" }}"
-                                                                           required
-                                                                           id="balanceInp{{ enrollment.id }}"
+                                                                <div class="mb-3">
+                                                                    <label for="paymentdueInp{{ enrollment.id }}" class="fw-light fs-6">Конец абонимента</label>
+                                                                    <input type="date" class="form-control"
+                                                                           name="payment_due"
+                                                                           value="{{ enrollment.payment_due|date:"Y-m-d" }}"
+                                                                           id="paymentdueInp{{ enrollment.id }}"
                                                                            placeholder="123"/>
-                                                                    <label for="balanceInp{{ enrollment.id }}">Баланс</label>
                                                                 </div>
                                                                 {% endif %}
                                                                 <div class="form-floating mb-3">
