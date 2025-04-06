@@ -110,7 +110,7 @@ class StudentsListView(AdminRequired, ListView):
             if ordering == "1":
                 queryset = queryset.order_by('first_name', 'last_name')
             elif ordering == "2":
-                queryset = queryset.filter(enrollment__balance__lte=0, courses__isnull=False, enrollment__trial_lesson=False, enrollment__status=True).order_by('first_name', 'last_name').distinct()
+                queryset = queryset.filter(enrollment__payment_due__lt=datetime.today().date(), courses__isnull=False, enrollment__trial_lesson=False, enrollment__status=True).order_by('first_name', 'last_name').distinct()
             elif ordering == "3":
                 thirty_days_ago = datetime.now() - timedelta(days=30)
                 queryset = queryset.filter(enrollment_date__gte=thirty_days_ago).order_by('-id')
