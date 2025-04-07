@@ -95,8 +95,8 @@ class CreatePaymentView(View):
 
             if form.cleaned_data['start_date']:
                 payment.payed_from = form.cleaned_data['start_date']
-            elif last_payment_due:
-                payment.payed_from = next_closest_session_date(course=enrollment.course, today=last_payment_due.payed_due) if last_payment_due.payed_due else datetime.now().date()
+            elif payment.enrollment.payment_due:
+                payment.payed_from = next_closest_session_date(course=enrollment.course, today= payment.enrollment.payment_due) if payment.enrollment.payment_due else datetime.now().date()
             else:
                 payment.payed_from = next_closest_session_date(course=enrollment.course)
 
