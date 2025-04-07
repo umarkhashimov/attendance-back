@@ -225,7 +225,7 @@ tr.trial-lesson td {
     display: none !important;
 }
 
-.gradesInp input{
+.gradesInp input {
     padding: 5px !important;
     width: 30px !important;
 }
@@ -457,16 +457,16 @@ table.enrollments tr:not(.trial-lesson):hover td {
         text-after-overflow: ellipsis;
     }
 
-    .gradesInp input{
-        padding:2px !important;
+    .gradesInp input {
+        padding: 2px !important;
         width: 20px !important;
     }
 
-    .attendance-form p.badge{
+    .attendance-form p.badge {
         display: none !important;
     }
 
-    .attendance-form button{
+    .attendance-form button {
         padding: 5px !important;
         font-size: 14px !important;
         max-width: 50px;
@@ -486,16 +486,16 @@ table.enrollments tr:not(.trial-lesson):hover td {
     height: 40px;
 }
 
-.debt-students-phone-numbers span.copied{
+.debt-students-phone-numbers span.copied {
     color: green;
 }
 
-.debt-students-phone-numbers span.copied:after{
+.debt-students-phone-numbers span.copied:after {
     content: '✅';
 }
 
 @media screen and (max-width: 380px) {
-    .debt-students-phone-numbers{
+    .debt-students-phone-numbers {
         flex-direction: column !important;
     }
 }
@@ -504,3 +504,7 @@ table.enrollments tr:not(.trial-lesson):hover td {
     border-color: black !important;
 }
 
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}

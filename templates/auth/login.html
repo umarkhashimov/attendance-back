@@ -23,6 +23,10 @@
                 {% csrf_token %}
 
                 {{ form|crispy }}
+                <div class="d-flex gap-2 align-items-center">
+                    <input type="checkbox" id="showPassword" class="form-check-input border-2 fs-5 m-0">
+                    <label for="showPassword" class="user-select-none">Показать пароль</label>
+                </div>
 
                 <div class="mt-4 d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary w-100">Войти</button>
@@ -30,4 +34,18 @@
             </form>
         </div>
     </div>
+
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+        const passwordInput = document.getElementById('id_password');
+        const showPasswordCheckbox = document.getElementById('showPassword');
+
+        showPasswordCheckbox.addEventListener('change', function () {
+            console.log(passwordInput)
+            console.log(showPasswordCheckbox)
+            passwordInput.type = this.checked ? 'text' : 'password';
+        });
+    </script>
 {% endblock %}
