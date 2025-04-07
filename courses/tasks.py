@@ -31,9 +31,6 @@ def mark_unmarked_sessions(date=None):
                  enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
                  AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session)
 
-                 if not obj.trial_lesson:
-                     obj.substract_one_session()
-
              text = f'Группа: {course}\nУчитель: #{course.teacher.username} - {course.teacher.get_full_name}\n\n'
              message += text
 
