@@ -14,7 +14,7 @@ def calculate_balance(due_date: datetime.date, course) -> int:
                 balance += 1
             current_date += timedelta(days=1)
     else:
-        while due_date <= current_date:
+        while due_date < current_date:
             if str(due_date.weekday()) in weekdays:
                 balance -= 1
             due_date += timedelta(days=1)
