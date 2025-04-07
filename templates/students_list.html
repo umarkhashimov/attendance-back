@@ -91,7 +91,7 @@
             {% for obj in students %}
                 <div class="col-12 col-md-6 col-lg-4 px-1 my-1">
                     <a href="{% url 'students:student_update' pk=obj.id %}"
-                       class="border-2 border px-2 py-2 d-block course-list-item">
+                       class="border-2 border px-2 py-2 d-block course-list-item {% if obj.in_debt %} border-danger-subtle bg-danger-subtle {% endif %}">
                         <p class="text-dark mb-0 course-name">
                             <span class="text-secondary course-id">{{ obj.id }}</span>
                             {{ obj.full_name|capfirst }}

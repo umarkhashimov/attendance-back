@@ -21,6 +21,10 @@ class StudentModel(models.Model):
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
+    def in_debt(self):
+        overdue_enrollments_count = Enrollment.objects.filter(student=self, payment_due__lt=datetime.datetime.today().date(), status=True).count()
+        return overdue_enrollments_count > 0
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -47,8 +51,8 @@ class Enrollment(models.Model):
     def __str__(self):
         return f"{self.student} - {self.course}"
 
-    def in_debt(self):
-        return self.payment_due and self.payment_due < datetime.date.today()
+    # def in_debt(self):
+    #     return self.payment_due and self.payment_due < datetime.date.today()
 
     @property
     def balance(self):
