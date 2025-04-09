@@ -29,8 +29,9 @@ class PaymentsListView(ListView):
         data = self.request.GET.copy()
         teacher_id = data.get('teacher')
         course_id = data.get('course')
+        student_id = data.get('student')
 
-        context['filter_form'] = PaymentHistoryFilterForm(initial=data, teacher_id=teacher_id, course_id=course_id)
+        context['filter_form'] = PaymentHistoryFilterForm(initial=data, teacher_id=teacher_id, course_id=course_id, student_id=student_id)
         context['queryset_length'] = self.get_queryset().count()
         return context
 

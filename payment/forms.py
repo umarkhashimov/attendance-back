@@ -42,7 +42,7 @@ class PaymentHistoryFilterForm(forms.Form):
     payment_date_start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max':datetime.date.today()}), required=False, label="С")
     payment_date_end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max':datetime.date.today()}), required=False, label="До")
 
-    def __init__(self, teacher_id=None, course_id=None,  *args, **kwargs):
+    def __init__(self, teacher_id=None, course_id=None, student_id=None,  *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         if course_id:
@@ -50,6 +50,14 @@ class PaymentHistoryFilterForm(forms.Form):
                 course = CourseModel.objects.filter(id=course_id)
                 if course and str(course.first().teacher.id) != str(teacher_id):
                     self.initial['teacher'] = None
+
+        if teacher_id and not course_id:
+            courses_by_teacher = CourseModel.objects.filter(teacher=teacher_id)
+            self.fields['course'].queryset = courses_by_teacher
+
+        if course_id and not student_id:
+            students_by_courses = StudentModel.objects.filter(enrollment__course_id=course_id)
+            self.fields['student'].queryset = students_by_courses
 
         start_date = self.initial.get("payment_date_start")
         end_date = self.initial.get("payment_date_end")
