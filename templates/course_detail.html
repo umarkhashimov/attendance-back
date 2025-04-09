@@ -9,127 +9,164 @@
 
     <div class="container pt-2">
         <div class="row">
-            <div class="col-12 col-md-3">
-                <div class="col-12">
-                    <div class="bg-light rounded py-3 mt-3 px-2 border">
-                        <p class="text-dark ms-1">Записать нового Ученика</p>
 
-                        <form method="post"
-                              action="{% url 'students:create_enrollment_from_course' course_id=obj.id %}">
-                            {% csrf_token %}
-                            {% comment %} {{ enrollment_form|crispy }} {% endcomment %}
-                            {% for field in enrollment_form %}
-                                <div class="my-1 {% if field.name != 'trial_lesson' %}
+            <div class="col-12 col-md-6" id="editGroupInfo">
+                <div class="bg-light rounded py-3 mt-3 px-2 border">
+                    <p class="text-black ms-1">Изменить инфорамацию группы #{{ obj.id }}</p>
+                    {% comment %} {{ form.as_p }} {% endcomment %}
+                    <form method="post">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            <div class="my-1 {% if field.name not in 'weekday,status' %}
                     
                     form-floating
-  
+
                   {% else %}
                     
-                    ms-1
-  
-                  {% endif %}">
-                                    {{ field }}
-                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                </div>
-                                {% if field.errors %}
-                                    <div class="text-danger small">
-                                        {% for error in field.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                            <div class="d-flex justify-content-end flex-column flex-md-row mt-2">
-                                <button type="submit" class="btn btn-success">Сохранить</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                {#      Group additional tools     #}
-                <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
-                    <button type="button" class="btn btn-secondary py-1 my-1" data-bs-toggle="modal"
-                            data-bs-target="#overallAttendanceModal">
-                        Посещаемость
-                    </button>
-                    <button type="button" class="btn btn-success py-1 my-1" data-bs-toggle="modal"
-                            data-bs-target="#paymentHistoryModal">
-                        История оплат
-                    </button>
-                    <!-- Overall Attendance modal -->
-                    <div class="modal fade" id="overallAttendanceModal" data-bs-backdrop="static"
-                         data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Посещаемость</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="col-12 attendance-table-wrapper">
-                                        <div class="overflow-x-scroll pb-2">
-                                            <table class="border table-bordered w-100 attendance-record-table">
-                                                <tr>
-                                                    <td class="px-2 border border-secondary border-1 border-black student-name-cell fw-bold">
-                                                        Имя студента
-                                                    </td>
-                                                    {% for session in sessions %}
-                                                        <td class="text-center border border-secondary border-black border-1 date-cell px-1">
-                                                            <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
-                                                        </td>
-                                                    {% empty %}
-                                                        {% if attendance_data|length > 1 %}
-                                                            <td rowspan="{{ attendance_data|length|add:1 }}"
-                                                                class="text-center border border-secondary border-1 date-cell">
-                                                                нет записей
-                                                            </td>
-                                                        {% endif %}
-                                                    {% endfor %}
-                                                </tr>
-                                                {% for record in attendance_data %}
-                                                    <tr>
-                                                        <td class="px-2 py-1 border border-black border-secondary border-1 status-cell">{{ record.student }}</td>
-                                                        {% for info in record.attendance %}
-                                                            <td class="border border-secondary border-1 border-black text-center status-cell {% if info.status == True %} bg-success bg-opacity-75 {% elif info.status == False %} bg-danger bg-opacity-75 {% else %} bg-secondary-subtle {% endif %}">
-                                                                {% if info.status == True %}
-                                                                    <span title="оценка за дом.зад./посещение"
-                                                                          class="text-black">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
-                                                                {% elif info.status == False %}
-                                                                    <span class="text-dark"><i
-                                                                            class="bi bi-x"></i></span>
-                                                                {% elif info.status == None %}
-                                                                    <i class="bi bi-question"></i>
-                                                                {% endif %}
-                                                            </td>
+                     ms-1
 
+                  {% endif %}">
+                                {{ field }}
+                                <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+                            {% if field.errors %}
+                                <div class="text-danger small">
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+                            <button type="submit" class="btn btn-success">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div>
+                    <div class="">
+                        <div class="bg-light rounded py-3 mt-3 px-2 border">
+                            <p class="text-dark ms-1">Записать нового Ученика</p>
+
+                            <form method="post"
+                                  action="{% url 'students:create_enrollment_from_course' course_id=obj.id %}">
+                                {% csrf_token %}
+                                {% comment %} {{ enrollment_form|crispy }} {% endcomment %}
+                                {% for field in enrollment_form %}
+                                    <div class="my-1 {% if field.name != 'trial_lesson' %}
+
+                    form-floating
+
+                  {% else %}
+
+                    ms-1
+
+                  {% endif %}">
+                                        {{ field }}
+                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    </div>
+                                    {% if field.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in field.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="d-flex justify-content-end flex-column flex-md-row mt-2">
+                                    <button type="submit" class="btn btn-success">Сохранить</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {#      Group additional tools     #}
+                    <div class="bg-light rounded py-2 px-2 mt-3 border">
+                        <button type="button" class="btn btn-secondary py-1 my-1" data-bs-toggle="modal"
+                                data-bs-target="#overallAttendanceModal">
+                            Посещаемость
+                        </button>
+                        <button type="button" class="btn btn-success py-1 my-1" data-bs-toggle="modal"
+                                data-bs-target="#paymentHistoryModal">
+                            История оплат
+                        </button>
+                        <!-- Overall Attendance modal -->
+                        <div class="modal fade" id="overallAttendanceModal" data-bs-backdrop="static"
+                             data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Посещаемость</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="col-12 attendance-table-wrapper">
+                                            <div class="overflow-x-scroll pb-2">
+                                                <table class="border table-bordered w-100 attendance-record-table">
+                                                    <tr>
+                                                        <td class="px-2 border border-secondary border-1 border-black student-name-cell fw-bold">
+                                                            Имя студента
+                                                        </td>
+                                                        {% for session in sessions %}
+                                                            <td class="text-center border border-secondary border-black border-1 date-cell px-1">
+                                                                <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
+                                                            </td>
+                                                        {% empty %}
+                                                            {% if attendance_data|length > 1 %}
+                                                                <td rowspan="{{ attendance_data|length|add:1 }}"
+                                                                    class="text-center border border-secondary border-1 date-cell">
+                                                                    нет записей
+                                                                </td>
+                                                            {% endif %}
                                                         {% endfor %}
                                                     </tr>
-                                                {% empty %}
-                                                    <tr>
-                                                        <td colspan="3" class="text-center w-100">нет записей</td>
-                                                    </tr>
-                                                {% endfor %}
-                                            </table>
+                                                    {% for record in attendance_data %}
+                                                        <tr>
+                                                            <td class="px-2 py-1 border border-black border-secondary border-1 status-cell">{{ record.student }}</td>
+                                                            {% for info in record.attendance %}
+                                                                <td class="border border-secondary border-1 border-black text-center status-cell {% if info.status == True %} bg-success bg-opacity-75 {% elif info.status == False %} bg-danger bg-opacity-75 {% else %} bg-secondary-subtle {% endif %}">
+                                                                    {% if info.status == True %}
+                                                                        <span title="оценка за дом.зад./посещение"
+                                                                              class="text-black">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
+                                                                    {% elif info.status == False %}
+                                                                        <span class="text-dark"><i
+                                                                                class="bi bi-x"></i></span>
+                                                                    {% elif info.status == None %}
+                                                                        <i class="bi bi-question"></i>
+                                                                    {% endif %}
+                                                                </td>
+
+                                                            {% endfor %}
+                                                        </tr>
+                                                    {% empty %}
+                                                        <tr>
+                                                            <td colspan="3" class="text-center w-100">нет записей</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- Payment History modal -->
-                    <div class="modal fade" id="paymentHistoryModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                         aria-hidden="true">
-                        <div class="modal-dialog modal-xl">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="exampleModalLabel">История оплат</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="history-wrapper">
-                                        <div class="accordion" id="accordionPaymentHistoryModal">
+                        <!-- Payment History modal -->
+                        <div class="modal fade" id="paymentHistoryModal" tabindex="-1"
+                             aria-labelledby="exampleModalLabel"
+                             aria-hidden="true">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">История оплат</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="history-wrapper">
+                                            <div class="accordion" id="accordionPaymentHistoryModal">
                                                 <table class="table-bordered w-100">
                                                     <thead>
                                                     <tr>
@@ -161,6 +198,7 @@
 
                                                     </tbody>
                                                 </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -168,52 +206,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-12" id="editGroupInfo">
-                    <div class="bg-light rounded py-3 mt-3 px-2 border">
-                        <p class="text-black ms-1">Изменить инфорамацию группы #{{ obj.id }}</p>
-                        {% comment %} {{ form.as_p }} {% endcomment %}
-                        <form method="post">
-                            {% csrf_token %}
-                            {% for field in form %}
-                                <div class="my-1 {% if field.name not in 'weekday,status' %}
-                    
-                    form-floating
-
-                  {% else %}
-                    
-                     ms-1
-
-                  {% endif %}">
-                                    {{ field }}
-                                    <label aria-required="{{ field.field.required }}" {{ field.required }}
-                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                </div>
-                                {% if field.errors %}
-                                    <div class="text-danger small">
-                                        {% for error in field.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                            <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
-                                <button type="submit" class="btn btn-success">Сохранить</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
             </div>
-            <div class="col-12 col-md-9">
+            <div class="col-12 col-md-12">
                 <div class="rounded py-2 mt-3 mt-md-0">
                     <p class="mt-2 text-dark ms-1 mb-2">Записанные ученики</p>
 
-                    <table class="table border border-2 enrollments">
+                    <table class="table border border-2 enrollments" id="enrollmentsTable">
                         <thead>
                         <tr>
-                            <th class="w-50">Курс</th>
-                            <th class="w-25">Баланс</th>
-                            <th class="w-25">Конец</th>
-                            <th class="w-50">Управления</th>
+                            <th class="w-auto">Студент</th>
+                            <th class="w-auto">Баланс</th>
+                            <th class="w-auto">Конец</th>
+                            <th class="w-auto">Управления</th>
+                            <th class="max-w-15 text-center">Примечание</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -223,12 +228,12 @@
                                     <span class="me-1 text-secondary opacity-75">{{ forloop.counter }}. </span>
                                     <a
                                             class="text-decoration-none text-dark opacity-100 table-obj-name-link"
-                                        href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a>
+                                            href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a>
                                     {% if enrollment.note %}
-                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                  title="{{ enrollment.note }}"
-                                                                  role='button' class="text-warning ms-1"><i
-                                                                    class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="{{ enrollment.note }}"
+                                              role='button' class="text-warning ms-1"><i
+                                                class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                                 </td>
                                 <td class="py-0 align-middle  {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
                                 <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.payment_due }}</td>
@@ -321,16 +326,18 @@
                                                         <div class="enrollment-tab mytab bg-light border rounded-0 p-2">
                                                             <form method="post"
                                                                   action="{% url "students:update_enrollment" pk=enrollment.id %}?next={{ request.path }}">
-                                                            {% csrf_token %}
+                                                                {% csrf_token %}
                                                                 {% if request.user.is_superuser %}
-                                                                <div class="mb-3">
-                                                                    <label for="paymentdueInp{{ enrollment.id }}" class="fw-light fs-6">Конец абонимента</label>
-                                                                    <input type="date" class="form-control"
-                                                                           name="payment_due"
-                                                                           value="{{ enrollment.payment_due|date:"Y-m-d" }}"
-                                                                           id="paymentdueInp{{ enrollment.id }}"
-                                                                           placeholder="123"/>
-                                                                </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="paymentdueInp{{ enrollment.id }}"
+                                                                               class="fw-light fs-6">Конец
+                                                                            абонимента</label>
+                                                                        <input type="date" class="form-control"
+                                                                               name="payment_due"
+                                                                               value="{{ enrollment.payment_due|date:"Y-m-d" }}"
+                                                                               id="paymentdueInp{{ enrollment.id }}"
+                                                                               placeholder="123"/>
+                                                                    </div>
                                                                 {% endif %}
                                                                 <div class="form-floating mb-3">
                                                                     <input type="number" class="form-control"
@@ -397,7 +404,7 @@
                                                             <form method="post"
                                                                   action="{% url "payment:create_payment_enrollment" enrollment_id=enrollment.id %}?next={{ request.path }}"
                                                                   class=" gap-2">
-                                                            {% csrf_token %}
+                                                                {% csrf_token %}
                                                                 <p class="mb-1">
                                                                     <b>Цена:</b> <input type="number"
                                                                                         id="priceInp{{ enrollment.id }}"
@@ -450,7 +457,8 @@
                                                                         <input name="start_date" type="date"
                                                                                class="form-control"
                                                                                value=""
-                                                                               id="startInp{{ enrollment.id }}" onchange="paymentFromEnter(this, {{ enrollment.id }})">
+                                                                               id="startInp{{ enrollment.id }}"
+                                                                               onchange="paymentFromEnter(this, {{ enrollment.id }})">
                                                                         <label class="mb-2 mt-1"
                                                                                for="endInp{{ enrollment.id }}">Конец</label>
                                                                         <input name="end_date" type="date" disabled
@@ -458,9 +466,11 @@
                                                                                value="" id="endInp{{ enrollment.id }}">
                                                                     </div>
                                                                 </div>
-                                                            <div class="d-flex flex-column flex-md-row justify-content-end mt-2">
-                                                                <button class="btn btn-success" type="submit">Оплатить</button>
-                                                            </div>
+                                                                <div class="d-flex flex-column flex-md-row justify-content-end mt-2">
+                                                                    <button class="btn btn-success" type="submit">
+                                                                        Оплатить
+                                                                    </button>
+                                                                </div>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -469,6 +479,7 @@
                                         </div>
                                     </div>
                                 </td>
+                                <td class="py-0 max-w-15 align-middle text-break text-center">{{ enrollment.note|default:"..." }}</td>
                             </tr>
                         {% empty %}
                             <tr>
@@ -522,10 +533,10 @@
             btn.classList.add('active')
         }
 
-        function paymentFromEnter(inp, enrollment_id){
+        function paymentFromEnter(inp, enrollment_id) {
             let endDateInp = document.querySelector(`#endInp${enrollment_id}`)
             endDateInp.removeAttribute('disabled')
-            if (inp.value > endDateInp.value){
+            if (inp.value > endDateInp.value) {
                 endDateInp.value = ''
             }
             endDateInp.min = inp.value

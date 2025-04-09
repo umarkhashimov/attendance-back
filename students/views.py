@@ -125,7 +125,7 @@ class UpdateEnrollmentView(View, AdminRequired):
 
 
         next_url  = self.request.GET.get('next', '/')
-        return redirect(next_url)
+        return redirect(next_url + '#enrollmentsTable')
 
 class DeactivateEnrollmentView(View):
     def post(self, request, enrollment_id):

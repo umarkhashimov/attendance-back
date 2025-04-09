@@ -9,7 +9,7 @@
 
     <div class="container pt-2">
         <div class="row d-flex">
-            <div class="col-12">
+            <div class="col-12 col-md-6">
                 <div class="bg-light rounded py-3 px-2 mt-3 border">
                     <p class="text-black ms-1">Изменить информацию ученика #{{ student.id }}
                         - {{ student.first_name|default:'нет Имени' }} {{ student.last_name|default:'нет Фамилии' }}</p>
@@ -36,10 +36,46 @@
                     </form>
                 </div>
             </div>
-        </div>
-        <div class="row flex-row">
-            <div class="col-12 col-md-3">
-                <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
+            <div class="col-12 col-md-6">
+
+                <div class="bg-light rounded py-3 mt-3 px-2 border">
+                    <p class="text-dark ms-1">Записать на новый курс</p>
+                    <form method="get">
+                        <div class="form-floating mb-3">
+                            {{ teacher_select_form.teacher }}
+                            <label for="floatingInput">{{ teacher_select_form.teacher.label }}</label>
+                        </div>
+                    </form>
+                    <form method="post"
+                          action="{% url 'students:create_enrollment_from_student' student_id=student.id %}">
+                        {% csrf_token %}
+                        {% for field in enrollment_form %}
+                            <div class="my-1 {% if field.name != 'trial_lesson' %}
+
+                  form-floating
+
+                {% else %}
+
+                  ms-1
+
+                {% endif %}">
+                                {{ field }}
+                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+                            {% if field.errors %}
+                                <div class="text-danger small">
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                        <div class="d-flex justify-content-end flex-column flex-md-row">
+                            <button type="submit" class="btn btn-success">Сохранить</button>
+                        </div>
+                    </form>
+                </div>
+            <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
                     <button type="button" class="btn btn-secondary py-1 my-1" data-bs-toggle="modal"
                         data-bs-target="#overallAttendanceModal">
                     Посещаемость
@@ -122,7 +158,7 @@
                         </div>
                     </div>
                     <!-- Overall Attendance modal -->
-                    <div class="modal fade" id="overallAttendanceModal" data-bs-backdrop="static"
+                    <div class="modal fade" id="overallAttendanceModal"
                          data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                          aria-hidden="true">
                         <div class="modal-dialog modal-lg">
@@ -194,55 +230,19 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-light rounded py-3 mt-3 px-2 border">
-                    <p class="text-dark ms-1">Записать на новый курс</p>
-                    <form method="get">
-                        <div class="form-floating mb-3">
-                            {{ teacher_select_form.teacher }}
-                            <label for="floatingInput">{{ teacher_select_form.teacher.label }}</label>
-                        </div>
-                    </form>
-                    <form method="post"
-                          action="{% url 'students:create_enrollment_from_student' student_id=student.id %}">
-                        {% csrf_token %}
-                        {% for field in enrollment_form %}
-                            <div class="my-1 {% if field.name != 'trial_lesson' %}
-
-                  form-floating
-
-                {% else %}
-
-                  ms-1
-
-                {% endif %}">
-                                {{ field }}
-                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            </div>
-                            {% if field.errors %}
-                                <div class="text-danger small">
-                                    {% for error in field.errors %}
-                                        {{ error }}
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                        <div class="d-flex justify-content-end flex-column flex-md-row">
-                            <button type="submit" class="btn btn-success">Сохранить</button>
-                        </div>
-                    </form>
-                </div>
             </div>
-            <div class="col-12 col-md-9">
+            <div class="col-12">
                 <div class="rounded py-2 mt-3 mt-md-0">
                     <p class="mt-2 text-dark ms-1 mb-2">Записанные Курсы</p>
 
-                    <table class="table border border-2 enrollments">
+                    <table class="table border border-2 enrollments" id="enrollmentsTable">
                         <thead>
                         <tr>
-                            <th class="w-50">Курс</th>
-                            <th class="w-25">Баланс</th>
-                            <th class="w-25">Конец</th>
-                            <th class="w-50">Управления</th>
+                            <th class="w-auto">Курс</th>
+                            <th class="w-auto">Баланс</th>
+                            <th class="w-auto">Конец</th>
+                            <th class="w-auto">Управления</th>
+                            <th class="max-w-15 text-center">Примечание</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -252,7 +252,7 @@
                                     <span class="me-1 text-secondary opacity-75">{{ forloop.counter }}. </span>
                                     <a
                                             class="text-decoration-none text-dark opacity-100 table-obj-name-link"
-                                        href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.course }}</a>
+                                        href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}</a>
                                     {% if enrollment.note %}
                                     <span data-bs-toggle="tooltip" data-bs-placement="top"
                                                                   title="{{ enrollment.note }}"
@@ -498,6 +498,7 @@
                                         </div>
                                     </div>
                                 </td>
+                             <td class="py-0 align-middle text-break text-center">{{ enrollment.note|default:"..." }}</td>
                             </tr>
                         {% empty %}
                             <tr>
@@ -509,8 +510,7 @@
                 </div>
             </div>
         </div>
-
-    </div>
+</div>
 {% endblock %}
 
 {% block custom_js %}

@@ -108,7 +108,12 @@ class CreatePaymentView(View):
 
             payment.save()
 
-            if payment.payed_due > payment.enrollment.payment_due:
+            if payment.enrollment.payment_due:
+                if payment.payed_due > payment.enrollment.payment_due:
+                    payment.enrollment.payment_due = payment.payed_due
+                    payment.enrollment.save()
+
+            else:
                 payment.enrollment.payment_due = payment.payed_due
                 payment.enrollment.save()
 

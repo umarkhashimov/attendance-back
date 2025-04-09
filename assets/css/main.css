@@ -508,3 +508,7 @@ input::-ms-reveal,
 input::-ms-clear {
     display: none;
 }
+
+.max-w-15{
+    max-width: 150px !important;
+}

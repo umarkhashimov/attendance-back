@@ -83,7 +83,7 @@ class CourseEnrollmentForm(ModelForm):
 
     class Meta:
         model = Enrollment
-        fields = ['student',  'discount', 'trial_lesson']
+        fields = ['student',  'discount', 'note', 'debt_note', 'trial_lesson']
         widgets = {
             'trial_lesson': forms.CheckboxInput(
                 attrs={
