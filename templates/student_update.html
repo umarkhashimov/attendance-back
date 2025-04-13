@@ -75,10 +75,10 @@
                         </div>
                     </form>
                 </div>
-            <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
+                <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
                     <button type="button" class="btn btn-secondary py-1 my-1" data-bs-toggle="modal"
-                        data-bs-target="#overallAttendanceModal">
-                    Посещаемость
+                            data-bs-target="#overallAttendanceModal">
+                        Посещаемость
                     </button>
                     <button type="button" class="btn btn-success py-1 my-1" data-bs-toggle="modal"
                             data-bs-target="#paymentHistoryModal">
@@ -132,7 +132,10 @@
                                                                         <td class="px-1">{{ payment.payed_due|default:'?' }}</td>
                                                                         <td class="px-1">{{ payment.date|date:'d-m-Y' }}</td>
                                                                         {% if user.is_superuser %}
-                                                                            <td class=""><a href="{% url 'payment:update_payment_dates' pk=payment.id %}" class="btn py-1 px-2 w-100 btn-secondary"><i class="bi bi-pencil"></i></a></td>
+                                                                            <td class=""><a
+                                                                                    href="{% url 'payment:update_payment_dates' pk=payment.id %}"
+                                                                                    class="btn py-1 px-2 w-100 btn-secondary"><i
+                                                                                    class="bi bi-pencil"></i></a></td>
                                                                         {% endif %}
                                                                     </tr>
                                                                 {% empty %}
@@ -148,7 +151,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {% empty %}
+                                            {% empty %}
                                                 <p class="text-center w-100">нет записей</p>
                                             {% endfor %}
                                         </div>
@@ -197,11 +200,11 @@
                                                             {% for record in attendance_data %}
                                                                 <tr class="attendance-item">
                                                                     <td class="px-2 py-1 border border-black border-secondary border-1 status-cell">{{ record.session__date }}</td>
-                                                                    <td class="border border-secondary border-1 border-black text-center status-cell {% if record.status == True %} bg-success bg-opacity-75 {% elif record.status == False %} bg-danger bg-opacity-75 {% else %} bg-secondary-subtle {% endif %}">
-                                                                        {% if record.status == True %}
+                                                                    <td class="border border-secondary border-1 border-black text-center status-cell {% if record.status == 1 %} bg-success bg-opacity-75 {% elif record.status == 0 %} bg-danger bg-opacity-75 {% elif record.status == 2 %} bg-warning bg-opacity-50 {% else %} bg-secondary-subtle {% endif %}">
+                                                                        {% if record.status == 1 or record.status == 2 %}
                                                                             <span title="оценка за дом.зад./посещение"
-                                                                                  class="text-white">{{ record.homework_grade|default:"-" }}/{{ record.participation_grade|default:"-" }}</span>
-                                                                        {% elif record.status == False %}
+                                                                                  class="text-black">{{ record.homework_grade|default:"-" }}/{{ record.participation_grade|default:"-" }}</span>
+                                                                        {% elif record.status == 0 %}
                                                                             <span class="text-dark"><i
                                                                                     class="bi bi-x"></i></span>
                                                                         {% elif record.status == None %}
@@ -221,8 +224,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            {% empty %}
-                                                <p class="text-center w-100">нет записей</p>
+                                        {% empty %}
+                                            <p class="text-center w-100">нет записей</p>
                                         {% endfor %}
                                     </div>
                                 </div>
@@ -252,12 +255,12 @@
                                     <span class="me-1 text-secondary opacity-75">{{ forloop.counter }}. </span>
                                     <a
                                             class="text-decoration-none text-dark opacity-100 table-obj-name-link"
-                                        href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}</a>
+                                            href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}</a>
                                     {% if enrollment.note %}
-                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                                                  title="{{ enrollment.note }}"
-                                                                  role='button' class="text-warning ms-1"><i
-                                                                    class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="{{ enrollment.note }}"
+                                              role='button' class="text-warning ms-1"><i
+                                                class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                                 </td>
                                 <td class="py-0 align-middle  {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
                                 <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.payment_due }}</td>
@@ -350,16 +353,18 @@
                                                         <div class="enrollment-tab mytab bg-light border rounded-0 p-2">
                                                             <form method="post"
                                                                   action="{% url "students:update_enrollment" pk=enrollment.id %}?next={{ request.path }}">
-                                                            {% csrf_token %}
+                                                                {% csrf_token %}
                                                                 {% if request.user.is_superuser %}
-                                                                <div class="mb-3">
-                                                                    <label for="paymentdueInp{{ enrollment.id }}" class="fw-light fs-6">Конец абонимента</label>
-                                                                    <input type="date" class="form-control"
-                                                                           name="payment_due"
-                                                                           value="{{ enrollment.payment_due|date:"Y-m-d" }}"
-                                                                           id="paymentdueInp{{ enrollment.id }}"
-                                                                           placeholder="123"/>
-                                                                </div>
+                                                                    <div class="mb-3">
+                                                                        <label for="paymentdueInp{{ enrollment.id }}"
+                                                                               class="fw-light fs-6">Конец
+                                                                            абонимента</label>
+                                                                        <input type="date" class="form-control"
+                                                                               name="payment_due"
+                                                                               value="{{ enrollment.payment_due|date:"Y-m-d" }}"
+                                                                               id="paymentdueInp{{ enrollment.id }}"
+                                                                               placeholder="123"/>
+                                                                    </div>
                                                                 {% endif %}
                                                                 <div class="form-floating mb-3">
                                                                     <input type="number" class="form-control"
@@ -426,7 +431,7 @@
                                                             <form method="post"
                                                                   action="{% url "payment:create_payment_enrollment" enrollment_id=enrollment.id %}?next={{ request.path }}"
                                                                   class=" gap-2">
-                                                            {% csrf_token %}
+                                                                {% csrf_token %}
                                                                 <p class="mb-1">
                                                                     <b>Цена:</b> <input type="number"
                                                                                         id="priceInp{{ enrollment.id }}"
@@ -479,7 +484,8 @@
                                                                         <input name="start_date" type="date"
                                                                                class="form-control"
                                                                                value=""
-                                                                               id="startInp{{ enrollment.id }}" onchange="paymentFromEnter(this, {{ enrollment.id }})">
+                                                                               id="startInp{{ enrollment.id }}"
+                                                                               onchange="paymentFromEnter(this, {{ enrollment.id }})">
                                                                         <label class="mb-2 mt-1"
                                                                                for="endInp{{ enrollment.id }}">Конец</label>
                                                                         <input name="end_date" type="date" disabled
@@ -487,9 +493,11 @@
                                                                                value="" id="endInp{{ enrollment.id }}">
                                                                     </div>
                                                                 </div>
-                                                            <div class="d-flex flex-column flex-md-row justify-content-end mt-2">
-                                                                <button class="btn btn-success" type="submit">Оплатить</button>
-                                                            </div>
+                                                                <div class="d-flex flex-column flex-md-row justify-content-end mt-2">
+                                                                    <button class="btn btn-success" type="submit">
+                                                                        Оплатить
+                                                                    </button>
+                                                                </div>
                                                             </form>
                                                         </div>
                                                     </div>
@@ -498,7 +506,7 @@
                                         </div>
                                     </div>
                                 </td>
-                             <td class="py-0 align-middle text-break text-center">{{ enrollment.note|default:"..." }}</td>
+                                <td class="py-0 align-middle text-break text-center">{{ enrollment.note|default:"..." }}</td>
                             </tr>
                         {% empty %}
                             <tr>
@@ -510,7 +518,7 @@
                 </div>
             </div>
         </div>
-</div>
+    </div>
 {% endblock %}
 
 {% block custom_js %}
@@ -528,10 +536,10 @@
             btn.classList.add('active')
         }
 
-        function paymentFromEnter(inp, enrollment_id){
+        function paymentFromEnter(inp, enrollment_id) {
             let endDateInp = document.querySelector(`#endInp${enrollment_id}`)
             endDateInp.removeAttribute('disabled')
-            if (inp.value > endDateInp.value){
+            if (inp.value > endDateInp.value) {
                 endDateInp.value = ''
             }
             endDateInp.min = inp.value
