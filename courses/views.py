@@ -189,7 +189,7 @@ class MyCoursesView(ListView):
     queryset = CourseModel.objects.all()
     template_name = "my_groups.html"
     context_object_name = 'courses'
-    paginate_by = 10
+    paginate_by = 20
 
     def get_queryset(self):
         queryset = super().get_queryset()
