@@ -108,7 +108,7 @@
 
                                         {% for obj in conducted.attendancemodel_set.all %}
                                             <tr class="d-flex attendance-item {% if obj.enrollment.trial_lesson or obj.trial_attendance %}trial-lesson{% endif %}"
-                                                status='{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}'
+                                                status='{{ obj.status_ch }}'
                                                 stid="{{ obj.enrollment.student.student_id }}"
                                                 class="attendance-item absent">
                                                 <td class="w-100 d-flex align-items-center ps-3 name">
@@ -127,11 +127,22 @@
                                                     </span>
                                                 </td>
                                                 <td>
+{#                                                    <div class="w-100">#}
+                                                            {#-------------------------#}
+{#                                                            <label id="p-0" stid="{{ obj.enrollment.student.student_id }}" onclick="changeAttendanceInputStatus(this)"#}
+{#                                                                   style="cursor: pointer; user-select: none;">#}
+{#                                                                <input type="hidden" name="status_ch"#}
+{#                                                                       id="statusInp{{ obj.id }}" value="">#}
+{#                                                                <span id="checkbox-display">#}
+{#                                                                    ⬜ Not Given#}
+{#                                                                </span>#}
+{#                                                            </label>#}
+{#                                                        </div>#}
                                                     <div class="d-flex justify-content-end text-end align-items-center h-100">
 
-                                                        <input hidden class="studentStatusInput" type="text"
-                                                               name="stid_{{ obj.enrollment.student.student_id }}"
-                                                               value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">
+{#                                                        <input hidden class="studentStatusInput" type="text"#}
+{#                                                               name="stid_{{ obj.enrollment.student.student_id }}"#}
+{#                                                               value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">#}
                                                         <div class="gradesInp btn-group d-flex me-1 {% if obj.enrollment.trial_lesson or obj.trial_attendance %}d-none opacity-0{% endif %}">
                                                             <input type="number"
                                                                    name="ga_{{ obj.enrollment.student.student_id }}"
@@ -144,27 +155,40 @@
                                                                    class="form-control grade-inp border-2 rounded-start-0"
                                                                    title="Оценка за домашнее задание">
                                                         </div>
-                                                        <div class="marked-conf d-flex align-items-center">
-                                                            <div class="d-flex align-items-center h-100 marked-status-badge">
-                                                                <p class="badge present text-bg-success rounded-5 m-0 my-auto">
-                                                                    <i class="bi bi-check"></i></p>
-                                                                <p class="badge absent text-bg-danger rounded-5 m-0 my-auto">
-                                                                    <i class="bi bi-x"></i></p>
-                                                                <button type="button"
-                                                                        onclick="unmarkStudent({{ obj.enrollment.student.student_id }})"
-                                                                        class="btn btn-light border border-dark px-2 ms-1    ">
-                                                                    <i class="bi bi-pencil-fill"></i></button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="btn-group gap-1 choose check-buttons">
-                                                            <button type="button"
-                                                                    onclick="markStudent('absent', {{ obj.enrollment.student.student_id }})"
-                                                                    class="btn btn-danger px-3"><i
-                                                                    class="bi bi-x-lg"></i></button>
-                                                            <button type="button"
-                                                                    onclick="markStudent('present', {{ obj.enrollment.student.student_id }})"
-                                                                    class="btn btn-success px-3"><i
-                                                                    class="bi bi-check-lg"></i></button>
+{#                                                        <div class="marked-conf d-flex align-items-center">#}
+{#                                                            <div class="d-flex align-items-center h-100 marked-status-badge">#}
+{#                                                                <p class="badge present text-bg-success rounded-5 m-0 my-auto">#}
+{#                                                                    <i class="bi bi-check"></i></p>#}
+{#                                                                <p class="badge absent text-bg-danger rounded-5 m-0 my-auto">#}
+{#                                                                    <i class="bi bi-x"></i></p>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+                                                        <div class="btn-group gap-1 choose check-buttons py-1">
+{#                                                            <button type="button"#}
+{#                                                                    onclick="markStudent('absent', {{ obj.enrollment.student.student_id }})"#}
+{#                                                                    class="btn btn-danger px-3"><i#}
+{#                                                                    class="bi bi-x-lg"></i></button>#}
+{#                                                            <button type="button"#}
+{#                                                                    onclick="markStudent('present', {{ obj.enrollment.student.student_id }})"#}
+{#                                                                    class="btn btn-success px-3"><i#}
+{#                                                                    class="bi bi-check-lg"></i></button>#}
+                                                            <label id="p-0" stid="{{ obj.enrollment.student.student_id }}" onclick="changeAttendanceInputStatus(this)"
+                                                                   style="cursor: pointer; user-select: none;">
+                                                                <input type="hidden" name="stid_{{ obj.enrollment.student.student_id }}"
+                                                                       id="statusInp{{ obj.id }}" {% if obj.status_ch %}value="{{ obj.status_ch }}" {% endif %}>
+                                                                <span id="checkbox-display">
+
+                                                                    {% if obj.status_ch == 1 %}
+                                                                        <i class="bi bi-check-lg text-success bg-success-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>
+                                                                    {% elif obj.status_ch == 0 %}
+                                                                        <i class="bi bi-x-lg text-danger bg-danger-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>
+                                                                    {% elif obj.status_ch == 2 %}
+                                                                        <i class="bi bi-clock-fill text-warning bg-warning-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>
+                                                                    {% else %}
+                                                                        <i class="bi bi-dash-circle text-secondary bg-secondary-subtle py-1 px-2 border-1 rounded-1 border fs-5"></i>
+                                                                    {% endif %}
+                                                                </span>
+                                                            </label>
                                                         </div>
                                                     </div>
                                                 </td>
@@ -325,6 +349,24 @@
             })
         }
 
+
+        function changeAttendanceInputStatus(label){
+            const states = [
+                {#{ value: '', label: '<i class="bi bi-dash-circle text-secondary bg-secondary-subtle py-1 px-2 border-1 rounded-1 border fs-5"></i>' },   // None#}
+                { value: '0', label: '<i class="bi bi-x-lg text-danger bg-danger-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>' },
+                { value: '1', label: '<i class="bi bi-check-lg text-success bg-success-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>' },
+                { value: '2', label: '<i class="bi bi-clock-fill text-warning bg-warning-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>' }
+            ];
+
+            let currentStateIndex = label.querySelector(`input`).value ? label.querySelector(`input`).value : 0;
+            currentStateIndex = (currentStateIndex + 1) % states.length;
+            const state = states[currentStateIndex];
+            label.querySelector(`input`).value = state.value;
+            label.querySelector('span').innerHTML = state.label;
+
+            const studentData = document.querySelector(`.students-attendance-list tr[stid='${label.getAttribute('stid')}']`)
+            studentData.setAttribute('status', state.value);
+        }
 
     </script>
     <script src="{% static 'js/attendance.js' %}"></script>

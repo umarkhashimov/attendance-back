@@ -79,32 +79,34 @@ class GetSessionView(View):
         session.save()
         session.course.set_topic()
 
+        print(keys)
+
         for obj in attendances:
+
 
             if f"stid_{obj.enrollment.student.student_id}" in keys:
 
                 status = request.POST.get(str(f'stid_{obj.enrollment.student.student_id}'), None)
-                if status == 'present':
-                    obj.trial_attendance = obj.enrollment.trial_lesson
+                if status in ['1', '2', '0']:
+                    obj.status_ch = int(status)
+                    if obj.status_ch in [1,2]:
+                        if (obj.enrollment.trial_lesson and not obj.trial_attendance) and session.date == datetime.today().date():
+                            obj.trial_attendance = obj.enrollment.trial_lesson
+                            obj.enrollment.trial_lesson = False
+                            if not obj.enrollment.payment_due:
+                                obj.enrollment.payment_due = datetime.today()
+                            obj.enrollment.save()
 
-                    if obj.enrollment.trial_lesson:
-                        obj.enrollment.trial_lesson = False
-                        if not obj.enrollment.payment_due:
-                            obj.enrollment.payment_due = datetime.today()
+
+                        attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'), None)
+                        homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'), None)
+                        obj.participation_grade = attendance_grade if attendance_grade else None
+                        obj.homework_grade = homework_grade if homework_grade else None
+
+
+                    if not obj.enrollment.payment_due and obj.enrollment.trial_lesson == False:
+                        obj.enrollment.payment_due = datetime.today().date()
                         obj.enrollment.save()
-
-
-                    attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'), None)
-                    homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'), None)
-                    obj.participation_grade = attendance_grade if attendance_grade else None
-                    obj.homework_grade = homework_grade if homework_grade else None
-                    obj.status = 1
-                elif status == 'absent':
-                    obj.status = 0
-
-                if not obj.enrollment.payment_due and obj.enrollment.trial_lesson == False:
-                    obj.enrollment.payment_due = datetime.today().date()
-                    obj.enrollment.save()
 
             obj.save()
 
