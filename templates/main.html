@@ -108,7 +108,7 @@
 
                                         {% for obj in conducted.attendancemodel_set.all %}
                                             <tr class="d-flex attendance-item {% if obj.enrollment.trial_lesson or obj.trial_attendance %}trial-lesson{% endif %}"
-                                                status='{{ obj.status_ch }}'
+                                                status='{{ obj.status }}'
                                                 stid="{{ obj.enrollment.student.student_id }}"
                                                 class="attendance-item absent">
                                                 <td class="w-100 d-flex align-items-center ps-3 name">
@@ -131,7 +131,7 @@
                                                             {#-------------------------#}
 {#                                                            <label id="p-0" stid="{{ obj.enrollment.student.student_id }}" onclick="changeAttendanceInputStatus(this)"#}
 {#                                                                   style="cursor: pointer; user-select: none;">#}
-{#                                                                <input type="hidden" name="status_ch"#}
+{#                                                                <input type="hidden" name="status"#}
 {#                                                                       id="statusInp{{ obj.id }}" value="">#}
 {#                                                                <span id="checkbox-display">#}
 {#                                                                    ⬜ Not Given#}
@@ -143,7 +143,7 @@
 {#                                                        <input hidden class="studentStatusInput" type="text"#}
 {#                                                               name="stid_{{ obj.enrollment.student.student_id }}"#}
 {#                                                               value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">#}
-                                                        <div class="gradesInp btn-group d-flex me-1 {% if obj.enrollment.trial_lesson or obj.trial_attendance %}d-none opacity-0{% endif %}">
+                                                        <div class="gradesInp btn-group d-flex me-1 {% if obj.enrollment.trial_lesson %}d-none opacity-0{% endif %}">
                                                             <input type="number"
                                                                    name="ga_{{ obj.enrollment.student.student_id }}"
                                                                    value="{{ obj.participation_grade }}"
@@ -175,14 +175,14 @@
                                                             <label id="p-0" stid="{{ obj.enrollment.student.student_id }}" onclick="changeAttendanceInputStatus(this)"
                                                                    style="cursor: pointer; user-select: none;">
                                                                 <input type="hidden" name="stid_{{ obj.enrollment.student.student_id }}"
-                                                                       id="statusInp{{ obj.id }}" {% if obj.status_ch %}value="{{ obj.status_ch }}" {% endif %}>
+                                                                       id="statusInp{{ obj.id }}" {% if obj.status %}value="{{ obj.status }}" {% endif %}>
                                                                 <span id="checkbox-display">
 
-                                                                    {% if obj.status_ch == 1 %}
+                                                                    {% if obj.status == 1 %}
                                                                         <i class="bi bi-check-lg text-success bg-success-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>
-                                                                    {% elif obj.status_ch == 0 %}
+                                                                    {% elif obj.status == 0 %}
                                                                         <i class="bi bi-x-lg text-danger bg-danger-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>
-                                                                    {% elif obj.status_ch == 2 %}
+                                                                    {% elif obj.status == 2 %}
                                                                         <i class="bi bi-clock-fill text-warning bg-warning-subtle py-1 px-2 border-1 rounded-1 border  fs-5"></i>
                                                                     {% else %}
                                                                         <i class="bi bi-dash-circle text-secondary bg-secondary-subtle py-1 px-2 border-1 rounded-1 border fs-5"></i>

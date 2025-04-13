@@ -88,8 +88,8 @@ class GetSessionView(View):
 
                 status = request.POST.get(str(f'stid_{obj.enrollment.student.student_id}'), None)
                 if status in ['1', '2', '0']:
-                    obj.status_ch = int(status)
-                    if obj.status_ch in [1,2]:
+                    obj.status = int(status)
+                    if obj.status in [1,2]:
                         if (obj.enrollment.trial_lesson and not obj.trial_attendance) and session.date == datetime.today().date():
                             obj.trial_attendance = obj.enrollment.trial_lesson
                             obj.enrollment.trial_lesson = False
