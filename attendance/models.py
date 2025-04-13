@@ -6,9 +6,10 @@ from students.models import Enrollment
 class AttendanceModel(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     session = models.ForeignKey(SessionsModel, on_delete=models.CASCADE)
-    status = models.BooleanField(null=True) 
-    homework_grade = models.IntegerField(null=True)
-    participation_grade = models.IntegerField(null=True)
+    status = models.BooleanField(blank=True, null=True)
+    status_ch = models.IntegerField(choices=[(1, 'Присутствует'), (0, "Отсутствует"), (3, "Опоздал")], null=True)
+    homework_grade = models.IntegerField(null=True, blank=True)
+    participation_grade = models.IntegerField(null=True, blank=True)
     trial_attendance = models.BooleanField(default=False)
 
     def __str__(self):
