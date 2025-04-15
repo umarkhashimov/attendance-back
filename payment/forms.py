@@ -82,3 +82,10 @@ class UpdatePaymentDatesForm(forms.ModelForm):
         widgets = {
             'payed_from': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
         }
+
+class TrialStudentsFilterForm(forms.Form):
+    weekdays = forms.ChoiceField(
+        choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")],
+        widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+        required=False, label="Дни"
+    )

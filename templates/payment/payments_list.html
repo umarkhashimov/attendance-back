@@ -1,5 +1,5 @@
 {% extends 'layout/base.html' %}
-
+{% load tz %}
 {% block title %}
     <title>Панель Управления</title>
 {% endblock %}
@@ -80,7 +80,9 @@
                     <tbody>
                     {% for payment in payments %}
                         <tr class="list-items-hover">
-                            <td class="px-1"><a class="link-dark text-decoration-none table-obj-name-link"
+                            <td class="px-1">
+                                <span class="text-secondary">{{ forloop.counter }}.</span>
+                                <a class="link-dark text-decoration-none table-obj-name-link"
                                                 href="{% url 'students:student_update' pk=payment.enrollment.student.id %}">{{ payment.enrollment.student }}</a>
                             </td>
                             <td class="px-1"><a class="link-dark text-decoration-none table-obj-name-link"

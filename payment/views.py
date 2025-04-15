@@ -5,13 +5,13 @@ from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import View, ListView, UpdateView
-
+from django.db.models import Q
 from courses.models import CourseModel
 from users.filters import AdminRequired, SuperUserRequired
 from users.helpers import record_action
 from users.models import UsersModel
 from .models import PaymentModel
-from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm, UpdatePaymentDatesForm
+from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm, UpdatePaymentDatesForm, TrialStudentsFilterForm
 from students.models import Enrollment, StudentModel
 from .helpers import calculate_payment_due_date, calculate_payment_amount, next_closest_session_date
 from collections import defaultdict
@@ -149,10 +149,25 @@ class TrialEnrollmentsView(View, AdminRequired):
     def get(self, request):
         teachers = UsersModel.objects.filter(role='1').distinct()
 
+        # Filters
+        weekdays = self.request.GET.get('weekdays', None)
+
         teacher_enrollments = {}
 
         for teacher in teachers:
             courses = CourseModel.objects.filter(teacher=teacher, enrollment__trial_lesson=True, enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
+            if weekdays:
+                print(weekdays, type(weekdays))
+                if weekdays == '1':
+                    print('123123')
+                    print(courses)
+                    courses = courses.filter(weekdays='0,2,4')
+                    print(courses)
+                elif weekdays == '2':
+                    courses = courses.filter(weekdays='1,3,5')
+                else:
+                    courses = courses.exclude(Q(weekdays='0,2,4') | Q(weekdays='1,3,5'))
+
             if len(courses) > 0:
                 teacher_enrollments[teacher] = {
                     course: list(Enrollment.objects.filter(course=course, trial_lesson=True, status=True))
@@ -160,6 +175,7 @@ class TrialEnrollmentsView(View, AdminRequired):
                 }
 
         context = {'teacher_enrollments': teacher_enrollments}
+        context['filter_form'] = TrialStudentsFilterForm(initial=self.request.GET)
         return render(request, self.template_name, context)
 
 class ConfirmPaymentView(View):

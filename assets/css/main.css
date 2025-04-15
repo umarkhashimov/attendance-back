@@ -219,18 +219,16 @@ tr.trial-lesson td {
     color: green;
 }
 
-/*.attendance-item[status="1"] .marked-status-badge .absent{*/
-/*    display: none;*/
-/*}*/
+.attendance-item[status="1"] .marked-status-badge .present,
+.attendance-item[status="0"] .marked-status-badge .absent,
+.attendance-item[status="2"] .marked-status-badge .overtime {
+    display: block !important;
+}
 
-/*.attendance-item[status="0"] .marked-status-badge .present{*/
-/*    display: none;*/
-/*}*/
-
-/* .attendance-item[status=""] .marked-conf */
-/*.attendance-item:not([status="1"]):not([status="0"]) .marked-conf {*/
-/*    display: none !important;*/
-/*}*/
+.attendance-item:not([status='1'], [status='2'], [status='0']) .marked-conf,
+.attendance-item:where([status='1'], [status='2'], [status='0']) .check-buttons{
+    display: none !important;
+}
 
 .attendance-item:not([status="1"], [status="2"]) .gradesInp {
     display: none !important;
@@ -520,6 +518,6 @@ input::-ms-clear {
     display: none;
 }
 
-.max-w-15{
+.max-w-15 {
     max-width: 150px !important;
 }
