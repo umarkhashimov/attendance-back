@@ -152,7 +152,7 @@ class TrialEnrollmentsView(View, AdminRequired):
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
-        enrollments = Enrollment.objects.select_related('course__teacher').filter(trial_lesson=True)
+        enrollments = Enrollment.objects.select_related('course__teacher').filter(trial_lesson=True, status=True)
 
         if weekdays:
             if weekdays == '1':
