@@ -136,3 +136,13 @@ class DeactivateEnrollmentView(View):
         record_action(3, self.request.user, enrollment, enrollment.id, action_message)
         next_url  = self.request.GET.get('next', '/')
         return redirect(next_url)
+
+
+class UpdateEnrollmentNote(View):
+    def post(self, request, pk):
+        enrollment = get_object_or_404(Enrollment, id=pk)
+        text = request.POST.get('text', None)
+        enrollment.note = text.strip()
+        enrollment.save()
+        next_url = self.request.GET.get('next', '/')
+        return redirect(next_url)

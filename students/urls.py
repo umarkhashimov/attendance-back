@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import StudentUpdateView, CreateStudentView, CreateEnrollmentView, UpdateEnrollmentView, DeactivateEnrollmentView
+from .views import StudentUpdateView, CreateStudentView, CreateEnrollmentView, UpdateEnrollmentView, DeactivateEnrollmentView, UpdateEnrollmentNote
 
 app_name = 'students'
 
@@ -11,4 +11,6 @@ urlpatterns = [
     path('enrollment/delete/<int:enrollment_id>', DeactivateEnrollmentView.as_view(), name='delete_enrollment'),
     path('enrollment/create/course/<int:course_id>/', CreateEnrollmentView.as_view(), name='create_enrollment_from_course'),
     path('enrollment/create/student/<int:student_id>/', CreateEnrollmentView.as_view(), name='create_enrollment_from_student'),
+    path('enrollment/update-note/<int:pk>/', UpdateEnrollmentNote.as_view(), name='update_enrollment_note'),
+
 ]

@@ -245,7 +245,7 @@
                             <th class="w-auto">Баланс</th>
                             <th class="w-auto">Конец</th>
                             <th class="w-auto">Управления</th>
-                            <th class="max-w-15 text-center">Примечание</th>
+                            <th class="w-25 text-center">Примечание</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -506,7 +506,14 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-0 align-middle text-break text-center">{{ enrollment.note|default:"..." }}</td>
+                                <td class="py-0 pe-0 max-w-15 align-middle text-break text-center">
+                                    <form method="post" action="{% url 'students:update_enrollment_note' pk=enrollment.id %}?next={{ request.path }}#enrollmentsTable">
+                                    {% csrf_token %}
+                                        <input name="text" onchange="submit()" maxlength="25"
+                                                  class="text-center form-control rounded-0 align-middle w-100" value="{{ enrollment.note|default:"" }}">
+                                    </form>
+                                </td>
+
                             </tr>
                         {% empty %}
                             <tr>

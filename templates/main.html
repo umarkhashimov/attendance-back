@@ -8,25 +8,28 @@
 
     <div class="container courses-list mt-5">
         {% if request.user.role == '2' %}
-        <div class="d-flex flex-column flex-md-row mb-3">
-            <div class="bg-light bg-light rounded py-2 px-2 border">
-                <form method="get">
-                    <div class="mb-3">
-                        <h6 class="text-dark ms-1 fs-6 m-0">Просмотр по дате
-                            <a href="?date={{ today }}" type="reset" class="filter-reset-btn ms-2 mb-1"><p>Сбросить</p></a>
-                        </h6>
-                    </div>
-                    <div class="d-flex gap-2">
+            <div class="d-flex flex-column flex-md-row mb-3">
+                <div class="bg-light bg-light rounded py-2 px-2 border">
+                    <form method="get">
+                        <div class="mb-3">
+                            <h6 class="text-dark ms-1 fs-6 m-0">Просмотр по дате
+                                <a href="?date={{ today }}" type="reset" class="filter-reset-btn ms-2 mb-1"><p>
+                                    Сбросить</p></a>
+                            </h6>
+                        </div>
+                        <div class="d-flex gap-2">
 
-                        <a href="?date={{ prev_date|date:"Y-m-d" }}" class="btn btn-outline-primary"><i
-                                class="bi bi-caret-left-fill"></i></a>
-                        <input type="date" name="date" max="{{ today }}" value="{{ filter_date }}"
-                               class="form-control border-primary" onchange="this.form.submit()">
-                        <a href="?date={{ next_date|date:"Y-m-d" }}" class="btn btn-outline-primary {% if filter_date == today %} disabled{% endif %}"><i class="bi bi-caret-right-fill"></i></a>
-                    </div>
-                </form>
+                            <a href="?date={{ prev_date|date:"Y-m-d" }}" class="btn btn-outline-primary"><i
+                                    class="bi bi-caret-left-fill"></i></a>
+                            <input type="date" name="date" max="{{ today }}" value="{{ filter_date }}"
+                                   class="form-control border-primary" onchange="this.form.submit()">
+                            <a href="?date={{ next_date|date:"Y-m-d" }}"
+                               class="btn btn-outline-primary {% if filter_date == today %} disabled{% endif %}"><i
+                                    class="bi bi-caret-right-fill"></i></a>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
         {% endif %}
         <p class="text-dark ms-1 fs-6 m-0">Отмеченные</p>
         <hr class="table-group-divider mt-2"/>
@@ -46,7 +49,12 @@
                     <div class="d-flex w-100 align-items-center py-2 overflow-hidden text-truncate">
                         <p class="text-dark mb-0 course-name text-truncate w-100">
                             <span class="opacity-50 course-id">{{ obj.course.id }}</span>
-                            {% if obj.record_by.role == '2' %}<span class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Отмечено администратором"><i class="bi bi-person-fill-exclamation"></i></span>{% elif obj.record_by == None %}<span class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Отмечено роботом"><i class="bi bi-robot"></i></span>{% endif %}
+                            {% if obj.record_by.role == '2' %}
+                                <span class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="Отмечено администратором"><i
+                                        class="bi bi-person-fill-exclamation"></i></span>{% elif obj.record_by == None %}
+                                <span class="text-warning" data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="Отмечено роботом"><i class="bi bi-robot"></i></span>{% endif %}
                             <span>
                         {{ obj.course.subject|capfirst }} - <span
                                     class="d-none d-sm-inline-block">{{ obj.course.get_name }}</span>
@@ -127,24 +135,26 @@
                                                     </span>
                                                 </td>
                                                 <td>
-{#                                                    <div class="w-100">#}
-                                                            {#-------------------------#}
-{#                                                            <label id="p-0" stid="{{ obj.enrollment.student.student_id }}" onclick="changeAttendanceInputStatus(this)"#}
-{#                                                                   style="cursor: pointer; user-select: none;">#}
-{#                                                                <input type="hidden" name="status"#}
-{#                                                                       id="statusInp{{ obj.id }}" value="">#}
-{#                                                                <span id="checkbox-display">#}
-{#                                                                    ⬜ Not Given#}
-{#                                                                </span>#}
-{#                                                            </label>#}
-{#                                                        </div>#}
+                                                    {#                                                    <div class="w-100">#}
+                                                    {#-------------------------#}
+                                                    {#                                                            <label id="p-0" stid="{{ obj.enrollment.student.student_id }}" onclick="changeAttendanceInputStatus(this)"#}
+                                                    {#                                                                   style="cursor: pointer; user-select: none;">#}
+                                                    {#                                                                <input type="hidden" name="status"#}
+                                                    {#                                                                       id="statusInp{{ obj.id }}" value="">#}
+                                                    {#                                                                <span id="checkbox-display">#}
+                                                    {#                                                                    ⬜ Not Given#}
+                                                    {#                                                                </span>#}
+                                                    {#                                                            </label>#}
+                                                    {#                                                        </div>#}
                                                     <div class="d-flex justify-content-end text-end align-items-center h-100">
-                                                        <input type="hidden" name="stid_{{ obj.enrollment.student.student_id }}"
-                                                               id="statusInp{{ obj.enrollment.student.student_id }}" {% if obj.status %}value="{{ obj.status }}" {% endif %}>
+                                                        <input type="hidden"
+                                                               name="stid_{{ obj.enrollment.student.student_id }}"
+                                                               id="statusInp{{ obj.enrollment.student.student_id }}"
+                                                               {% if obj.status %}value="{{ obj.status }}" {% endif %}>
 
-{#                                                        <input hidden class="studentStatusInput" type="text"#}
-{#                                                               name="stid_{{ obj.enrollment.student.student_id }}"#}
-{#                                                               value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">#}
+                                                        {#                                                        <input hidden class="studentStatusInput" type="text"#}
+                                                        {#                                                               name="stid_{{ obj.enrollment.student.student_id }}"#}
+                                                        {#                                                               value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">#}
                                                         <div class="gradesInp btn-group d-flex me-1 {% if obj.enrollment.trial_lesson %}d-none opacity-0{% endif %}">
                                                             <input type="number"
                                                                    name="ga_{{ obj.enrollment.student.student_id }}"
@@ -167,9 +177,9 @@
                                                                     <i class="bi bi-check "></i></p>
 
                                                                 <button type="button"
-                                                                            onclick="unmarkStudent({{ obj.enrollment.student.student_id }})"
-                                                                            class="btn btn-light border border-dark px-2 ms-1    ">
-                                                                        <i class="bi bi-pencil-fill"></i></button>
+                                                                        onclick="unmarkStudent({{ obj.enrollment.student.student_id }})"
+                                                                        class="btn btn-light border border-dark px-2 ms-1    ">
+                                                                    <i class="bi bi-pencil-fill"></i></button>
                                                             </div>
                                                         </div>
                                                         <div class="btn-group gap-1 choose check-buttons">
@@ -343,6 +353,20 @@
                     }
                 })
             })
+        }
+
+
+        function markStudent(status, stid) {
+            const studentData = document.querySelector(`.students-attendance-list tr[stid='${stid}']`)
+            studentData.setAttribute('status', status);
+            studentData.querySelector(`#statusInp${stid}`).value = status;
+        }
+
+
+        function unmarkStudent(stid) {
+            const studentData = document.querySelector(`.students-attendance-list tr[stid='${stid}']`)
+            studentData.setAttribute('status', '');
+            studentData.querySelector(`#statusInp${stid}`).value = '';
         }
 
     </script>
