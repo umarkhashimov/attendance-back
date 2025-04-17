@@ -152,29 +152,33 @@ class TrialEnrollmentsView(View, AdminRequired):
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
-        teacher_enrollments = {}
+        enrollments = Enrollment.objects.select_related('course__teacher').filter(trial_lesson=True)
 
-        for teacher in teachers:
-            courses = CourseModel.objects.filter(teacher=teacher, enrollment__trial_lesson=True, enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
-            if weekdays:
-                print(weekdays, type(weekdays))
-                if weekdays == '1':
-                    print('123123')
-                    print(courses)
-                    courses = courses.filter(weekdays='0,2,4')
-                    print(courses)
-                elif weekdays == '2':
-                    courses = courses.filter(weekdays='1,3,5')
-                else:
-                    courses = courses.exclude(Q(weekdays='0,2,4') | Q(weekdays='1,3,5'))
+        if weekdays:
+            if weekdays == '1':
+                enrollments = enrollments.filter(course__weekdays__contains='0,2,4')
+            elif weekdays == '2':
+                enrollments = enrollments.filter(course__weekdays__contains='1,3,5')
+            else:
+                enrollments = enrollments.exclude(Q(course__weekdays__contains='0,2,4') | Q(course__weekdays__contains='1,3,5'))
 
-            if len(courses) > 0:
-                teacher_enrollments[teacher] = {
-                    course: list(Enrollment.objects.filter(course=course, trial_lesson=True, status=True))
-                    for course in courses
-                }
 
-        context = {'teacher_enrollments': teacher_enrollments}
+        course_enrollment_map = defaultdict(list)
+        for enrollment in enrollments:
+            course = enrollment.course
+            course_enrollment_map[course].append(enrollment)
+
+        teacher_data = defaultdict(lambda: defaultdict(list))
+        for course, enrollment_list in course_enrollment_map.items():
+            teacher = course.teacher
+            teacher_data[teacher][course] = enrollment_list
+
+        teacher_data = {
+            teacher: dict(course_map)
+            for teacher, course_map in teacher_data.items()
+        }
+
+        context = {'teacher_enrollments':teacher_data}
         context['filter_form'] = TrialStudentsFilterForm(initial=self.request.GET)
         return render(request, self.template_name, context)
 
