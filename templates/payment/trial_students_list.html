@@ -85,7 +85,6 @@
                                                                           copy="{{ enrollment.student.additional_number|default_if_none:"---" }}"
                                                                           {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>
                                                             </div>
-                                                            <span class="badge text-bg-light border border-dark text-dark rounded-pill bg-opacity-100">{{ enrollment.balance }}</span>
                                                         </div>
                                                     </li>
                                                 {% endfor %}
