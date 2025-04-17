@@ -130,17 +130,49 @@ class DebtPaymentsListView(View, AdminRequired):
     def get(self, request):
         teachers = UsersModel.objects.filter(role='1').distinct()
 
-        teacher_enrollments = {}
+        # teacher_enrollments = {}
+        #
+        # for teacher in teachers:
+        #     courses = CourseModel.objects.filter(teacher=teacher, enrollment__payment_due__lt=datetime.today().date(), enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
+        #     if len(courses) > 0:
+        #         teacher_enrollments[teacher] = {
+        #             course: list(Enrollment.objects.filter(course=course, payment_due__lt=datetime.today().date(), status=True))
+        #             for course in courses
+        #         }
+        #
+        # context = {'teacher_enrollments': teacher_enrollments}
 
-        for teacher in teachers:
-            courses = CourseModel.objects.filter(teacher=teacher, enrollment__payment_due__lt=datetime.today().date(), enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
-            if len(courses) > 0:
-                teacher_enrollments[teacher] = {
-                    course: list(Enrollment.objects.filter(course=course, payment_due__lt=datetime.today().date(), status=True))
-                    for course in courses
-                }
+        # Filters
+        weekdays = self.request.GET.get('weekdays', None)
 
-        context = {'teacher_enrollments': teacher_enrollments}
+        enrollments = Enrollment.objects.select_related('course__teacher').filter(status=True, payment_due__lt=datetime.today().date())
+
+        if weekdays:
+            if weekdays == '1':
+                enrollments = enrollments.filter(course__weekdays__contains='0,2,4')
+            elif weekdays == '2':
+                enrollments = enrollments.filter(course__weekdays__contains='1,3,5')
+            else:
+                enrollments = enrollments.exclude(
+                    Q(course__weekdays__contains='0,2,4') | Q(course__weekdays__contains='1,3,5'))
+
+        course_enrollment_map = defaultdict(list)
+        for enrollment in enrollments:
+            course = enrollment.course
+            course_enrollment_map[course].append(enrollment)
+
+        teacher_data = defaultdict(lambda: defaultdict(list))
+        for course, enrollment_list in course_enrollment_map.items():
+            teacher = course.teacher
+            teacher_data[teacher][course] = enrollment_list
+
+        teacher_data = {
+            teacher: dict(course_map)
+            for teacher, course_map in teacher_data.items()
+        }
+
+        context = {'teacher_enrollments': teacher_data}
+        context['filter_form'] = TrialStudentsFilterForm(initial=self.request.GET)
         return render(request, self.template_name, context)
 
 class TrialEnrollmentsView(View, AdminRequired):
