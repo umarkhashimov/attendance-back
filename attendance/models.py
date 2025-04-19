@@ -17,7 +17,7 @@ class AttendanceModel(models.Model):
 
 
     class Meta:
-        verbose_name = 'attendance record'
-        verbose_name_plural = 'attendance records'
+        verbose_name = 'посещение'
+        verbose_name_plural = 'посещении'
         unique_together = ('enrollment', 'session') 
         ordering = [ '-enrollment__trial_lesson', '-trial_attendance','enrollment__student__first_name', 'enrollment__student__last_name']

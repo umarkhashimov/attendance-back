@@ -16,8 +16,8 @@ class SubjectModel(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "subject"
-        verbose_name_plural = "subjects"
+        verbose_name = "предмет"
+        verbose_name_plural = "предметы"
 
 WEEKDAY_CHOICES = [
     ('0', 'Понедельник'),
@@ -42,7 +42,7 @@ weekdays_short = {
 class CourseModel(models.Model):
     subject = models.ForeignKey(SubjectModel, on_delete=models.CASCADE, verbose_name="предмет")
     course_name = models.CharField(max_length=100, null=True, blank=True, unique=False, verbose_name="имя курса")
-    teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': '1'}, verbose_name="учитель")
+    teacher = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, limit_choices_to={'role': '1', 'is_active': True}, verbose_name="учитель")
     weekdays = MultiSelectField(choices=WEEKDAY_CHOICES, verbose_name="дни недели")
     lesson_time = models.TimeField(verbose_name="время урока")
     duration = models.PositiveIntegerField(verbose_name="длительность урока (мин)")
@@ -83,7 +83,7 @@ class CourseModel(models.Model):
     class Meta:
         verbose_name = 'курс'
         verbose_name_plural = 'курсы'
-        ordering = ['id']
+        ordering = ['weekdays', 'lesson_time']
 
 
 class SessionsModel(models.Model):

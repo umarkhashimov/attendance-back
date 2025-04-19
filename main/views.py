@@ -129,7 +129,7 @@ class StudentsListView(AdminRequired, ListView):
         return queryset
     
 class TeachersListView(AdminRequired, ListView):
-    queryset = UsersModel.objects.all().filter(role='1').order_by('first_name', 'last_name').prefetch_related('coursemodel_set')
+    queryset = UsersModel.objects.all().filter(role='1', is_active=True).order_by('first_name', 'last_name').prefetch_related('coursemodel_set')
     template_name = 'teachers_list.html'
     context_object_name = 'teachers'
     ordering = ['first_name', 'last_name']

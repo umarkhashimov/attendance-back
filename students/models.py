@@ -14,7 +14,7 @@ class StudentModel(models.Model):
     phone_number = models.CharField(max_length=15, verbose_name='Номер телефона родителя')
     additional_number = models.CharField(max_length=15, verbose_name='Номер телефона ученика', null=True, blank=True)
     notes = models.TextField(blank=True, null=True, verbose_name='Заметка')
-    enrollment_date = models.DateField(auto_now_add=True, verbose_name='Имя')  # Date the student was enrolled
+    enrollment_date = models.DateField(auto_now_add=True, verbose_name='Дата создания')  # Date the student was enrolled
     courses = models.ManyToManyField(CourseModel, through='Enrollment', verbose_name='Записанные курсы')
 
     @property
@@ -45,8 +45,8 @@ class Enrollment(models.Model):
     debt_note = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка для учителя")
     note = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка")
     payment_due = models.DateField(null=True, blank=True, verbose_name="Оплачно до")
-    enrolled_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, limit_choices_to={'role': '2'}, null=True, blank=True)
-    enrolled_at = models.DateTimeField(auto_now_add=True)
+    enrolled_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, limit_choices_to={'role': '2'}, null=True, blank=True, verbose_name='Кем записан')
+    enrolled_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата записи")
 
     def __str__(self):
         return f"{self.student} - {self.course}"

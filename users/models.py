@@ -6,10 +6,10 @@ from django.contrib.admin.models import LogEntry, ContentType
 
 class UsersModel(AbstractUser):
     ROLE_CHOICES = [
-        ('1', 'Teacher'),
-        ('2', 'Admin'),
+        ('1', 'Учитель'),
+        ('2', 'Администратор'),
     ]
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1', verbose_name='Роль')
     phone_number = models.CharField(max_length=13, null=True, blank=True, verbose_name="Номер Телефона")
 
     @property
@@ -20,8 +20,8 @@ class UsersModel(AbstractUser):
         return f"{self.username} - {self.get_full_name}"
 
     class Meta:
-        verbose_name = 'user'
-        verbose_name_plural = 'users'
+        verbose_name = 'пользователь'
+        verbose_name_plural = 'пользователи'
 
 def log_user_action(user, obj, action_flag, message):
     LogEntry.objects.log_action(
@@ -49,3 +49,10 @@ class LogAdminActionsModel(models.Model):
 
     def action_type(self):
         return self.get_action_number_display()
+
+    def __str__(self):
+        return  f"{self.user.username} - {self.content_type.name} - {self.action_number}"
+
+    class Meta:
+        verbose_name = 'запись'
+        verbose_name_plural = 'записи'
