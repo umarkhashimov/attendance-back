@@ -107,9 +107,9 @@ class StudentsListView(AdminRequired, ListView):
             year, month = map(int, enrollment_month.split('-'))
             print(year, month)
             try:
-                year = int(year)
-                month = int(month)
-                queryset = queryset.filter(enrollment__enrolled_at__year=year, enrollment__enrolled_at__month=month).distinct()
+                # year = int(year)
+                # month = int(month)
+                queryset = queryset.filter(enrollment__enrolled_at__year=year, enrollment__enrolled_at__month=month).distinct().order_by('enrollment__enrolled_at')
             except:
                 pass
 
