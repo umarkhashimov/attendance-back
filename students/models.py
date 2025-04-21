@@ -72,3 +72,4 @@ class Enrollment(models.Model):
         verbose_name = "зачисление"
         verbose_name_plural = "зачислении"
         # unique_together = ("student", "course")
+        ordering = ['-enrolled_at', 'student__first_name', 'student__last_name']
