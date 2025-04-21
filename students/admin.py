@@ -12,3 +12,4 @@ class StudentModelAdmin(admin.ModelAdmin):
 class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ['course', 'student', 'status', 'payment_due', 'enrolled_at']
     list_filter = ['status', 'enrolled_by', 'course__teacher', 'enrolled_at', 'course']
+    search_fields = ['student__first_name', 'student__last_name']
