@@ -9,7 +9,7 @@ from courses.models import WEEKDAY_CHOICES, SubjectModel
 
 class CoursesListFilterForm(forms.Form):
     teacher = forms.ModelChoiceField(
-        queryset=UsersModel.objects.filter(role='1'),
+        queryset=UsersModel.objects.filter(role='1', is_active=True),
         widget=Select2Widget(attrs={'class':'form-select', 'onchange':'submit()'}),
         required=False, label="Учитель"
     )
@@ -34,7 +34,7 @@ class StudentsListFilterForm(forms.Form):
     )
 
     teacher = forms.ModelChoiceField(
-        queryset=UsersModel.objects.filter(role='1'),
+        queryset=UsersModel.objects.filter(role='1', is_active=True),
         widget=Select2Widget(attrs={'class': 'form-select', 'onchange': 'submit()'}),
         required=False, label="Учитель"
     )

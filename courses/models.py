@@ -11,6 +11,7 @@ from .filters import course_date_match
 
 class SubjectModel(models.Model):
     name = models.CharField(max_length=150, unique=True)
+    show_separately = models.BooleanField(default=False, verbose_name="Отображать раздельно")
 
     def __str__(self) -> str:
         return self.name

@@ -102,15 +102,22 @@ class StudentsListView(AdminRequired, ListView):
 
         queryset = super().get_queryset()
 
+        if enrollment_month:
+            print(enrollment_month)
+            year, month = map(int, enrollment_month.split('-'))
+            print(year, month)
+            try:
+                year = int(year)
+                month = int(month)
+                queryset = queryset.filter(enrollment__enrolled_at__year=year, enrollment__enrolled_at__month=month).distinct()
+            except:
+                pass
+
         if text:
             words= text.split()
             queryset = queryset.filter(Q(last_name__in=words) | Q(first_name__in=words) | Q(last_name__icontains=text) | Q(phone_number__icontains=text) | Q(additional_number__icontains=text))
         if teacher:
             queryset = queryset.filter(courses__teacher=teacher).distinct()
-
-        if enrollment_month:
-            year, month = map(int, enrollment_month.split('-'))
-            queryset = queryset.filter(enrollment__enrolled_at__year=year, enrollment__enrolled_at__month=month).distinct()
 
         if ordering:
             if ordering == "1":
@@ -156,7 +163,7 @@ class TeachersListView(AdminRequired, ListView):
 
 
 class CoursesListView(AdminRequired, ListView):
-    queryset = CourseModel.objects.all()
+    queryset = CourseModel.objects.all().exclude(subject__show_separately=True)
     template_name = "courses_list.html"
     context_object_name = 'courses'
     paginate_by = 30
@@ -169,7 +176,9 @@ class CoursesListView(AdminRequired, ListView):
         subject = self.request.GET.get('subject')
 
         queryset = super().get_queryset()
-        
+        if subject:
+            queryset = CourseModel.objects.filter(subject=subject)
+
         if days:
             if days == "1":
                 queryset = queryset.filter(weekdays__contains='0,2,4')
@@ -179,8 +188,6 @@ class CoursesListView(AdminRequired, ListView):
                 queryset = queryset.exclude(Q(weekdays__contains="0,2,4") | Q(weekdays__contains="1,3,5"))
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
-        if subject:
-            queryset = queryset.filter(subject_id=subject)
 
         return queryset
     
