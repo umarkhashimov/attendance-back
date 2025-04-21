@@ -12,16 +12,22 @@ from courses.forms import DaysMultiselectForm, CancelCauseForm, CourseUpdateForm
 from courses.models import CourseModel, UsersModel
 from .forms import CoursesListFilterForm, StudentsListFilterForm, TeachersListFilterForm
 from attendance.models import AttendanceModel
+
 class MainPageView(TemplateView):
     template_name = 'main.html'
 
     def dispatch(self, request, *args, **kwargs):
-        # Condition to redirect
+        # Extract and validate date only once
+        t = request.GET.get('date', '')
+        self.today = date.today()
 
-        t = self.request.GET.get('date', '')
         if t:
             try:
-                today = datetime.strptime(t, '%Y-%m-%d').date()
+                parsed_date = datetime.strptime(t, '%Y-%m-%d').date()
+                # Don't allow future dates unless admin
+                if request.user.role != '1' and parsed_date > self.today:
+                    parsed_date = self.today
+                self.today = parsed_date
             except ValueError:
                 return redirect('main:main')
 
@@ -29,55 +35,69 @@ class MainPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        t = self.request.GET.get('date')
-        today = date.today()
-        if t and self.request.user.role != '1':
-            today = datetime.strptime(t, '%Y-%m-%d').date()
-            if today > date.today():
-                today = date.today()
+        today = self.today
+
+        # Dates for navigation
         context['prev_date'] = today - timedelta(days=1)
         context['next_date'] = date.today() if today == date.today() else today + timedelta(days=1)
 
-        # Get sessions already marked today
+        # Query: all sessions marked today
         marked_sessions = SessionsModel.objects.filter(date=today)
 
-        # Get courses scheduled for today based on weekdays
-        sessions_today = CourseModel.objects.filter(status=True, weekdays__contains=str(today.weekday()))
+        # Courses scheduled today (based on weekday) and not yet marked
+        sessions_today = CourseModel.objects.filter(
+            status=True,
+            weekdays__contains=str(today.weekday())
+        ).exclude(
+            id__in=marked_sessions.values_list('course', flat=True)
+        )
 
-        # Exclude courses that already have marked sessions
-        marked_course_ids = marked_sessions.values_list('course', flat=True)
-        sessions_today = sessions_today.exclude(id__in=marked_course_ids)
-
-        # Get all marked courses
-        courses = CourseModel.objects.all().filter(status=True).order_by('id')
-
+        # Filter by teacher if not admin
         if self.request.user.role == '1':
-            courses = courses.filter(teacher__id=self.request.user.id)
-            sessions_today = sessions_today.filter(teacher__id=self.request.user.id)
-            marked_sessions = marked_sessions.filter(course__in=courses)
+            teacher_id = self.request.user.id
+            courses = CourseModel.objects.filter(status=True, teacher_id=teacher_id).order_by('id')
+            sessions_today = sessions_today.filter(teacher_id=teacher_id)
+            marked_sessions = marked_sessions.filter(course__teacher_id=teacher_id)
+        else:
+            courses = CourseModel.objects.filter(status=True).order_by('id')
 
-        # attendance data test
+        # Get today's conducted sessions and prefetch attendance
+        conducted_sessions = SessionsModel.objects.filter(
+            status=True, date=today
+        ).prefetch_related('attendancemodel_set', 'course')
 
-        conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
-
+        # Prepare attendance entries for students not marked yet
+        attendance_bulk_create = []
         for session in conducted_sessions:
-            if session.date == today:
-                attendance = AttendanceModel.objects.all().filter(session=session)
-                fresh_enrolled = Enrollment.objects.filter(course=session.course, status=True).exclude(student_id__in=attendance.values_list('enrollment__student_id', flat=True))
-                for enroll in fresh_enrolled:
-                    if not AttendanceModel.objects.filter(session=session, enrollment__student_id=enroll.student.id).exists():
-                        AttendanceModel.objects.create(enrollment=enroll, session=session)
+            existing_student_ids = AttendanceModel.objects.filter(session=session).values_list('enrollment__student_id', flat=True)
+            fresh_enrolled = Enrollment.objects.filter(
+                course=session.course, status=True
+            ).exclude(student_id__in=existing_student_ids)
 
-        conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
+            for enroll in fresh_enrolled:
+                attendance_bulk_create.append(
+                    AttendanceModel(enrollment=enroll, session=session)
+                )
 
-        context['today'] = date.today().strftime("%Y-%m-%d")
-        context['filter_date'] = today.strftime("%Y-%m-%d")
-        context["conducted_sessions"] = conducted_sessions
-        context['sessions_today'] = sessions_today.order_by("lesson_time")
-        context['marked_sessions'] = marked_sessions.order_by('course__lesson_time')
-        context['cancel_cause_form'] = CancelCauseForm
+        # Bulk create attendance records
+        if attendance_bulk_create:
+            AttendanceModel.objects.bulk_create(attendance_bulk_create)
+
+        # Re-fetch conducted_sessions if necessary
+        conducted_sessions = SessionsModel.objects.filter(
+            status=True, date=today
+        ).prefetch_related('attendancemodel_set')
+
+        # Final context
+        context.update({
+            'today': date.today().strftime("%Y-%m-%d"),
+            'filter_date': today.strftime("%Y-%m-%d"),
+            'conducted_sessions': conducted_sessions,
+            'sessions_today': sessions_today.order_by("lesson_time"),
+            'marked_sessions': marked_sessions.order_by('course__lesson_time'),
+            'cancel_cause_form': CancelCauseForm,
+        })
         return context
-    
 
 class StudentsListView(AdminRequired, ListView):
     model = StudentModel

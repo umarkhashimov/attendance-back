@@ -38,8 +38,6 @@ class GetSessionView(View):
         session.save()
         session.course.set_topic()
 
-        print(keys)
-
         for obj in attendances:
 
 
