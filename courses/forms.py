@@ -1,6 +1,6 @@
 from django import forms
 from .models import CourseModel, WEEKDAY_CHOICES, SessionsModel, SubjectModel
-from django_select2.forms import Select2Widget, Select2MultipleWidget
+# from django_select2.forms import Select2Widget, Select2MultipleWidget
 from multiselectfield import MultiSelectField
 from users.models import UsersModel
 
@@ -8,7 +8,7 @@ class CourseUpdateForm(forms.ModelForm):
 
     subject = forms.ModelChoiceField(
         queryset=SubjectModel.objects.all(),
-        widget=Select2Widget(attrs={'class':'form-control w-100'}),
+        widget=forms.Select(attrs={'class':' w-100'}),
         label="Курс"
     )
 
@@ -29,9 +29,9 @@ class CourseUpdateForm(forms.ModelForm):
                 }
             ),
             'subject': forms.Select(attrs={'class':'form-control'}),
-            'teacher': Select2Widget(attrs={'class':'form-control'}),
+            'teacher': forms.Select(attrs={'class':'form-control'}),
             'course_name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Введите имя курса'}),
-            'weekdays': Select2MultipleWidget(attrs={'class':'form-control multiplechoices'}),
+            'weekdays': forms.SelectMultiple(attrs={'class':'form-control multiplechoices'}),
             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
 
         }
@@ -110,7 +110,7 @@ class CancelCauseForm(forms.Form):
 class DaysMultiselectForm(forms.Form):
     weekdays = forms.MultipleChoiceField(
         choices = WEEKDAY_CHOICES,
-        widget=Select2MultipleWidget(attrs={"id": "id_soft_skills", 'class':'form-select border border-3 border-danger w-100', 'onchange':'submit()'}),
+        widget=forms.SelectMultiple(attrs={"id": "id_soft_skills", 'class':'form-select border border-3 border-danger w-100', 'onchange':'submit()'}),
         label=False, required=False
     )
 

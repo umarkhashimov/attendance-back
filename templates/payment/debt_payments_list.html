@@ -13,7 +13,7 @@
         <hr class="table-group-divider mt-0"/>
         <div class="row m-0 p-0 ">
             <div class="col-12 bg-light rounded pt-2 px-2 border">
-                <form id="filterForm" method="get" action="{% url 'payment:debt_payments_list' %}" class="">
+                <form id="filterForm" method="get" action="{% url 'payment:debt_payments_list' %}" class="" onreset="resetForm(event)">
                     <div class="">
                         <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
                             <button type="reset" class="filter-reset-btn ms-2 mb-1">Очистить</button>
@@ -88,27 +88,4 @@
             {% endfor %}
         </div>
     </div>
-{% endblock %}
-{% block custom_js %}
-    <script>
-
-
-        $(document).ready(function () {
-            $('.django-select2').select2() // Apply select2 to all select elements
-        })
-
-        let filterForm = document.querySelector('form#filterForm')
-        filterForm.addEventListener('reset', (event) => {
-            event.preventDefault();
-            event.target.reset()
-            event.target.querySelectorAll('input').forEach((inp) => {
-                inp.removeAttribute('value')
-            })
-            event.target.querySelectorAll('option').forEach((select) => {
-                select.removeAttribute('selected')
-            })
-            event.target.submit()
-        })
-
-    </script>
 {% endblock %}

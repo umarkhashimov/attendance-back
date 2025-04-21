@@ -18,7 +18,7 @@
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">
             <div class="col-12 bg-light rounded pt-2 px-2 pb-1 border">
-                <form id="filterForm" method="get" class="student-filter-form">
+                <form id="filterForm" method="get" class="student-filter-form" onreset="resetForm(event)">
                     <div class="">
                         <h6 class="text-dark ms-1 fs-6 m-0">Фильтры
                             <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
@@ -79,26 +79,4 @@
         {% endif %}
     </div>
 
-{% endblock %}
-
-{% block custom_js %}
-    <script>
-        let filterForm = document.querySelector('form#filterForm')
-        filterForm.addEventListener('reset', (event) => {
-            event.preventDefault();
-            event.target.reset()
-            event.target.querySelectorAll('input').forEach((inp) => {
-                inp.removeAttribute('value')
-            })
-            event.target.querySelectorAll('option').forEach((select) => {
-                select.removeAttribute('selected')
-            })
-            event.target.submit()
-        })
-
-        $(document).ready(function () {
-            $('select').select2() // Apply select2 to all select elements
-        })
-
-    </script>
 {% endblock %}

@@ -13,7 +13,7 @@
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">
             <div class="col-12 bg-light rounded pt-2 px-2 border">
-                <form id="filterForm" method="get" action="{% url 'main:teachers_list' %}" class="">
+                <form id="filterForm" method="get" action="{% url 'main:teachers_list' %}" class="" onreset="resetForm(event)">
                     <div class="">
                         <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
                             <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
@@ -56,15 +56,6 @@
                             <div class="accordion-body bg-opacity-25 bg-light">
                                     <ul class="list-group list-unstyled">
                                 {% for course in teacher.coursemodel_set.all %}
-{#                                    <h2 class="accordion-header">#}
-{#                                        <button class="accordion-button shadow-none collapsed border py-2" type="button"#}
-{#                                                data-bs-toggle="collapse"#}
-{#                                                data-bs-target="#accordion{{ course.id }}Teacher{{ teacher.id }}"#}
-{#                                                aria-expanded="false">#}
-{#                                            {{ course }}<span#}
-{#                                                class="badge text-light mx-2 bg-primary p-1">{{ enrollments|length }}</span>#}
-{#                                        </button>#}
-{#                                    </h2>#}
                                                 <a href="{% url 'courses:course_update' pk=course.id %}" class="my-auto text-dark table-obj-name-link text-decoration-none">
                                                     <li class="list-group-item list-items-hover py-0">
                                                         <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">
@@ -90,21 +81,4 @@
         {% endif %}
         </div>
     </div>
-{% endblock %}
-
-{% block custom_js %}
-    <script>
-    let filterForm = document.querySelector('form#filterForm')
-        filterForm.addEventListener('reset', (event) => {
-            event.preventDefault();
-            event.target.reset()
-            event.target.querySelectorAll('input').forEach((inp) => {
-                inp.removeAttribute('value')
-            })
-            event.target.querySelectorAll('option').forEach((select) => {
-                select.removeAttribute('selected')
-            })
-            event.target.submit()
-        })
-    </script>
 {% endblock %}

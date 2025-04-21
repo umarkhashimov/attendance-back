@@ -66,7 +66,7 @@ class CreateStudentView(AdminRequired, CreateView):
 
 
 class CreateEnrollmentView(AdminRequired, View):
-    template_name = 'create_enrollment.html'
+
 
     def post(self, request, course_id=None, student_id=None):
         form = EnrollmentForm(request.POST)
@@ -107,7 +107,6 @@ class CreateEnrollmentView(AdminRequired, View):
     
 
 class UpdateEnrollmentView(View, AdminRequired):
-    template_name = "update_enrollment.html"
 
     def post(self, request, pk):
         enrollment = get_object_or_404(Enrollment, id=pk)

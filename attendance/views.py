@@ -8,44 +8,7 @@ from courses.models import SessionsModel, CourseModel
 from courses.forms import CancelCauseForm, SessionTopicFieldForm
 from users.filters import AdminRequired
 from .models import AttendanceModel
-from datetime import datetime 
-
-class NewSessionView(View, LoginRequiredMixin):
-    template_name = 'session_detail.html'
-    
-    def get(self, request, course_id):
-        course = get_object_or_404(CourseModel, id=course_id)
-
-        if request.user.role == '1' and not course_date_match(course):
-            return redirect("main:main")
-        
-        today = datetime.now().date()
-        session = SessionsModel.objects.filter(course=course, date=today)
-        
-        if session.exists():
-            obj = SessionsModel.objects.get(course=course, date=today)
-            return redirect('attendance:session_detail', course_id=course_id, session_id=obj.id)
-        
-
-        sessions = SessionsModel.objects.filter(course=course)
-
-        context = {
-            'session': session,
-            'course': course,
-            'all_session_dates': sessions,
-            'today': today,
-            'cancel_cause_form': CancelCauseForm(),
-            # 'enrollments': enrollments,
-            # 'exist': existing_records,
-        }
-
-        if session:
-            context.update({
-                'prev_session': SessionsModel.objects.filter(id__lt=session.id, course=session.course).order_by('-id').first(),
-                'next_session': SessionsModel.objects.filter(id__gt=session.id, course=session.course).order_by('id').first(),
-            })
-
-        return render(request, self.template_name, context)
+from datetime import datetime
     
 class RedirecToSessionByDate(View, AdminRequired):
 
@@ -60,10 +23,6 @@ class RedirecToSessionByDate(View, AdminRequired):
 
 
 class GetSessionView(View):
-    template_name = 'session_detail.html'
-
-    def get(self, request, course_id, session_id):
-        return  redirect("main:main")
 
     def post(self, request, course_id, session_id, session_date):
         course = get_object_or_404(CourseModel, id=course_id)

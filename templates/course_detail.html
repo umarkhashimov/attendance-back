@@ -508,10 +508,7 @@
 
 {% block custom_js %}
     <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
+
 
         flatpickr('#LessonTimePicker', {
             enableTime: true,
@@ -528,10 +525,6 @@
             const result = (price - ((price / 100) * discount)) * Number(selectMonth.value)
             modal.querySelector(`#amountInp${selectMonth.getAttribute('forPayment')}`).value = result
         }
-
-        $(document).ready(function () {
-            $('.django-select2').select2() // Apply select2 to all select elements
-        })
 
         function openEnrollmentTab(btn) {
             let modal = document.querySelector(`#editEnrollmentModal${btn.getAttribute('enrollment_id')}`)

@@ -552,11 +552,6 @@
             endDateInp.min = inp.value
         }
 
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-
         function calculateAmount(selectMonth) {
             const modal = document.querySelector(`#editEnrollmentModal${selectMonth.getAttribute('forPayment')}`)
             const price = Number(modal.querySelector(`#priceInp${selectMonth.getAttribute('forPayment')}`).value)
@@ -565,10 +560,6 @@
             const result = (price - ((price / 100) * discount)) * Number(selectMonth.value)
             modal.querySelector(`#amountInp${selectMonth.getAttribute('forPayment')}`).value = result
         }
-
-        $(document).ready(function () {
-            $('.django-select2').select2() // Apply select2 to all select elements
-        })
 
     </script>
 {% endblock %}

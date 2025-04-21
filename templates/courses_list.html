@@ -11,63 +11,14 @@
         <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
             <h5 class="m-0">Группы</h5>
             {#      <a href="{% url 'courses:create_course' %}" class="btn btn-primary">Создать</a>#}
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#groupCreateModal">
+            <a href="{% url 'courses:create_course' %}" type="button" class="btn btn-primary">
                 Создать группу
-            </button>
-        </div>
-        <!-- Group create modal -->
-        <div class="modal fade" id="groupCreateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form method="post" action="{% url 'courses:create_course' %}">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Создать группу</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="pt-1">
-                                {% comment %} {{ form.as_p }} {% endcomment %}
-                                <form method="post">
-                                    {% csrf_token %}
-                                    {% for field in create_course_form %}
-                                        <div class="my-1 {% if field.name not in 'weekday,status' %}
-
-                    form-floating
-
-                  {% else %}
-
-                     ms-1
-
-                  {% endif %}">
-                                            {{ field }}
-                                            <label aria-required="{{ field.field.required }}" {{ field.required }}
-                                                   for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                        </div>
-                                        {% if field.errors %}
-                                            <div class="text-danger small">
-                                                {% for error in field.errors %}
-                                                    {{ error }}
-                                                {% endfor %}
-                                            </div>
-                                        {% endif %}
-                                    {% endfor %}
-                            </div>
-                        </div>
-                        <div class="modal-footer pt-1">
-                            <div class="d-flex justify-content-md-end flex-column-reverse w-100 flex-md-row gap-2">
-                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                                <button type="submit" class="btn btn-success">Сохранить</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            </a>
         </div>
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">
             <div class="col-12 bg-light rounded pt-2 px-2 border">
-                <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="">
+                <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="" onreset="resetForm(event)">
                     <div class="">
                         <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
                             <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
@@ -138,47 +89,4 @@
     </div>
 
 
-    <script>
-        let filterForm = document.querySelector('form#filterForm')
-        filterForm.addEventListener('reset', (event) => {
-            event.preventDefault();
-            event.target.reset()
-            event.target.querySelectorAll('input').forEach((inp) => {
-                inp.removeAttribute('value')
-            })
-            event.target.querySelectorAll('option').forEach((select) => {
-                select.removeAttribute('selected')
-            })
-            event.target.submit()
-        })
-
-    </script>
-
-{% endblock %}
-
-{% block custom_js %}
-    <script>
-        flatpickr('#LessonTimePicker', {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: 'H:i',
-            time_24hr: true
-        })
-
-        $(document).ready(function () {
-            $('.django-select2').select2() // Apply select2 to all select elements
-        })
-
-        $('#groupCreateModal').on('shown.bs.modal', function () {
-            $(this).find('.django-select2').each(function () {
-                $(this).select2({
-                    dropdownParent: $('#groupCreateModal'),
-                });
-            });
-            $('.django-select2.multiplechoices').select2({
-                dropdownParent: $('#groupCreateModal'),
-                multiple: true  // Ensure multiple selection is enabled
-            });
-        });
-    </script>
 {% endblock %}

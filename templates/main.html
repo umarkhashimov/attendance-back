@@ -317,51 +317,11 @@
 
 {% block custom_js %}
     <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    </script>
-    <script>
-
-        window.onload = () => {
-            checkInputs = document.querySelectorAll('input.checkStatus')
-
-            document.querySelectorAll('input[type="number"].grade-inp').forEach((inp) => {
-                inp.addEventListener('input', () => {
-                    // Ensure the input value is a number
-                    let value = inp.value;
-
-                    // If the value is not a number or is outside the range of 0 to 5, reset it to an empty string or limit it.
-                    if (isNaN(value) || value < 0 || value > 5) {
-                        inp.value = ''; // Clear the input if the value is invalid
-                    } else {
-                        // Optionally, if you want to ensure only valid values are shown, limit the decimal places or sanitize input here
-                        inp.value = value; // Set back the valid value
-                    }
-                });
-            })
-
-            document.querySelectorAll('input[type="checkbox"].checkStatus').forEach((inp) => {
-                inp.addEventListener('change', () => {
-                    let gradeDiv = document.querySelector(`div#${inp.getAttribute("gradeFor")}`)
-                    console.log(inp.checked, gradeDiv);
-                    if (inp.checked) {
-                        gradeDiv.classList.remove('hiddenDiv')
-                    } else {
-                        gradeDiv.classList.add('hiddenDiv')
-                    }
-                })
-            })
-        }
-
-
         function markStudent(status, stid) {
             const studentData = document.querySelector(`.students-attendance-list tr[stid='${stid}']`)
             studentData.setAttribute('status', status);
             studentData.querySelector(`#statusInp${stid}`).value = status;
         }
-
 
         function unmarkStudent(stid) {
             const studentData = document.querySelector(`.students-attendance-list tr[stid='${stid}']`)
