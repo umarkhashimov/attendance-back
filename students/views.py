@@ -83,9 +83,7 @@ class CreateEnrollmentView(AdminRequired, View):
             enrollment, created = Enrollment.objects.update_or_create(
                 course=course if course else form.cleaned_data['course'],
                 student=student if student else form.cleaned_data['student'],
-                enrolled_at=datetime.now(),
-                enrolled_by=self.request.user,
-                defaults={**form.cleaned_data, 'status': True},
+                defaults={**form.cleaned_data, 'status': True, 'enrolled_at':datetime.now(), 'enrolled_by':self.request.user},
             )
 
             if not enrollment.payment_due and enrollment.trial_lesson == False:
