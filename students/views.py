@@ -67,7 +67,6 @@ class CreateStudentView(AdminRequired, CreateView):
 
 class CreateEnrollmentView(AdminRequired, View):
 
-
     def post(self, request, course_id=None, student_id=None):
         form = EnrollmentForm(request.POST)
         if student_id:
@@ -103,7 +102,7 @@ class CreateEnrollmentView(AdminRequired, View):
             else:
                 return redirect('main:main')
 
-        return render(request, self.template_name, {'form': form})
+        return redirect('main:main')
     
 
 class UpdateEnrollmentView(View, AdminRequired):

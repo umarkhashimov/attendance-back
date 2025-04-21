@@ -1,6 +1,6 @@
 from django import forms
 from .models import CourseModel, WEEKDAY_CHOICES, SessionsModel, SubjectModel
-# from django_select2.forms import Select2Widget, Select2MultipleWidget
+from django_select2.forms import Select2Widget, Select2MultipleWidget
 from multiselectfield import MultiSelectField
 from users.models import UsersModel
 
@@ -8,7 +8,7 @@ class CourseUpdateForm(forms.ModelForm):
 
     subject = forms.ModelChoiceField(
         queryset=SubjectModel.objects.all(),
-        widget=forms.Select(attrs={'class':' w-100'}),
+        widget=Select2Widget(attrs={'class':' w-100'}),
         label="Курс"
     )
 
@@ -28,15 +28,15 @@ class CourseUpdateForm(forms.ModelForm):
                     'id': 'LessonTimePicker',
                 }
             ),
-            'subject': forms.Select(attrs={'class':'form-control'}),
-            'teacher': forms.Select(attrs={'class':'form-control'}),
+            'subject': Select2Widget(attrs={'class':'form-control'}),
+            'teacher': Select2Widget(attrs={'class':'form-control'}),
             'course_name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Введите имя курса'}),
-            'weekdays': forms.SelectMultiple(attrs={'class':'form-control multiplechoices'}),
+            'weekdays': Select2MultipleWidget(attrs={'class':'form-control multiplechoices'}),
             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
 
         }
 
-    def __init__(self, *args, student=None, course=None, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Add attributes to all fields
         for field_name, field in self.fields.items():
@@ -48,27 +48,6 @@ class CourseUpdateForm(forms.ModelForm):
             })
 
 
-class LessonsWeekdaysForm(forms.ModelForm):
-    weekdays = forms.MultipleChoiceField(
-        choices=CourseModel.weekdays,
-        widget=forms.CheckboxSelectMultiple,  # You can also use a `SelectMultiple` widget
-        required=True,  # Ensure at least one option is selected
-    )
-
-    class Meta:
-        model = CourseModel
-        fields = ["weekdays"]
-
-    def clean_multi_select_field(self):
-        data = self.cleaned_data['weekdays']
-        
-        # Example validation: Ensure at least two options are selected
-        if len(data) < 1:
-            raise forms.ValidationError("Please select at least two options.")
-        
-        return data
-
-        
 class CourseCreateForm(forms.ModelForm):
 
     class Meta:

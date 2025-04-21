@@ -11,7 +11,7 @@ from users.filters import AdminRequired, SuperUserRequired
 from users.helpers import record_action
 from users.models import UsersModel
 from .models import PaymentModel
-from .forms import CreatePaymentForm, ConfirmPaymentForm, PaymentHistoryFilterForm, UpdatePaymentDatesForm, TrialStudentsFilterForm
+from .forms import CreatePaymentForm, PaymentHistoryFilterForm, UpdatePaymentDatesForm, TrialStudentsFilterForm
 from students.models import Enrollment, StudentModel
 from .helpers import calculate_payment_due_date, calculate_payment_amount, next_closest_session_date
 from collections import defaultdict
@@ -213,27 +213,6 @@ class TrialEnrollmentsView(View, AdminRequired):
         context = {'teacher_enrollments':teacher_data}
         context['filter_form'] = TrialStudentsFilterForm(initial=self.request.GET)
         return render(request, self.template_name, context)
-
-class ConfirmPaymentView(View):
-    
-    def get(self, request, payment_id):
-
-        payment = get_object_or_404(PaymentModel, id=payment_id)
-        form = ConfirmPaymentForm(instance=payment)
-
-        return render(request, 'payment/view_payment.html', {'form': form})
-    
-    def post(self, request, payment_id):
-        payment = get_object_or_404(PaymentModel, id=payment_id)
-
-        if 'confirm' in request.POST:
-            if not payment.status:
-                print('confirmed')
-                payment.status = True
-                payment.save()
-                payment.enrollment.add_balance(payment.lessons_covered * 12)
-
-        return redirect('payment:payments_list')
 
 class UpdatePaymentDatesView(SuperUserRequired, UpdateView):
     model = PaymentModel

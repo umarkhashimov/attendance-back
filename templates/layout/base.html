@@ -34,30 +34,7 @@
         integrity="sha512-qiKM6FJbI5x5+GL5CEbAUK0suRhjXVMRXnH/XQJaaQ6iQPf05XxbFBE4jS6VJzPGIRg7xREZTrGJIZVk1MLclA=="
         crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
 
-<script defer>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map(triggerEl => new bootstrap.Tooltip(triggerEl));
-    });
-    $(document).ready(function () {
-        $('select').select2() // Apply select2 to all select elements
-    })
-
-
-    function resetForm(event) {
-        event.preventDefault();
-
-        const form = event.target;
-        form.reset();
-        form.querySelectorAll('input').forEach((input) => {
-            input.value = '';
-        });
-        form.querySelectorAll('select option').forEach((option) => {
-            option.selected = false;
-        });
-        form.submit()
-    }
-</script>
+<script src="{% static 'js/main.js' %}"></script>
 {% block custom_js %}
 
 {% endblock %}

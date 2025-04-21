@@ -1,6 +1,4 @@
-from calendar import month
 from django import forms
-from django.shortcuts import get_object_or_404
 from django_select2.forms import Select2Widget
 import datetime
 
@@ -17,28 +15,16 @@ class CreatePaymentForm(forms.ModelForm):
         fields = ['months', 'amount']
 
         widgets = {
-            'months': Select2Widget(attrs={'class':'form-control mt-2'}),
+            'months': forms.Select(attrs={'class':'form-control ordinary mt-2'}),
             'amount': forms.NumberInput(attrs={'readonly':True}),
         }
 
-class ConfirmPaymentForm(forms.ModelForm):
-    class Meta:
-        model = PaymentModel
-        fields = ['enrollment', 'months', 'amount']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Set all fields to use a text widget for read-only display
-        for field in self.fields.values():
-            field.widget.attrs['readonly'] = True
-            field.widget.attrs['class'] = 'readonly'  # Optional: for custom styling
-            field.disabled = True
 
 class PaymentHistoryFilterForm(forms.Form):
-    teacher = forms.ModelChoiceField(queryset=UsersModel.objects.filter(role='1'), required=False, label="Учитель", widget=forms.Select(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
-    course = forms.ModelChoiceField(queryset=CourseModel.objects.all(), required=False, label="Курс", widget=forms.Select(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
-    student = forms.ModelChoiceField(queryset=StudentModel.objects.all(), required=False, label="Студет", widget=forms.Select(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
-    sort_by = forms.ChoiceField(choices=[(1, "Последние"),(2, "Ранние"),(3, "Удаленные"),(4, "Кол-во месяц")], required=False, label="Сортировать по", widget=forms.Select(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
+    teacher = forms.ModelChoiceField(queryset=UsersModel.objects.filter(role='1'), required=False, label="Учитель", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
+    course = forms.ModelChoiceField(queryset=CourseModel.objects.all(), required=False, label="Курс", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
+    student = forms.ModelChoiceField(queryset=StudentModel.objects.all(), required=False, label="Студет", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
+    sort_by = forms.ChoiceField(choices=[(1, "Последние"),(2, "Ранние"),(3, "Удаленные"),(4, "Кол-во месяц")], required=False, label="Сортировать по", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
     payment_date_start = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max':datetime.date.today()}), required=False, label="С")
     payment_date_end = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max':datetime.date.today()}), required=False, label="До")
 

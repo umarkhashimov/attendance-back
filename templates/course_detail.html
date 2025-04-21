@@ -508,43 +508,11 @@
 
 {% block custom_js %}
     <script>
-
-
         flatpickr('#LessonTimePicker', {
             enableTime: true,
             noCalendar: true,
             dateFormat: 'H:i',
             time_24hr: true
         })
-
-        function calculateAmount(selectMonth) {
-            const modal = document.querySelector(`#editEnrollmentModal${selectMonth.getAttribute('forPayment')}`)
-            const price = Number(modal.querySelector(`#priceInp${selectMonth.getAttribute('forPayment')}`).value)
-            const discount = Number(modal.querySelector(`#dicountInp${selectMonth.getAttribute('forPayment')}`).value)
-
-            const result = (price - ((price / 100) * discount)) * Number(selectMonth.value)
-            modal.querySelector(`#amountInp${selectMonth.getAttribute('forPayment')}`).value = result
-        }
-
-        function openEnrollmentTab(btn) {
-            let modal = document.querySelector(`#editEnrollmentModal${btn.getAttribute('enrollment_id')}`)
-            modal.querySelectorAll('.mytab').forEach((t) => {
-                t.classList.add('d-none')
-            })
-            modal.querySelector(`.mytab.${btn.getAttribute('for')}`).classList.remove('d-none')
-            modal.querySelectorAll('.tab-btn').forEach((t) => {
-                t.classList.remove('active')
-            })
-            btn.classList.add('active')
-        }
-
-        function paymentFromEnter(inp, enrollment_id) {
-            let endDateInp = document.querySelector(`#endInp${enrollment_id}`)
-            endDateInp.removeAttribute('disabled')
-            if (inp.value > endDateInp.value) {
-                endDateInp.value = ''
-            }
-            endDateInp.min = inp.value
-        }
     </script>
 {% endblock %}

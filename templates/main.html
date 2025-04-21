@@ -111,7 +111,7 @@
                                             <label>Тема урока</label>
                                         </div>
                                     </div>
-                                    <table class="table border students-attendance-list">
+                                    <table class="table border students-attendance-list" id="session{{ conducted.id }}">
                                         <tbody>
 
                                         {% for obj in conducted.attendancemodel_set.all %}
@@ -135,26 +135,12 @@
                                                     </span>
                                                 </td>
                                                 <td>
-                                                    {#                                                    <div class="w-100">#}
-                                                    {#-------------------------#}
-                                                    {#                                                            <label id="p-0" stid="{{ obj.enrollment.student.student_id }}" onclick="changeAttendanceInputStatus(this)"#}
-                                                    {#                                                                   style="cursor: pointer; user-select: none;">#}
-                                                    {#                                                                <input type="hidden" name="status"#}
-                                                    {#                                                                       id="statusInp{{ obj.id }}" value="">#}
-                                                    {#                                                                <span id="checkbox-display">#}
-                                                    {#                                                                    ⬜ Not Given#}
-                                                    {#                                                                </span>#}
-                                                    {#                                                            </label>#}
-                                                    {#                                                        </div>#}
                                                     <div class="d-flex justify-content-end text-end align-items-center h-100">
                                                         <input type="hidden"
                                                                name="stid_{{ obj.enrollment.student.student_id }}"
                                                                id="statusInp{{ obj.enrollment.student.student_id }}"
                                                                {% if obj.status %}value="{{ obj.status }}" {% endif %}>
 
-                                                        {#                                                        <input hidden class="studentStatusInput" type="text"#}
-                                                        {#                                                               name="stid_{{ obj.enrollment.student.student_id }}"#}
-                                                        {#                                                               value="{% if obj.status == True %}present{% elif obj.status == False %}absent{% else %}{% endif %}">#}
                                                         <div class="gradesInp btn-group d-flex me-1 {% if obj.enrollment.trial_lesson %}d-none opacity-0{% endif %}">
                                                             <input type="number"
                                                                    name="ga_{{ obj.enrollment.student.student_id }}"
@@ -177,22 +163,22 @@
                                                                     <i class="bi bi-check "></i></p>
 
                                                                 <button type="button"
-                                                                        onclick="unmarkStudent({{ obj.enrollment.student.student_id }})"
+                                                                        onclick="unmarkStudent({{ obj.enrollment.student.student_id }}, {{ conducted.id }})"
                                                                         class="btn btn-light border border-dark px-2 ms-1    ">
                                                                     <i class="bi bi-pencil-fill"></i></button>
                                                             </div>
                                                         </div>
                                                         <div class="btn-group gap-1 choose check-buttons">
                                                             <button type="button"
-                                                                    onclick="markStudent('0', {{ obj.enrollment.student.student_id }})"
+                                                                    onclick="markStudent('0', {{ obj.enrollment.student.student_id }}, {{ conducted.id }})"
                                                                     class="btn btn-danger px-2"><i
                                                                     class="bi bi-x-lg"></i></button>
                                                             <button type="button"
-                                                                    onclick="markStudent('2', {{ obj.enrollment.student.student_id }})"
+                                                                    onclick="markStudent('2', {{ obj.enrollment.student.student_id }}, {{ conducted.id }})"
                                                                     class="btn btn-warning px-2"><i
                                                                     class="bi bi-clock text-secondary"></i></button>
                                                             <button type="button"
-                                                                    onclick="markStudent('1', {{ obj.enrollment.student.student_id }})"
+                                                                    onclick="markStudent('1', {{ obj.enrollment.student.student_id }}, {{ conducted.id }})"
                                                                     class="btn btn-success px-2"><i
                                                                     class="bi bi-check-lg"></i></button>
                                                         </div>
@@ -313,22 +299,4 @@
         {% endfor %}
 
     </div>
-{% endblock %}
-
-{% block custom_js %}
-    <script>
-        function markStudent(status, stid) {
-            const studentData = document.querySelector(`.students-attendance-list tr[stid='${stid}']`)
-            studentData.setAttribute('status', status);
-            studentData.querySelector(`#statusInp${stid}`).value = status;
-        }
-
-        function unmarkStudent(stid) {
-            const studentData = document.querySelector(`.students-attendance-list tr[stid='${stid}']`)
-            studentData.setAttribute('status', '');
-            studentData.querySelector(`#statusInp${stid}`).value = '';
-        }
-
-    </script>
-    <script src="{% static 'js/attendance.js' %}"></script>
 {% endblock %}
