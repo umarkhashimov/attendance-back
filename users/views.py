@@ -2,10 +2,10 @@ from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordRes
 from django.contrib.messages.views import SuccessMessageMixin
 from django.views.generic import TemplateView, UpdateView, ListView
 from django.urls import reverse, reverse_lazy
-
+from datetime import datetime, timedelta
 from .filters import AdminRequired, SuperUserRequired
 from .models import UsersModel, LogAdminActionsModel
-from .forms import LoginForm, TeacherUpdateForm
+from .forms import LoginForm, TeacherUpdateForm, UserActionsFilterForm
 
 class LoginPageView(LoginView):
     form_class = LoginForm
@@ -40,3 +40,47 @@ class AdminActionsView(SuperUserRequired, ListView):
     context_object_name = 'actions'
     ordering = ['-id']
     paginate_by = 30
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        data = self.request.GET.copy()
+        context['filter_form'] = UserActionsFilterForm(initial=data)
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        user = self.request.GET.get('user', None)
+        start_date = self.request.GET.get('date_start', None)
+        end_date = self.request.GET.get('date_end', None)
+        sort_by = self.request.GET.get('sort_by', None)
+        action_type = self.request.GET.get('action_type', None)
+
+        if user:
+            queryset = queryset.filter(user_id=user)
+
+        if action_type:
+            queryset = queryset.filter(action_number=action_type)
+
+        if start_date:
+            queryset = queryset.filter(datetime__gt=start_date)
+
+        if end_date:
+            end_date = datetime.strptime(end_date, '%Y-%m-%d')
+            queryset = queryset.filter(datetime__lte=end_date+timedelta(days=1))
+
+        if sort_by:
+            if sort_by == '1':
+                queryset = queryset.order_by('-id')
+            elif sort_by == '2':
+                queryset = queryset.order_by('id')
+            elif sort_by == '3':
+                queryset = queryset.order_by('user__username')
+            elif sort_by == '4':
+                queryset = queryset.order_by('action_number')
+        else:
+            queryset = queryset.order_by('-id')
+
+
+        return queryset

@@ -2,6 +2,7 @@ from django.contrib.admin.models import LogEntry
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import UsersModel, LogAdminActionsModel
+from django.contrib.contenttypes.models import ContentType
 
 
 class CustomUserAdmin(UserAdmin):
@@ -37,3 +38,16 @@ admin.site.register(UsersModel, CustomUserAdmin)
 class LogAdmin(admin.ModelAdmin):
     list_display = ['user', 'content_type', 'action_type']
     list_filter = ['user', 'action_number', 'datetime']
+
+
+@admin.register(ContentType)
+class CustomContentTypeAdmin(admin.ModelAdmin):
+    list_display = ('app_label', 'model', 'custom_model_name')
+
+    def custom_model_name(self, obj):
+        model_class = obj.model_class()
+        if model_class:
+            return model_class.__name__
+        return 'Unknown'
+
+    custom_model_name.short_description = 'Model Name'

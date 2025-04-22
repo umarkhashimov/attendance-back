@@ -3,8 +3,9 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
-
-from .models import UsersModel
+from django.contrib.admin.models import LogEntry, ContentType
+import datetime
+from .models import UsersModel, ACTION_FLAG_CHOICES
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
@@ -50,3 +51,55 @@ class TeacherSelectForm(forms.Form):
         widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
         label="Учитель"
     )
+
+
+from config.settings import INSTALLED_APPS
+
+class UserActionsFilterForm(forms.Form):
+    # content_type = forms.ModelChoiceField(
+    #     queryset=ContentType.objects.all().filter(app_label__in=INSTALLED_APPS),
+    #     widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
+    #     label="Тип Данных", required=False)
+
+    user = forms.ModelChoiceField(
+        queryset=UsersModel.objects.all().filter(role='2'),
+        widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
+        label="Администратор", required=False)
+
+    action_type = forms.ChoiceField(
+        choices=ACTION_FLAG_CHOICES,
+        widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
+        label="Действие", required=False)
+
+    sort_by = forms.ChoiceField(
+        choices=[(1, "Последние"), (2, "Ранние"), (3, "Администратор"), (4, "Действие")],
+        widget=Select2Widget(attrs={'class': 'form-control mt-2', 'onchange': 'submit()'}),
+        required=False, label="Сортировать по",)
+
+    date_start = forms.DateField(
+        widget=forms.DateInput(
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+        required=False, label="С")
+
+    date_end = forms.DateField(
+        widget=forms.DateInput(
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+        required=False, label="До")
+
+    def __init__(self,  *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        start_date = self.initial.get("date_start")
+        end_date = self.initial.get("date_end")
+
+        if start_date:
+            self.fields['date_end'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
+
+            if end_date:
+                date_start = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+                date_end = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+
+                if date_end < date_start:
+                    self.initial['date_end'] = datetime.date.today().strftime('%Y-%m-%d')
+            else:
+                self.initial['date_end'] = datetime.date.today().strftime('%Y-%m-%d')

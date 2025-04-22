@@ -11,50 +11,59 @@
             <h5 class="mt-1 mb-2">История действий</h5>
         </div>
         <hr class="table-group-divider"/>
-        <div class="row px-2 mt-3">
-{#            <div class="accordion accordion-flush px-1" id="accordionExample">#}
-{#                {% for action in actions %}#}
-{#                    <div class="accordion-item border-1">#}
-{#                        <div class="accordion-header">#}
-{#                            <div class="d-flex justify-content-between align-items-center border border-1">#}
-{##}
-{#                                <button class="accordion-button shadow-none collapsed border py-2 ps-1" type="button"#}
-{#                                        data-bs-toggle="collapse" data-bs-target="#accordion{{ action.id }}"#}
-{#                                        aria-expanded="false">#}
-{#                                <span class="pe-3 d-flex justify-content-between w-100">#}
-{##}
-{#                                <span>#}
-{##}
-{#                                {% if action.action_number == 1 %}#}
-{#                                    <span class="badge text-success fs-5 py-0"><i#}
-{#                                            class="bi bi-plus-square-fill"></i></span>#}
-{#                                {% elif action.action_number == 2 %}#}
-{#                                    <span class="badge text-warning fs-5 py-0"><i#}
-{#                                            class="bi bi-pencil-square"></i></span>#}
-{#                                {% elif action.action_number == 3 %}#}
-{#                                    <span class="badge text-danger fs-5 py-0"><i class="bi bi-trash3-fill"></i></span>#}
-{#                                {% endif %}#}
-{#                                    <span class="text-primary">{{ action.user.username }}</span>#}
-{#                                </span>#}
-{#                                    <span>{{ action.content_type.name }}</span>#}
-{#                                    <span>{{ action.datetime }}</span>#}
-{#                                </span>#}
-{#                                </button>#}
-{#                            </div>#}
-{##}
-{#                        </div>#}
-{#                        <div id="accordion{{ action.id }}" class="accordion-collapse collapse border border-1 p-0"#}
-{#                             data-bs-parent="#accordionExample">#}
-{#                            <div class="accordion-body bg-opacity-25 bg-light">#}
-{#                                {{ action.message|safe }}#}
+        <div class="row m-0 p-0 ">
+            <div class="col-12 bg-light rounded pt-2 px-2 border">
+                <form id="filterForm" method="get" action="{% url 'users:admin_actions' %}" class="" onreset="resetForm(event)">
+                    <div class="">
+                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
+                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                        </h6>
+                    </div>
+                    <div class="row mt-2 pb-3">
+{#                        <div class="col-12 col-md-4">#}
+{#                            <div class="custom-select-2">#}
+{#                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.content_type.label }}</label>#}
+{#                                {{ filter_form.content_type }}#}
 {#                            </div>#}
 {#                        </div>#}
-{#                    </div>#}
-{#                {% empty %}#}
-{#                    <p class="text-center text-secondary">Пусто</p>#}
-{#                {% endfor %}#}
-{#            </div>#}
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.user.label }}</label>
+                                {{ filter_form.user }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.action_type.label }}</label>
+                                {{ filter_form.action_type }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.sort_by.label }}</label>
+                                {{ filter_form.sort_by }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 mt-2">
+                            <div class="custom-select-2">
+                                <label for="subject"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.date_start.label }}</label>
+                                {{ filter_form.date_start }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 mt-2">
+                            <div class="custom-select-2">
+                                <label for="subject"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.date_end.label }}</label>
+                                {{ filter_form.date_end }}
+                            </div>
+                        </div>
 
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row px-2 mt-3">
             <div class="accordion accordion-flush px-0" id="accordionExample">
                 {% for action in actions %}
                 <div class="accordion-item border">
@@ -90,6 +99,8 @@
                         </div>
                     </div>
                 </div>
+                    {% empty %}
+                    <p class="text-center text-secondary">Пусто</p>
                 {% endfor %}
             </div>
 

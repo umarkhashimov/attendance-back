@@ -129,19 +129,6 @@ class DebtPaymentsListView(View, AdminRequired):
 
     def get(self, request):
         teachers = UsersModel.objects.filter(role='1').distinct()
-
-        # teacher_enrollments = {}
-        #
-        # for teacher in teachers:
-        #     courses = CourseModel.objects.filter(teacher=teacher, enrollment__payment_due__lt=datetime.today().date(), enrollment__status=True).distinct().order_by('weekdays', 'lesson_time')
-        #     if len(courses) > 0:
-        #         teacher_enrollments[teacher] = {
-        #             course: list(Enrollment.objects.filter(course=course, payment_due__lt=datetime.today().date(), status=True))
-        #             for course in courses
-        #         }
-        #
-        # context = {'teacher_enrollments': teacher_enrollments}
-
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
