@@ -54,12 +54,12 @@
             {% for obj in courses %}
                 <div class="col-12 col-md-6 col-lg-4 px-1">
                     <div class="position-relative px-0">
-                        <span class="position-absolute top-0 topic-label">{{ obj.last_topic|default:"---" }}</span>
-                        <span class="position-absolute top-0 teacher-name-label">{% if obj.teacher.first_name %}
+                        <span class="position-absolute top-0 topic-label" style="border-color: {{ obj.teacher.color }}">{{ obj.last_topic|default:"---" }}</span>
+                        <span class="position-absolute top-0 teacher-name-label" style="border-color: {{ obj.teacher.color }}">{% if obj.teacher.first_name %}
                             {{ obj.teacher.first_name|default:'-' }} {{ obj.teacher.last_name|default:"-" }}{% else %}
                             {{ obj.teacher.username }}{% endif %}</span>
                         <a href="{% url 'courses:course_update' pk=obj.id %}"
-                           class="border-2 border px-2 py-2 d-block course-list-item mt-2 mb-1">
+                           class="border-2 border px-2 py-2 d-block course-list-item mt-2 mb-1" style="border-color: {{ obj.teacher.color }} !important;">
                             <div class="row">
                                 <div class="col-9 gap-2 align-right pt-1">
                                     <p class="text-dark mb-0 course-name mt-1 align-end h-100 w-100">
