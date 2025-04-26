@@ -16,10 +16,10 @@
             <form method="post">
               {% csrf_token %}
               {% for field in form %}
-              <div class="my-1 {% if field.name not in 'weekday,status' %}
+              <div id="{{ field.name }}-wrapper-div" class="my-1 {% if field.name == 'weekdays' %}d-none{% endif %} {% if field.name not in 'weekday,status' %}
               
               form-floating
-              
+
               {% else %}
               
               ms-1

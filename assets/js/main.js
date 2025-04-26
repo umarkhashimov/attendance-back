@@ -74,3 +74,12 @@ document.querySelectorAll('form').forEach((form) => {
         f.target.submit()
     })
 })
+
+function setMultipleWeekdays(selector){
+    let weekdaysFieldDiv = document.getElementById('weekdays-wrapper-div')
+    if (String(selector.value) == '3') {
+        weekdaysFieldDiv.classList.remove('d-none')
+    }else{
+        weekdaysFieldDiv.classList.add('d-none')
+    }
+}

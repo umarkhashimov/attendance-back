@@ -287,6 +287,10 @@ tr.trial-lesson td {
     box-shadow: 0px 0px 2px 1px black;
 }
 
+.select2{
+    width: 100% !important;
+}
+
 .requiredField .asteriskField {
     color: red !important;
     margin-left: 3px;

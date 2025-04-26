@@ -13,7 +13,7 @@ from datetime import datetime
 from students.models import Enrollment
 from students.forms import CourseEnrollmentForm
 from attendance.models import AttendanceModel
-from .forms import CourseUpdateForm, CancelCauseForm
+from .forms import CourseUpdateForm, CancelCauseForm, CourseCreateForm
 from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
 
@@ -111,7 +111,22 @@ class RedirectCourseToCloseSession(View):
 class CreateCourseView(AdminRequired, CreateView):
     model = CourseModel
     template_name = 'create_course.html'
-    form_class = CourseUpdateForm
+    form_class = CourseCreateForm
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        data = form.cleaned_data
+        if data['days'] == '1':
+            obj.weekdays = ['0', '2', '4']
+        elif data['days'] == '2':
+            obj.weekdays = ['1', '3', '5']
+        else:
+            obj.weekdays = data['weekdays']
+
+        obj.save()
+        form.save_m2m()
+
+        return super().form_valid(form)
 
     def get_success_url(self):
         action_message = f"Создал группу <b>{self.object}</b>"

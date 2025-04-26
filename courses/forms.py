@@ -50,32 +50,53 @@ class CourseUpdateForm(forms.ModelForm):
 
 class CourseCreateForm(forms.ModelForm):
 
+    weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
+    days = forms.ChoiceField(
+        choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")], label="Дни уроков",
+        widget=forms.Select(attrs={'class':'form-control', 'onchange': 'setMultipleWeekdays(this)'}),
+        required=False)
+
+    subject = forms.ModelChoiceField(
+        queryset=SubjectModel.objects.all(),
+        widget=Select2Widget(attrs={'class': ' w-100'}),
+        label="Курс"
+    )
+
+
     class Meta:
         model = CourseModel
-        fields = "__all__"
+        fields = ['subject', 'course_name', 'teacher', 'days', 'weekdays', 'lesson_time', 'duration', 'session_cost', 'last_topic', 'status']
+        exclude = []
         widgets = {
             'lesson_time': forms.TimeInput(
-                format='%H:%M', 
+                format='%H:%M',
                 attrs={
-                    'class': 'form-control',  
+                    'class': 'form-control',
                     'placeholder': 'HH:MM',
-                    'type': 'time', 
+                    'type': 'time',
                     'id': 'LessonTimePicker',
                 }
             ),
-            'duration':  forms.NumberInput(
-                attrs={
-                    'oninput': 'this.value = this.value.replace(/[^0-9]/g, '');',
-                    'placeholder': 'Длительность занятий',
-                }
-            ),
-            'session_cost': forms.NumberInput(
-                attrs={
-                    'oninput': 'this.value = this.value.replace(/[^0-9]/g, '');',
-                    'placeholder': '123',
-                }
-            )
+            'subject': Select2Widget(attrs={'class': 'form-control'}),
+            'teacher': Select2Widget(attrs={'class': 'form-control'}),
+            'course_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите имя курса'}),
+            'weekdays': Select2MultipleWidget(attrs={'class': 'form-control multiplechoices w-100'}),
+            'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add attributes to all fields
+        self.fields['weekdays'].initial = ['0']
+        self.fields['weekdays'].required = False
+        for field_name, field in self.fields.items():
+            if field_name in ['weekdays', 'status']:
+                continue
+            field.widget.attrs.update({
+                "class": "form-control",  # Add Bootstrap class
+                "placeholder": ' ',  # Optional: Use label as placeholder
+            })
 
 class CancelCauseForm(forms.Form):
     CAUSE_OPTIONS = [
