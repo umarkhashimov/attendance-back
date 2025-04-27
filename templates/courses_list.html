@@ -59,7 +59,7 @@
                             {{ obj.teacher.first_name|default:'-' }} {{ obj.teacher.last_name|default:"-" }}{% else %}
                             {{ obj.teacher.username }}{% endif %}</span>
                         <a href="{% url 'courses:course_update' pk=obj.id %}"
-                           class="border-2 border px-2 py-2 d-block course-list-item mt-2 mb-1" style="border-color: {{ obj.teacher.color }} !important;">
+                           class="border-1 border px-2 py-2 d-block course-list-item mt-2 mb-1" style="border-color: {{ obj.teacher.color }} !important;">
                             <div class="row">
                                 <div class="col-9 gap-2 align-right pt-1">
                                     <p class="text-dark mb-0 course-name mt-1 align-end h-100 w-100">

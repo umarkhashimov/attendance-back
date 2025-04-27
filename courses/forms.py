@@ -4,50 +4,6 @@ from django_select2.forms import Select2Widget, Select2MultipleWidget
 from multiselectfield import MultiSelectField
 from users.models import UsersModel
 
-class CourseUpdateForm(forms.ModelForm):
-
-    subject = forms.ModelChoiceField(
-        queryset=SubjectModel.objects.all(),
-        widget=Select2Widget(attrs={'class':' w-100'}),
-        label="Курс"
-    )
-
-    weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
-
-    class Meta:
-        model = CourseModel
-        fields = "__all__"
-        exclude = []
-        widgets = {
-            'lesson_time': forms.TimeInput(
-                format='%H:%M', 
-                attrs={
-                    'class': 'form-control',  
-                    'placeholder': 'HH:MM',
-                    'type': 'time', 
-                    'id': 'LessonTimePicker',
-                }
-            ),
-            'subject': Select2Widget(attrs={'class':'form-control'}),
-            'teacher': Select2Widget(attrs={'class':'form-control'}),
-            'course_name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Введите имя курса'}),
-            'weekdays': Select2MultipleWidget(attrs={'class':'form-control multiplechoices'}),
-            'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # Add attributes to all fields
-        for field_name, field in self.fields.items():
-            if field_name in ['weekdays', 'status']:
-                continue
-            field.widget.attrs.update({
-                "class": "form-control",  # Add Bootstrap class
-                "placeholder": ' ',  # Optional: Use label as placeholder
-            })
-
-
 class CourseCreateForm(forms.ModelForm):
 
     weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)
@@ -86,10 +42,13 @@ class CourseCreateForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        days = kwargs.pop('days', None)
         super().__init__(*args, **kwargs)
         # Add attributes to all fields
         self.fields['weekdays'].initial = ['0']
         self.fields['weekdays'].required = False
+        self.fields['days'].initial = days
+
         for field_name, field in self.fields.items():
             if field_name in ['weekdays', 'status']:
                 continue

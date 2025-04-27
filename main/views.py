@@ -8,7 +8,7 @@ from students.forms import StudentInfoForm
 from students.models import StudentModel, Enrollment
 from users.filters import AdminRequired
 from courses.models import SessionsModel, SubjectModel
-from courses.forms import DaysMultiselectForm, CancelCauseForm, CourseUpdateForm
+from courses.forms import DaysMultiselectForm, CancelCauseForm
 from courses.models import CourseModel, UsersModel
 from .forms import CoursesListFilterForm, StudentsListFilterForm, TeachersListFilterForm
 from attendance.models import AttendanceModel
@@ -194,6 +194,5 @@ class CoursesListView(AdminRequired, ListView):
         days = self.request.GET.getlist('weekdays')
         context["days_form"] = DaysMultiselectForm(initial={'weekdays': days})
         context['subjects'] = SubjectModel.objects.all()
-        context["create_course_form"] = CourseUpdateForm
         return context
     

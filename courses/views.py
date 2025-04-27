@@ -13,14 +13,44 @@ from datetime import datetime
 from students.models import Enrollment
 from students.forms import CourseEnrollmentForm
 from attendance.models import AttendanceModel
-from .forms import CourseUpdateForm, CancelCauseForm, CourseCreateForm
+from .forms import CancelCauseForm, CourseCreateForm
 from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
 
 class CourseUpdateView(AdminRequired, UpdateView):
     model = CourseModel
     template_name = "course_detail.html"
-    form_class = CourseUpdateForm
+    form_class = CourseCreateForm
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        data = form.cleaned_data
+        if data['days'] == '1':
+            obj.weekdays = ['0', '2', '4']
+        elif data['days'] == '2':
+            obj.weekdays = ['1', '3', '5']
+        else:
+            obj.weekdays = data['weekdays']
+
+        obj.save()
+        form.save_m2m()
+
+        return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        # Now add your custom props here
+        weekdays = ",".join(filter(None, self.get_object().weekdays))
+
+        if weekdays == '0,2,4':
+            kwargs['days'] = 1
+        elif weekdays == '1,3,5':
+            kwargs['days'] = 2
+        else:
+            kwargs['days'] = 3
+
+        # kwargs['user'] = self.request.user
+        return kwargs
 
     def get_success_url(self):
         return self.request.path
