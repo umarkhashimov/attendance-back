@@ -52,6 +52,7 @@ class AdminActionsView(SuperUserRequired, ListView):
         queryset = super().get_queryset()
 
         user = self.request.GET.get('user', None)
+        content_type = self.request.GET.get('content_type', None)
         start_date = self.request.GET.get('date_start', None)
         end_date = self.request.GET.get('date_end', None)
         sort_by = self.request.GET.get('sort_by', None)
@@ -59,6 +60,9 @@ class AdminActionsView(SuperUserRequired, ListView):
 
         if user:
             queryset = queryset.filter(user_id=user)
+
+        if content_type:
+            queryset = queryset.filter(content_type=content_type)
 
         if action_type:
             queryset = queryset.filter(action_number=action_type)

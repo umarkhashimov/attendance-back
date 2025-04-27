@@ -60,10 +60,10 @@ class TeacherSelectForm(forms.Form):
 from config.settings import INSTALLED_APPS
 
 class UserActionsFilterForm(forms.Form):
-    # content_type = forms.ModelChoiceField(
-    #     queryset=ContentType.objects.all().filter(app_label__in=INSTALLED_APPS),
-    #     widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
-    #     label="Тип Данных", required=False)
+    content_type = forms.ModelChoiceField(
+        queryset=ContentType.objects.all().filter(app_label__in=INSTALLED_APPS),
+        widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}),
+        label="Тип Данных", required=False)
 
     user = forms.ModelChoiceField(
         queryset=UsersModel.objects.all().filter(role='2'),
