@@ -18,7 +18,8 @@
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">
             <div class="col-12 bg-light rounded pt-2 px-2 border">
-                <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class="" onreset="resetForm(event)">
+                <form id="filterForm" method="get" action="{% url 'main:courses_list' %}" class=""
+                      onreset="resetForm(event)">
                     <div class="">
                         <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
                             <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
@@ -54,12 +55,14 @@
             {% for obj in courses %}
                 <div class="col-12 col-md-6 col-lg-4 px-1">
                     <div class="position-relative px-0">
-                        <span class="position-absolute top-0 topic-label" style="border-color: {{ obj.teacher.color }}">{{ obj.last_topic|default:"---" }}</span>
-                        <span class="position-absolute top-0 teacher-name-label" style="border-color: {{ obj.teacher.color }}">{% if obj.teacher.first_name %}
+                        <span class="position-absolute top-0 topic-label" user-color="{{ obj.teacher.color }}"
+                              style="outline-color: {{ obj.teacher.color }};">{{ obj.last_topic|default:"---" }}<span style="background: {{ obj.teacher.color }}" class="label-bg"></span></span>
+                        <span class="position-absolute top-0 teacher-name-label"
+                              style="outline-color: {{ obj.teacher.color }} !important;">{% if obj.teacher.first_name %}
                             {{ obj.teacher.first_name|default:'-' }} {{ obj.teacher.last_name|default:"-" }}{% else %}
-                            {{ obj.teacher.username }}{% endif %}</span>
+                            {{ obj.teacher.username }}{% endif %}<span style="background: {{ obj.teacher.color }}" class="label-bg"></span></span>
                         <a href="{% url 'courses:course_update' pk=obj.id %}"
-                           class="border-1 border px-2 py-2 d-block course-list-item mt-2 mb-1" style="border-color: {{ obj.teacher.color }} !important;">
+                           class="border-3 border px-2 py-2 d-block course-list-item mt-2 mb-1">
                             <div class="row">
                                 <div class="col-9 gap-2 align-right pt-1">
                                     <p class="text-dark mb-0 course-name mt-1 align-end h-100 w-100">
@@ -82,11 +85,11 @@
                 <p class="text-center text-secondary">Нет груп.</p>
             {% endfor %}
 
-            {% if page_obj.paginator.count > 30  %}
+            {% if page_obj.paginator.count > 30 %}
                 {% include 'layout/pagination.html' %}
             {% endif %}
 
+        </div>
+
     </div>
-
-
 {% endblock %}
