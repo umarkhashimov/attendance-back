@@ -1,5 +1,6 @@
 from django.forms import ModelForm
 from django import forms
+from django.db.models import Q
 from django_select2.forms import Select2Widget
 from .models import StudentModel, Enrollment
 from courses.models import CourseModel
@@ -37,7 +38,7 @@ class EnrollmentForm(ModelForm):
 class StudentEnrollmentForm(ModelForm):
     
     course = forms.ModelChoiceField(
-        queryset=CourseModel.objects.all(),
+        queryset=CourseModel.objects.all().exclude(archived=True),
         widget=Select2Widget(),
         label='Курс'
     )
@@ -66,7 +67,7 @@ class StudentEnrollmentForm(ModelForm):
 
         if student:
             enrolled = Enrollment.objects.filter(student=student, status=True).values_list('course__id', flat=True)
-            queryset = CourseModel.objects.all().exclude(id__in=enrolled)
+            queryset = CourseModel.objects.all().exclude(Q(id__in=enrolled) | Q(archived=True))
             if teacher:
                 queryset = queryset.filter(teacher_id=teacher)
 

@@ -184,7 +184,7 @@ class CoursesListView(AdminRequired, ListView):
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
 
-        return queryset
+        return queryset.exclude(archived=True)
     
 
     def get_context_data(self, **kwargs):
