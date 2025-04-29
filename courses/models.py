@@ -51,11 +51,24 @@ class CourseModel(models.Model):
     last_topic = models.CharField(max_length=250, null=True, blank=True, verbose_name='Тема')
     status = models.BooleanField(default=False, verbose_name="Статус курса")
     enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)
-    archived = models.BooleanField(default=False)
+    archived = models.BooleanField(default=False, verbose_name="В архиве")
+
+    def archive_course(self):
+        if self.get_all_enrolled_count() > 0:
+            return False
+        else:
+            self.archived = True
+            self.save()
+            return True
 
     def check_time(self):
         return course_date_match(self)
-    
+
+    def get_all_enrolled_count(self):
+        Enrollments = apps.get_model('students', 'Enrollment')
+        count = Enrollments.objects.filter(course=self, status=True).count()
+        return count
+
     def get_enrolled_count(self):
         Enrollments = apps.get_model('students', 'Enrollment')
         count = Enrollments.objects.filter(course=self, status=True, trial_lesson=False).count()

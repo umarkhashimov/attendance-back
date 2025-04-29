@@ -1,6 +1,6 @@
 from pyexpat.errors import messages
 from django.contrib import messages
-from users.filters import AdminRequired
+from users.filters import AdminRequired, SuperUserRequired
 from django.views.generic import DetailView,  UpdateView, View, CreateView, ListView, TemplateView
 from django.core.exceptions import PermissionDenied
 
@@ -285,3 +285,14 @@ class UpdateGroupTopicView(View):
 
         messages.success(request, 'Успешно сохранено')
         return redirect("courses:groupinfo", pk=course.id)
+
+
+class ArchiveCourseView(SuperUserRequired,View):
+    def get(self, request, pk):
+        course = get_object_or_404(CourseModel, id=pk)
+        status = course.archive_course()
+        print('aaaaaaaaaaaaaaaaaa')
+        if status:
+            return redirect("main:courses_list")
+
+        return redirect("courses:course_update", pk=course.id)

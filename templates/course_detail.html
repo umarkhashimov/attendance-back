@@ -11,7 +11,7 @@
         <div class="row">
             <div class="mt-4 mb-2 ">
                 <h5 class="mt-1 mb-2">{{ obj }}</h5>
-            <hr class="table-group-divider mb-0"/>
+                <hr class="table-group-divider mb-0"/>
             </div>
             <div class="col-12 col-md-12">
                 <div class="rounded py-2 mt-3 mt-md-0">
@@ -312,7 +312,8 @@
                     <form method="post">
                         {% csrf_token %}
                         {% for field in form %}
-                            <div id="{{ field.name }}-wrapper-div" class="my-1 {% if field.name == 'weekdays' and form.days.value != 3%}d-none{% endif %} {% if field.name not in 'weekday,status' %}
+                            <div id="{{ field.name }}-wrapper-div"
+                                 class="my-1 {% if field.name == 'weekdays' and form.days.value != 3 %}d-none{% endif %} {% if field.name not in 'weekday,status' %}
                     
                     form-floating
 
@@ -386,6 +387,44 @@
                                 data-bs-target="#paymentHistoryModal">
                             История оплат
                         </button>
+                        {% if request.user.is_superuser and obj.get_all_enrolled_count == 0 %}
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#staticBackdrop">
+                                Архивировать группу
+                            </button>
+
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static"
+                                 data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <form class="{% url 'courses:archive_course' pk=obj.id %}" method="get">
+                                        {% csrf_token %}
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                        aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Вы уверены что хотите перенести эту группу в архив ?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Отмена
+                                                </button>
+                                                <a type="button" class="btn btn-danger" href="{% url 'courses:archive_course' pk=obj.id %}">
+                                                    Подтвердить
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                        {% endif %}
                         <!-- Overall Attendance modal -->
                         <div class="modal fade" id="overallAttendanceModal" data-bs-backdrop="static"
                              data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
