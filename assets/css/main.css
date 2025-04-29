@@ -257,7 +257,7 @@ tr.trial-lesson td {
     outline: 3px solid;
     z-index: 99;
     background-color: white;
-
+    box-shadow: 0px 0px 4px 2px black;
 }
 .label-bg {
     content: '';
@@ -288,6 +288,7 @@ tr.trial-lesson td {
     letter-spacing: 1px;
     outline: 3px solid;
     z-index: 99;
+    box-shadow: 0px 0px 4px 2px black;
 }
 
 .teacher-color-preview {
