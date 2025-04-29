@@ -254,11 +254,12 @@ tr.trial-lesson td {
     border-radius: 2px;
     color: black;
     letter-spacing: 2px;
-    outline: 3px solid;
+    outline: 2px solid;
     z-index: 99;
     background-color: white;
-    box-shadow: 0px 0px 4px 2px black;
+    box-shadow: 0px 0px 3px 2px black;
 }
+
 .label-bg {
     content: '';
     position: absolute;
@@ -268,7 +269,7 @@ tr.trial-lesson td {
     height: 100%;
     z-index: -1;
     background-color: white;
-    opacity: 0.1;
+    opacity: 0.2;
 }
 
 .teacher-name-label {
@@ -286,9 +287,9 @@ tr.trial-lesson td {
     background-color: white;
     color: black;
     letter-spacing: 1px;
-    outline: 3px solid;
+    outline: 2px solid;
     z-index: 99;
-    box-shadow: 0px 0px 4px 2px black;
+    box-shadow: 0px 0px 3px 2px black;
 }
 
 .teacher-color-preview {
