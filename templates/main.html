@@ -115,7 +115,7 @@
                                         <tbody>
 
                                         {% for obj in conducted.attendancemodel_set.all %}
-                                            <tr class="d-flex attendance-item {% if obj.enrollment.trial_lesson or obj.trial_attendance %}trial-lesson{% endif %}"
+                                            <tr class="d-flex attendance-item {% if obj.enrollment.trial_lesson == True and obj.enrollment.trial_used_once == False or obj.trial_attendance %}trial-lesson{% endif %}"
                                                 status='{{ obj.status }}'
                                                 stid="{{ obj.enrollment.student.student_id }}"
                                                 class="attendance-item absent">

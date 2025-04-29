@@ -48,10 +48,15 @@ class GetSessionView(View):
                     obj.status = int(status)
                     if obj.status in [1,2]:
                         if (obj.enrollment.trial_lesson and not obj.trial_attendance) and session.date == datetime.today().date():
-                            obj.trial_attendance = obj.enrollment.trial_lesson
-                            obj.enrollment.trial_lesson = False
-                            if not obj.enrollment.payment_due:
-                                obj.enrollment.payment_due = datetime.today()
+                            if not obj.enrollment.trail_used_once:
+                                obj.trial_attendance = obj.enrollment.trial_lesson
+
+                            if obj.enrollment.trial_lesson and not obj.enrollment.trail_used_once:
+                                obj.enrollment.trail_used_once = True
+                            else:
+                                obj.enrollment.trial_lesson = False
+                                if not obj.enrollment.payment_due:
+                                    obj.enrollment.payment_due = datetime.today()
                             obj.enrollment.save()
 
 
