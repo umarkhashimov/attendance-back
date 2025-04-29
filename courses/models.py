@@ -51,6 +51,7 @@ class CourseModel(models.Model):
     last_topic = models.CharField(max_length=250, null=True, blank=True, verbose_name='Тема')
     status = models.BooleanField(default=False, verbose_name="Статус курса")
     enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)
+    archived = models.BooleanField(default=False)
 
     def check_time(self):
         return course_date_match(self)

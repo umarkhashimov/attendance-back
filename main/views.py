@@ -158,7 +158,7 @@ class TeachersListView(AdminRequired, ListView):
 
 
 class CoursesListView(AdminRequired, ListView):
-    queryset = CourseModel.objects.all().exclude(subject__show_separately=True)
+    queryset = CourseModel.objects.all().exclude(Q(subject__show_separately=True) | Q(archived=True))
     template_name = "courses_list.html"
     context_object_name = 'courses'
     paginate_by = 30
