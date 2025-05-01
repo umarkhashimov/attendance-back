@@ -1,5 +1,5 @@
 from calendar import month
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time, timezone
 
 from django import forms
 from django.shortcuts import render, redirect, get_object_or_404
@@ -207,11 +207,12 @@ class UpdatePaymentDatesView(SuperUserRequired, UpdateView):
     template_name = 'payment/update_dates.html'
 
     def form_valid(self, form):
-        # Perform any custom actions before saving
         instance = form.save(commit=False)
-
-        instance.payed_due = calculate_payment_due_date(instance.enrollment, iterate_balance=instance.current_balance if instance.current_balance else None, count_from=instance.payed_from)
-        # Save the instance
+        if form.cleaned_data['manual_due_date']:
+            instance.payed_due = calculate_payment_due_date(instance.enrollment, count_from=instance.payed_from)
+        else:
+            instance.payed_due = instance.payed_due
+        instance.date = datetime.combine(form.cleaned_data['factual_date'].date(), datetime.now().time())
         instance.save()
 
         return super().form_valid(form)

@@ -61,13 +61,24 @@ class PaymentHistoryFilterForm(forms.Form):
                 self.initial['payment_date_end'] = datetime.date.today().strftime('%Y-%m-%d')
 
 class UpdatePaymentDatesForm(forms.ModelForm):
+    factual_date = forms.DateTimeField(widget=forms.DateInput(attrs={'type': 'date'}), required=False, label="Фактическая дата оплаты")
+    manual_due_date = forms.BooleanField(widget=forms.CheckboxInput(attrs={'type': 'checkbox', 'onchange': 'custom_due_date_toggle(this)'}), required=False, label="Конец посчитать автоматически")
+
 
     class Meta:
         model = PaymentModel
-        fields = ['payed_from']
+        fields = ['payed_from', 'payed_due', 'manual_due_date', 'factual_date', 'manual_due_date']
         widgets = {
             'payed_from': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
+            'payed_due': forms.DateInput(attrs={'type': 'date',}, format='%Y-%m-%d'),
+            'factual_date': forms.DateInput( format='%Y-%m-%d'),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        instance = kwargs.get('instance')
+        if instance and instance.date:
+            self.fields['factual_date'].initial = instance.date.strftime('%Y-%m-%d')
 
 class TrialStudentsFilterForm(forms.Form):
     weekdays = forms.ChoiceField(

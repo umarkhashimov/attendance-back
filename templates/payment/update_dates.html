@@ -12,22 +12,34 @@
         <hr class="table-group-divider"/>
         <div class="col-12 bg-light rounded p-3 border">
             <form method="post">
+                {% csrf_token %}
                 <p><b>Ученик:</b> {{ object.enrollment.student.full_name }}</p>
                 <p><b>Курс:</b> {{ object.enrollment.course }}</p>
-                <p><b>Месяцы:</b> {{ object.months }}</p>
-                {% if object.current_balance %}
-                    <p><b>Баланс после оплаты:</b> {{ object.current_balance }}</p>
-                {% else %}
-                    <p class="m-0">(баланс при оплате не найдено)</p>
-                    <p><b>Нынешный баланс:</b> {{ object.enrollment.balance }}</p>
-                {% endif %}
-                {% csrf_token %}
+                <p><b>Начало:</b> {{ object.payed_from }}</p>
+                <p><b>Конец:</b> {{ object.payed_due }}</p>
                 <p><b>Дата оплаты:</b> {{ object.date }}</p>
                 {{ form|crispy }}
+
                 <div class="d-flex justify-content-end flex-column flex-md-row pt-3">
                     <button type="submit" class="btn btn-primary">Сохранить</button>
                 </div>
             </form>
         </div>
     </div>
+{% endblock %}
+{% block custom_js %}
+
+    <script>
+    function custom_due_date_toggle(check){
+        console.log(check.checked)
+        let div = document.getElementById('div_id_payed_due')
+
+        if (check.checked == true){
+            div.classList.add('d-none')
+        }else{
+            div.classList.remove('d-none')
+        }
+    }
+    </script>
+
 {% endblock %}

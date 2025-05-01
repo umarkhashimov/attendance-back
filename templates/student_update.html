@@ -116,7 +116,6 @@
                                                                 <tr>
                                                                     <th class="text-center">Сумма</th>
                                                                     <th class="text-center">Кол-во месяцев</th>
-                                                                    <th class="text-center">Баланс</th>
                                                                     <th class="text-center">Начало</th>
                                                                     <th class="text-center">Конец</th>
                                                                     <th class="text-center">Оплачено</th>
@@ -127,7 +126,6 @@
                                                                     <tr class="list-items-hover">
                                                                         <td class="px-1">{{ payment.amount }}</td>
                                                                         <td class="px-1">{{ payment.months }}</td>
-                                                                        <td class="px-1">{{ payment.current_balance|default:'?' }}</td>
                                                                         <td class="px-1">{{ payment.payed_from|default:'?' }}</td>
                                                                         <td class="px-1">{{ payment.payed_due|default:'?' }}</td>
                                                                         <td class="px-1">{{ payment.date|date:'d-m-Y' }}</td>
@@ -527,4 +525,3 @@
         </div>
     </div>
 {% endblock %}
-
