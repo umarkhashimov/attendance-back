@@ -128,7 +128,7 @@
                                                                         <td class="px-1">{{ payment.months }}</td>
                                                                         <td class="px-1">{{ payment.payed_from|default:'?' }}</td>
                                                                         <td class="px-1">{{ payment.payed_due|default:'?' }}</td>
-                                                                        <td class="px-1">{{ payment.date|date:'d-m-Y' }}</td>
+                                                                        <td class="px-1">{{ payment.date|date }}</td>
                                                                         {% if user.is_superuser %}
                                                                             <td class=""><a
                                                                                     href="{% url 'payment:update_payment_dates' pk=payment.id %}"
