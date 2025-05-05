@@ -9,7 +9,7 @@
     <div class="container courses-list">
         <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
             <h5 class="m-0">Ученики</h5>
-{#            <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>#}
+            {#            <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>#}
             <a href="{% url 'students:create_student' %}" class="btn btn-primary">
                 Создать Ученика
             </a>
@@ -45,26 +45,36 @@
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
                             <div class="custom-select-2">
-                                <label for="id_enrollment_month" class="me-2 ms-1 mb-1">{{ filter_form.enrollment_month.label }}</label>
+                                <label for="id_enrollment_month"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.enrollment_month.label }}</label>
                                 {{ filter_form.enrollment_month }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="id_enrollment_month"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.display_only.label }}</label>
+                                {{ filter_form.display_only }}
                             </div>
                         </div>
                     </div>
                 </form>
                 <div>
-                <p class="text-secondary fw-normal m-0 d-inline-block me-3">Активные: {{ active_students_count }}</p>
-                <p class="text-secondary fw-normal m-0 d-inline-block">Найдено: {{ queryset_length }}</p>
+                    <p class="text-secondary fw-normal m-0 d-inline-block me-3">
+                        Активные: {{ active_students_count }}</p>
+                    <p class="text-secondary fw-normal m-0 d-inline-block">Найдено: {{ queryset_length }}</p>
                 </div>
             </div>
         </div>
 
         <div class="row px-2 mt-3">
             {% for obj in students %}
-                <div class="col-12 col-md-6 col-lg-4 px-1 my-1">
+                <div class="col-12 col-md-6 col-lg-6 px-1 my-1">
                     <a href="{% url 'students:student_update' pk=obj.id %}"
                        class="border border-3 px-2 py-2 d-block course-list-item {% if obj.in_debt %} border-danger-subtle bg-danger-subtle {% endif %}">
                         <p class="text-dark mb-0 course-name">
-                            <span class="text-secondary course-id">{{ obj.id }}</span>
+                            <span class="me-2">{{ forloop.counter }}</span>
+{#                            <span class="text-secondary course-id">{{ obj.id }}</span>#}
                             {{ obj.full_name|capfirst }}
                         </p>
                     </a>
@@ -74,8 +84,8 @@
             {% endfor %}
         </div>
 
-        {% if page_obj.paginator.count > 30  %}
-                {% include 'layout/pagination.html' %}
+        {% if page_obj.paginator.count > 30 %}
+            {% include 'layout/pagination.html' %}
         {% endif %}
     </div>
 

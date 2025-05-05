@@ -101,40 +101,54 @@ class StudentsListView(AdminRequired, ListView):
         teacher = self.request.GET.get('teacher')
         ordering = self.request.GET.get('order_by')
         enrollment_month = self.request.GET.get('enrollment_month')
+        display_only = self.request.GET.get('display_only')
 
         queryset = super().get_queryset()
 
-        if enrollment_month:
+        if enrollment_month and not display_only:
             year, month = map(int, enrollment_month.split('-'))
-            queryset = queryset.filter(enrollment__enrolled_at__year=year, enrollment__enrolled_at__month=month).distinct().order_by('enrollment__enrolled_at')
+            queryset = queryset.filter(enrollment_date__year=year, enrollment_date__month=month)
+
+
+        if not enrollment_month and display_only:
+            if display_only == '1':
+                queryset = queryset.filter(Q(courses__isnull=False) | Q(enrollment__status=True)).exclude(enrollment__status=False)
+            elif display_only == '2':
+                queryset = queryset.filter(Q(courses__isnull=True) | Q(enrollment__status=False)).exclude(enrollment__status=True)
+            elif display_only == '3':
+                queryset = queryset.filter(enrollment__trial_lesson=True, enrollment__status=True).exclude(enrollment__status=False)
+            elif display_only == '4':
+                queryset = queryset.filter(enrollment__payment_due__lt=datetime.today().date(),enrollment__trial_lesson=False, enrollment__status=True)
+
+        if enrollment_month and display_only:
+            year, month = map(int, enrollment_month.split('-'))
+            if display_only == '1':
+                queryset = queryset.filter(enrollment__status=True, enrollment__enrolled_at__year=year, enrollment__enrolled_at__month=month)
+            elif display_only == '2':
+                queryset = queryset.filter(Q(courses__isnull=True) | Q(enrollment__status=False), enrollment_date__year=year, enrollment_date__month=month).exclude(enrollment__status=True)
+            elif display_only == '3':
+                queryset = queryset.filter(Q(enrollment__trail_used_once_date__month=month, enrollment__trail_used_once_date__year=year), enrollment__status=True)
+            elif display_only == '4':
+                queryset = queryset.filter(enrollment__payment_due__month=month, enrollment__payment_due__year=year, enrollment__status=True)
 
         if text:
             words= text.split()
             queryset = queryset.filter(Q(last_name__in=words) | Q(first_name__in=words) | Q(last_name__icontains=text) | Q(phone_number__icontains=text) | Q(additional_number__icontains=text))
+
         if teacher:
-            queryset = queryset.filter(courses__teacher=teacher).distinct()
+            queryset = queryset.filter(courses__teacher=teacher)
 
         if ordering:
             if ordering == "1":
                 queryset = queryset.order_by('first_name', 'last_name')
             elif ordering == "2":
-                queryset = queryset.filter(enrollment__payment_due__lt=datetime.today().date(), courses__isnull=False, enrollment__trial_lesson=False, enrollment__status=True).order_by('first_name', 'last_name').distinct()
+                queryset = queryset.order_by('-first_name', '-last_name')
             elif ordering == "3":
-                thirty_days_ago = datetime.now() - timedelta(days=30)
-                queryset = queryset.filter(enrollment_date__gte=thirty_days_ago).order_by('-id')
-            elif ordering == '4':
-                thirty_days_ago = datetime.now() - timedelta(days=60)
-                queryset = queryset.filter(enrollment_date__gte=thirty_days_ago).order_by('-id')
-            elif ordering == "5":
-                queryset = queryset.filter(Q(courses__isnull=False) | Q(enrollment__status=True)).exclude(enrollment__status=False).order_by('first_name', 'last_name').distinct()
-            elif ordering == "8":
-                queryset = queryset.filter(Q(courses__isnull=True) | Q(enrollment__status=False)).exclude(enrollment__status=True).order_by('first_name', 'last_name').distinct()
-            elif ordering == "6":
                 queryset = queryset.order_by('-id')
-            elif ordering == "7":
+            elif ordering == "4":
                 queryset = queryset.order_by('id')
 
-        return queryset
+        return queryset.distinct()
     
 class TeachersListView(AdminRequired, ListView):
     queryset = UsersModel.objects.all().filter(role='1', is_active=True).order_by('first_name', 'last_name').prefetch_related('coursemodel_set')

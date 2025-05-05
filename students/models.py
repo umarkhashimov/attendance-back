@@ -40,6 +40,7 @@ class Enrollment(models.Model):
     status = models.BooleanField(default=True, verbose_name="Статус Активности")
     trial_lesson = models.BooleanField(default=True, verbose_name="Пробный урок")
     trail_used_once = models.BooleanField(default=False)
+    trail_used_once_date = models.DateField(null=True, blank=True)
     hold = models.PositiveIntegerField(default=0, null=True, verbose_name="Заморозка")
     discount = models.PositiveIntegerField(default=0, verbose_name="Скидка %", validators=[MaxValueValidator(100)])
     debt_note = models.CharField(max_length=200, null=True, blank=True, verbose_name="Заметка для учителя")

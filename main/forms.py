@@ -40,9 +40,15 @@ class StudentsListFilterForm(forms.Form):
     )
 
     order_by = forms.ChoiceField(
-        choices=[(1, "Имя Фамилия"), (2, "Должники"), (3, "Новые за 30 дней"), (4, "Новые за 60 дней"), (5, "Активные"), (8, "Не активные"), (6, "Последние"), (7, "Ранние"),],
-        widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
+        choices=[(1, "Имя Фамилия"), (2, "Имя Фамилия (убывание)"), (3, "Последние"), (4, "Ранние"),],
+        widget=Select2Widget(attrs={'class': 'form-select', 'onchange': 'submit()'}),
         label="Сортировать по", required=False
+    )
+
+    display_only = forms.ChoiceField(
+        choices=[(1, 'Активные'), (2,'Неактивные'), (3, "Пробники"), (4, "Должники")],
+        widget=Select2Widget(attrs={'class': 'form-control', 'onchange':'submit()'}),
+        label="Показать", required=False
     )
 
     enrollment_month = forms.DateField(

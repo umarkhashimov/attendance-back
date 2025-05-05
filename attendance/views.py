@@ -10,17 +10,6 @@ from users.filters import AdminRequired
 from .models import AttendanceModel
 from datetime import datetime
     
-class RedirecToSessionByDate(View, AdminRequired):
-
-    def get(self, request, course_id):
-        date = self.request.GET.get('date')
-        session = SessionsModel.objects.get(course_id=course_id, date=date)
-
-        if session:
-            return redirect('attendance:session_detail', session_id=session.id)
-        else:
-            return redirect('main:main')
-
 
 class GetSessionView(View):
 
@@ -55,6 +44,7 @@ class GetSessionView(View):
                                 obj.enrollment.trail_used_once = True
                             else:
                                 obj.enrollment.trial_lesson = False
+                                obj.trial_lesson_used_once_date = datetime.today()
                                 if not obj.enrollment.payment_due:
                                     obj.enrollment.payment_due = datetime.today()
                             obj.enrollment.save()
