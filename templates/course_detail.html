@@ -36,6 +36,7 @@
                                     <a
                                             class="text-decoration-none text-dark opacity-100 table-obj-name-link"
                                             href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a>
+                                <span class="text-secondary fs-6">-{{ enrollment.discount }}%</span>
                                     {% if enrollment.note %}
                                         <span data-bs-toggle="tooltip" data-bs-placement="top"
                                               title="{{ enrollment.note }}"
@@ -106,10 +107,17 @@
                                                             <b>Ученик:</b> {{ enrollment.student }}
                                                         </p>
                                                         <p class="mb-2">
-                                                            <b>Баланс:</b> {{ enrollment.balance }}
+                                                            <b>Баланс:</b> {{ enrollment.balance|default:'-' }}
                                                         </p>
                                                         <p class="mb-2">
-                                                            <b>Конец абонимента:</b> {{ enrollment.payment_due }}
+                                                            <b>Дата записи:</b> {{ enrollment.enrolled_at|default:'-' }}
+                                                        </p>
+                                                        <p class="mb-2">
+                                                            <b>Прошел пробный:</b> {{ enrollment.trail_used_once_date|default:'-' }}
+                                                        </p>
+                                                        <p class="mb-2">
+                                                            <b>Конец
+                                                                абонимента:</b> {{ enrollment.payment_due|default:'-' }}
                                                         </p>
                                                         <div>
                                                             <ul class="nav nav-tabs">
@@ -415,7 +423,8 @@
                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                                     Отмена
                                                 </button>
-                                                <a type="button" class="btn btn-danger" href="{% url 'courses:archive_course' pk=obj.id %}">
+                                                <a type="button" class="btn btn-danger"
+                                                   href="{% url 'courses:archive_course' pk=obj.id %}">
                                                     Подтвердить
                                                 </a>
                                             </div>

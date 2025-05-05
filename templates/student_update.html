@@ -254,6 +254,7 @@
                                     <a
                                             class="text-decoration-none text-dark opacity-100 table-obj-name-link"
                                             href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}</a>
+                                <span class="text-secondary fs-6">-{{ enrollment.discount }}%</span>
                                     {% if enrollment.note %}
                                         <span data-bs-toggle="tooltip" data-bs-placement="top"
                                               title="{{ enrollment.note }}"
@@ -324,10 +325,16 @@
                                                             <b>Ученик:</b> {{ enrollment.student }}
                                                         </p>
                                                         <p class="mb-2">
-                                                            <b>Баланс:</b> {{ enrollment.balance }}
+                                                            <b>Баланс:</b> {{ enrollment.balance|default:'-' }}
                                                         </p>
                                                         <p class="mb-2">
-                                                            <b>Конец абонимента:</b> {{ enrollment.payment_due }}
+                                                            <b>Дата записи:</b> {{ enrollment.enrolled_at|default:'-' }}
+                                                        </p>
+                                                        <p class="mb-2">
+                                                            <b>Прошел пробный:</b> {{ enrollment.trail_used_once_date|default:'-' }}
+                                                        </p>
+                                                        <p class="mb-2">
+                                                            <b>Конец абонимента:</b> {{ enrollment.payment_due|default:'-' }}
                                                         </p>
                                                         <div>
                                                             <ul class="nav nav-tabs">

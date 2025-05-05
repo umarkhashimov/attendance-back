@@ -73,7 +73,7 @@
                     <a href="{% url 'students:student_update' pk=obj.id %}"
                        class="border border-3 px-2 py-2 d-block course-list-item {% if obj.in_debt %} border-danger-subtle bg-danger-subtle {% endif %}">
                         <p class="text-dark mb-0 course-name">
-                            <span class="me-2">{{ forloop.counter }}</span>
+                            <span class="me-1 fw-semibold">{{ forloop.counter }}.</span>
 {#                            <span class="text-secondary course-id">{{ obj.id }}</span>#}
                             {{ obj.full_name|capfirst }}
                         </p>
