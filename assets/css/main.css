@@ -552,3 +552,28 @@ input::-ms-clear {
 .max-w-15 {
     max-width: 150px !important;
 }
+
+tr.active-tr {
+    position: relative;
+    background-color: rgba(0, 145, 255, 0.15) !important;
+    /*color: white !important;*/
+
+
+    td:first-child::before{
+        position: absolute;
+        content: '';
+        top: calc(50% - 6px);
+        left: -15px;
+        z-index: 99;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: red;
+    }
+
+
+}
+
+/*tr.active-tr :where(a, p, span) {*/
+/*    color: white !important;*/
+/*}*/
