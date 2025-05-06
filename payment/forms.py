@@ -10,6 +10,8 @@ from .models import PaymentModel
 class CreatePaymentForm(forms.ModelForm):
     start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
+    automatic_date = forms.BooleanField(widget=forms.CheckboxInput(attrs={'type': 'checkbox'}), required=False)
+
     class Meta:
         model = PaymentModel
         fields = ['months', 'amount']

@@ -556,7 +556,6 @@ input::-ms-clear {
 tr.active-tr {
     position: relative;
     background-color: rgba(0, 145, 255, 0.15) !important;
-    /*color: white !important;*/
 
 
     td:first-child::before{
@@ -571,9 +570,4 @@ tr.active-tr {
         background-color: red;
     }
 
-
 }
-
-/*tr.active-tr :where(a, p, span) {*/
-/*    color: white !important;*/
-/*}*/

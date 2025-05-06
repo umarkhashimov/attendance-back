@@ -14,6 +14,7 @@ class PaymentModel(models.Model):
     amount = models.FloatField(null=True, blank=True, verbose_name="Сумма оплаты")
     payed_from = models.DateField(null=True, blank=True, verbose_name="Начало абонимента")
     payed_due = models.DateField(null=True, blank=True, verbose_name="Конец абонимента")
+    manual_dates = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время оплаты")
 
     def __str__(self):

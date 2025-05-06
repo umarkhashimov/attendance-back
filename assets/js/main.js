@@ -83,3 +83,12 @@ function setMultipleWeekdays(selector){
         weekdaysFieldDiv.classList.add('d-none')
     }
 }
+
+function manualPaymentDatesCheckbox(element){
+    let targetDiv = document.getElementById(element.getAttribute('forDiv'))
+    if (element.checked){
+        targetDiv.classList.remove('show')
+    }else{
+        targetDiv.classList.add('show')
+    }
+}

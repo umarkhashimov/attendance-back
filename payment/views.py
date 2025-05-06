@@ -93,17 +93,21 @@ class CreatePaymentView(View):
             last_payment_due = PaymentModel.objects.filter(enrollment=enrollment).order_by('-date').first()
             payment = PaymentModel.objects.create(enrollment=enrollment, months=form.cleaned_data['months'])
             payment.amount = calculate_payment_amount(enrollment, payment.months)
+            auto_date = form.cleaned_data['automatic_date']
 
-            if form.cleaned_data['start_date']:
+
+            if form.cleaned_data['start_date'] and not auto_date:
                 payment.payed_from = form.cleaned_data['start_date']
+                payment.manual_date = True
             elif payment.enrollment.payment_due:
                 payment.payed_from = next_closest_session_date(course=enrollment.course, today= payment.enrollment.payment_due) if payment.enrollment.payment_due else datetime.now().date()
             else:
                 payment.payed_from = next_closest_session_date(course=enrollment.course)
 
 
-            if form.cleaned_data['end_date']:
+            if form.cleaned_data['end_date'] and not auto_date:
                 payment.payed_due = form.cleaned_data['end_date']
+                payment.manual_date = True
             else:
                 payment.payed_due = calculate_payment_due_date(enrollment, 12 * payment.months, payment.payed_from)
 
