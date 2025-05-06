@@ -98,7 +98,7 @@ class CreatePaymentView(View):
 
             if form.cleaned_data['start_date'] and not auto_date:
                 payment.payed_from = form.cleaned_data['start_date']
-                payment.manual_date = True
+                payment.manual_dates = True
             elif payment.enrollment.payment_due:
                 payment.payed_from = next_closest_session_date(course=enrollment.course, today= payment.enrollment.payment_due) if payment.enrollment.payment_due else datetime.now().date()
             else:
@@ -107,7 +107,7 @@ class CreatePaymentView(View):
 
             if form.cleaned_data['end_date'] and not auto_date:
                 payment.payed_due = form.cleaned_data['end_date']
-                payment.manual_date = True
+                payment.manual_dates = True
             else:
                 payment.payed_due = calculate_payment_due_date(enrollment, 12 * payment.months, payment.payed_from)
 
