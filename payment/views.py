@@ -34,6 +34,7 @@ class PaymentsListView(ListView):
 
         context['filter_form'] = PaymentHistoryFilterForm(initial=data, teacher_id=teacher_id, course_id=course_id, student_id=student_id)
         context['queryset_length'] = self.get_queryset().count()
+        context['today'] = datetime.now().date()
         return context
 
     def get_queryset(self):

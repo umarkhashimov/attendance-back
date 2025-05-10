@@ -79,13 +79,13 @@
                     </thead>
                     <tbody>
                     {% for payment in payments %}
-                        <tr class="list-items-hover" onclick="toggleTableRowActive(this)" id="payment{{ payment.id }}">
+                        <tr class="list-items-hover {% if payment.date|date:'d-m-Y' == today|date:'d-m-Y' %}text-success{% endif %}" onclick="toggleTableRowActive(this)" id="payment{{ payment.id }}">
                             <td class="px-1">
-                                <span class="text-secondary fw-bold">{{ forloop.counter }}.</span>
-                                <a class="text-dark text-decoration-none table-obj-name-link"
+                                <span class="{% if payment.date|date:'d-m-Y' == today|date:'d-m-Y' %}text-success{% else %} text-secondary{% endif %} fw-bold">{{ forloop.counter }}.</span>
+                                <a class="{% if payment.date|date:'d-m-Y' == today|date:'d-m-Y' %}text-success{% else %} text-dark{% endif %} text-decoration-none table-obj-name-link"
                                                 href="{% url 'students:student_update' pk=payment.enrollment.student.id %}">{{ payment.enrollment.student }}</a>
                             </td>
-                            <td class="px-1"><a class="text-dark text-decoration-none table-obj-name-link"
+                            <td class="px-1"><a class="{% if payment.date|date:'d-m-Y' == today|date:'d-m-Y' %}text-success{% else %} text-dark{% endif %} text-decoration-none table-obj-name-link"
                                                 href="{% url 'courses:course_update' pk=payment.enrollment.course.id %}">{{ payment.enrollment.course }}</a>
                             </td>
                             <td class="px-1">{{ payment.amount }}</td>
