@@ -89,38 +89,48 @@ class CreatePaymentView(View):
     def post(self, request, enrollment_id):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         form = CreatePaymentForm(request.POST)
+
         if form.is_valid():
-            last_payment_due = PaymentModel.objects.filter(enrollment=enrollment).order_by('-date').first()
             payment = PaymentModel.objects.create(enrollment=enrollment, months=form.cleaned_data['months'])
             payment.amount = calculate_payment_amount(enrollment, payment.months)
             auto_date = form.cleaned_data['automatic_date']
 
+            if auto_date:
+                if payment.enrollment.payment_due:
+                    payment.payed_from = next_closest_session_date(course=enrollment.course, today=payment.enrollment.payment_due)
+                else:
+                    weekdays = [x for x in enrollment.course.weekdays]
+                    today_weekday = datetime.today().weekday()
+                    if str(today_weekday) in weekdays:
+                        payment.payed_from = datetime.today()
+                    else:
+                        payment.payed_from = next_closest_session_date(course=enrollment.course, today=datetime.now().date())
 
-            if form.cleaned_data['start_date'] and not auto_date:
-                payment.payed_from = form.cleaned_data['start_date']
-                payment.manual_dates = True
-            elif payment.enrollment.payment_due:
-                payment.payed_from = next_closest_session_date(course=enrollment.course, today= payment.enrollment.payment_due) if payment.enrollment.payment_due else datetime.now().date()
-            else:
-                payment.payed_from = next_closest_session_date(course=enrollment.course)
-
-
-            if form.cleaned_data['end_date'] and not auto_date:
-                payment.payed_due = form.cleaned_data['end_date']
-                payment.manual_dates = True
-            else:
                 payment.payed_due = calculate_payment_due_date(enrollment, 12 * payment.months, payment.payed_from)
+            else:
+                manual_start_date = form.cleaned_data['start_date']
+                manual_end_date = form.cleaned_data['end_date']
+
+                if manual_start_date:
+                    payment.payed_from = manual_start_date
+                else:
+                    payment.payed_from = datetime.now().date()
+
+                if manual_end_date:
+                    payment.payed_due = manual_end_date
+                else:
+                    payment.payed_due = calculate_payment_due_date(enrollment, 12 * payment.months, payment.payed_from)
+                payment.manual_dates = True
 
             payment.save()
 
-            if payment.enrollment.payment_due:
-                if payment.payed_due > payment.enrollment.payment_due:
-                    payment.enrollment.payment_due = payment.payed_due
-                    payment.enrollment.save()
-
+            if enrollment.payment_due:
+                if enrollment.payment_due < payment.payed_due:
+                    enrollment.payment_due = payment.payed_due
             else:
-                payment.enrollment.payment_due = payment.payed_due
-                payment.enrollment.save()
+                enrollment.payment_due = payment.payed_due
+
+            enrollment.save()
 
             action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
             record_action(1, self.request.user, payment, payment.id, action_message)
