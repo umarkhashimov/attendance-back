@@ -2,6 +2,7 @@ from calendar import month
 from datetime import datetime, timedelta, time, timezone
 
 from django import forms
+from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import View, ListView, UpdateView
@@ -85,57 +86,51 @@ class PaymentsListView(ListView):
 
 
 class CreatePaymentView(View):
-
     def post(self, request, enrollment_id):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         form = CreatePaymentForm(request.POST)
+        next_url = request.GET.get('next', '/')
 
-        if form.is_valid():
-            payment = PaymentModel.objects.create(enrollment=enrollment, months=form.cleaned_data['months'])
-            payment.amount = calculate_payment_amount(enrollment, payment.months)
-            auto_date = form.cleaned_data['automatic_date']
+        if not form.is_valid():
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+            return redirect(next_url)
 
-            if auto_date:
-                if payment.enrollment.payment_due:
-                    payment.payed_from = next_closest_session_date(course=enrollment.course, today=payment.enrollment.payment_due)
-                else:
-                    weekdays = [x for x in enrollment.course.weekdays]
-                    today_weekday = datetime.today().weekday()
-                    if str(today_weekday) in weekdays:
-                        payment.payed_from = datetime.today()
-                    else:
-                        payment.payed_from = next_closest_session_date(course=enrollment.course, today=datetime.now().date())
+        months = form.cleaned_data['months']
+        auto_date = form.cleaned_data['automatic_date']
+        start_date = form.cleaned_data.get('start_date')
+        end_date = form.cleaned_data.get('end_date')
 
-                payment.payed_due = calculate_payment_due_date(enrollment, 12 * payment.months, payment.payed_from)
-            else:
-                manual_start_date = form.cleaned_data['start_date']
-                manual_end_date = form.cleaned_data['end_date']
+        if not auto_date and start_date and end_date and start_date < end_date:
+            messages.error(request, "Конец абонимента не может быть раньше начало !")
+            return redirect(next_url)
 
-                if manual_start_date:
-                    payment.payed_from = manual_start_date
-                else:
-                    payment.payed_from = datetime.now().date()
+        payment = PaymentModel.objects.create(enrollment=enrollment, months=months)
+        payment.amount = calculate_payment_amount(enrollment, months)
 
-                if manual_end_date:
-                    payment.payed_due = manual_end_date
-                else:
-                    payment.payed_due = calculate_payment_due_date(enrollment, 12 * payment.months, payment.payed_from)
-                payment.manual_dates = True
+        # Determine payed_from and payed_due
+        if auto_date:
+            base_date = enrollment.payment_due or datetime.today().date()
+            payment.payed_from = next_closest_session_date(course=enrollment.course, today=base_date)
+            payment.payed_due = calculate_payment_due_date(enrollment, 12 * months, payment.payed_from)
+        else:
+            payment.payed_from = start_date or datetime.today().date()
+            payment.payed_due = end_date or calculate_payment_due_date(enrollment, 12 * months, payment.payed_from)
+            payment.manual_dates = True
 
-            payment.save()
+        payment.save()
 
-            if enrollment.payment_due:
-                if enrollment.payment_due < payment.payed_due:
-                    enrollment.payment_due = payment.payed_due
-            else:
-                enrollment.payment_due = payment.payed_due
-
+        # Update enrollment's payment_due if necessary
+        if not enrollment.payment_due or enrollment.payment_due < payment.payed_due:
+            enrollment.payment_due = payment.payed_due
             enrollment.save()
 
-            action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
-            record_action(1, self.request.user, payment, payment.id, action_message)
+        # Record action
+        action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
+        record_action(1, request.user, payment, payment.id, action_message)
 
-        next_url = self.request.GET.get('next', '/')
+        messages.success(request, "Оплата успешно добавлена.")
         return redirect(next_url)
 
 class DebtPaymentsListView(View, AdminRequired):
