@@ -176,49 +176,53 @@ div.hiddenDiv {
 }
 
 .attendance-item.trial-lesson td {
-    background-color: rgba(255, 255, 0, 0.1) !important;
+    background-color: rgba(0, 191, 255, 0.2) !important;
+}
+
+.attendance-item.trial-lesson{
+    border-color: rgba(0, 191, 255, 0.5) !important;
 }
 
 tr.trial-lesson td {
     background-color: rgba(255, 255, 0, 0.1) !important;
 }
 
-.attendance-item[status="0"] {
-    border: 2px solid rgba(255, 0, 0, 0.2);
-}
+/*.attendance-item[status="0"] {*/
+/*    border: 2px solid rgba(255, 0, 0, 0.3);*/
+/*}*/
 
 .attendance-item[status="0"] td {
-    background-color: rgba(255, 0, 0, 0.05);
+    background-color: rgba(255, 0, 0, 0.1);
 }
 
-.attendance-item[status="0"] td.name {
-    color: red;
-}
+/*.attendance-item[status="0"] td.name {*/
+/*    color: red;*/
+/*}*/
 
-.attendance-item[status="1"] {
-    border: 2px solid rgba(0, 128, 0, 0.1);
-}
+/*.attendance-item[status="1"] {*/
+/*    border: 2px solid rgba(0, 128, 0, 0.3);*/
+/*}*/
 
 .attendance-item[status="1"] td {
-    background-color: rgba(0, 128, 0, 0.05);
+    background-color: rgba(0, 128, 0, 0.2);
 }
 
 
-.attendance-item[status="1"] td.name {
-    color: green;
-}
+/*.attendance-item[status="1"] td.name {*/
+/*    color: green;*/
+/*}*/
 
-.attendance-item[status="2"] {
-    border: 2px solid rgba(255, 255, 0, 0.1);
-}
+/*.attendance-item[status="2"] {*/
+/*    border: 2px solid rgba(255, 165, 0, 0.5);*/
+/*}*/
 
 .attendance-item[status="2"] td {
-    background-color: rgba(255, 255, 0, 0.05);
+    background-color: rgba(255, 255, 0, 0.2);
 }
 
-.attendance-item[status="2"] td.name {
-    color: green;
-}
+/*.attendance-item[status="2"] td.name {*/
+/*    color: green;*/
+/*}*/
 
 .attendance-item[status="1"] .marked-status-badge .present,
 .attendance-item[status="0"] .marked-status-badge .absent,
