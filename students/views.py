@@ -62,8 +62,6 @@ class CreateStudentView(AdminRequired, CreateView):
         action_message = f"Создал ученика: <b>{self.object.id} - {self.object.full_name}</b>"
         record_action(1, self.request.user, self.object, self.object.id, action_message)
         return reverse('students:student_update', kwargs={'pk': self.object.id})
-    
-
 
 class CreateEnrollmentView(AdminRequired, View):
 

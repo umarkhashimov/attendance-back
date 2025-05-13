@@ -48,6 +48,7 @@ class Enrollment(models.Model):
     payment_due = models.DateField(null=True, blank=True, verbose_name="Оплачно до")
     enrolled_by = models.ForeignKey(UsersModel, on_delete=models.CASCADE, limit_choices_to={'role': '2'}, null=True, blank=True, verbose_name='Кем записан')
     enrolled_at = models.DateField(auto_now_add=True, verbose_name="Дата записи", null=True, blank=True)
+    created_at = models.DateField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
         return f"{self.student} - {self.course}"
