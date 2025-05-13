@@ -383,14 +383,6 @@
                                                                         100)%</label>
                                                                 </div>
                                                                 <div class="form-floating mb-3">
-                                                                    <input type="number" class="form-control" required
-                                                                           value="{{ enrollment.hold|default:"0" }}"
-                                                                           min="0"
-                                                                           id="dicountInp{{ enrollment.id }}"
-                                                                           placeholder="123" name="hold"/>
-                                                                    <label for="dicountInp{{ enrollment.id }}">Заморозка</label>
-                                                                </div>
-                                                                <div class="form-floating mb-3">
                                                                     <input type="text" class="form-control"
                                                                            value="{{ enrollment.debt_note|default:"" }}"
                                                                            id="debtNoteInp{{ enrollment.id }}"
@@ -405,6 +397,14 @@
                                                                            id="NoteInp{{ enrollment.id }}"
                                                                            placeholder="123" name="note"/>
                                                                     <label for="NoteInp{{ enrollment.id }}">Заметка</label>
+                                                                </div>
+                                                            <div class="d-flex align-items-center mb-3">
+                                                                    <input type="checkbox" name="hold"
+                                                                           class="form-check-input fs-5 m-0"
+                                                                           {% if enrollment.hold %}checked{% endif %}
+                                                                           id="holdInp{{ enrollment.id }}">
+                                                                    <label for="holdInp{{ enrollment.id }}"
+                                                                           class="ms-2">Заморозка</label>
                                                                 </div>
                                                                 <div class="d-flex align-items-center">
                                                                     <input type="checkbox" name="trial_lesson"

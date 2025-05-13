@@ -322,6 +322,10 @@
                     </table>
                 </div>
             </div>
+
+            {% if page_obj.paginator.count > 30 %}
+                {% include 'layout/pagination.html' %}
+            {% endif %}
     </div>
 {% endblock %}
 
