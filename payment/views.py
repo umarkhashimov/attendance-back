@@ -92,47 +92,53 @@ class CreatePaymentView(View):
         form = CreatePaymentForm(request.POST)
         next_url = request.GET.get('next', '/')
 
-        if not form.is_valid():
-            for field, errors in form.errors.items():
-                for error in errors:
-                    messages.error(request, f"{field}: {error}")
-            return redirect(next_url)
+        if form.is_valid():
 
-        months = form.cleaned_data['months']
-        auto_date = form.cleaned_data['automatic_date']
-        start_date = form.cleaned_data.get('start_date')
-        end_date = form.cleaned_data.get('end_date')
+            months = form.cleaned_data['months']
+            auto_date = form.cleaned_data['automatic_date']
+            start_date = form.cleaned_data.get('start_date')
+            end_date = form.cleaned_data.get('end_date')
 
-        if not auto_date and start_date and end_date and start_date < end_date:
-            messages.error(request, "Конец абонимента не может быть раньше начало !")
-            return redirect(next_url)
+            try:
 
-        payment = PaymentModel.objects.create(enrollment=enrollment, months=months)
-        payment.amount = calculate_payment_amount(enrollment, months)
+                payment = PaymentModel.objects.create(enrollment=enrollment, months=months)
+                payment.amount = calculate_payment_amount(enrollment, months)
 
-        # Determine payed_from and payed_due
-        if auto_date:
-            base_date = enrollment.payment_due or datetime.today().date()
-            payment.payed_from = next_closest_session_date(course=enrollment.course, today=base_date)
-            payment.payed_due = calculate_payment_due_date(enrollment, 12 * months, payment.payed_from)
+                # Determine payed_from and payed_due
+                if auto_date:
+                    base_date = enrollment.payment_due or datetime.today().date()
+                    payment.payed_from = next_closest_session_date(course=enrollment.course, today=base_date)
+                    payment.payed_due = calculate_payment_due_date(enrollment, 12 * months, payment.payed_from)
+                else:
+                    payment.payed_from = start_date or datetime.today().date()
+                    payment.payed_due = end_date or calculate_payment_due_date(enrollment, 12 * months, payment.payed_from)
+                    payment.manual_dates = True
+
+                payment.save()
+
+                # Update enrollment's payment_due if necessary
+                if enrollment.payment_due:
+                    if enrollment.payment_due < payment.payed_due:
+                        enrollment.payment_due = payment.payed_due
+                else:
+                        enrollment.payment_due = payment.payed_due
+
+                enrollment.save()
+
+                # Record action
+                action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
+                record_action(1, request.user, payment, payment.id, action_message)
+
+                messages.success(request, "Оплата успешно добавлена.")
+                return redirect(next_url)
+            except Exception as e:
+                messages.success(request, "Что-то пошло не так.")
+                return redirect(next_url)
+
         else:
-            payment.payed_from = start_date or datetime.today().date()
-            payment.payed_due = end_date or calculate_payment_due_date(enrollment, 12 * months, payment.payed_from)
-            payment.manual_dates = True
+            messages.success(request, "Ошибка в форме")
+            return redirect(next_url)
 
-        payment.save()
-
-        # Update enrollment's payment_due if necessary
-        if not enrollment.payment_due or enrollment.payment_due < payment.payed_due:
-            enrollment.payment_due = payment.payed_due
-            enrollment.save()
-
-        # Record action
-        action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
-        record_action(1, request.user, payment, payment.id, action_message)
-
-        messages.success(request, "Оплата успешно добавлена.")
-        return redirect(next_url)
 
 class DebtPaymentsListView(View, AdminRequired):
     template_name = 'payment/debt_payments_list.html'

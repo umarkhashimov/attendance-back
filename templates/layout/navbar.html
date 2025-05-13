@@ -63,6 +63,11 @@
                            href="{% url 'main:students_list' %}">Ученики</a>
                     </li>
                     <li class="nav-item">
+                        {% url 'main:enrollments_list' as cpath %}
+                        <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page"
+                           href="{% url 'main:enrollments_list' %}">Записи</a>
+                    </li>
+                    <li class="nav-item">
                         {% url 'main:teachers_list' as cpath %}
                         <a class="nav-link {% if request.path == cpath %}active{% endif %}" aria-current="page"
                            href="{% url 'main:teachers_list' %}">Учителя</a>

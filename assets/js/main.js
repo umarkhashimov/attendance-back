@@ -86,9 +86,13 @@ function setMultipleWeekdays(selector){
 
 function manualPaymentDatesCheckbox(element){
     let targetDiv = document.getElementById(element.getAttribute('forDiv'))
+    let startInp = targetDiv.querySelector('input[name="start_date"]')
     if (element.checked){
+        startInp.removeAttribute('required')
         targetDiv.classList.remove('show')
     }else{
         targetDiv.classList.add('show')
+        startInp.setAttribute('required', "")
     }
+    console.log(startInp)
 }

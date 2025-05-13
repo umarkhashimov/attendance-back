@@ -260,4 +260,9 @@ class CoursesListView(AdminRequired, ListView):
         context["days_form"] = DaysMultiselectForm(initial={'weekdays': days})
         context['subjects'] = SubjectModel.objects.all()
         return context
-    
+
+
+class EnrollmentsListView(AdminRequired, ListView):
+    model = Enrollment
+    template_name = 'enrollments_list.html'
+    context_object_name = 'enrollments'
