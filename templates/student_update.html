@@ -198,7 +198,7 @@
                                                             {% for record in attendance_data %}
                                                                 <tr class="attendance-item">
                                                                     <td class="px-2 py-1 border border-black border-secondary border-1 status-cell">{{ record.session__date }}</td>
-                                                                    <td class="border border-secondary border-1 border-black text-center status-cell {% if record.status == 1 %} bg-success bg-opacity-75 {% elif record.status == 0 %} bg-danger bg-opacity-75 {% elif record.status == 2 %} bg-warning bg-opacity-50 {% else %} bg-secondary-subtle {% endif %}">
+                                                                    <td class="border border-secondary border-1 border-black text-center status-cell {% if record.status == 1 %} bg-success bg-opacity-75 {% elif record.status == 0 %} bg-danger bg-opacity-75 {% elif record.status == 2 %} bg-warning bg-opacity-50 {% elif record.status == 3 %} bg-info bg-opacity-50   {% else %} bg-secondary-subtle {% endif %}">
                                                                         {% if record.status == 1 or record.status == 2 %}
                                                                             <span title="оценка за дом.зад./посещение"
                                                                                   class="text-black">{{ record.homework_grade|default:"-" }}/{{ record.participation_grade|default:"-" }}</span>
@@ -248,18 +248,24 @@
                         </thead>
                         <tbody>
                         {% for enrollment in enrollments %}
-                            <tr {% if enrollment.trial_lesson %}class="trial-lesson"{% endif %}>
+                            <tr class="{% if enrollment.trial_lesson %}trial-lesson {% elif enrollment.hold%}enrollment-hold{% endif %}">
                                 <td class="py-0 align-middle">
                                     <span class="me-1 text-dark">{{ forloop.counter }}. </span>
                                     <a
                                             class="text-decoration-none text-dark opacity-100 table-obj-name-link"
                                             href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}</a>
                                 <span class="text-secondary fs-6">-{{ enrollment.discount }}%</span>
-                                    {% if enrollment.note %}
+                                    {% if enrollment.hold %}
                                         <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="{{ enrollment.note }}"
+                                              title="Запись заморожена"
+                                              role='button' class="text-primary ms-1"><i
+                                                class="bi bi-exclamation-circle-fill"></i></span>
+                                    {% elif enrollment.trial_lesson %}
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="Пробник"
                                               role='button' class="text-warning ms-1"><i
-                                                class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                                                class="bi bi-exclamation-circle-fill"></i></span>
+                                    {% endif %}
                                 </td>
                                 <td class="py-0 align-middle  {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
                                 <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.payment_due }}</td>

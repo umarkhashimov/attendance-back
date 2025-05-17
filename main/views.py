@@ -266,4 +266,5 @@ class EnrollmentsListView(AdminRequired, ListView):
     model = Enrollment
     template_name = 'enrollments_list.html'
     context_object_name = 'enrollments'
+    ordering = ['-id']
     paginate_by = 30

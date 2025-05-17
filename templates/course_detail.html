@@ -37,16 +37,17 @@
                                             class="text-decoration-none text-dark opacity-100 table-obj-name-link"
                                             href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a>
                                 <span class="text-secondary fs-6">-{{ enrollment.discount }}%</span>
-                                    {% if not enrollment.hold and enrollment.note %}
-                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="{{ enrollment.note }}"
-                                              role='button' class="text-warning ms-1"><i
-                                                class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
                                     {% if enrollment.hold %}
                                         <span data-bs-toggle="tooltip" data-bs-placement="top"
                                               title="Запись заморожена"
                                               role='button' class="text-primary ms-1"><i
-                                                class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                                                class="bi bi-exclamation-circle-fill"></i></span>
+                                    {% elif enrollment.trial_lesson %}
+                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="Пробник"
+                                              role='button' class="text-warning ms-1"><i
+                                                class="bi bi-exclamation-circle-fill"></i></span>
+                                    {% endif %}
                                 </td>
                                 <td class="py-0 align-middle  {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}</td>
                                 <td class="py-0 align-middle {% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.payment_due }}</td>
