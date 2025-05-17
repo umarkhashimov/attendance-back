@@ -126,6 +126,10 @@ class UpdateEnrollmentView(View, AdminRequired):
 class DeactivateEnrollmentView(View):
     def post(self, request, enrollment_id):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
+        enrollment.trial_lesson = False
+        enrollment.hold = False
+        enrollment.payment_due = None
+        enrollment.debt_note = None
         enrollment.status = False
         enrollment.save()
         action_message = f"Удалил ученика <b>{enrollment.student}</b> из группы <b>{enrollment.course}</b>"

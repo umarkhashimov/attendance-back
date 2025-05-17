@@ -189,9 +189,14 @@ tr.trial-lesson td {
 
 tr.enrollment-hold td{
     background-color: rgba(48, 209, 239, 0.1) !important;
-    color: gray !important;
+    color: black !important;
 }
 
+tr.enrollment-disabled td {
+    color: black; !important;
+    /*box-shadow: inset 0 0 20px gray;*/
+    background-color: rgba(128, 128, 128, 0.3) !important;
+}
 
 
 /*.attendance-item[status="0"] {*/
@@ -367,7 +372,7 @@ tr.enrollment-hold td{
     box-shadow: 0px 0px 2px 1px #a00000 !important;
 }
 
-table.enrollments tr:not(.trial-lesson, .enrollment-hold):hover td {
+table.enrollments tr:not(.trial-lesson, .enrollment-hold, [disabled]):hover td {
     background-color: rgba(0, 0, 0, 0.02) !important;
 }
 
@@ -562,6 +567,10 @@ input::-ms-clear {
 
 .max-w-15 {
     max-width: 150px !important;
+}
+
+.max-w-50px {
+    max-width: 50px !important;
 }
 
 tr.active-tr {
