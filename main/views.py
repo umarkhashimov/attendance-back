@@ -1,7 +1,7 @@
 from django.template.defaultfilters import first
 from django.views.generic import TemplateView, ListView
 from datetime import date, datetime, timedelta
-from django.db.models import Q
+from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
 
 from students.forms import StudentInfoForm
@@ -63,12 +63,12 @@ class MainPageView(TemplateView):
         for session in conducted_sessions:
             if session.date == today:
                 attendance = AttendanceModel.objects.all().filter(session=session)
-                fresh_enrolled = Enrollment.objects.filter(course=session.course, status=True).exclude(student_id__in=attendance.values_list('enrollment__student_id', flat=True))
+                fresh_enrolled = Enrollment.objects.filter(course=session.course, status=True, hold=False).exclude(student_id__in=attendance.values_list('enrollment__student_id', flat=True))
                 for enroll in fresh_enrolled:
                     if not AttendanceModel.objects.filter(session=session, enrollment__student_id=enroll.student.id).exists():
                         AttendanceModel.objects.create(enrollment=enroll, session=session)
 
-        conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
+        conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related(Prefetch('attendancemodel_set', queryset=AttendanceModel.objects.filter(enrollment__hold=False)))
 
         context.update({
             'today': date.today().strftime("%Y-%m-%d"),

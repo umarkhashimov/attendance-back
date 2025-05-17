@@ -187,6 +187,13 @@ tr.trial-lesson td {
     background-color: rgba(255, 255, 0, 0.1) !important;
 }
 
+tr.enrollment-hold td{
+    background-color: rgba(48, 209, 239, 0.1) !important;
+    color: gray !important;
+}
+
+
+
 /*.attendance-item[status="0"] {*/
 /*    border: 2px solid rgba(255, 0, 0, 0.3);*/
 /*}*/
@@ -360,7 +367,7 @@ tr.trial-lesson td {
     box-shadow: 0px 0px 2px 1px #a00000 !important;
 }
 
-table.enrollments tr:not(.trial-lesson):hover td {
+table.enrollments tr:not(.trial-lesson, .enrollment-hold):hover td {
     background-color: rgba(0, 0, 0, 0.02) !important;
 }
 

@@ -59,7 +59,7 @@ class CourseUpdateView(AdminRequired, UpdateView):
         context = super().get_context_data(**kwargs)
         context['obj'] = self.get_object()
         context['enrollment_form'] = CourseEnrollmentForm(course=self.get_object().id)
-        context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True).order_by('student__first_name', 'student__last_name')
+        context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True).order_by('-trial_lesson', 'hold','student__first_name', 'student__last_name')
         context['payment_form'] = CreatePaymentForm
 
         # Get the course and its related sessions
@@ -112,30 +112,7 @@ class StartCourseView(AdminRequired, View):
 
             course.create_sessions()
         return redirect("courses:course_update", pk=pk)
-    
-class RedirectCourseToCloseSession(View):
-    
-    def get(self, request, course_id):
-        today = datetime.now().date()
-        course = CourseModel.objects.get(id=course_id)
 
-        if course.is_started:
-
-            closest_session = (
-                SessionsModel.objects.filter(date__gte=today, course_id=course.id)
-                .order_by('date')
-                .first()
-            )
-            if not closest_session:
-                closest_session = (
-                    SessionsModel.objects.filter(date__lt=today, course_id=course.id)
-                    .order_by('-date')
-                    .first()
-                )
-            return redirect('attendance:session_detail', session_id=closest_session.id)
-        
-        else:
-            return redirect("main:main")
         
 
 class CreateCourseView(AdminRequired, CreateView):
@@ -201,7 +178,7 @@ class ConductSession(View):
             enrollments = Enrollment.objects.filter(course=course, status=True)
             for obj in enrollments:
                 enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
-                AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session)
+                AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session, defaults={'status': 3 if obj.hold else None})
 
             # Record Action
             if self.request.user.is_superuser:
