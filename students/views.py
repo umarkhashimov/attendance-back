@@ -80,7 +80,7 @@ class CreateEnrollmentView(AdminRequired, View):
             enrollment, created = Enrollment.objects.update_or_create(
                 course=course if course else form.cleaned_data['course'],
                 student=student if student else form.cleaned_data['student'],
-                defaults={**form.cleaned_data, 'status': True, 'enrolled_at':datetime.now(), 'enrolled_by':self.request.user},
+                defaults={**form.cleaned_data, 'status': True, 'enrolled_at':datetime.now()},
             )
 
             if not enrollment.payment_due and enrollment.trial_lesson == False:
@@ -89,6 +89,10 @@ class CreateEnrollmentView(AdminRequired, View):
 
             if not created:
                 enrollment.payment_due = None
+                enrollment.save()
+
+            if created:
+                enrollment.enrolled_by = self.request.user
                 enrollment.save()
 
             action_message = f"Записал ученика <b>{enrollment.student}</b> в группу <b>{enrollment.course}</b>"

@@ -17,6 +17,15 @@ class UsersModel(AbstractUser):
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
 
+    @property
+    def get_short_name(self) -> str:
+        if self.first_name and self.last_name:
+            return f"{self.first_name[0]}. {self.last_name}"
+        elif self.first_name or self.last_name:
+            return self.first_name or self.last_name
+        else:
+            return self.username
+
     def __str__(self):
         return f"{self.username} - {self.get_full_name}"
 
