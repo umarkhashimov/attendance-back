@@ -342,6 +342,8 @@
                                                         <p class="mb-2">
                                                             <b>Конец абонимента:</b> {{ enrollment.payment_due|default:'-' }}
                                                         </p>
+                                                        <a href="{% url 'students:re_enroll' pk=enrollment.id %}?next_url={{ request.path }}" class="link-primary mb-2 d-inline-block"><i class="bi bi-caret-right-fill"></i> Перенаправить в другую группу</a>
+
                                                         <div>
                                                             <ul class="nav nav-tabs">
                                                                 <li class="nav-item">

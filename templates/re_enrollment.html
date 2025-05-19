@@ -1,0 +1,72 @@
+{% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+  <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+  <div class="container pt-2">
+    <div class="bg-light rounded py-3 mt-3 px-2 border">
+      <p class="text-black ms-1">Перенаправить Ученика в другую группу</p>
+      {% comment %} {{ form.as_p }} {% endcomment %}
+      <form method="post">
+        {% csrf_token %}
+          <table class="table bottom-1 border bg-white enrollment-info-table">
+            <tr>
+                <td>Группа</td>
+                <td>{{ enrollment.course }}</td>
+            </tr>
+            <tr>
+                <td>Ученик</td>
+                <td>{{ enrollment.student }}</td>
+            </tr>
+            <tr>
+                <td>Баланс</td>
+                <td>{{ enrollment.balance|default:'?' }}</td>
+            </tr>
+            <tr>
+                <td>Конец абонимента</td>
+                <td>{{ enrollment.payment_due|default:'?' }}</td>
+            </tr>
+            <tr>
+                <td>Скидка</td>
+                <td>{{ enrollment.discount }}%</td>
+            </tr>
+            <tr>
+                <td>Заметка для Учителя</td>
+                <td>{{ enrollment.debt_note|default:'-' }}</td>
+            </tr>
+            <tr>
+                <td>Заметка</td>
+                <td>{{ enrollment.note|default:'-'  }}</td>
+            </tr>
+            <tr>
+                <td>Замарожен</td>
+                <td>{% if enrollment.hold %} <span class="badge text-bg-success p-1"><i class="bi bi-check-lg"></i></span>{% else %}<span class="badge text-bg-danger p-1"><i class="bi bi-x-lg"></i></span>{% endif %}</td>
+            </tr>
+            <tr>
+                <td>Прошел пробный</td>
+                <td>{% if enrollment.trail_used_once %} <span class="badge text-bg-success p-1"><i class="bi bi-check-lg"></i></span>{% else %}<span class="badge text-bg-danger p-1"><i class="bi bi-x-lg"></i></span>{% endif %}</td>
+            </tr>
+            <tr>
+                <td>Пробник</td>
+                <td>{% if enrollment.trial_lesson %} <span class="badge text-bg-success p-1"><i class="bi bi-check-lg"></i></span>{% else %}<span class="badge text-bg-danger p-1"><i class="bi bi-x-lg"></i></span>{% endif %}</td>
+            </tr>
+        </table>
+
+        <p class="ms-1 fw-semibold">Выбрать новую группу:</p>
+          <div class="my-1 form-floating">
+            {{ re_enrollment_form.course }}
+              <label for="{{ re_enrollment_form.course.label }}">{{ re_enrollment_form.course.label }}</label>
+          </div>
+          <p class="ms-1 m-2"><span class="text-primary fw-bold">!</span> Детали будут скопированы в новую запись</p>
+
+
+        <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+          <button type="submit" class="btn btn-primary">Принять</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

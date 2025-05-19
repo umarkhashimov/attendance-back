@@ -116,3 +116,14 @@ class UpdateEnrollmentForm(forms.Form):
     trial_lesson = forms.BooleanField(required=False)
     debt_note = forms.CharField(max_length=200, required=False)
     note = forms.CharField(max_length=200, required=False)
+
+
+class ReEnrollmentForm(forms.Form):
+    course = forms.ModelChoiceField(queryset=CourseModel.objects.exclude(Q(archived=True) | Q(status=False)),
+                                    widget=Select2Widget(attrs={'class': 'form-control'}), label="Группа")
+
+    def __init__(self, *args, student=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if student:
+            active_enrollments = Enrollment.objects.filter(student=student, status=True).values_list('course__id', flat=True)
+            self.fields['course'].queryset = CourseModel.objects.exclude(Q(archived=True) | Q(status=False) | Q(id__in=active_enrollments))

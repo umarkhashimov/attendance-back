@@ -4,12 +4,14 @@ from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
 from collections import defaultdict
+from django.forms.models import model_to_dict
+from django.contrib import messages
 
 from users.filters import AdminRequired
 from users.forms import TeacherSelectForm
 from users.helpers import record_action
 from .models import StudentModel, Enrollment
-from .forms import StudentInfoForm
+from .forms import StudentInfoForm, ReEnrollmentForm
 from courses.models import CourseModel
 from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
@@ -150,3 +152,59 @@ class UpdateEnrollmentNote(View):
         enrollment.save()
         next_url = self.request.GET.get('next', '/')
         return redirect(next_url)
+
+class ReEnrollStudentView(View):
+
+    def get(self, request, pk):
+        enrollment = get_object_or_404(Enrollment, id=pk)
+
+        context = {
+            're_enrollment_form': ReEnrollmentForm(student=enrollment.student),
+            'enrollment': enrollment,
+        }
+        return render(request, 're_enrollment.html', context)
+
+    def post(self, request, pk):
+        enrollment = get_object_or_404(Enrollment, id=pk)
+        form = ReEnrollmentForm(request.POST)
+        if form.is_valid():
+            try:
+                data = model_to_dict(enrollment)
+
+                # Remove fields you want to set explicitly
+                data.pop('id', None)
+                data['course'] = form.cleaned_data['course']
+                data['student'] = enrollment.student
+                data['enrolled_by'] = enrollment.enrolled_by
+                data['enrolled_at'] = datetime.now()
+
+                new_enrollment, created = Enrollment.objects.update_or_create(
+                    student=enrollment.student,
+                    course=form.cleaned_data['course'],
+                    defaults=data
+                )
+            except:
+                pass
+            finally:
+                enrollment.status = False
+                enrollment.save()
+
+                messages.success(request, "Запись успешно перенаправлена.")
+                next_url = self.request.GET.get('next_url', '/')
+                return redirect(next_url)
+
+        return redirect('main:main')
+        #
+        #
+        #     new_enrollment, created = Enrollment.objects.update_or_create(student=enrollment.student,
+        #                                                                   course=form.cleaned_data['course'],
+        #                                                                   trial_lesson=enrollment.trial_lesson,
+        #                                                                   trail_used_once=enrollment.trail_used_once,
+        #                                                                   trail_used_once_date=enrollment.trail_used_once_date,
+        #                                                                   hold=enrollment.hold,
+        #                                                                   discount=enrollment.discount,
+        #                                                                   note=enrollment.note,
+        #                                                                   debt_note=enrollment.debt_note,
+        #                                                                   payment_due=enrollment.payment_due,
+        #                                                                   enrolled_by=enrollment.enrolled_by,
+        #                                                                   enrolled_at=datetime.now())

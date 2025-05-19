@@ -11,7 +11,7 @@ from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime
 
 from students.models import Enrollment
-from students.forms import CourseEnrollmentForm
+from students.forms import CourseEnrollmentForm, ReEnrollmentForm
 from attendance.models import AttendanceModel
 from .forms import CancelCauseForm, CourseCreateForm
 from payment.forms import CreatePaymentForm
@@ -113,8 +113,6 @@ class StartCourseView(AdminRequired, View):
             course.create_sessions()
         return redirect("courses:course_update", pk=pk)
 
-        
-
 class CreateCourseView(AdminRequired, CreateView):
     model = CourseModel
     template_name = 'create_course.html'
@@ -140,7 +138,6 @@ class CreateCourseView(AdminRequired, CreateView):
         record_action(1, self.request.user, self.object, self.object.id, action_message)
         return reverse('courses:course_update', kwargs={'pk': self.object.id})
 
-        
 class CancelSessionView(View):
 
     def post(self, request, course_id, session_date):

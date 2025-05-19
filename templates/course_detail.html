@@ -116,7 +116,7 @@
                                                             <b>Баланс:</b> {{ enrollment.balance|default:'-' }}
                                                         </p>
                                                         <p class="mb-2">
-                                                            <b>Дата записи:</b> {{ enrollment.enrolled_at|default:'-' }}
+                                                            <b>Дата записи:</b> {{ enrollment.created_at|default:'-' }}
                                                         </p>
                                                         <p class="mb-2">
                                                             <b>Прошел пробный:</b> {{ enrollment.trail_used_once_date|default:'-' }}
@@ -125,6 +125,7 @@
                                                             <b>Конец
                                                                 абонимента:</b> {{ enrollment.payment_due|default:'-' }}
                                                         </p>
+                                                        <a href="{% url 'students:re_enroll' pk=enrollment.id %}?next_url={{ request.path }}" class="link-primary mb-2 d-inline-block"><i class="bi bi-caret-right-fill"></i> Перенаправить в другую группу</a>
                                                         <div>
                                                             <ul class="nav nav-tabs">
                                                                 <li class="nav-item">
@@ -513,12 +514,16 @@
 {% endblock %}
 
 {% block custom_js %}
-    <script>
+    <script defer>
         flatpickr('#LessonTimePicker', {
             enableTime: true,
             noCalendar: true,
             dateFormat: 'H:i',
             time_24hr: true
+        })
+
+        $(document).ready(function () {
+            $('.django-select2').select2() // Apply select2 to all select elements
         })
     </script>
 {% endblock %}
