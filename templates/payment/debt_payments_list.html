@@ -65,6 +65,7 @@
 
                                                             <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">
                                                                 <a href="{% url 'students:student_update' pk=enrollment.student.id %}" class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>
+                                                                <p class="m-0 ms-2 text-danger opacity-75">- {{ enrollment.payment_due }}</p>
                                                                 <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row gap-md-3 debt-students-phone-numbers">
                                                                     <span type="button" copy="{{ enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>
                                                                     <span type="button" copy="{{ enrollment.student.additional_number|default_if_none:"---" }}" {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>
