@@ -115,7 +115,7 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i class="bi bi-info-circle-fill"></i></button>
                                         <!-- Edit Enrollment modal -->
-                                        <div class="modal fade" data-bs-backdrop="static"
+                                        <div class="modal fade modal-lg" data-bs-backdrop="static"
                                              id="editEnrollmentModal{{ enrollment.id }}" tabindex="-1"
                                              aria-labelledby="exampleModalLabel" aria-hidden="true">
                                             <div class="modal-dialog">
@@ -127,7 +127,7 @@
                                                     </div>
                                                     {% csrf_token %}
                                                     <div class="modal-body">
-                                                        <table class="table bottom-1 border bg-white">
+                                                        <table class="table bottom-1 border bg-white enrollment-info-table">
                                                             <tr>
                                                                 <td>Группа</td>
                                                                 <td>{{ enrollment.course }}</td>

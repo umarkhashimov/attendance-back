@@ -116,7 +116,7 @@ class EnrollmentsListFilterForm(forms.Form):
             self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
 
         if end_date:
-            self.fields['date_from'].widget.attrs.update({'min': start_date, 'max': end_date})
+            self.fields['date_from'].widget.attrs.update({'max': end_date})
             # self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
 
             #
