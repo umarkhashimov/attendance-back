@@ -4,13 +4,13 @@ from datetime import date, datetime, timedelta
 from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
 
-from students.forms import StudentInfoForm
+from students.forms import StudentInfoForm, EnrollmentForm
 from students.models import StudentModel, Enrollment
 from users.filters import AdminRequired
 from courses.models import SessionsModel, SubjectModel
 from courses.forms import DaysMultiselectForm, CancelCauseForm
 from courses.models import CourseModel, UsersModel
-from .forms import CoursesListFilterForm, StudentsListFilterForm, TeachersListFilterForm
+from .forms import CoursesListFilterForm, StudentsListFilterForm, TeachersListFilterForm, EnrollmentsListFilterForm
 from attendance.models import AttendanceModel
 class MainPageView(TemplateView):
     template_name = 'main.html'
@@ -268,3 +268,57 @@ class EnrollmentsListView(AdminRequired, ListView):
     context_object_name = 'enrollments'
     ordering = ['-id']
     paginate_by = 30
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        data = self.request.GET.copy()
+        context['filter_form'] = EnrollmentsListFilterForm(initial=data)
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        student = self.request.GET.get('student', None)
+        course = self.request.GET.get('course', None)
+        enrolled_by = self.request.GET.get('enrolled_by', None)
+        date_from = self.request.GET.get('date_from', None)
+        date_to = self.request.GET.get('date_to', None)
+        display_only = self.request.GET.get('display_only', None)
+        order_by = self.request.GET.get('order_by', None)
+
+        if student:
+            queryset = queryset.filter(student=student)
+
+        if course:
+            queryset = queryset.filter(course=course)
+
+        if enrolled_by:
+            queryset = queryset.filter(enrolled_by=enrolled_by)
+
+        if date_from:
+            queryset = queryset.filter(created_at__gte=date_from)
+
+        if date_to:
+            queryset = queryset.filter(created_at__lte=date_to)
+
+        if display_only:
+            if display_only == '1':
+                queryset = queryset.filter(trial_lesson=True)
+            elif display_only == '2':
+                queryset = queryset.filter(status=False)
+            elif display_only == '3':
+                queryset = queryset.filter(payment_due__lt=datetime.today().date())
+            elif display_only == '4':
+                queryset = queryset.filter(payment_due__isnull=False).exclude(Q(trial_lesson=True) | Q(status=False))
+            elif display_only == '5':
+                queryset = queryset.filter(hold=True)
+
+        if order_by:
+            if order_by == '1':
+                queryset = queryset.order_by('student__first_name', 'student__last_name')
+            elif order_by == '2':
+                queryset = queryset.order_by('course__id', 'student__first_name', 'student__last_name')
+            elif order_by == '3':
+                queryset = queryset.order_by('course__lesson_time', 'course__id', 'student__first_name', 'student__last_name')
+
+        return queryset

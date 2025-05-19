@@ -22,43 +22,50 @@
                     <div class="row mt-2 pb-3">
                         <div class="col-12 col-md-4">
                             <div class="custom-select-2">
-                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.content_type.label }}</label>
-                                {{ filter_form.content_type }}
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-6 col-md-4">
-                            <div class="custom-select-2">
-                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.user.label }}</label>
-                                {{ filter_form.user }}
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-6 col-md-4">
-                            <div class="custom-select-2">
-                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.action_type.label }}</label>
-                                {{ filter_form.action_type }}
+                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.student.label }}</label>
+                                {{ filter_form.student }}
                             </div>
                         </div>
                         <div class="col-12 col-md-4">
                             <div class="custom-select-2">
-                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.sort_by.label }}</label>
-                                {{ filter_form.sort_by }}
+                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.course.label }}</label>
+                                {{ filter_form.course }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.enrolled_by.label }}</label>
+                                {{ filter_form.enrolled_by }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-2 mt-2">
+                            <div class="custom-select-2">
+                                <label for="subject"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.date_from.label }}</label>
+                                {{ filter_form.date_from }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-2 mt-2">
+                            <div class="custom-select-2">
+                                <label for="subject"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.date_to.label }}</label>
+                                {{ filter_form.date_to }}
                             </div>
                         </div>
                         <div class="col-12 col-md-4 mt-2">
                             <div class="custom-select-2">
                                 <label for="subject"
-                                       class="me-2 ms-1 mb-1">{{ filter_form.date_start.label }}</label>
-                                {{ filter_form.date_start }}
+                                       class="me-2 ms-1 mb-1">{{ filter_form.display_only.label }}</label>
+                                {{ filter_form.display_only }}
                             </div>
                         </div>
                         <div class="col-12 col-md-4 mt-2">
                             <div class="custom-select-2">
                                 <label for="subject"
-                                       class="me-2 ms-1 mb-1">{{ filter_form.date_end.label }}</label>
-                                {{ filter_form.date_end }}
+                                       class="me-2 ms-1 mb-1">{{ filter_form.order_by.label }}</label>
+                                {{ filter_form.order_by }}
                             </div>
                         </div>
-
                     </div>
                 </form>
             </div>
@@ -138,8 +145,12 @@
                                                                 <td>{{ enrollment.payment_due|default:'?' }}</td>
                                                             </tr>
                                                             <tr>
-                                                                <td>Дата записи</td>
+                                                                <td>Дата записи (создания)</td>
                                                                 <td>{{ enrollment.created_at }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Дата записи</td>
+                                                                <td>{{ enrollment.enrolled_at }}</td>
                                                             </tr>
                                                             <tr>
                                                                 <td>Кем записан</td>

@@ -4,8 +4,10 @@ from cProfile import label
 from django import forms
 from django_select2.forms import Select2Widget, Select2MultipleWidget, ModelSelect2Widget
 
+from students.models import StudentModel
 from users.models import UsersModel
-from courses.models import WEEKDAY_CHOICES, SubjectModel
+from courses.models import WEEKDAY_CHOICES, SubjectModel, CourseModel
+
 
 class CoursesListFilterForm(forms.Form):
     teacher = forms.ModelChoiceField(
@@ -63,3 +65,66 @@ class TeachersListFilterForm(forms.Form):
         widget=forms.TextInput(attrs={'class': 'form-control shadow-none rounded-1 py-0', 'onchange': 'submit()'}),
         required=False, label="Имя пользователя / Имя / Фамилия"
     )
+
+class EnrollmentsListFilterForm(forms.Form):
+    student = forms.ModelChoiceField(queryset=StudentModel.objects.all(),
+                                     widget=Select2Widget(attrs={'class': 'form-control', 'onchange':'submit()'}),
+                                     required=False, label="Ученик")
+
+    course = forms.ModelChoiceField(queryset=CourseModel.objects.all(),
+                                    widget=Select2Widget(attrs={'class': 'form-control', 'onchange':'submit()'}),
+                                    required=False, label="Группа")
+
+    enrolled_by = forms.ModelChoiceField(queryset=UsersModel.objects.filter(role='2'),
+                                         widget=Select2Widget(attrs={'class': 'form-control', 'onchange':'submit()'}),
+                                         required=False, label="Кем записан")
+
+    date_from = forms.DateField(widget=forms.DateInput(
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+                                         required=False, label="С")
+    date_to = forms.DateField(widget=forms.DateInput(
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+                                       required=False, label="До")
+
+    display_only = forms.ChoiceField(
+        choices=[(1, 'Пробники'), (2, 'Неактивные'), (3, "Должники"), (4, "Активные"), (5, "Замороженные")],
+        widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+        label="Показать", required=False
+    )
+
+    order_by = forms.ChoiceField(
+        choices=[(1, "Имя Фамилия"), (2, "Группа (id)"), (3, "Группа (время)"), (4, "Ранние"), ],
+        widget=Select2Widget(attrs={'class': 'form-select', 'onchange': 'submit()'}),
+        label="Сортировать по", required=False
+    )
+
+    def __init__(self,  *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        start_date = self.initial.get("date_from")
+        end_date = self.initial.get("date_to")
+        print('HIiiii')
+
+        if start_date and not end_date:
+            self.initial['date_to'] = start_date
+
+        elif end_date and not start_date:
+            self.initial['date_from'] = end_date
+
+
+        if start_date:
+            self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
+
+        if end_date:
+            self.fields['date_from'].widget.attrs.update({'min': start_date, 'max': end_date})
+            # self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
+
+            #
+            # if end_date:
+            #     payment_date_start = datetime.datetime.strptime(start_date, '%Y-%m-%d')
+            #     payment_date_end = datetime.datetime.strptime(end_date, '%Y-%m-%d')
+            #
+            #     if payment_date_end < payment_date_start:
+            #         self.initial['date_to'] = datetime.date.today().strftime('%Y-%m-%d')
+            # else:
+            #     self.initial['date_to'] = datetime.date.today().strftime('%Y-%m-%d')
