@@ -303,7 +303,7 @@ class EnrollmentsListView(AdminRequired, ListView):
 
         if display_only:
             if display_only == '1':
-                queryset = queryset.filter(trial_lesson=True)
+                queryset = queryset.filter(trial_lesson=True, status=True)
             elif display_only == '2':
                 queryset = queryset.filter(status=False)
             elif display_only == '3':
