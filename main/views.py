@@ -320,5 +320,9 @@ class EnrollmentsListView(AdminRequired, ListView):
                 queryset = queryset.order_by('course__id', 'student__first_name', 'student__last_name')
             elif order_by == '3':
                 queryset = queryset.order_by('course__lesson_time', 'course__id', 'student__first_name', 'student__last_name')
+            elif order_by == '4':
+                queryset = queryset.order_by('-created_at')
+            elif order_by == '5':
+                queryset = queryset.order_by('-enrolled_at')
 
         return queryset

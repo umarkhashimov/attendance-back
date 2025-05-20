@@ -93,7 +93,7 @@ class EnrollmentsListFilterForm(forms.Form):
     )
 
     order_by = forms.ChoiceField(
-        choices=[(1, "Имя Фамилия"), (2, "Группа (id)"), (3, "Группа (время)"), (4, "Ранние"), ],
+        choices=[(1, "Имя Фамилия"), (2, "Группа (id)"), (3, "Группа (время)"), (4, "Дата записи (создания)"), (5, "Дата Записи") ],
         widget=Select2Widget(attrs={'class': 'form-select', 'onchange': 'submit()'}),
         label="Сортировать по", required=False
     )
