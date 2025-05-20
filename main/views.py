@@ -300,6 +300,9 @@ class EnrollmentsListView(AdminRequired, ListView):
 
         if date_to:
             queryset = queryset.filter(created_at__lte=date_to)
+        elif not date_to and date_from:
+            queryset = queryset.filter(created_at__lte=date_from)
+
 
         if display_only:
             if display_only == '1':
