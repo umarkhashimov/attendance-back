@@ -324,25 +324,22 @@
                                                     </div>
                                                     {% csrf_token %}
                                                     <div class="modal-body">
-                                                        <p class="mb-2">
-                                                            <b>Группа:</b> {{ enrollment.course }}, {{ enrollment.subject }}
-                                                        </p>
-                                                        <p class="mb-2">
-                                                            <b>Ученик:</b> {{ enrollment.student }}
-                                                        </p>
-                                                        <p class="mb-2">
-                                                            <b>Баланс:</b> {{ enrollment.balance|default:'-' }}
-                                                        </p>
-                                                        <p class="mb-2">
-                                                            <b>Дата записи:</b> {{ enrollment.enrolled_at|default:'-' }}
-                                                        </p>
-                                                        <p class="mb-2">
-                                                            <b>Прошел пробный:</b> {{ enrollment.trail_used_once_date|default:'-' }}
-                                                        </p>
-                                                        <p class="mb-2">
-                                                            <b>Конец абонимента:</b> {{ enrollment.payment_due|default:'-' }}
-                                                        </p>
-                                                        <a href="{% url 'students:re_enroll' pk=enrollment.id %}?next_url={{ request.path }}" class="link-primary mb-2 d-inline-block"><i class="bi bi-caret-right-fill"></i> Перенаправить в другую группу</a>
+                                                        <table class="table bottom-1 border bg-white enrollment-info-table">
+                                                            <tr>
+                                                                <td>Группа</td>
+                                                                <td>{{ enrollment.course }}<br>{{ enrollment.course.teacher.get_short_name }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Ученик</td>
+                                                                <td>{{ enrollment.student }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Дата записи</td>
+                                                                <td>{{ enrollment.enrolled_at }}</td>
+                                                            </tr>
+
+                                                        </table>
+                                                        <a href="{% url 'students:re_enroll' pk=enrollment.id %}?next_url={{ request.path }}" class="link-primary mb-3 d-inline-block"><i class="bi bi-caret-right-fill"></i> Перенаправить в другую группу</a>
 
                                                         <div>
                                                             <ul class="nav nav-tabs">
