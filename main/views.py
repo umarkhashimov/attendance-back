@@ -90,88 +90,30 @@ class StudentsListView(AdminRequired, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['filter_form'] = StudentsListFilterForm(self.request.GET)
+        data = self.request.GET.copy()
+        context['filter_form'] = StudentsListFilterForm(initial=data)
         context['create_student_form'] = StudentInfoForm
         context['queryset_length'] = self.get_queryset().count()
-        context['active_students_count'] = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False).distinct().count()
+        context['all_students_count'] = StudentModel.objects.all().count()
+        context['active_students_count'] = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False, enrollment__payment_due__isnull=False).distinct().count()
         return context
-
-    from datetime import datetime
-    from django.db.models import Q
 
     def get_queryset(self):
         text = self.request.GET.get('text')
         teacher = self.request.GET.get('teacher')
         ordering = self.request.GET.get('order_by')
-        enrollment_month = self.request.GET.get('enrollment_month')
-        display_only = self.request.GET.get('display_only')
+        date_from = self.request.GET.get('date_from')
+        date_to = self.request.GET.get('date_to')
 
         queryset = super().get_queryset()
 
-        year, month = None, None
-        if enrollment_month:
-            try:
-                year, month = map(int, enrollment_month.split('-'))
-            except ValueError:
-                pass  # Skip filtering if format is invalid
+        if date_from:
+            queryset = queryset.filter(enrollment_date__gte=date_from)
 
-        # Handle filtering by display_only and/or enrollment_month
-        if display_only:
-            if display_only == '1':
-                queryset = queryset.filter(
-                    Q(courses__isnull=False) | Q(enrollment__status=True)
-                ).exclude(enrollment__status=False)
-
-            elif display_only == '2':
-                queryset = queryset.filter(
-                    Q(courses__isnull=True) | Q(enrollment__status=False)
-                ).exclude(enrollment__status=True)
-
-            elif display_only == '3':
-                queryset = queryset.filter(
-                    enrollment__trial_lesson=True,
-                    enrollment__status=True
-                ).exclude(enrollment__status=False)
-
-            elif display_only == '4':
-                queryset = queryset.filter(
-                    enrollment__payment_due__lt=datetime.today().date(),
-                    enrollment__trial_lesson=False,
-                    enrollment__status=True
-                )
-
-            # Additional filter by month if enrollment_month is present
-            if year and month:
-                if display_only == '1':
-                    queryset = queryset.filter(
-                        enrollment__status=True,
-                        enrollment__enrolled_at__year=year,
-                        enrollment__enrolled_at__month=month
-                    )
-                elif display_only == '2':
-                    queryset = queryset.filter(
-                        Q(courses__isnull=True) | Q(enrollment__status=False),
-                        enrollment_date__year=year,
-                        enrollment_date__month=month
-                    ).exclude(enrollment__status=True)
-                elif display_only == '3':
-                    queryset = queryset.filter(
-                        enrollment__trail_used_once_date__year=year,
-                        enrollment__trail_used_once_date__month=month,
-                        enrollment__status=True
-                    )
-                elif display_only == '4':
-                    queryset = queryset.filter(
-                        enrollment__payment_due__year=year,
-                        enrollment__payment_due__month=month,
-                        enrollment__status=True
-                    )
-
-        elif year and month:
-            queryset = queryset.filter(
-                enrollment_date__year=year,
-                enrollment_date__month=month
-            )
+        if date_to:
+            queryset = queryset.filter(enrollment_date__lte=date_to)
+        elif not date_to and date_from:
+            queryset = queryset.filter(enrollment_date__lte=date_from)
 
         # Apply search text filter
         if text:
@@ -273,6 +215,7 @@ class EnrollmentsListView(AdminRequired, ListView):
         context = super().get_context_data(**kwargs)
         data = self.request.GET.copy()
         context['filter_form'] = EnrollmentsListFilterForm(initial=data)
+        context['queryset_length'] = self.get_queryset().count()
         return context
 
     def get_queryset(self):

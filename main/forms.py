@@ -47,17 +47,39 @@ class StudentsListFilterForm(forms.Form):
         label="Сортировать по", required=False
     )
 
-    display_only = forms.ChoiceField(
-        choices=[(1, 'Активные'), (2,'Неактивные'), (3, "Пробники"), (4, "Должники")],
-        widget=Select2Widget(attrs={'class': 'form-control', 'onchange':'submit()'}),
-        label="Показать", required=False
-    )
-
     enrollment_month = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'month', 'class': 'form-control', 'onchange': 'submit()'}),
         label="Выбрать месяц",
         input_formats=['%Y-%m']  # Required to parse '2025-04' format
     )
+
+    date_from = forms.DateField(widget=forms.DateInput(
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+        required=False, label="С")
+
+    date_to = forms.DateField(widget=forms.DateInput(
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+        required=False, label="До")
+
+    def __init__(self,  *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        start_date = self.initial.get("date_from")
+        end_date = self.initial.get("date_to")
+        print('HIiiii')
+
+        if start_date and not end_date:
+            self.initial['date_to'] = start_date
+
+        elif end_date and not start_date:
+            self.initial['date_from'] = end_date
+
+
+        if start_date:
+            self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
+
+        if end_date:
+            self.fields['date_from'].widget.attrs.update({'max': end_date})
 
 class TeachersListFilterForm(forms.Form):
     text = forms.CharField(
