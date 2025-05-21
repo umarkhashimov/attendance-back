@@ -106,20 +106,24 @@
 {#            {% endfor %}#}
 
             {% for teacher, courses in teacher_enrollments.items %}
-                <ol class="list-group my-2 border-1 border-primary border p-0">
+                <ol class="list-group my-2 border-primary border p-0">
                 <li class="list-group-item list-group-item-primary w-100 fs-5 fw-semibold mb-3">{{ forloop.counter }}. {{ teacher }}</li>
                     {% for course, enrollments in courses.items %}
                         <li class="list-unstyled list-group-item border-0 py-0 mb-3">
 
-                            <ul class="list-group">
-                                <li class="list-group-item-info list-group-item fw-semibold bg-opacity-25">
-                                    {{ course }}:
+                            <ul class="list-group border border-secondary shadow shadow-sm">
+                                <li class="list-group-item-secondary list-group-item fw-semibold bg-opacity-25">
+                                    <a href="{% url 'courses:course_update' pk=course.id %}"
+                                                                   class="my-auto text-dark table-obj-name-link text-decoration-none">{{ course }}</a>
                                 </li>
                                 {% for enrollment in enrollments %}
                                 <li class="list-group-item d-flex justify-content-between list-items-hover">
-                                <div>
+                                <div class="d-flex">
                                     {{ forloop.counter }}. <a href="{% url 'students:student_update' pk=enrollment.student.id %}"
                                                                    class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>
+                                    {% if enrollment.note %}
+                                    <p class="m-0 ms-2 text-secondary">- {{ enrollment.note }}</p>
+                                    {% endif %}
                                 </div>
                                 <div class="debt-students-phone-numbers d-flex gap-3">
                                     <span type="button" copy="{{ enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>

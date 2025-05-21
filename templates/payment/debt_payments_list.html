@@ -30,7 +30,7 @@
                 </form>
             </div>
         </div>
-        <div class="row px-2 mt-3 debt-accordions">
+        <div class="row px-3 mt-3 debt-accordions">
 {#            {% for teacher, courses in teacher_enrollments.items %}#}
 {#                <div class="accordion accordion-flush" id="accordionExample">#}
 {#                    <div class="accordion-item my-1">#}
@@ -88,14 +88,15 @@
 {#                <p class="text-center text-secondary">Нет Должников.</p>#}
 {#            {% endfor %}#}
             {% for teacher, courses in teacher_enrollments.items %}
-                <ol class="list-group my-2 border-1 border-primary border p-0">
+                <ol class="list-group my-2 border-primary border p-0">
                 <li class="list-group-item list-group-item-primary w-100 fs-5 fw-semibold mb-3">{{ forloop.counter }}. {{ teacher }}</li>
                     {% for course, enrollments in courses.items %}
                         <li class="list-unstyled list-group-item border-0 py-0 mb-3">
 
-                            <ul class="list-group">
-                                <li class="list-group-item-info list-group-item fw-semibold bg-opacity-25">
-                                    {{ course }}:
+                            <ul class="list-group border border-secondary shadow shadow-sm">
+                                <li class="list-group-item-secondary list-group-item fw-semibold bg-opacity-25">
+                                    <a href="{% url 'courses:course_update' pk=course.id %}"
+                                                                   class="my-auto text-dark table-obj-name-link text-decoration-none">{{ course }}</a>
                                 </li>
                                 {% for enrollment in enrollments %}
                                 <li class="list-group-item d-flex justify-content-between list-items-hover">
@@ -115,7 +116,7 @@
                     {% endfor %}
                 </ol>
             {% empty %}
-                <p class="text-center text-secondary">Нет Пробников.</p>
+                <p class="text-center text-secondary">Нет Должников.</p>
             {% endfor %}
         </div>
     </div>
