@@ -31,61 +31,91 @@
             </div>
         </div>
         <div class="row px-2 mt-3 debt-accordions">
+{#            {% for teacher, courses in teacher_enrollments.items %}#}
+{#                <div class="accordion accordion-flush" id="accordionExample">#}
+{#                    <div class="accordion-item my-1">#}
+{#                        <h2 class="accordion-header">#}
+{##}
+{#                            <button class="accordion-button shadow-none collapsed border py-2" type="button"#}
+{#                                    data-bs-toggle="collapse" data-bs-target="#accordion{{ teacher.id }}"#}
+{#                                    aria-expanded="false">#}
+{#                                <span class="me-1 text-secondary opacity-75">{{ forloop.counter }}. </span>{{ teacher }}#}
+{#                            </button>#}
+{#                        </h2>#}
+{#                        <div id="accordion{{ teacher.id }}" class="accordion-collapse collapse border">#}
+{#                            <div class="accordion-body bg-opacity-25 bg-light">#}
+{#                                {% for course, enrollments in courses.items %}#}
+{#                                    <h2 class="accordion-header">#}
+{#                                        <button class="accordion-button shadow-none collapsed border py-2" type="button"#}
+{#                                                data-bs-toggle="collapse"#}
+{#                                                data-bs-target="#accordion{{ course.id }}Teacher{{ teacher.id }}"#}
+{#                                                aria-expanded="false">#}
+{#                                            {{ course }}<span#}
+{#                                                class="badge text-light mx-2 bg-danger p-1">{{ enrollments|length }}</span>#}
+{#                                        </button>#}
+{#                                    </h2>#}
+{#                                    <div id="accordion{{ course.id }}Teacher{{ teacher.id }}"#}
+{#                                         class="accordion-collapse collapse">#}
+{#                                        <div class="accordion-body bg-opacity-50 bg-light border">#}
+{#                                            <ul class="list-group list-unstyled">#}
+{##}
+{#                                                {% for enrollment in enrollments %}#}
+{#                                                    <li class="list-group-item list-items-hover py-0">#}
+{#                                                        <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">#}
+{##}
+{#                                                            <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">#}
+{#                                                                <a href="{% url 'students:student_update' pk=enrollment.student.id %}" class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>#}
+{#                                                                <p class="m-0 ms-2 text-danger opacity-75">- {{ enrollment.payment_due }}</p>#}
+{#                                                                <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row gap-md-3 debt-students-phone-numbers">#}
+{#                                                                    <span type="button" copy="{{ enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>#}
+{#                                                                    <span type="button" copy="{{ enrollment.student.additional_number|default_if_none:"---" }}" {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>#}
+{#                                                            </div>#}
+{#                                                            <span class="badge text-bg-danger text-white rounded-pill bg-opacity-100">{{ enrollment.balance }}</span>#}
+{#                                                        </div>#}
+{#                                                    </li>#}
+{#                                                {% endfor %}#}
+{#                                            </ul>#}
+{##}
+{#                                        </div>#}
+{#                                    </div>#}
+{##}
+{#                                {% endfor %}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% empty %}#}
+{#                <p class="text-center text-secondary">Нет Должников.</p>#}
+{#            {% endfor %}#}
             {% for teacher, courses in teacher_enrollments.items %}
-                <div class="accordion accordion-flush" id="accordionExample">
-                    <div class="accordion-item my-1">
-                        <h2 class="accordion-header">
+                <ol class="list-group my-2 border-1 border-primary border p-0">
+                <li class="list-group-item list-group-item-primary w-100 fs-5 fw-semibold mb-3">{{ forloop.counter }}. {{ teacher }}</li>
+                    {% for course, enrollments in courses.items %}
+                        <li class="list-unstyled list-group-item border-0 py-0 mb-3">
 
-                            <button class="accordion-button shadow-none collapsed border py-2" type="button"
-                                    data-bs-toggle="collapse" data-bs-target="#accordion{{ teacher.id }}"
-                                    aria-expanded="false">
-                                <span class="me-1 text-secondary opacity-75">{{ forloop.counter }}. </span>{{ teacher }}
-                            </button>
-                        </h2>
-                        <div id="accordion{{ teacher.id }}" class="accordion-collapse collapse border">
-                            <div class="accordion-body bg-opacity-25 bg-light">
-                                {% for course, enrollments in courses.items %}
-                                    <h2 class="accordion-header">
-                                        <button class="accordion-button shadow-none collapsed border py-2" type="button"
-                                                data-bs-toggle="collapse"
-                                                data-bs-target="#accordion{{ course.id }}Teacher{{ teacher.id }}"
-                                                aria-expanded="false">
-                                            {{ course }}<span
-                                                class="badge text-light mx-2 bg-danger p-1">{{ enrollments|length }}</span>
-                                        </button>
-                                    </h2>
-                                    <div id="accordion{{ course.id }}Teacher{{ teacher.id }}"
-                                         class="accordion-collapse collapse">
-                                        <div class="accordion-body bg-opacity-50 bg-light border">
-                                            <ul class="list-group list-unstyled">
-
-                                                {% for enrollment in enrollments %}
-                                                    <li class="list-group-item list-items-hover py-0">
-                                                        <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">
-
-                                                            <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">
-                                                                <a href="{% url 'students:student_update' pk=enrollment.student.id %}" class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>
-                                                                <p class="m-0 ms-2 text-danger opacity-75">- {{ enrollment.payment_due }}</p>
-                                                                <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row gap-md-3 debt-students-phone-numbers">
-                                                                    <span type="button" copy="{{ enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>
-                                                                    <span type="button" copy="{{ enrollment.student.additional_number|default_if_none:"---" }}" {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>
-                                                            </div>
-                                                            <span class="badge text-bg-danger text-white rounded-pill bg-opacity-100">{{ enrollment.balance }}</span>
-                                                        </div>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-
-                                        </div>
-                                    </div>
-
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                            <ul class="list-group">
+                                <li class="list-group-item-info list-group-item fw-semibold bg-opacity-25">
+                                    {{ course }}:
+                                </li>
+                                {% for enrollment in enrollments %}
+                                <li class="list-group-item d-flex justify-content-between list-items-hover">
+                                <div class="d-flex">
+                                    {{ forloop.counter }}. <a href="{% url 'students:student_update' pk=enrollment.student.id %}"
+                                                                   class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>
+                                    <p class="m-0 ms-2 text-danger opacity-75">- {{ enrollment.payment_due }}  | {{ enrollment.balance }}</p>
+                                </div>
+                                <div class="debt-students-phone-numbers d-flex gap-3">
+                                    <span type="button" copy="{{ enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>
+                                    <span type="button" copy="{{ enrollment.student.additional_number|default_if_none:"---" }}" {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>
+                                </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ol>
             {% empty %}
-                <p class="text-center text-secondary">Нет Должников.</p>
+                <p class="text-center text-secondary">Нет Пробников.</p>
             {% endfor %}
         </div>
     </div>
