@@ -98,6 +98,7 @@ class StudentsListView(AdminRequired, ListView):
         text = self.request.GET.get('text')
         teacher = self.request.GET.get('teacher')
         ordering = self.request.GET.get('order_by')
+        enrollment_month = self.request.GET.get('enrollment_month')
 
         queryset = super().get_queryset()
 
@@ -106,6 +107,11 @@ class StudentsListView(AdminRequired, ListView):
             queryset = queryset.filter(Q(last_name__in=words) | Q(first_name__in=words) | Q(last_name__icontains=text) | Q(phone_number__icontains=text) | Q(additional_number__icontains=text))
         if teacher:
             queryset = queryset.filter(courses__teacher=teacher).distinct()
+
+        if enrollment_month:
+            year, month = map(int, enrollment_month.split('-'))
+            queryset = queryset.filter(enrollment__enrolled_at__year=year, enrollment__enrolled_at__month=month).distinct()
+
         if ordering:
             if ordering == "1":
                 queryset = queryset.order_by('first_name', 'last_name')

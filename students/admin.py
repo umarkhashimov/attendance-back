@@ -10,5 +10,5 @@ class StudentModelAdmin(admin.ModelAdmin):
 
 @admin.register(Enrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
-    list_display = ['course', 'student', 'status', 'payment_due']
-    list_filter = ['status', 'enrolled_by', 'enrolled_at']
+    list_display = ['course', 'student', 'status', 'payment_due', 'enrolled_at']
+    list_filter = ['status', 'enrolled_by', 'course__teacher', 'enrolled_at', 'course']

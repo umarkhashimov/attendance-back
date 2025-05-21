@@ -14,42 +14,7 @@
                 Создать Ученика
             </a>
         </div>
-            <!-- Group create modal -->
-        <div class="modal fade" id="studentCreateModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <form method="post" action="{% url 'students:create_student' %}">
-                    {% csrf_token %}
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Добавить Ученика</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            {% for field in create_student_form %}
-                              <div class="form-floating my-1">
-                                {{ field }}
-                                <label aria-required="{{ field.field.required }}" {{ field.required }} for="{{ field.id_for_label }}">{{ field.label }}</label>
-                              </div>
-                              {% if field.errors %}
-                                <div class="text-danger small">
-                                  {% for error in field.errors %}
-                                    {{ error }}
-                                  {% endfor %}
-                                </div>
-                              {% endif %}
-                            {% endfor %}
-                        </div>
-                        <div class="modal-footer pt-1">
-                            <div class="d-flex justify-content-md-end flex-column-reverse w-100 flex-md-row gap-2">
-                                <button type="reset" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                                <button type="submit" class="btn btn-success">Сохранить</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">
             <div class="col-12 bg-light rounded pt-2 px-2 pb-1 border">
@@ -76,6 +41,12 @@
                             <div class="custom-select-2">
                                 <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.order_by.label }}</label>
                                 {{ filter_form.order_by }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="id_enrollment_month" class="me-2 ms-1 mb-1">{{ filter_form.enrollment_month.label }}</label>
+                                {{ filter_form.enrollment_month }}
                             </div>
                         </div>
                     </div>
