@@ -94,8 +94,8 @@ class StudentsListView(AdminRequired, ListView):
         context['filter_form'] = StudentsListFilterForm(initial=data)
         context['create_student_form'] = StudentInfoForm
         context['queryset_length'] = self.get_queryset().count()
-        context['all_students_count'] = StudentModel.objects.all().count()
-        context['active_students_count'] = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False, enrollment__payment_due__isnull=False).distinct().count()
+        context['overall_count'] = StudentModel.objects.all().count()
+        context['active_count'] = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False, enrollment__payment_due__isnull=False).distinct().count()
         return context
 
     def get_queryset(self):
@@ -216,6 +216,8 @@ class EnrollmentsListView(AdminRequired, ListView):
         data = self.request.GET.copy()
         context['filter_form'] = EnrollmentsListFilterForm(initial=data)
         context['queryset_length'] = self.get_queryset().count()
+        context['overall_count'] = Enrollment.objects.all().count()
+        context['active_count'] = Enrollment.objects.filter(status=True, trial_lesson=False, payment_due__isnull=False).distinct().count()
         return context
 
     def get_queryset(self):

@@ -68,8 +68,12 @@
                         </div>
                     </div>
                 </form>
-                <div>
-                    <p class="text-secondary fw-normal m-0 ms-1 mb-2 d-inline-block">Найдено: {{ queryset_length }}</p>
+                <div class="pb-2">
+                    <p class="text-secondary fw-normal m-0 d-inline-block me-3">
+                        Всего: {{ overall_count }}</p>
+                    <p class="text-secondary fw-normal m-0 d-inline-block me-3">
+                        Активные: {{ active_count }}</p>
+                    <p class="text-secondary fw-normal m-0 d-inline-block">Найдено: {{ queryset_length }}</p>
                 </div>
             </div>
         </div>
