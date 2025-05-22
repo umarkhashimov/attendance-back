@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from dateutil.relativedelta import weekdays
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -11,7 +12,7 @@ from users.filters import AdminRequired
 from users.forms import TeacherSelectForm
 from users.helpers import record_action
 from .models import StudentModel, Enrollment
-from .forms import StudentInfoForm, ReEnrollmentForm
+from .forms import StudentInfoForm, ReEnrollmentForm, ReEnrollmentFilterForm
 from courses.models import CourseModel
 from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
@@ -157,9 +158,12 @@ class ReEnrollStudentView(View):
 
     def get(self, request, pk):
         enrollment = get_object_or_404(Enrollment, id=pk)
+        weekdays = request.GET.get('weekdays', None)
+        teacher = request.GET.get('teacher', None)
 
         context = {
-            're_enrollment_form': ReEnrollmentForm(student=enrollment.student),
+            're_enrollment_form': ReEnrollmentForm(student=enrollment.student, teacher=teacher or None, weekdays=weekdays or None),
+            'filter_form': ReEnrollmentFilterForm(request.GET),
             'enrollment': enrollment,
         }
         return render(request, 're_enrollment.html', context)

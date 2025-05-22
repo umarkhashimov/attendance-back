@@ -188,6 +188,7 @@ class CoursesListView(AdminRequired, ListView):
                 queryset = queryset.filter(weekdays__contains='1,3,5')
             elif days == "3":
                 queryset = queryset.exclude(Q(weekdays__contains="0,2,4") | Q(weekdays__contains="1,3,5"))
+
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
 

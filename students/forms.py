@@ -2,6 +2,8 @@ from django.forms import ModelForm
 from django import forms
 from django.db.models import Q
 from django_select2.forms import Select2Widget
+
+from users.models import UsersModel
 from .models import StudentModel, Enrollment
 from courses.models import CourseModel
 
@@ -122,8 +124,38 @@ class ReEnrollmentForm(forms.Form):
     course = forms.ModelChoiceField(queryset=CourseModel.objects.exclude(Q(archived=True) | Q(status=False)),
                                     widget=Select2Widget(attrs={'class': 'form-control'}), label="Группа")
 
-    def __init__(self, *args, student=None, **kwargs):
+    def __init__(self, *args, student=None, teacher=None, weekdays=None, **kwargs):
         super().__init__(*args, **kwargs)
+        queryset = CourseModel.objects.all()
+
         if student:
             active_enrollments = Enrollment.objects.filter(student=student, status=True).values_list('course__id', flat=True)
-            self.fields['course'].queryset = CourseModel.objects.exclude(Q(archived=True) | Q(status=False) | Q(id__in=active_enrollments))
+            queryset = queryset.exclude(Q(archived=True)  | Q(id__in=active_enrollments))
+
+        if teacher:
+            queryset = queryset.filter(teacher_id=teacher)
+
+        if weekdays:
+            if weekdays == "1":
+                queryset = queryset.filter(weekdays__contains='0,2,4')
+            elif weekdays == "2":
+                queryset = queryset.filter(weekdays__contains='1,3,5')
+            elif weekdays == "3":
+                queryset = queryset.exclude(Q(weekdays__contains="0,2,4") | Q(weekdays__contains="1,3,5"))
+
+
+        self.fields['course'].queryset = queryset
+
+
+class ReEnrollmentFilterForm(forms.Form):
+    weekdays = forms.ChoiceField(
+        choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")], label="Дни уроков",
+        widget=Select2Widget(attrs={'class': 'form-control'}),
+        required=False)
+
+    teacher = forms.ModelChoiceField(queryset=UsersModel.objects.filter(role='1', is_active=True),
+                                     widget=Select2Widget(attrs={'class': 'form-control'}),
+                                     required=False, label="Учитель")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
