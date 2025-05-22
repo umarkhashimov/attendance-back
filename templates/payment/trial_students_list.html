@@ -111,15 +111,15 @@
                     {% for course, enrollments in courses.items %}
                         <li class="list-unstyled list-group-item border-0 py-0 mb-3">
 
-                            <ul class="list-group border border-secondary shadow shadow-sm">
+                            <ul class="list-group border border-secondary shadow shadow-sm" id="courseTable{{ course.id }}">
                                 <li class="list-group-item-secondary list-group-item fw-semibold bg-opacity-25">
                                     <a href="{% url 'courses:course_update' pk=course.id %}"
                                                                    class="my-auto text-dark table-obj-name-link text-decoration-none">{{ course }}</a>
                                 </li>
                                 {% for enrollment in enrollments %}
-                                <li class="list-group-item d-flex justify-content-between list-items-hover">
+                                <li class="list-group-item d-flex justify-content-between align-items-center list-items-hover">
                                 <div class="d-flex">
-                                    {{ forloop.counter }}. <a href="{% url 'students:student_update' pk=enrollment.student.id %}"
+                                    <span class="text-secondary me-1">{{ forloop.counter }}.</span> <a href="{% url 'students:student_update' pk=enrollment.student.id %}"
                                                                    class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>
                                     {% if enrollment.note %}
                                     <p class="m-0 ms-2 text-secondary">- {{ enrollment.note }}</p>
@@ -128,6 +128,15 @@
                                 <div class="debt-students-phone-numbers d-flex gap-3">
                                     <span type="button" copy="{{ enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>
                                     <span type="button" copy="{{ enrollment.student.additional_number|default_if_none:"---" }}" {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>
+                                    <div>
+                                            <form method="post"
+                                                  action="{% url 'students:update_enrollment_note' pk=enrollment.id %}?next={{ request.path }}#courseTable{{ course.id }}"">
+                                                {% csrf_token %}
+                                                <input name="text" onchange="submit()" maxlength="25"
+                                                       class="text-center form-control rounded-0 align-middle w-100"
+                                                       value="{{ enrollment.note|default:"" }}">
+                                            </form>
+                                        </div>
                                 </div>
                                 </li>
                             {% endfor %}
