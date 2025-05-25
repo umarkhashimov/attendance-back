@@ -66,7 +66,6 @@ class StudentsListFilterForm(forms.Form):
 
         start_date = self.initial.get("date_from")
         end_date = self.initial.get("date_to")
-        print('HIiiii')
 
         if start_date and not end_date:
             self.initial['date_to'] = start_date
@@ -125,7 +124,6 @@ class EnrollmentsListFilterForm(forms.Form):
 
         start_date = self.initial.get("date_from")
         end_date = self.initial.get("date_to")
-        print('HIiiii')
 
         if start_date and not end_date:
             self.initial['date_to'] = start_date

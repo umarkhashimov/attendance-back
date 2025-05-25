@@ -53,6 +53,11 @@
 
                 <div class="leadDetailsWrapper">
                     <div class="form-floating my-1">
+                        {{ lead_form.subject }}
+                        <label aria-required="{{ lead_form.subject.required }}" {{ lead_form.subject.required }}
+                               for="{{ lead_form.subject.id_for_label }}">{{ lead_form.subject.label }}</label>
+                    </div>
+                    <div class="form-floating my-1">
                         {{ lead_form.teacher }}
                         <label aria-required="{{ lead_form.teacher.required }}" {{ lead_form.teacher.required }}
                                for="{{ lead_form.teacher.id_for_label }}">{{ lead_form.teacher.label }}</label>

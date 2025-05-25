@@ -1,5 +1,9 @@
 from django import forms
 from django_select2.forms import Select2Widget
+import datetime
+
+from courses.models import CourseModel, SubjectModel
+from users.models import UsersModel
 from .models import LeadsModel
 from students.models import StudentModel
 
@@ -10,9 +14,10 @@ class LeadForm(forms.ModelForm):
 
     class Meta:
         model = LeadsModel
-        fields = ['weekdays', 'lesson_time', 'teacher', 'arrival_date', 'note']
+        fields = ['weekdays', 'subject', 'lesson_time', 'teacher', 'arrival_date', 'note']
         widgets = {
             'teacher': Select2Widget(attrs={'class': 'form-control'}),
+            'subject': Select2Widget(attrs={'class': 'form-control'}),
             'weekdays': Select2Widget(attrs={'class': 'form-control'}),
             'lesson_time': forms.TimeInput(
                 format='%H:%M',
@@ -48,3 +53,57 @@ class LeadForm(forms.ModelForm):
                     "placeholder": ' ',  # Optional: Use label as placeholder
                 })
 
+
+
+class LeadsListFilterForm(forms.Form):
+    student = forms.ModelChoiceField(queryset=StudentModel.objects.all(),
+                                     widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+                                     required=False, label="Ученик")
+
+    weekdays = forms.ChoiceField(
+        choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")],
+        widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+        required=False, label="Дни"
+    )
+
+    teacher = forms.ModelChoiceField(queryset=UsersModel.objects.filter(role='1', is_active=True),
+                                     widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+                                     required=False, label="Учитель")
+
+    status = forms.ChoiceField(choices=[(1, "Ожидание"), (2, "Обработан"), (3, "Отменен")],
+                               widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+                               required=False, label="Статус")
+
+    subject = forms.ModelChoiceField(queryset=SubjectModel.objects.all(),
+                                     widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+                                     required=False, label="Предмет")
+
+    created_by = forms.ModelChoiceField(UsersModel.objects.filter(role='2', is_active=True),
+                                        widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+                                        required=False, label="Кем создан")
+
+    date_from = forms.DateField(widget=forms.DateInput(
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+        required=False, label="С")
+
+    date_to = forms.DateField(widget=forms.DateInput(
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+        required=False, label="До")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        start_date = self.initial.get("date_from")
+        end_date = self.initial.get("date_to")
+
+        if start_date and not end_date:
+            self.initial['date_to'] = start_date
+
+        elif end_date and not start_date:
+            self.initial['date_from'] = end_date
+
+        if start_date:
+            self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
+
+        if end_date:
+            self.fields['date_from'].widget.attrs.update({'max': end_date})
