@@ -27,7 +27,6 @@ class StudentInfoForm(ModelForm):
 
             if field.required:
                 field.widget.attrs.update({
-                    "class": "form-control is-invalid",
                     'aria-required': 'True',
                 })
 
