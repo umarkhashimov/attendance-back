@@ -1,6 +1,6 @@
 from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, View
+from django.views.generic import ListView, View, DetailView
 from django.contrib import messages
 
 
@@ -133,3 +133,7 @@ class CreateLeadView(View):
 
         return render(request, self.template_name, context)
 
+class LeadDetailView(DetailView):
+    template_name = 'leads/lead_detail.html'
+    model = LeadsModel
+    context_object_name = 'lead'

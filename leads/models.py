@@ -13,8 +13,6 @@ class LeadsModel(models.Model):
     arrival_date = models.DateField(null=True, blank=True, verbose_name="Примерная дата")
     note = models.TextField(null=True, blank=True, max_length=500, verbose_name="Заметка")
     status = models.IntegerField(choices=[(1, "Ожидание"), (2, "Обработан"), (3, "Отменен")], default=1)
-    active = models.BooleanField(default=True)
-    processed = models.BooleanField(default=False)
     processed_date = models.DateField(null=True, blank=True)
     enrollment_result = models.ForeignKey(Enrollment, on_delete=models.SET_NULL, null=True, blank=True)
     created_by = models.ForeignKey(UsersModel, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_by')

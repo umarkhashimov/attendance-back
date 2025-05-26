@@ -86,16 +86,9 @@
                     <div class="accordion-item my-1">
                         <div class="accordion-header">
                             <div class="d-flex justify-content-between align-items-center border">
-                                <div class="d-flex align-items-center justify-content-between w-100 pe-3">
+                                <div class="d-flex align-items-center justify-content-between w-100 px-3">
                                     <div class="d-flex align-items-center">
-                                        <span class="ms-3 text-secondary opacity-75">{{ forloop.counter }}. </span>
-                                        <a href=""
-                                           class="py-2 ps-2 d-flex align-items-center text-dark text-decoration-none table-obj-name-link m-0 w-100 h-100"
-                                           type="button">
-                                            <span class="text-dark">{{ lead.student.full_name }}</span>
-                                        </a>
-                                    </div>
-                                    <div class="d-flex">
+                                        <span class="me-3 text-dark">{{ forloop.counter }}. </span>
                                         {% if lead.status == 1 %}
                                             <span class="badge text-bg-warning fs-6 p-2"><i
                                                     class="bi bi-hourglass-split"></i></span>
@@ -105,6 +98,16 @@
                                         {% elif lead.status == 3 %}
                                             <span class="badge text-bg-danger fs-6 p-2"><i class="bi bi-x-lg"></i></span>
                                         {% endif %}
+                                        <span class="ms-3 text-secondary opacity-75">{{ lead.id }} </span>
+                                        <a href="{% url 'leads:lead_detail' pk=lead.id %}"
+                                           class="py-2 ps-2 d-flex align-items-center text-dark text-decoration-none table-obj-name-link m-0 w-100 h-100"
+                                           type="button">
+                                            <span class="text-dark">{{ lead.student.full_name }}</span>
+                                        </a>
+                                    </div>
+                                    <div class="d-flex debt-students-phone-numbers gap-3">
+                                         <span type="button" copy="{{ lead.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ lead.student.phone_number }}</span>
+                                    <span type="button" copy="{{ lead.student.additional_number|default_if_none:"---" }}" {% if lead.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ lead.student.additional_number|default_if_none:"---" }}</span>
                                     </div>
                                 </div>
                                 <div class="d-flex flex-column h-100">
@@ -130,8 +133,16 @@
                                         <td>{{ lead.created_at }}</td>
                                     </tr>
                                     <tr>
+                                        <td>Номер телефона родителей:</td>
+                                        <td class="debt-students-phone-numbers"><span type="button" copy="{{ lead.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ lead.student.phone_number }}</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Номер телефона ученика:</td>
+                                        <td class="debt-students-phone-numbers"><span type="button" copy="{{ lead.student.additional_number|default_if_none:"---" }}" {% if lead.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ lead.student.additional_number|default_if_none:"---" }}</span></td>
+                                    </tr>
+                                    <tr>
                                         <td>Заметка:</td>
-                                        <td>{{ lead.note }}</td>
+                                        <td>{{ lead.note|default:'---' }}</td>
                                     </tr>
                                 </table>
                             </div>
