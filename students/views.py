@@ -17,6 +17,7 @@ from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
 from attendance.models import AttendanceModel
+
 class StudentUpdateView(AdminRequired, UpdateView):
     model = StudentModel
     template_name = 'student_update.html'

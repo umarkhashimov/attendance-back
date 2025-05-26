@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.forms.models import model_to_dict
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, View, DetailView
 from django.contrib import messages
@@ -8,7 +9,7 @@ from students.models import StudentModel
 from users.models import UsersModel
 from .forms import LeadForm, LeadsListFilterForm
 from .models import LeadsModel
-from students.forms import StudentInfoForm
+from students.forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import SubjectModel
 
 class LeadsListView(ListView):
@@ -137,3 +138,12 @@ class LeadDetailView(DetailView):
     template_name = 'leads/lead_detail.html'
     model = LeadsModel
     context_object_name = 'lead'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        data = self.request.GET.dict()
+        object_data = model_to_dict(self.get_object())
+        merged_data = {**object_data, **data}
+        context['filter_form'] = LeadsListFilterForm(initial=merged_data)
+        context['enroll_form'] = StudentEnrollmentForm(student=self.get_object().student, teacher=self.request.GET.get('teacher', None))
+        return context
