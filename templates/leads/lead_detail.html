@@ -224,7 +224,7 @@
                             {% if lead.status == 2 %}
                                 <tr>
                                     <td>Записан в итоге:</td>
-                                    <td><a class="link-dark" {% if lead.enrollment_result %}href="{% url 'courses:course_update' pk=lead.enrollment_result.course.id %}"{% endif %}>{{ lead.enrollment_result|default:'?' }}</a></td>
+                                    <td><a class="link-dark" {% if lead.enrollment_result %}href="{% url 'courses:course_update' pk=lead.enrollment_result.course.id %}"{% endif %}>{{ lead.enrollment_result.course|default:'?' }}</a></td>
                                 </tr>
                             {% endif %}
                         </table>
