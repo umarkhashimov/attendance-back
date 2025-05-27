@@ -41,3 +41,16 @@ def next_closest_session_date(course, today=None):
         max_iterations -= 1
 
     return date.today()
+
+def last_closest_session_date(course, today=None):
+    today = today - timedelta(days=1) if today else date.today() - timedelta(days=1)
+    weekdays = [x for x in course.weekdays]
+
+    max_iterations = 7
+    while max_iterations > 0:
+        if str(today.weekday()) in weekdays:
+            return today
+        today = today - timedelta(days=1)
+        max_iterations -= 1
+
+    return date.today()

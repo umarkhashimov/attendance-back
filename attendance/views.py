@@ -5,10 +5,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from courses.filters import course_date_match
 from courses.models import SessionsModel, CourseModel
-from courses.forms import CancelCauseForm, SessionTopicFieldForm
-from users.filters import AdminRequired
 from .models import AttendanceModel
 from datetime import datetime
+from payment.helpers import last_closest_session_date
     
 
 class GetSessionView(View):
@@ -42,23 +41,21 @@ class GetSessionView(View):
 
                             if obj.enrollment.trial_lesson and not obj.enrollment.trail_used_once:
                                 obj.enrollment.trail_used_once = True
+                                obj.enrollment.trail_used_once_date = datetime.today().date()
                             else:
                                 obj.enrollment.trial_lesson = False
-                                obj.trial_lesson_used_once_date = datetime.today()
-                                if not obj.enrollment.payment_due:
-                                    obj.enrollment.payment_due = datetime.today()
-                            obj.enrollment.save()
 
+                                if not obj.enrollment.payment_due:
+                                    print('last session date calculate')
+                                    obj.enrollment.payment_due = last_closest_session_date(obj.enrollment.course)
+
+                            obj.save()
+                            obj.enrollment.save()
 
                         attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'), None)
                         homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'), None)
                         obj.participation_grade = attendance_grade if attendance_grade else None
                         obj.homework_grade = homework_grade if homework_grade else None
-
-
-                    if not obj.enrollment.payment_due and obj.enrollment.trial_lesson == False:
-                        obj.enrollment.payment_due = datetime.today().date()
-                        obj.enrollment.save()
 
             obj.save()
 
