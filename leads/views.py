@@ -180,17 +180,17 @@ class LeadEnrollView(AdminRequired, View):
                     defaults={**form.cleaned_data, 'status': True, 'enrolled_at': datetime.now()},
                 )
 
+                if not enrollment.status and not created:
+                    enrollment.payment_due = None
+
                 if not enrollment.payment_due and enrollment.trial_lesson == False:
                     enrollment.payment_due = datetime.today().date()
-                    enrollment.save()
 
-                if not created:
-                    enrollment.payment_due = None
-                    enrollment.save()
 
                 if created:
                     enrollment.enrolled_by = self.request.user
-                    enrollment.save()
+
+                enrollment.save()
 
                 lead.status = 2
                 lead.enrollment_result = enrollment
