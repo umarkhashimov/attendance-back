@@ -190,8 +190,9 @@ class ReEnrollStudentView(AdminRequired, View):
                     defaults=data
                 )
             except:
-                pass
-            finally:
+                messages.error(request, "Произошла ошибка.")
+                return redirect(self.request.path)
+            else:
                 enrollment.status = False
                 enrollment.save()
 

@@ -1,16 +1,18 @@
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.shortcuts import render, get_object_or_404, redirect, reverse
-from django.views.generic import ListView, View, DetailView, UpdateView
+from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView
 from django.contrib import messages
+from datetime import datetime
 
 from users.filters import AdminRequired
-from students.models import StudentModel
+from students.models import StudentModel, Enrollment
 from users.models import UsersModel
 from .forms import LeadForm, LeadsListFilterForm, LeadUpdateForm
 from .models import LeadsModel
 from students.forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import SubjectModel
+
 
 class LeadsListView(AdminRequired, ListView):
     model = LeadsModel
@@ -158,3 +160,61 @@ class LeadUpdateView(AdminRequired, UpdateView):
     def get_success_url(self):
         messages.success(self.request,"Детали лида успешно изменены")
         return reverse('leads:lead_detail', kwargs={'pk': self.object.pk})
+
+class LeadEnrollView(AdminRequired, View):
+
+    def get(self, request, pk, student_id):
+
+        return redirect('leads:lead_detail', pk=pk)
+
+    def post(self, request, pk, student_id):
+        form = StudentEnrollmentForm(request.POST)
+        lead = get_object_or_404(LeadsModel, pk=pk)
+        if form.is_valid():
+            try:
+                student = get_object_or_404(StudentModel, pk=student_id)
+
+                enrollment, created = Enrollment.objects.update_or_create(
+                    course=form.cleaned_data['course'],
+                    student=student,
+                    defaults={**form.cleaned_data, 'status': True, 'enrolled_at': datetime.now()},
+                )
+
+                if not enrollment.payment_due and enrollment.trial_lesson == False:
+                    enrollment.payment_due = datetime.today().date()
+                    enrollment.save()
+
+                if not created:
+                    enrollment.payment_due = None
+                    enrollment.save()
+
+                if created:
+                    enrollment.enrolled_by = self.request.user
+                    enrollment.save()
+
+                lead.status = 2
+                lead.enrollment_result = enrollment
+                lead.processed_by = request.user
+                lead.processed_at = datetime.now()
+                lead.save()
+
+                messages.success(request,'Ученик успешно записан в группу в группу')
+            except Exception as e:
+                messages.error(request,'Ошибка при записи ученика в группу')
+
+
+        return redirect('leads:lead_detail', pk=pk)
+
+class LeadCancelView(AdminRequired, View):
+    def get(self, request, pk):
+        return redirect('leads:lead_detail', pk=pk)
+
+    def post(self,request,pk):
+        lead = get_object_or_404(LeadsModel, pk=pk)
+        lead.status = 3
+        lead.processed_by = self.request.user
+        lead.processed_at = datetime.now()
+        lead.save()
+        messages.success(request, "Лид успешно Отменен")
+        return redirect('leads:lead_detail', pk=pk)
+

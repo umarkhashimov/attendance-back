@@ -8,7 +8,7 @@
 
     <div class="container courses-list">
 
-        <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
+        <div class="mt-5 mb-2 d-flex flex-column flex-md-row align-items-center justify-content-between">
 
             <h4 class="d-flex align-items-center">Лид № {{ lead.id }}
                 <span class="ms-3">
@@ -28,9 +28,42 @@
              </span>
             </h4>
             {% if lead.status == 1 %}
-                <a href="{% url 'leads:lead_update' pk=lead.id %}" type="button" class="btn btn-primary">
-                    Изменить
-                </a>
+                <div class="d-flex gap-3">
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#cancelLeadModal">
+                        Отменить
+                    </button>
+                    <a href="{% url 'leads:lead_update' pk=lead.id %}" type="button" class="btn btn-primary">
+                        Изменить
+                    </a>
+                </div>
+
+                <!-- Cancel Modal -->
+                <div class="modal fade" id="cancelLeadModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                     tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Внимание !</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                            </div>
+                            <form method="post" action="{% url 'leads:lead_cancel' pk=lead.id %}">
+                                {% csrf_token %}
+                                <div class="modal-body">
+                                    <p>
+                                        Вы уверены что хотите отменить этот лид ?
+                                    </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет
+                                    </button>
+                                    <button type="submit" class="btn btn-danger">Да</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             {% endif %}
         </div>
         <hr class="table-group-divider"/>
@@ -66,10 +99,10 @@
                             <td>{{ lead.student.notes|default:'---' }}</td>
                         </tr>
                     </table>
-                <div class="pt-2 pb-1">
-                    <a class="ms-2 link-primary fs-6" href="{% url 'students:student_update' pk=lead.student.id %}">Перейти
-                        на страницу ученика</a>
-                </div>
+                    <div class="pt-2 pb-1">
+                        <a class="ms-2 link-primary fs-6" href="{% url 'students:student_update' pk=lead.student.id %}">Перейти
+                            на страницу ученика</a>
+                    </div>
                 </div>
             </div>
 
@@ -148,7 +181,8 @@
                         <div>
 
                             <p class="text-black ms-1 mt-2">Выберите группу</p>
-                            <form method="post" action="">
+                            <form method="post"
+                                  action="{% url 'leads:lead_enroll' student_id=lead.student.id pk=lead.id %}">
                                 {% csrf_token %}
                                 {% for field in enroll_form %}
                                     <div class="my-1 {% if field.name != 'trial_lesson' %}form-floating{% else %}ms-1{% endif %}">
