@@ -107,3 +107,45 @@ class LeadsListFilterForm(forms.Form):
 
         if end_date:
             self.fields['date_from'].widget.attrs.update({'max': end_date})
+
+
+class LeadUpdateForm(forms.ModelForm):
+
+    class Meta:
+        model = LeadsModel
+        fields = ['weekdays', 'subject', 'lesson_time', 'teacher', 'arrival_date', 'note']
+        widgets = {
+            'teacher': Select2Widget(attrs={'class': 'form-control'}),
+            'subject': Select2Widget(attrs={'class': 'form-control'}),
+            'weekdays': Select2Widget(attrs={'class': 'form-control'}),
+            'lesson_time': forms.TimeInput(
+                format='%H:%M',
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'HH:MM',
+                    'type': 'time',
+                    'id': 'LessonTimePicker',
+                }
+            ),
+            'arrival_date': forms.DateInput(
+                format='%Y-%m-%d',
+                attrs={
+                    'class': 'form-control',
+                    'type': 'date',
+                    'id': 'datePicker',
+                }
+            )
+        }
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Add attributes to all fields
+
+
+        for field_name, field in self.fields.items():
+            if field_name not in ['lesson_time', 'select_student']:
+                field.widget.attrs.update({
+                    "class": "form-control",  # Add Bootstrap class
+                    "placeholder": ' ',  # Optional: Use label as placeholder
+                })

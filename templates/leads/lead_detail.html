@@ -28,7 +28,7 @@
              </span>
             </h4>
             {% if lead.status == 1 %}
-                <a type="button" class="btn btn-primary">
+                <a href="{% url 'leads:lead_update' pk=lead.id %}" type="button" class="btn btn-primary">
                     Изменить
                 </a>
             {% endif %}
@@ -66,8 +66,10 @@
                             <td>{{ lead.student.notes|default:'---' }}</td>
                         </tr>
                     </table>
+                <div class="pt-2 pb-1">
                     <a class="ms-2 link-primary fs-6" href="{% url 'students:student_update' pk=lead.student.id %}">Перейти
                         на страницу ученика</a>
+                </div>
                 </div>
             </div>
 
@@ -103,71 +105,73 @@
                 </div>
             </div>
         </div>
-        <hr class="table-group-divider"/>
-        <div class="row">
-            <div class="col-12">
-                <div class="bg-light rounded py-3 mt-3 px-2 border">
-                    <p class="text-black ms-1">Записать в группу</p>
-                    <div class="col-12 bg-light rounded pt-2 px-2 border">
-                        <form id="filterForm" method="get" class=""
-                              onreset="resetForm(event)">
-                            <div class="">
-                                <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
-                                    <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
-                                </h6>
-                            </div>
-                            <div class="row mt-2 pb-3">
-                                <div class="col-12 col-md-4">
-                                    <div class="custom-select-2">
-                                        <label for="daySelect"
-                                               class="me-2 ms-1 mb-1">{{ filter_form.subject.label }}</label>
-                                        {{ filter_form.subject }}
-                                    </div>
+        <hr class="table-group-divider mb-0"/>
+        {% if lead.status == 1 %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="bg-light rounded py-3 mt-3 px-2 border">
+                        <p class="text-black ms-1">Записать в группу</p>
+                        <div class="col-12 bg-light rounded pt-2 px-2 border">
+                            <form id="filterForm" method="get" class=""
+                                  onreset="resetForm(event)">
+                                <div class="">
+                                    <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
+                                        <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                                    </h6>
                                 </div>
-                                <div class="col-12 col-md-4">
-                                    <div class="custom-select-2">
-                                        <label for="daySelect"
-                                               class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
-                                        {{ filter_form.teacher }}
+                                <div class="row mt-2 pb-3">
+                                    <div class="col-12 col-md-4">
+                                        <div class="custom-select-2">
+                                            <label for="daySelect"
+                                                   class="me-2 ms-1 mb-1">{{ filter_form.subject.label }}</label>
+                                            {{ filter_form.subject }}
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="col-12 col-md-4">
-                                    <div class="custom-select-2">
-                                        <label for="daySelect"
-                                               class="me-2 ms-1 mb-1">{{ filter_form.weekdays.label }}</label>
-                                        {{ filter_form.weekdays }}
+                                    <div class="col-12 col-md-4">
+                                        <div class="custom-select-2">
+                                            <label for="daySelect"
+                                                   class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
+                                            {{ filter_form.teacher }}
+                                        </div>
                                     </div>
-                                </div>
+                                    <div class="col-12 col-md-4">
+                                        <div class="custom-select-2">
+                                            <label for="daySelect"
+                                                   class="me-2 ms-1 mb-1">{{ filter_form.weekdays.label }}</label>
+                                            {{ filter_form.weekdays }}
+                                        </div>
+                                    </div>
 
-                            </div>
-                        </form>
-                    </div>
-                    <div>
-
-                        <p class="text-black ms-1 mt-2">Выберите группу</p>
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            {% for field in enroll_form %}
-                                <div class="my-1 {% if field.name != 'trial_lesson' %}form-floating{% else %}ms-1{% endif %}">
-                                    {{ field }}
-                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 </div>
-                                {% if field.errors %}
-                                    <div class="text-danger small">
-                                        {% for error in field.errors %}
-                                            {{ error }}
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                            <div class="d-flex justify-content-end flex-column flex-md-row">
-                                <button type="submit" class="btn btn-success">Сохранить</button>
-                            </div>
-                        </form>
+                            </form>
+                        </div>
+                        <div>
 
+                            <p class="text-black ms-1 mt-2">Выберите группу</p>
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                {% for field in enroll_form %}
+                                    <div class="my-1 {% if field.name != 'trial_lesson' %}form-floating{% else %}ms-1{% endif %}">
+                                        {{ field }}
+                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    </div>
+                                    {% if field.errors %}
+                                        <div class="text-danger small">
+                                            {% for error in field.errors %}
+                                                {{ error }}
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                                <div class="d-flex justify-content-end flex-column flex-md-row">
+                                    <button type="submit" class="btn btn-success">Сохранить</button>
+                                </div>
+                            </form>
+
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        {% endif %}
     </div>
 {% endblock %}

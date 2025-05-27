@@ -52,7 +52,7 @@ class StudentEnrollmentForm(ModelForm):
 
     class Meta:
         model = Enrollment
-        fields = ['course', 'discount', 'trial_lesson']
+        fields = ['course', 'discount', 'note', 'trial_lesson']
         widgets = {
             'trial_lesson': forms.CheckboxInput(
                 attrs={
@@ -60,7 +60,7 @@ class StudentEnrollmentForm(ModelForm):
             })
         }
 
-    def __init__(self, *args, student=None, teacher=None, **kwargs):
+    def __init__(self, *args, student=None, teacher=None, subject=None, weekdays=None, **kwargs):
         super().__init__(*args, **kwargs)
         # Add attributes to all fields
         for field_name, field in self.fields.items():
@@ -77,6 +77,17 @@ class StudentEnrollmentForm(ModelForm):
             queryset = CourseModel.objects.all().exclude(Q(id__in=enrolled) | Q(archived=True))
             if teacher:
                 queryset = queryset.filter(teacher_id=teacher)
+
+            if subject:
+                queryset = queryset.filter(subject=subject)
+
+            if weekdays:
+                if str(weekdays) == "1":
+                    queryset = queryset.filter(weekdays__contains='0,2,4')
+                elif str(weekdays) == "2":
+                    queryset = queryset.filter(weekdays__contains='1,3,5')
+                elif str(weekdays) == "3":
+                    queryset = queryset.exclude(Q(weekdays__contains="0,2,4") | Q(weekdays__contains="1,3,5"))
 
             self.fields['course'].queryset = queryset
 

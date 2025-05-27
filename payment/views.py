@@ -17,7 +17,7 @@ from students.models import Enrollment, StudentModel
 from .helpers import calculate_payment_due_date, calculate_payment_amount, next_closest_session_date
 from collections import defaultdict
 
-class PaymentsListView(ListView):
+class PaymentsListView(AdminRequired, ListView):
     model = PaymentModel
     template_name = 'payment/payments_list.html'
     context_object_name = 'payments'
@@ -86,7 +86,7 @@ class PaymentsListView(ListView):
         return queryset
 
 
-class CreatePaymentView(View):
+class CreatePaymentView(AdminRequired, View):
     def post(self, request, enrollment_id):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         form = CreatePaymentForm(request.POST)
@@ -140,7 +140,7 @@ class CreatePaymentView(View):
             return redirect(next_url)
 
 
-class DebtPaymentsListView(View, AdminRequired):
+class DebtPaymentsListView(AdminRequired, View):
     template_name = 'payment/debt_payments_list.html'
 
     def get(self, request):
@@ -178,7 +178,7 @@ class DebtPaymentsListView(View, AdminRequired):
         context['filter_form'] = TrialStudentsFilterForm(initial=self.request.GET)
         return render(request, self.template_name, context)
 
-class TrialEnrollmentsView(View, AdminRequired):
+class TrialEnrollmentsView(AdminRequired, View):
     template_name = 'payment/trial_students_list.html'
 
     def get(self, request):

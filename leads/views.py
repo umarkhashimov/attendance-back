@@ -1,18 +1,18 @@
 from django.db.models import Q
 from django.forms.models import model_to_dict
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, View, DetailView
+from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.views.generic import ListView, View, DetailView, UpdateView
 from django.contrib import messages
 
-
+from users.filters import AdminRequired
 from students.models import StudentModel
 from users.models import UsersModel
-from .forms import LeadForm, LeadsListFilterForm
+from .forms import LeadForm, LeadsListFilterForm, LeadUpdateForm
 from .models import LeadsModel
 from students.forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import SubjectModel
 
-class LeadsListView(ListView):
+class LeadsListView(AdminRequired, ListView):
     model = LeadsModel
     template_name = 'leads/leads_list.html'
     context_object_name = 'leads'
@@ -70,7 +70,7 @@ class LeadsListView(ListView):
         return queryset
 
 
-class CreateLeadView(View):
+class CreateLeadView(AdminRequired, View):
     template_name = 'leads/create_lead.html'
 
     def get(self, request):
@@ -134,7 +134,7 @@ class CreateLeadView(View):
 
         return render(request, self.template_name, context)
 
-class LeadDetailView(DetailView):
+class LeadDetailView(AdminRequired, DetailView):
     template_name = 'leads/lead_detail.html'
     model = LeadsModel
     context_object_name = 'lead'
@@ -145,5 +145,16 @@ class LeadDetailView(DetailView):
         object_data = model_to_dict(self.get_object())
         merged_data = {**object_data, **data}
         context['filter_form'] = LeadsListFilterForm(initial=merged_data)
-        context['enroll_form'] = StudentEnrollmentForm(student=self.get_object().student, teacher=self.request.GET.get('teacher', None))
+        print(merged_data)
+        context['enroll_form'] = StudentEnrollmentForm(student=self.get_object().student, teacher=merged_data.get('teacher', None), subject=merged_data.get('subject', None), weekdays=merged_data.get('weekdays', None))
         return context
+
+class LeadUpdateView(AdminRequired, UpdateView):
+    template_name = 'leads/lead_update.html'
+    model = LeadsModel
+    context_object_name = 'lead'
+    form_class = LeadUpdateForm
+
+    def get_success_url(self):
+        messages.success(self.request,"Детали лида успешно изменены")
+        return reverse('leads:lead_detail', kwargs={'pk': self.object.pk})

@@ -10,7 +10,7 @@
     <div class="container pt-2">
         <div class="row d-flex">
             <div class="col-12 col-md-6">
-                <div class="bg-light rounded py-3 px-2 mt-3 border">
+                <div class="bg-light rounded py-4 px-2 mt-3 border">
                     <p class="text-black ms-1">Изменить информацию ученика #{{ student.id }}
                         - {{ student.first_name|default:'нет Имени' }} {{ student.last_name|default:'нет Фамилии' }}</p>
                     <form method="post">
@@ -39,9 +39,9 @@
             <div class="col-12 col-md-6">
 
                 <div class="bg-light rounded py-3 mt-3 px-2 border">
-                    <p class="text-dark ms-1">Записать на новый курс</p>
+                    <p class="text-dark ms-1 mb-2">Записать на новый курс</p>
                     <form method="get">
-                        <div class="form-floating mb-3">
+                        <div class="form-floating mb-1">
                             {{ teacher_select_form.teacher }}
                             <label for="floatingInput">{{ teacher_select_form.teacher.label }}</label>
                         </div>
@@ -75,7 +75,7 @@
                         </div>
                     </form>
                 </div>
-                <div class="col-12 bg-light rounded py-2 px-2 mt-3 border">
+                <div class="col-12 bg-light rounded py-1 px-2 mt-2 border">
                     <button type="button" class="btn btn-secondary py-1 my-1" data-bs-toggle="modal"
                             data-bs-target="#overallAttendanceModal">
                         Посещаемость

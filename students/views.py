@@ -110,7 +110,7 @@ class CreateEnrollmentView(AdminRequired, View):
         return redirect('main:main')
     
 
-class UpdateEnrollmentView(View, AdminRequired):
+class UpdateEnrollmentView(AdminRequired, View):
 
     def post(self, request, pk):
         enrollment = get_object_or_404(Enrollment, id=pk)
@@ -132,7 +132,7 @@ class UpdateEnrollmentView(View, AdminRequired):
         next_url  = self.request.GET.get('next', '/')
         return redirect(next_url + '#enrollmentsTable')
 
-class DeactivateEnrollmentView(View):
+class DeactivateEnrollmentView(AdminRequired, View):
     def post(self, request, enrollment_id):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         enrollment.trial_lesson = False
@@ -147,7 +147,7 @@ class DeactivateEnrollmentView(View):
         return redirect(next_url)
 
 
-class UpdateEnrollmentNote(View):
+class UpdateEnrollmentNote(AdminRequired, View):
     def post(self, request, pk):
         enrollment = get_object_or_404(Enrollment, id=pk)
         text = request.POST.get('text', None)
@@ -156,7 +156,7 @@ class UpdateEnrollmentNote(View):
         next_url = self.request.GET.get('next', '/')
         return redirect(next_url)
 
-class ReEnrollStudentView(View):
+class ReEnrollStudentView(AdminRequired, View):
 
     def get(self, request, pk):
         enrollment = get_object_or_404(Enrollment, id=pk)
@@ -200,17 +200,3 @@ class ReEnrollStudentView(View):
                 return redirect(next_url)
 
         return redirect('main:main')
-        #
-        #
-        #     new_enrollment, created = Enrollment.objects.update_or_create(student=enrollment.student,
-        #                                                                   course=form.cleaned_data['course'],
-        #                                                                   trial_lesson=enrollment.trial_lesson,
-        #                                                                   trail_used_once=enrollment.trail_used_once,
-        #                                                                   trail_used_once_date=enrollment.trail_used_once_date,
-        #                                                                   hold=enrollment.hold,
-        #                                                                   discount=enrollment.discount,
-        #                                                                   note=enrollment.note,
-        #                                                                   debt_note=enrollment.debt_note,
-        #                                                                   payment_due=enrollment.payment_due,
-        #                                                                   enrolled_by=enrollment.enrolled_by,
-        #                                                                   enrolled_at=datetime.now())
