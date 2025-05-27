@@ -206,6 +206,31 @@
                     </div>
                 </div>
             </div>
+
+        {% elif lead.status == 2 or lead.status == 3 %}
+            <div class="row">
+                <div class="col-12">
+                    <div class="bg-light rounded py-3 mt-3 px-2 border">
+                        <p class="text-black ms-1">Информация о статусе</p>
+                        <table class="table bottom-1 border bg-white enrollment-info-table table-hover">
+                            <tr>
+                                <td class="w-auto">Обработан в:</td>
+                                <td class="w-auto">{{ lead.processed_at|default:'?' }}</td>
+                            </tr>
+                            <tr>
+                                <td>Кем обработан</td>
+                                <td>{{ lead.processed_by|default:'?' }}</td>
+                            </tr>
+                            {% if lead.status == 2 %}
+                                <tr>
+                                    <td>Записан в итоге:</td>
+                                    <td><a class="link-dark" {% if lead.enrollment_result %}href="{% url 'courses:course_update' pk=lead.enrollment_result.course.id %}"{% endif %}>{{ lead.enrollment_result|default:'?' }}</a></td>
+                                </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+                </div>
+            </div>
         {% endif %}
     </div>
 {% endblock %}
