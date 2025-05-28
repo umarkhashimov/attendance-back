@@ -38,7 +38,7 @@ class LeadForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # Add attributes to all fields
 
-        if self.fields['select_student'].initial:
+        if self.fields['select_student'].initial == False:
             self.fields['student'].required = True
 
         for field_name, field in self.fields.items():

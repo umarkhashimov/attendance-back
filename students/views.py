@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from dateutil.relativedelta import weekdays
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
