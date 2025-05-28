@@ -25,6 +25,12 @@ class StudentInfoForm(ModelForm):
                 "placeholder": ' ',  # Optional: Use label as placeholder
             })
 
+            if field.required:
+                field.widget.attrs.update({
+                    "class": "form-control is-invalid",
+                    'aria-required': 'True',
+                })
+
 
 class EnrollmentForm(ModelForm):
     

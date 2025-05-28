@@ -1,0 +1,144 @@
+{% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+    {% include 'layout/navbar.html' %}
+
+    <div class="container pt-2">
+        <div class="bg-light rounded py-3 mt-3 px-2 border">
+            <p class="text-black ms-1">Создать новый Лид</p>
+            <hr class="table-group-divider"/>
+
+            {% comment %} {{ form.as_p }} {% endcomment %}
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-check ps-1">
+                    {{ lead_form.select_student.value }}
+                    <div class="form-check form-switch">
+                        {{ lead_form.select_student }}
+                        <label class="form-check-label"
+                               for="{{ lead_form.select_student.id_for_label }}">{{ lead_form.select_student.label }}</label>
+                    </div>
+                </div>
+                <hr class="table-group-divider"/>
+
+                <div id="existingStudentWrapper" class="{% if lead_form.select_student.value %}d-none{% endif %}">
+                    <div id="studentSelectInp" class=" form-floating my-1">
+                        {{ lead_form.student }}
+                        <label aria-required="{{ lead_form.student.required }}" {{ lead_form.student.required }}
+                               for="{{ lead_form.student.id_for_label }}">{{ lead_form.student.label }}</label>
+                    </div>
+
+                </div>
+
+                <div id="customStudentWrapper" class="{% if not lead_form.select_student.value %}d-none{% endif %}">
+                    {% for field in student_form %}
+                        <div class="form-floating my-1">
+                            {{ field }}
+                            <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                   for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        </div>
+                        {% if field.errors %}
+                            <div class="text-danger small">
+                                {% for error in field.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <hr class="table-group-divider"/>
+
+                <div class="leadDetailsWrapper">
+                    <div class="form-floating my-1">
+                        {{ lead_form.teacher }}
+                        <label aria-required="{{ lead_form.teacher.required }}" {{ lead_form.teacher.required }}
+                               for="{{ lead_form.teacher.id_for_label }}">{{ lead_form.teacher.label }}</label>
+                    </div>
+                    <div class="form-floating my-1">
+                        {{ lead_form.weekdays }}
+                        <label aria-required="{{ lead_form.weekdays.required }}" {{ lead_form.weekdays.required }}
+                               for="{{ lead_form.weekdays.id_for_label }}">{{ lead_form.weekdays.label }}</label>
+                    </div>
+                    <div class="form-floating my-1">
+                        {{ lead_form.lesson_time }}
+                        <label aria-required="{{ lead_form.lesson_time.required }}" {{ lead_form.lesson_time.required }}
+                               for="{{ lead_form.lesson_time.id_for_label }}">{{ lead_form.lesson_time.label }}</label>
+                    </div>
+                    <div class="form-floating my-1">
+                        {{ lead_form.note }}
+                        <label aria-required="{{ lead_form.note.required }}" {{ lead_form.note.required }}
+                               for="{{ lead_form.note.id_for_label }}">{{ lead_form.note.label }}</label>
+                    </div>
+                    <div class="form-floating my-1">
+                        {{ lead_form.arrival_date }}
+                        <label aria-required="{{ lead_form.arrival_date.required }}" {{ lead_form.arrival_date.required }}
+                               for="{{ lead_form.arrival_date.id_for_label }}">{{ lead_form.arrival_date.label }}</label>
+                    </div>
+                </div>
+
+
+                {#          {{ lead_form|crispy }}#}
+                <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+                    <button type="submit" class="btn btn-success">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script defer>
+        flatpickr('#LessonTimePicker', {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: 'H:i',
+            time_24hr: true
+        })
+
+        flatpickr('#datePicker', {
+            dateFormat: "Y-m-d",
+        })
+
+        let customWrapper = document.querySelector('div#customStudentWrapper')
+        let existingWrapper = document.querySelector('div#existingStudentWrapper')
+
+        function toggleStudentInputType(check) {
+            let label = document.querySelector(`label[for=${check.getAttribute('id')}]`)
+            let customRequiredInputs = customWrapper.querySelectorAll('input[aria-required="True"]')
+            let existingRequiredInputs = existingWrapper.querySelectorAll('select, input')
+
+            if (check.checked) {
+                label.innerText = 'Создать нового ученика'
+
+                customWrapper.classList.remove('d-none')
+                customRequiredInputs.forEach((inp) => {
+                    inp.setAttribute('required', '')
+                })
+
+                existingWrapper.classList.add('d-none')
+                existingRequiredInputs.forEach((inp) => {
+                    inp.removeAttribute('required')
+                })
+
+            } else {
+                label.innerText = 'Выбрать существующего ученика'
+
+                customWrapper.classList.add('d-none')
+                customRequiredInputs.forEach((inp) => {
+                    inp.removeAttribute('required')
+                })
+
+                existingWrapper.classList.remove('d-none')
+                existingRequiredInputs.forEach((inp) => {
+                    inp.setAttribute('required', '')
+                })
+
+            }
+        }
+    </script>
+{% endblock %}
+

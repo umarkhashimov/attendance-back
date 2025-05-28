@@ -11,6 +11,7 @@ urlpatterns = [
     path('', include('students.urls'), name='students'),
     path('', include('courses.urls'), name='courses'),
     path('', include('payment.urls'), name='payment'),
+    path('', include('leads.urls'), name='leads'),
 ]
 
 

@@ -96,3 +96,7 @@ function manualPaymentDatesCheckbox(element){
     }
     console.log(startInp)
 }
+
+// flatpickr('input[type="date"]', {
+//     dateFormat: "Y-m-d",
+// })

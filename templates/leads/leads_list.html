@@ -1,0 +1,73 @@
+{% extends '../layout/base.html' %}
+
+{% block title %}
+    <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+    {% include '../layout/navbar.html' %}
+
+    <div class="container pt-1">
+        <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
+            <h5 class="m-0">Ученики</h5>
+            {#            <a href="{% url "students:create_student" %}" class="btn btn-primary">Создать</a>#}
+            <a href="{% url 'leads:create_lead' %}" class="btn btn-primary">
+                Создать Лид
+            </a>
+        </div>
+        <hr class="table-group-divider"/>
+        <div class="row m-0 p-0 ">
+            <div class="col-12 bg-light rounded pt-2 px-2 border">
+                <form id="filterForm" method="get" action="{% url 'main:teachers_list' %}" class="" onreset="resetForm(event)">
+                    <div class="">
+                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
+                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                        </h6>
+                    </div>
+                    <div class="row mt-2 pb-3">
+                        <div class="col-12 col-md-6">
+                            <div class="custom-select-2">
+                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
+                                {{ filter_form.text }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row px-2 mt-3">
+            {% for lead in leads %}
+                <div class="accordion accordion-flush px-1" id="accordionExample">
+                    <div class="accordion-item my-1">
+                        <div class="accordion-header">
+                            <div class="d-flex justify-content-between align-items-center border">
+                                <span class="ms-3 text-secondary opacity-75">{{ forloop.counter }}. </span>
+                                <a href="" class="py-2 ps-2 d-flex align-items-center text-dark text-decoration-none table-obj-name-link m-0 w-100 h-100" type="button">
+                                    <span class="text-dark">{{ lead.student.full_name }}</span>
+                                </a>
+                                <div class="d-flex flex-column">
+                                <button class="accordion-button shadow-none collapsed border py-1 h-100" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#accordion{{ lead.id }}"
+                                        aria-expanded="false">
+                                </button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div id="accordion{{ lead.id }}" class="accordion-collapse collapse border">
+                            <div class="accordion-body bg-opacity-25 bg-light">
+                                    <ul class="list-group list-unstyled">
+                                        <li>{{ lead.note }}</li>
+                                    </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-center text-secondary">Нет Лидов.</p>
+            {% endfor %}
+            {% if page_obj.paginator.count > 30  %}
+                {% include 'layout/pagination.html' %}
+        {% endif %}
+        </div>
+    </div>
+{% endblock %}
