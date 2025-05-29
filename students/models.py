@@ -60,10 +60,7 @@ class Enrollment(models.Model):
 
     @property
     def balance(self):
-        if self.payment_due:
-            return calculate_balance(self.payment_due, self.course)
-        else:
-            return None
+        return calculate_balance(self)
 
     def calc_session_cost_discount(self):
         # return cost of one session with discount

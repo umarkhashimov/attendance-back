@@ -28,9 +28,12 @@ def calculate_payment_due_date(enrollment, iterate_balance=None, count_from=None
     return due_date
 
 
-def next_closest_session_date(course, today=None):
-    today = today + timedelta(days=1) if today else date.today()
+def next_closest_session_date(course, today=None, include_today=False):
+    today = today or date.today()
     weekdays = [x for x in course.weekdays]
+
+    if not include_today:
+        today = today + timedelta(days=1)
 
     next_date = None
     max_iterations = 7

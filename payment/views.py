@@ -107,7 +107,7 @@ class CreatePaymentView(AdminRequired, View):
                 # Determine payed_from and payed_due
                 if auto_date:
                     base_date = enrollment.payment_due or datetime.today().date()
-                    payment.payed_from = next_closest_session_date(course=enrollment.course, today=base_date)
+                    payment.payed_from = next_closest_session_date(course=enrollment.course, today=base_date, include_today=True if not enrollment.payment_due else False)
                     payment.payed_due = calculate_payment_due_date(enrollment, 12 * months, payment.payed_from)
                 else:
                     payment.payed_from = start_date or datetime.today().date()
@@ -117,13 +117,13 @@ class CreatePaymentView(AdminRequired, View):
                 payment.save()
 
                 # Update enrollment's payment_due if necessary
-                if enrollment.payment_due:
+                if enrollment.payment_due is None:
+                        enrollment.payment_due = payment.payed_due or datetime.today()
+                        enrollment.trial_lesson = False
+                else:
                     if enrollment.payment_due < payment.payed_due:
                         enrollment.payment_due = payment.payed_due
-                        # enrollment.trial_lesson = False
-                else:
-                        enrollment.payment_due = payment.payed_due or datetime.today()
-                        # enrollment.trial_lesson = False
+                        enrollment.trial_lesson = False
 
                 enrollment.save()
 
