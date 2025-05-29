@@ -120,8 +120,10 @@ class CreatePaymentView(AdminRequired, View):
                 if enrollment.payment_due:
                     if enrollment.payment_due < payment.payed_due:
                         enrollment.payment_due = payment.payed_due
+                        # enrollment.trial_lesson = False
                 else:
-                        enrollment.payment_due = payment.payed_due
+                        enrollment.payment_due = payment.payed_due or datetime.today()
+                        # enrollment.trial_lesson = False
 
                 enrollment.save()
 

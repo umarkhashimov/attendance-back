@@ -121,13 +121,13 @@ class UpdateEnrollmentView(AdminRequired, View):
                 student=enrollment.student,
                 defaults={**form.cleaned_data}
             )
-            enrollment.save()
 
             if not enrollment.payment_due:
                 if not enrollment.trial_lesson:
                     enrollment.payment_due = datetime.today().date()
                     enrollment.save()
 
+            enrollment.save()
 
         next_url  = self.request.GET.get('next', '/')
         return redirect(next_url + '#enrollmentsTable')
