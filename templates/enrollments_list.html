@@ -13,7 +13,8 @@
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">
             <div class="col-12 bg-light rounded pt-2 px-2 border">
-                <form id="filterForm" method="get" action="{% url 'main:enrollments_list' %}" class="" onreset="resetForm(event)">
+                <form id="filterForm" method="get" action="{% url 'main:enrollments_list' %}" class=""
+                      onreset="resetForm(event)">
                     <div class="">
                         <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
                             <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
@@ -78,138 +79,177 @@
             </div>
         </div>
         <div class="col-12 col-md-12">
-                <div class="rounded py-2 mt-3 mt-md-0">
-                    <p class="mt-2 text-dark ms-1 mb-2">Записанные ученики</p>
+            <div class="rounded py-2 mt-3 mt-md-0">
+                <p class="mt-2 text-dark ms-1 mb-2">Записанные ученики</p>
 
-                    <table class="table border border-2 enrollments" id="enrollmentsTable">
-                        <thead>
-                        <tr>
-                            <th class="w-auto">Студент</th>
-                            <th class="w-auto">Группа</th>
-                            <th class="w-auto">Баланс <span class="text-secondary">д/м/г</span></th>
-                            <th class="w-auto">Кем записан</th>
-                            <th class="max-w-50px text-center"><i class="bi bi-gear"></i></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for enrollment in enrollments %}
-                            <tr {% if not enrollment.status %} disabled {% endif %} class="enrollment-data {% if not enrollment.status %} enrollment-disabled {% elif enrollment.hold %}enrollment-hold  {% elif enrollment.trial_lesson%}trial-lesson{% endif %}"
-                                id="enrollmentdata{{ enrollment.id }}">
-                                <td class="py-0 align-middle">
-                                    <span class="me-1 text-dark">{{ forloop.counter }}. </span>
-                                    <a
-                                            class="text-decoration-none text-dark opacity-100 table-obj-name-link"
-                                            href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a>
+                <table class="table border border-2 enrollments" id="enrollmentsTable">
+                    <thead>
+                    <tr>
+                        <th class="w-auto">Студент</th>
+                        <th class="w-auto">Группа</th>
+                        <th class="w-auto">Баланс <span class="text-secondary">д/м/г</span></th>
+                        <th class="w-auto">Кем записан</th>
+                        <th class="max-w-50px text-center"><i class="bi bi-gear"></i></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for enrollment in enrollments %}
+                        <tr {% if not enrollment.status %} disabled {% endif %}
+                                                           class="enrollment-data {% if not enrollment.status %} enrollment-disabled {% elif enrollment.hold %}enrollment-hold  {% elif enrollment.trial_lesson %}trial-lesson{% endif %}"
+                                                           id="enrollmentdata{{ enrollment.id }}">
+                            <td class="py-0 align-middle">
+                                <span class="me-1 text-dark">{{ forloop.counter }}. </span>
+                                <a
+                                        class="text-decoration-none text-dark opacity-100 table-obj-name-link"
+                                        href="{% url 'students:student_update' pk=enrollment.student.id %}">{{ enrollment.student.full_name }}</a>
                                 <span class="text-secondary fs-6">-{{ enrollment.discount }}%</span>
-                                    {% if enrollment.status and enrollment.hold %}
-                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="Запись заморожена"
-                                              role='button' class="text-primary ms-1"><i
-                                                class="bi bi-exclamation-circle-fill"></i></span>
-                                    {% elif enrollment.status and enrollment.trial_lesson %}
-                                        <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="Пробник"
-                                              role='button' class="text-warning ms-1"><i
-                                                class="bi bi-exclamation-circle-fill"></i></span>
-                                    {% endif %}
-                                </td>
-                                <td class="align-middle">
-                                    <a class="text-decoration-none text-dark opacity-100 table-obj-name-link"
-                                            href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }} - {{ enrollment.course.teacher.get_short_name }}</a></td>
-                                <td class="{% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }} | {{ enrollment.payment_due|date:'d-m-y'|default:'None' }}</td>
-                                <td>{{ enrollment.enrolled_by.username|default:'?' }}</td>
-                                <td class="align-middle p-0 bg-light">
-                                    <div class="btn-group rounded-0 w-100 p-0 h-100">
-                                        <button type="button" class="btn rounded-0 btn-info text-white px-3 py-1"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i class="bi bi-info-circle-fill"></i></button>
-                                        <!-- Edit Enrollment modal -->
-                                        <div class="modal fade modal-lg" data-bs-backdrop="static"
-                                             id="editEnrollmentModal{{ enrollment.id }}" tabindex="-1"
-                                             aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Информация о Записе</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                    </div>
-                                                    {% csrf_token %}
-                                                    <div class="modal-body">
-                                                        <table class="table bottom-1 border bg-white enrollment-info-table">
+                                {% if enrollment.status and enrollment.hold %}
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                          title="Запись заморожена"
+                                          role='button' class="text-primary ms-1"><i
+                                            class="bi bi-exclamation-circle-fill"></i></span>
+                                {% elif enrollment.status and enrollment.trial_lesson %}
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                          title="Пробник"
+                                          role='button' class="text-warning ms-1"><i
+                                            class="bi bi-exclamation-circle-fill"></i></span>
+                                {% endif %}
+                            </td>
+                            <td class="align-middle">
+                                <a class="text-decoration-none text-dark opacity-100 table-obj-name-link"
+                                   href="{% url 'courses:course_update' pk=enrollment.course.id %}">{{ enrollment.course }}
+                                    - {{ enrollment.course.teacher.get_short_name }}</a>
+                                {% if enrollment.transferred %}
+                                    <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                          title="Перенаправленная запись"
+                                          role='button' class="text-primary ms-1"><i
+                                            class="bi bi-exclamation-circle-fill"></i></span>
+                                {% endif %}
+                            </td>
+                            <td class="{% if enrollment.balance <= 0 %}text-danger {% endif %}">{{ enrollment.balance }}
+                                | {{ enrollment.payment_due|date:'d-m-y'|default:'None' }}</td>
+                            <td>{{ enrollment.enrolled_by.username|default:'?' }}</td>
+                            <td class="align-middle p-0 bg-light">
+                                <div class="btn-group rounded-0 w-100 p-0 h-100">
+                                    <button type="button" class="btn rounded-0 btn-info text-white px-3 py-1"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i
+                                            class="bi bi-info-circle-fill"></i></button>
+                                    <!-- Edit Enrollment modal -->
+                                    <div class="modal fade modal-lg" data-bs-backdrop="static"
+                                         id="editEnrollmentModal{{ enrollment.id }}" tabindex="-1"
+                                         aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Информация о
+                                                        Записе</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                            aria-label="Close"></button>
+                                                </div>
+                                                {% csrf_token %}
+                                                <div class="modal-body">
+                                                    <table class="table bottom-1 border bg-white enrollment-info-table">
+                                                        <tr>
+                                                            <td>Группа</td>
+                                                            <td>{{ enrollment.course }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Ученик</td>
+                                                            <td>{{ enrollment.student }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Баланс</td>
+                                                            <td>{{ enrollment.balance|default:'?' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Конец абонимента</td>
+                                                            <td>{{ enrollment.payment_due|default:'?' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Дата записи (создания)</td>
+                                                            <td>{{ enrollment.created_at }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Дата записи</td>
+                                                            <td>{{ enrollment.enrolled_at }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Кем записан</td>
+                                                            <td>{{ enrollment.enrolled_by.username|default:'?' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Скидка</td>
+                                                            <td>{{ enrollment.discount }}%</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Заметка для Учителя</td>
+                                                            <td>{{ enrollment.debt_note|default:'-' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Заметка</td>
+                                                            <td>{{ enrollment.note|default:'-' }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Заморожен</td>
+                                                            <td>{% if enrollment.hold %}
+                                                                <span class="badge text-bg-success p-1"><i
+                                                                        class="bi bi-check-lg"></i></span>{% else %}
+                                                                <span class="badge text-bg-danger p-1"><i
+                                                                        class="bi bi-x-lg"></i></span>{% endif %}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Прошел пробный</td>
+                                                            <td>{% if enrollment.trail_used_once %}
+                                                                <span class="badge text-bg-success p-1"><i
+                                                                        class="bi bi-check-lg"></i></span>{% else %}
+                                                                <span class="badge text-bg-danger p-1"><i
+                                                                        class="bi bi-x-lg"></i></span>{% endif %}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Пробник</td>
+                                                            <td>{% if enrollment.trial_lesson %}
+                                                                <span class="badge text-bg-success p-1"><i
+                                                                        class="bi bi-check-lg"></i></span>{% else %}
+                                                                <span class="badge text-bg-danger p-1"><i
+                                                                        class="bi bi-x-lg"></i></span>{% endif %}</td>
+                                                        </tr>
                                                             <tr>
-                                                                <td>Группа</td>
-                                                                <td>{{ enrollment.course }}</td>
+                                                                <td>Перенаправленная запись</td>
+                                                                <td>{% if enrollment.transferred %}
+                                                                    <span class="badge text-bg-success p-1"><i
+                                                                            class="bi bi-check-lg"></i></span>{% else %}
+                                                                    <span class="badge text-bg-danger p-1"><i
+                                                                            class="bi bi-x-lg"></i></span>{% endif %}
+                                                                </td>
                                                             </tr>
                                                             <tr>
-                                                                <td>Ученик</td>
-                                                                <td>{{ enrollment.student }}</td>
+                                                        {% if enrollment.transferred %}
+                                                                <td>Перенаправлен откуда</td>
+                                                                <td>{{ enrollment.transferred_from }}</td>
                                                             </tr>
-                                                            <tr>
-                                                                <td>Баланс</td>
-                                                                <td>{{ enrollment.balance|default:'?' }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Конец абонимента</td>
-                                                                <td>{{ enrollment.payment_due|default:'?' }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Дата записи (создания)</td>
-                                                                <td>{{ enrollment.created_at }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Дата записи</td>
-                                                                <td>{{ enrollment.enrolled_at }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Кем записан</td>
-                                                                <td>{{ enrollment.enrolled_by.username|default:'?' }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Скидка</td>
-                                                                <td>{{ enrollment.discount }}%</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Заметка для Учителя</td>
-                                                                <td>{{ enrollment.debt_note|default:'-' }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Заметка</td>
-                                                                <td>{{ enrollment.note|default:'-'  }}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Заморожен</td>
-                                                                <td>{% if enrollment.hold %} <span class="badge text-bg-success p-1"><i class="bi bi-check-lg"></i></span>{% else %}<span class="badge text-bg-danger p-1"><i class="bi bi-x-lg"></i></span>{% endif %}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Прошел пробный</td>
-                                                                <td>{% if enrollment.trail_used_once %} <span class="badge text-bg-success p-1"><i class="bi bi-check-lg"></i></span>{% else %}<span class="badge text-bg-danger p-1"><i class="bi bi-x-lg"></i></span>{% endif %}</td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>Пробник</td>
-                                                                <td>{% if enrollment.trial_lesson %} <span class="badge text-bg-success p-1"><i class="bi bi-check-lg"></i></span>{% else %}<span class="badge text-bg-danger p-1"><i class="bi bi-x-lg"></i></span>{% endif %}</td>
-                                                            </tr>
-                                                        </table>
-                                                    </div>
+                                                        {% endif %}
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-                        {% empty %}
-                            <tr>
-                                <td colspan="3" class="text-center w-100">нет записей</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3" class="text-center w-100">нет записей</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
+        </div>
 
-            {% if page_obj.paginator.count > 30 %}
-                {% include 'layout/pagination.html' %}
-            {% endif %}
+        {% if page_obj.paginator.count > 30 %}
+            {% include 'layout/pagination.html' %}
+        {% endif %}
     </div>
 {% endblock %}
 

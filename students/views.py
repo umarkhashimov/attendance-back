@@ -178,6 +178,13 @@ class ReEnrollStudentView(AdminRequired, View):
                     course=form.cleaned_data['course'],
                     defaults=data
                 )
+
+                if created:
+                    new_enrollment.enrolled_by = self.request.user
+                    new_enrollment.transferred = True
+                    new_enrollment.transferred_from = enrollment
+                    new_enrollment.save()
+
             except:
                 messages.error(request, "Произошла ошибка.")
                 return redirect(self.request.path)
