@@ -256,7 +256,7 @@ class EnrollmentsListView(AdminRequired, ListView):
             elif display_only == '2':
                 queryset = queryset.filter(status=False)
             elif display_only == '3':
-                queryset = queryset.filter(payment_due__lt=datetime.today().date())
+                queryset = queryset.filter(Q(payment_due__lt=datetime.today().date()) | Q(payment_due__isnull=True), status=True)
             elif display_only == '4':
                 queryset = queryset.filter(payment_due__isnull=False).exclude(Q(trial_lesson=True) | Q(status=False))
             elif display_only == '5':

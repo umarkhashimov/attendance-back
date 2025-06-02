@@ -148,7 +148,7 @@ class DebtPaymentsListView(AdminRequired, View):
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
-        enrollments = Enrollment.objects.select_related('course__teacher').filter(status=True, payment_due__lt=datetime.today().date())
+        enrollments = Enrollment.objects.select_related('course__teacher').filter(Q(payment_due__lt=datetime.today().date()) | Q(payment_due__isnull=True), status=True)
 
         if weekdays:
             if weekdays == '1':
