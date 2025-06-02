@@ -177,15 +177,8 @@ class LeadEnrollView(AdminRequired, View):
                 enrollment, created = Enrollment.objects.update_or_create(
                     course=form.cleaned_data['course'],
                     student=student,
-                    defaults={**form.cleaned_data, 'status': True, 'enrolled_at': datetime.now()},
+                    defaults={**form.cleaned_data, 'status': True, 'enrolled_at': datetime.now(), 'payment_due': None},
                 )
-
-                if not enrollment.status and not created:
-                    enrollment.payment_due = None
-
-                if not enrollment.payment_due and enrollment.trial_lesson == False:
-                    enrollment.payment_due = datetime.today().date()
-
 
                 if created:
                     enrollment.enrolled_by = self.request.user

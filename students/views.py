@@ -17,6 +17,7 @@ from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
 from attendance.models import AttendanceModel
+from payment.helpers import last_closest_session_date
 
 class StudentUpdateView(AdminRequired, UpdateView):
     model = StudentModel
@@ -83,20 +84,13 @@ class CreateEnrollmentView(AdminRequired, View):
             enrollment, created = Enrollment.objects.update_or_create(
                 course=course if course else form.cleaned_data['course'],
                 student=student if student else form.cleaned_data['student'],
-                defaults={**form.cleaned_data, 'status': True, 'enrolled_at':datetime.now()},
+                defaults={**form.cleaned_data, 'status': True, 'enrolled_at':datetime.now(), 'payment_due': None},
             )
-
-            if not enrollment.payment_due and enrollment.trial_lesson == False:
-                enrollment.payment_due = datetime.today().date()
-                enrollment.save()
-
-            if not created:
-                enrollment.payment_due = None
-                enrollment.save()
 
             if created:
                 enrollment.enrolled_by = self.request.user
-                enrollment.save()
+
+            enrollment.save()
 
             action_message = f"Записал ученика <b>{enrollment.student}</b> в группу <b>{enrollment.course}</b>"
             record_action(1, self.request.user, enrollment, enrollment.id, action_message)

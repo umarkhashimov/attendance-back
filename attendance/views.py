@@ -26,37 +26,45 @@ class GetSessionView(View):
         session.save()
         session.course.set_topic()
 
+        today = datetime.today().date()
         for obj in attendances:
-
-
             if f"stid_{obj.enrollment.student.student_id}" in keys:
-
                 status = request.POST.get(str(f'stid_{obj.enrollment.student.student_id}'), None)
+
                 if status in ['1', '2', '0']:
                     obj.status = int(status)
-                    if obj.status in [1,2]:
-                        if (obj.enrollment.trial_lesson and not obj.trial_attendance) and session.date == datetime.today().date():
-                            if not obj.enrollment.trail_used_once:
-                                obj.trial_attendance = obj.enrollment.trial_lesson
 
-                            if obj.enrollment.trial_lesson and not obj.enrollment.trail_used_once:
-                                obj.enrollment.trail_used_once = True
-                                obj.enrollment.trail_used_once_date = datetime.today().date()
+                    # Check for trial lesson logic and payment_due assignment
+                    if obj.status in [1, 2]:
+                        enrollment = obj.enrollment
+                        today = datetime.today().date()
+
+                        # If enrollment has trial lesson and hasn't used it yet
+                        if enrollment.trial_lesson and not obj.trial_attendance:
+                            if not enrollment.trail_used_once:
+                                obj.trial_attendance = enrollment.trial_lesson
+                                enrollment.trail_used_once = True
+                                enrollment.trail_used_once_date = today
                             else:
-                                obj.enrollment.trial_lesson = False
+                                # Disable trial lesson after it has been used once
+                                enrollment.trial_lesson = False
+                                # Assign payment_due if it is None
+                                if enrollment.payment_due is None:
+                                    enrollment.payment_due = last_closest_session_date(enrollment.course)
 
-                                if not obj.enrollment.payment_due:
-                                    print('last session date calculate')
-                                    obj.enrollment.payment_due = last_closest_session_date(obj.enrollment.course)
+                        # If enrollment has no trial lesson and payment_due is None, assign payment_due
+                        elif not enrollment.trial_lesson and enrollment.payment_due is None:
+                            enrollment.payment_due = last_closest_session_date(enrollment.course)
 
-                            obj.save()
-                            obj.enrollment.save()
+                        obj.save()
+                        enrollment.save()
 
+                        # Update attendance and homework grades
                         attendance_grade = request.POST.get(str(f'ga_{obj.enrollment.student.student_id}'), None)
                         homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'), None)
                         obj.participation_grade = attendance_grade if attendance_grade else None
                         obj.homework_grade = homework_grade if homework_grade else None
 
-            obj.save()
+                    obj.save()
 
         return redirect('/?date=' + session_date)
