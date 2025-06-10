@@ -113,7 +113,7 @@ class UpdateEnrollmentView(AdminRequired, View):
             enrollment, created = Enrollment.objects.update_or_create(
                 course=enrollment.course,
                 student=enrollment.student,
-                defaults={**form.cleaned_data}
+                defaults={**form.cleaned_data, 'payment_due':enrollment.payment_due},
             )
 
             enrollment.save()
