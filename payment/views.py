@@ -1,7 +1,6 @@
 from calendar import month
 from datetime import datetime, timedelta, time, timezone
 
-from django import forms
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
@@ -16,6 +15,8 @@ from .forms import CreatePaymentForm, PaymentHistoryFilterForm, UpdatePaymentDat
 from students.models import Enrollment, StudentModel
 from .helpers import calculate_payment_due_date, calculate_payment_amount, next_closest_session_date
 from collections import defaultdict
+from django.urls import reverse
+from urllib.parse import urlencode
 
 class PaymentsListView(AdminRequired, ListView):
     model = PaymentModel
@@ -23,6 +24,17 @@ class PaymentsListView(AdminRequired, ListView):
     context_object_name = 'payments'
     ordering = ['-id']
     paginate_by = 50
+
+    def get(self, request, *args, **kwargs):
+        # If no filters provided, but session has saved filters — redirect with them
+        if not request.GET and request.session.get("payments_filters"):
+            return redirect(f"{reverse('payment:payments_list')}?{urlencode(request.session['payments_filters'])}")
+
+        # If GET has filters, store them
+        if request.GET:
+            request.session["payments_filters"] = request.GET.dict()
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -144,6 +156,15 @@ class DebtPaymentsListView(AdminRequired, View):
     template_name = 'payment/debt_payments_list.html'
 
     def get(self, request):
+        # If no filters provided, but session has saved filters — redirect with them
+        if not request.GET and request.session.get("debts_filters"):
+            return redirect(f"{reverse('payment:debt_payments_list')}?{urlencode(request.session['debts_filters'])}")
+
+        # If GET has filters, store them
+        if request.GET:
+            request.session["debts_filters"] = request.GET.dict()
+
+
         teachers = UsersModel.objects.filter(role='1').distinct()
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
@@ -182,6 +203,14 @@ class TrialEnrollmentsView(AdminRequired, View):
     template_name = 'payment/trial_students_list.html'
 
     def get(self, request):
+        # If no filters provided, but session has saved filters — redirect with them
+        if not request.GET and request.session.get("trials_filters"):
+            return redirect(f"{reverse('payment:trial_enrollments_list')}?{urlencode(request.session['trials_filters'])}")
+
+        # If GET has filters, store them
+        if request.GET:
+            request.session["trials_filters"] = request.GET.dict()
+
         teachers = UsersModel.objects.filter(role='1').distinct()
 
         # Filters

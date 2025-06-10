@@ -4,6 +4,8 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views.generic import ListView, View, DetailView, UpdateView, DeleteView
 from django.contrib import messages
 from datetime import datetime
+from django.urls import reverse
+from urllib.parse import urlencode
 
 from users.filters import AdminRequired
 from students.models import StudentModel, Enrollment
@@ -19,6 +21,17 @@ class LeadsListView(AdminRequired, ListView):
     template_name = 'leads/leads_list.html'
     context_object_name = 'leads'
     ordering = ['-id']
+
+    def get(self, request, *args, **kwargs):
+        # If no filters provided, but session has saved filters — redirect with them
+        if not request.GET and request.session.get("leads_filters"):
+            return redirect(f"{reverse('leads:leads_list')}?{urlencode(request.session['leads_filters'])}")
+
+        # If GET has filters, store them
+        if request.GET:
+            request.session["leads_filters"] = request.GET.dict()
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

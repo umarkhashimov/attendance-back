@@ -3,6 +3,8 @@ from django.views.generic import TemplateView, ListView
 from datetime import date, datetime, timedelta
 from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
+from django.urls import reverse
+from urllib.parse import urlencode
 
 from students.forms import StudentInfoForm, EnrollmentForm
 from students.models import StudentModel, Enrollment
@@ -88,6 +90,17 @@ class StudentsListView(AdminRequired, ListView):
     paginate_by = 30
     ordering = ['first_name', 'last_name']
 
+    def get(self, request, *args, **kwargs):
+        # If no filters provided, but session has saved filters — redirect with them
+        if not request.GET and request.session.get("students_filters"):
+            return redirect(f"{reverse('main:students_list')}?{urlencode(request.session['students_filters'])}")
+
+        # If GET has filters, store them
+        if request.GET:
+            request.session["students_filters"] = request.GET.dict()
+
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         data = self.request.GET.copy()
@@ -150,6 +163,17 @@ class TeachersListView(AdminRequired, ListView):
     ordering = ['first_name', 'last_name']
     paginate_by = 30
 
+    def get(self, request, *args, **kwargs):
+        # If no filters provided, but session has saved filters — redirect with them
+        if not request.GET and request.session.get("teachers_filters"):
+            return redirect(f"{reverse('main:teachers_list')}?{urlencode(request.session['teachers_filters'])}")
+
+        # If GET has filters, store them
+        if request.GET:
+            request.session["teachers_filters"] = request.GET.dict()
+
+        return super().get(request, *args, **kwargs)
+
     def get_queryset(self):
         text = self.request.GET.get('text')
         queryset = super().get_queryset()
@@ -170,6 +194,20 @@ class CoursesListView(AdminRequired, ListView):
     context_object_name = 'courses'
     paginate_by = 30
     ordering = ['teacher', 'lesson_time']
+
+    def get(self, request, *args, **kwargs):
+        # If no filters provided, but session has saved filters — redirect with them
+        # If GET has filters, store them
+        if request.GET:
+            request.session["courses_filters"] = request.GET.dict()
+
+        if not request.GET and request.session.get("courses_filters"):
+            return redirect(f"{reverse('main:courses_list')}?{urlencode(request.session['courses_filters'])}")
+
+        request.session["courses_filters"] = request.GET.dict()
+
+
+        return super().get(request, *args, **kwargs)
 
     def get_queryset(self):
         course_name = self.request.GET.get('course_name')
@@ -211,6 +249,17 @@ class EnrollmentsListView(AdminRequired, ListView):
     context_object_name = 'enrollments'
     ordering = ['-id']
     paginate_by = 30
+
+    def get(self, request, *args, **kwargs):
+        # If no filters provided, but session has saved filters — redirect with them
+        if not request.GET and request.session.get("enrollments_filters"):
+            return redirect(f"{reverse('main:enrollments_list')}?{urlencode(request.session['enrollments_filters'])}")
+
+        # If GET has filters, store them
+        if request.GET:
+            request.session["enrollments_filters"] = request.GET.dict()
+
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
