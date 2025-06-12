@@ -39,7 +39,6 @@ class MainPageView(TemplateView):
                 today = date.today()
         context['prev_date'] = today - timedelta(days=1)
         context['next_date'] = date.today() if today == date.today() else today + timedelta(days=1)
-
         # Get sessions already marked today
         marked_sessions = SessionsModel.objects.filter(date=today)
 
