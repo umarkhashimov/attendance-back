@@ -1,0 +1,38 @@
+{% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+  <title>Создать Курс</title>
+{% endblock %}
+{% block content %}
+  {% include 'layout/navbar.html' %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+          <div class="bg-light rounded py-3 mt-3 px-2 border">
+            <p class="text-black ms-1">Создать Курс</p>
+            {% comment %} {{ form.as_p }} {% endcomment %}
+            <form method="post">
+              {% csrf_token %}
+                {{ form|crispy }}
+            <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+              <button type="submit" class="btn btn-success">Сохранить</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block custom_js %}
+<script>
+  flatpickr('#LessonTimePicker', {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: 'H:i',
+    time_24hr: true
+  })
+</script>
+{% endblock %}

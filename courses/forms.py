@@ -4,6 +4,11 @@ from django_select2.forms import Select2Widget, Select2MultipleWidget
 from multiselectfield import MultiSelectField
 from users.models import UsersModel
 
+class CreateSubjectForm(forms.ModelForm):
+    class Meta:
+        model = SubjectModel
+        fields = ['name', 'show_separately']
+
 class CourseCreateForm(forms.ModelForm):
 
     weekdays = MultiSelectField(choices=WEEKDAY_CHOICES)

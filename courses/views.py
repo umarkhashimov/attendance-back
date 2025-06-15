@@ -5,7 +5,7 @@ from django.views.generic import DetailView,  UpdateView, View, CreateView, List
 from django.core.exceptions import PermissionDenied
 
 from users.helpers import record_action
-from .models import CourseModel, SessionsModel
+from .models import CourseModel, SessionsModel, SubjectModel
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from datetime import datetime
@@ -13,7 +13,7 @@ from datetime import datetime
 from students.models import Enrollment
 from students.forms import CourseEnrollmentForm, ReEnrollmentForm
 from attendance.models import AttendanceModel
-from .forms import CancelCauseForm, CourseCreateForm
+from .forms import CancelCauseForm, CourseCreateForm,CreateSubjectForm
 from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
 
@@ -270,3 +270,12 @@ class ArchiveCourseView(SuperUserRequired,View):
             return redirect("main:courses_list")
 
         return redirect("courses:course_update", pk=course.id)
+
+
+class CreateSubjectView(AdminRequired,CreateView):
+    model = SubjectModel
+    template_name = "create_subject.html"
+    form_class = CreateSubjectForm
+
+    def get_success_url(self):
+        return reverse('main:courses_list')
