@@ -52,7 +52,7 @@ class CourseModel(models.Model):
     status = models.BooleanField(default=False, verbose_name="Статус курса")
     enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)
     archived = models.BooleanField(default=False, verbose_name="В архиве")
-    created_at = models.DateTimeField()
+    #created_at = models.DateTimeField()
 
     def archive_course(self):
         if self.get_all_enrolled_count() > 0:
