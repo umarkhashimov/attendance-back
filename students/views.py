@@ -160,9 +160,9 @@ class ReEnrollStudentView(AdminRequired, View):
         return render(request, 're_enrollment.html', context)
 
     def post(self, request, pk):
-        enrollment = get_object_or_404(Enrollment, id=pk)
         form = ReEnrollmentForm(request.POST)
         if form.is_valid():
+            enrollment = get_object_or_404(Enrollment, id=pk)
             try:
                 data = model_to_dict(enrollment)
 
