@@ -160,14 +160,16 @@ class ReEnrollStudentView(AdminRequired, View):
         return render(request, 're_enrollment.html', context)
 
     def post(self, request, pk):
+        enrollment = get_object_or_404(Enrollment, id=pk)
         form = ReEnrollmentForm(request.POST)
         if form.is_valid():
-            enrollment = get_object_or_404(Enrollment, id=pk)
             try:
                 data = model_to_dict(enrollment)
 
                 # Remove fields you want to set explicitly
                 data.pop('id', None)
+                data.pop('transferred_from', None)
+                data.pop('transferred', None)
                 data['course'] = form.cleaned_data['course']
                 data['student'] = enrollment.student
                 data['enrolled_by'] = enrollment.enrolled_by
@@ -180,16 +182,13 @@ class ReEnrollStudentView(AdminRequired, View):
                 )
 
                 if created:
-                    if enrollment.transferred_from:
-                        last_transfer_from = enrollment.transferred_from
-
                     new_enrollment.enrolled_by = self.request.user
                     new_enrollment.transferred = True
                     new_enrollment.transferred_from = enrollment
                     new_enrollment.save()
 
             except Exception as e:
-                messages.error(request, f"Произошла ошибка. {e} {last_transfer_from}")
+                messages.error(request, f"Произошла ошибка. {e}")
                 return redirect(self.request.path)
             else:
                 enrollment.status = False
