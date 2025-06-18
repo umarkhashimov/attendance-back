@@ -180,13 +180,16 @@ class ReEnrollStudentView(AdminRequired, View):
                 )
 
                 if created:
+                    if enrollment.transferred_from:
+                        last_transfer_from = enrollment.transferred_from
+
                     new_enrollment.enrolled_by = self.request.user
                     new_enrollment.transferred = True
                     new_enrollment.transferred_from = enrollment
                     new_enrollment.save()
 
             except Exception as e:
-                messages.error(request, f"Произошла ошибка. {e}")
+                messages.error(request, f"Произошла ошибка. {e} {last_transfer_from}")
                 return redirect(self.request.path)
             else:
                 enrollment.status = False
