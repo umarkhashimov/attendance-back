@@ -58,7 +58,8 @@ class Enrollment(models.Model):
     def in_debt(self):
         if self.payment_due:
             return self.payment_due < datetime.date.today()
-        return False
+        else:
+            return True
 
     @property
     def balance(self):
