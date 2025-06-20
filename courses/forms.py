@@ -7,7 +7,7 @@ from users.models import UsersModel
 class CreateSubjectForm(forms.ModelForm):
     class Meta:
         model = SubjectModel
-        fields = ['name', 'show_separately']
+        fields = ['name', 'show_separately', 'individual']
 
 class CourseCreateForm(forms.ModelForm):
 

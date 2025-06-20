@@ -13,12 +13,12 @@
             {#      <a href="{% url 'courses:create_course' %}" class="btn btn-primary">Создать</a>#}
             <div>
                 <span class="me-2">Создать:</span>
-            <a href="{% url 'courses:create_subject' %}" type="button" class="btn btn-outline-primary">
-                Предмет
-            </a>
-            <a href="{% url 'courses:create_course' %}" type="button" class="btn btn-primary">
-                Группу
-            </a>
+                <a href="{% url 'courses:create_subject' %}" type="button" class="btn btn-outline-primary">
+                    Предмет
+                </a>
+                <a href="{% url 'courses:create_course' %}" type="button" class="btn btn-primary">
+                    Группу
+                </a>
             </div>
         </div>
         <hr class="table-group-divider"/>
@@ -62,27 +62,46 @@
                 <div class="col-12 col-md-6 col-lg-4 px-1">
                     <div class="position-relative px-0">
                         <span class="position-absolute top-0 topic-label" user-color="{{ obj.teacher.color }}"
-                              style="outline-color: {{ obj.teacher.color }};">{{ obj.last_topic|default:"---" }}<span style="background: {{ obj.teacher.color }}" class="label-bg"></span></span>
+                              style="outline-color: {{ obj.teacher.color }};">{{ obj.last_topic|default:"---" }}<span
+                                style="background: {{ obj.teacher.color }}" class="label-bg"></span></span>
                         <span class="position-absolute top-0 teacher-name-label"
                               style="outline-color: {{ obj.teacher.color }} !important;">{% if obj.teacher.first_name %}
                             {{ obj.teacher.first_name|default:'-' }} {{ obj.teacher.last_name|default:"-" }}{% else %}
-                            {{ obj.teacher.username }}{% endif %}<span style="background: {{ obj.teacher.color }}" class="label-bg"></span></span>
+                            {{ obj.teacher.username }}{% endif %}<span style="background: {{ obj.teacher.color }}"
+                                                                       class="label-bg"></span></span>
                         <a href="{% url 'courses:course_update' pk=obj.id %}"
                            class="border-3 border px-2 py-2 d-block course-list-item mt-2 mb-1">
                             <div class="row">
-                                <div class="col-9 gap-2 align-right pt-1">
-                                    <p class="text-dark mb-0 course-name mt-1 align-end h-100 w-100">
-                                        <span class="fs-6 text-secondary opacity-50 course-id">{{ obj.id }}</span>
-                                        {{ obj.subject|capfirst }} -
-                                        {{ obj.get_name }}
-                                    </p>
-                                </div>
-                                <div class="col-3 d-flex align-items-end justify-content-end h-100 pt-1 p-0 pe-3">
-                                    <p class="badge text-bg-light border border-1 border-primary my-0 me-1">{{ obj.get_enrolled_count }}</p>
-                                    <p class="m-0"><span
-                                            class="badge text-bg-light border border-1">{{ obj.lesson_time|time:'H:i' }}</span>
-                                    </p>
-                                </div>
+                                {% if obj.subject.individual and obj.get_single_enrollment %}
+                                    <div class="col-9 gap-2 align-right pt-1">
+                                        <p class="text-dark mb-0 course-name mt-1 align-end h-100 w-100">
+                                            <span class="fs-6 text-secondary opacity-50 course-id">{{ obj.id }}</span>
+                                            {{ obj.get_name }} -
+                                            <span class="text-primary">
+                                            {{ obj.get_single_enrollment.student }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <div class="col-3 d-flex align-items-end justify-content-end h-100 pt-1 p-0 pe-3">
+                                        <p class="m-0"><span
+                                                class="badge text-bg-light border border-1">{{ obj.lesson_time|time:'H:i' }}</span>
+                                        </p>
+                                    </div>
+                                {% else %}
+                                    <div class="col-9 gap-2 align-right pt-1">
+                                        <p class="text-dark mb-0 course-name mt-1 align-end h-100 w-100">
+                                            <span class="fs-6 text-secondary opacity-50 course-id">{{ obj.id }}</span>
+                                            {{ obj.subject|capfirst }} -
+                                            {{ obj.get_name }}
+                                        </p>
+                                    </div>
+                                    <div class="col-3 d-flex align-items-end justify-content-end h-100 pt-1 p-0 pe-3">
+                                        <p class="badge text-bg-light border border-1 border-primary my-0 me-1">{{ obj.get_enrolled_count }}</p>
+                                        <p class="m-0"><span
+                                                class="badge text-bg-light border border-1">{{ obj.lesson_time|time:'H:i' }}</span>
+                                        </p>
+                                    </div>
+                                {% endif %}
                             </div>
                         </a>
                     </div>

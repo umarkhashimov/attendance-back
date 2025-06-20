@@ -1,4 +1,5 @@
 from django.db import models
+
 from users.models import UsersModel
 from multiselectfield import MultiSelectField
 from datetime import timedelta
@@ -12,6 +13,7 @@ from .filters import course_date_match
 class SubjectModel(models.Model):
     name = models.CharField(max_length=150, unique=True, verbose_name="Имя предмета")
     show_separately = models.BooleanField(default=False, verbose_name="Отображать раздельно")
+    individual = models.BooleanField(default=False, verbose_name="Индивидуальный")
 
     def __str__(self) -> str:
         return self.name
@@ -53,6 +55,15 @@ class CourseModel(models.Model):
     enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)
     archived = models.BooleanField(default=False, verbose_name="В архиве")
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def get_single_enrollment(self):
+        Enrollments = apps.get_model('students', 'Enrollment')
+        enrollment = Enrollments.objects.filter(course=self, status=True)
+
+        if enrollment.count() == 1:
+            return enrollment.first()
+        else:
+            return None
 
     def archive_course(self):
         if self.get_all_enrolled_count() > 0:
