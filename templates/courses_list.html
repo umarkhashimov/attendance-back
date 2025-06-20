@@ -83,7 +83,7 @@
                                         </p>
                                     </div>
                                     <div class="col-3 d-flex align-items-end justify-content-end h-100 pt-1 p-0 pe-3">
-                                        <p title="Баланс" data-bs-toggle="tooltip" data-bs-placement="top" class="badge border my-0 me-1 {% if obj.get_single_enrollment.balance <= 0 %}text-danger{% endif %}">{{ obj.get_single_enrollment.balance }}</p>
+                                        <p title="Баланс" data-bs-toggle="tooltip" data-bs-placement="top" class="badge border my-0 me-1 text-dark {% if obj.get_single_enrollment.balance <= 0 %}text-danger{% endif %}">{{ obj.get_single_enrollment.balance }}</p>
                                         <p class="m-0"><span
                                                 class="badge text-bg-light border border-1">{{ obj.lesson_time|time:'H:i' }}</span>
                                         </p>
