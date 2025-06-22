@@ -127,7 +127,8 @@
                                                               title="Заморожен {{ obj.enrollment.hold }} "
                                                               role='button' class="text-primary"><i
                                                                 class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
-                                                        {% if obj.enrollment.trial_lesson == False or obj.enrollment.trail_used_once and obj.trial_attendance == False and obj.enrollment.in_debt%}
+{#                                                        {% if obj.enrollment.trial_lesson == False or obj.enrollment.trail_used_once and obj.trial_attendance == False and obj.enrollment.in_debt%}#}
+                                                            {% if obj.enrollment.trial_lesson == False and filter_date == today and obj.enrollment.in_debt or obj.enrollment.trail_used_once and filter_date == today and obj.enrollment.in_debt %}
                                                             <span data-bs-toggle="tooltip" data-bs-placement="top"
                                                                   title="{{ obj.enrollment.balance }} {% if obj.enrollment.debt_note %}|| {{ obj.enrollment.debt_note|default:"" }}{% endif %}"
                                                                   role='button' class="text-danger"><i

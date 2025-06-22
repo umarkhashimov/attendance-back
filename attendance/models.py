@@ -21,4 +21,4 @@ class AttendanceModel(models.Model):
         verbose_name = 'посещение'
         verbose_name_plural = 'посещении'
         unique_together = ('enrollment', 'session') 
-        ordering = [ '-enrollment__trial_lesson', '-trial_attendance','enrollment__student__first_name', 'enrollment__student__last_name']
+        ordering = [ '-enrollment__trial_lesson', '-trial_attendance', 'enrollment__trail_used_once','enrollment__student__first_name', 'enrollment__student__last_name']
