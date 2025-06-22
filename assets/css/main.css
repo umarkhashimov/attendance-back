@@ -184,11 +184,16 @@ div.hiddenDiv {
 }
 
 tr.enrollment-data.trial-lesson td {
-    background-color: rgba(255, 255, 0, 0.1) !important;
+    background-color: rgba(255, 255, 0, 0.2) !important;
 }
 
 tr.enrollment-data.enrollment-hold td{
     background-color: rgba(48, 209, 239, 0.1) !important;
+    color: black !important;
+}
+
+tr.enrollment-data.trial-used-once td{
+    background-color: rgba(255, 193, 7, 0.3) !important;
     color: black !important;
 }
 
@@ -379,7 +384,7 @@ tr.enrollment-data .enrollment-info-table tr:hover{
     box-shadow: 0px 0px 2px 1px #a00000 !important;
 }
 
-table.enrollments tr:not(.trial-lesson, .enrollment-hold, [disabled]):hover td {
+table.enrollments tr:not(.trial-lesson, .enrollment-hold, .trial-used-once, [disabled]):hover td {
     background-color: rgba(0, 0, 0, 0.02) !important;
 }
 
