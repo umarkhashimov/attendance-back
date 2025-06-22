@@ -110,10 +110,16 @@ class UpdateEnrollmentView(AdminRequired, View):
         enrollment = get_object_or_404(Enrollment, id=pk)
         form = UpdateEnrollmentForm(request.POST)
         if form.is_valid():
+            payment_due = enrollment.payment_due
+
+            if form.cleaned_data['payment_due']:
+                payment_due = form.cleaned_data['payment_due']
+
+
             enrollment, created = Enrollment.objects.update_or_create(
                 course=enrollment.course,
                 student=enrollment.student,
-                defaults={**form.cleaned_data, 'payment_due':enrollment.payment_due},
+                defaults={**form.cleaned_data, 'payment_due':payment_due},
             )
 
             enrollment.save()
