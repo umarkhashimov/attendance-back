@@ -184,7 +184,7 @@ div.hiddenDiv {
 }
 
 tr.enrollment-data.trial-lesson td {
-    background-color: rgba(255, 255, 0, 0.2) !important;
+    background-color: rgba(255, 255, 0, 0.3) !important;
 }
 
 tr.enrollment-data.enrollment-hold td{
@@ -193,7 +193,7 @@ tr.enrollment-data.enrollment-hold td{
 }
 
 tr.enrollment-data.trial-used-once td{
-    background-color: rgba(255, 193, 7, 0.3) !important;
+    background-color: rgba(0, 128, 0, 0.2) !important;
     color: black !important;
 }
 

@@ -248,7 +248,7 @@
                         </thead>
                         <tbody>
                         {% for enrollment in enrollments %}
-                            <tr class="enrollment-data {% if enrollment.hold %}enrollment-hold {% elif enrollment.trial_lesson and not enrollment.trail_used_once %}trial-lesson {% elif enrollment.trial_lesson and enrollment.trail_used_once %} border border-2 border-warning trial-used-once {% endif %}">
+                            <tr class="enrollment-data {% if enrollment.hold %}enrollment-hold {% elif enrollment.trial_lesson and not enrollment.trail_used_once %}trial-lesson {% elif enrollment.trial_lesson and enrollment.trail_used_once %} trial-used-once {% endif %}">
                                 <td class="py-0 align-middle">
                                     <span class="me-1 text-dark">{{ forloop.counter }}. </span>
                                     <a

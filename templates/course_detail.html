@@ -20,7 +20,7 @@
                     <table class="table border border-2 enrollments" id="enrollmentsTable">
                         <thead>
                         <tr>
-                            <th class="w-auto">Студент</th>
+                            <th class="w-auto"><input type="checkbox" class="form-check-input me-2">Студент</th>
                             <th class="w-auto">Баланс</th>
                             <th class="w-auto">Конец</th>
                             <th class="w-auto">Управления</th>
@@ -29,9 +29,10 @@
                         </thead>
                         <tbody>
                         {% for enrollment in enrollments %}
-                            <tr class="enrollment-data {% if enrollment.hold %}enrollment-hold {% elif enrollment.trial_lesson and not enrollment.trail_used_once %}trial-lesson {% elif enrollment.trial_lesson and enrollment.trail_used_once %} border border-2 border-warning trial-used-once {% endif %}"
+                            <tr class="enrollment-data {% if enrollment.hold %}enrollment-hold {% elif enrollment.trial_lesson and not enrollment.trail_used_once %}trial-lesson {% elif enrollment.trial_lesson and enrollment.trail_used_once %} trial-used-once {% endif %}"
                                 id="enrollmentdata{{ enrollment.id }}">
-                                <td class="py-0 align-middle">
+                                <td name="enrollment_{{ enrollment.id }}" class="py-0 align-middle me-2 enrollment-select-check">
+                                <input type="checkbox" class="form-check-input">
                                     <span class="me-1 text-dark">{{ forloop.counter }}. </span>
                                     <a
                                             class="text-decoration-none text-dark opacity-100 table-obj-name-link"
