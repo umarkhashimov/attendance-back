@@ -1,4 +1,5 @@
 import datetime
+from datetime import date
 from cProfile import label
 
 from django import forms
@@ -54,11 +55,11 @@ class StudentsListFilterForm(forms.Form):
     )
 
     date_from = forms.DateField(widget=forms.DateInput(
-        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': date.today().isoformat()}),
         required=False, label="С")
 
     date_to = forms.DateField(widget=forms.DateInput(
-        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
+        attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': date.today().isoformat()}),
         required=False, label="До")
 
     def __init__(self,  *args, **kwargs):
@@ -75,7 +76,7 @@ class StudentsListFilterForm(forms.Form):
 
 
         if start_date:
-            self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
+            self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': date.today().isoformat()})
 
         if end_date:
             self.fields['date_from'].widget.attrs.update({'max': end_date})
