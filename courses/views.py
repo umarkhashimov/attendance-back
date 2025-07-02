@@ -33,8 +33,6 @@ class CourseUpdateView(AdminRequired, UpdateView):
         else:
             new_weekdays = data['weekdays']
 
-
-
         active_enrollments = Enrollment.objects.filter(status=True, payment_due__isnull=False, course=course)
 
         for enrollment in active_enrollments:

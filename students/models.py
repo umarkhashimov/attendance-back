@@ -66,9 +66,9 @@ class Enrollment(models.Model):
     def balance(self):
         return calculate_balance(self)
 
-    def calculate_new_payment_due(self, new_weekdays):
+    def calculate_new_payment_due(self, new_weekdays, balance=None):
         current_date = datetime.date.today()
-        old_balance = self.balance
+        old_balance = self.balance if balance is None else balance
         negative = old_balance < 0
 
         if old_balance == 0:

@@ -187,11 +187,14 @@ class ReEnrollStudentView(AdminRequired, View):
                     defaults=data
                 )
 
+
                 if created:
                     new_enrollment.enrolled_by = self.request.user
                     new_enrollment.transferred = True
                     new_enrollment.transferred_from = enrollment
                     new_enrollment.save()
+
+                new_enrollment.calculate_new_payment_due([x for x in new_enrollment.course.weekdays], balance=enrollment.balance)
 
             except Exception as e:
                 messages.error(request, f"Произошла ошибка. {e}")
