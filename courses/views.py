@@ -8,7 +8,7 @@ from users.helpers import record_action
 from .models import CourseModel, SessionsModel, SubjectModel
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
-from datetime import datetime
+import datetime
 
 from students.models import Enrollment
 from students.forms import CourseEnrollmentForm, ReEnrollmentForm
@@ -23,17 +23,27 @@ class CourseUpdateView(AdminRequired, UpdateView):
     form_class = CourseCreateForm
 
     def form_valid(self, form):
+        course = self.get_object()
         obj = form.save(commit=False)
         data = form.cleaned_data
         if data['days'] == '1':
-            obj.weekdays = ['0', '2', '4']
+            new_weekdays  = ['0', '2', '4']
         elif data['days'] == '2':
-            obj.weekdays = ['1', '3', '5']
+            new_weekdays  = ['1', '3', '5']
         else:
-            obj.weekdays = data['weekdays']
+            new_weekdays = data['weekdays']
 
+
+
+        active_enrollments = Enrollment.objects.filter(status=True, payment_due__isnull=False, course=course)
+
+        for enrollment in active_enrollments:
+            enrollment.calculate_new_payment_due(new_weekdays)
+
+        obj.weekdays = new_weekdays
         obj.save()
         form.save_m2m()
+
 
         return super().form_valid(form)
 
@@ -144,7 +154,7 @@ class CancelSessionView(View):
         form = CancelCauseForm(request.POST)
         if form.is_valid():
             cause = form.cleaned_data['cause']
-            today = datetime.now().date()
+            today = datetime.datetime.now().date()
             course= get_object_or_404(CourseModel, id=course_id)
             session, created = SessionsModel.objects.get_or_create(course=course, date=session_date, defaults={'status': False, 'record_by_id': self.request.user.id, 'cause': cause})
             # generate empty attendance based on enrollment status
@@ -166,7 +176,7 @@ class CancelSessionView(View):
 class ConductSession(View):
 
     def get(self, request, course_id, session_date):
-        today = datetime.now().date()
+        today = datetime.datetime.now().date()
         course= get_object_or_404(CourseModel, id=course_id)
         session, created = SessionsModel.objects.get_or_create(course=course, date=session_date, defaults={'status': True, 'record_by_id': self.request.user.id, 'topic': course.last_topic})
 

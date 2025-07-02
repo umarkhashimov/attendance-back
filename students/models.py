@@ -6,6 +6,7 @@ from django.core.validators import MaxValueValidator
 from django.utils import timezone
 from users.models import UsersModel
 from .helpers import calculate_balance
+from payment.helpers import next_closest_session_date
 
 class StudentModel(models.Model):
     student_id = models.PositiveBigIntegerField(null=True, blank=True, unique=True, editable=False)
@@ -64,6 +65,46 @@ class Enrollment(models.Model):
     @property
     def balance(self):
         return calculate_balance(self)
+
+    def calculate_new_payment_due(self, new_weekdays):
+        current_date = datetime.date.today()
+        old_balance = self.balance
+        negative = old_balance < 0
+
+        if old_balance == 0:
+
+            max_iterations = 7
+            while max_iterations > 0:
+
+                if str(current_date.weekday()) in new_weekdays:
+                    next_date = current_date
+                    self.payment_due = next_date - datetime.timedelta(days=1)
+                    break
+
+                current_date += datetime.timedelta(days=1)
+                max_iterations -= 1
+
+            self.save()
+            return None
+
+        if negative:
+            current_date -= datetime.timedelta(days=1)
+
+        count = 0
+        while count < abs(old_balance):
+
+            if str(current_date.weekday()) in new_weekdays:
+                count += 1
+
+                if count >= abs(old_balance):
+                    break
+
+            current_date += datetime.timedelta(days=-1 if negative else 1)
+
+
+        self.payment_due = current_date
+        self.save()
+
 
     def calc_session_cost_discount(self):
         # return cost of one session with discount
