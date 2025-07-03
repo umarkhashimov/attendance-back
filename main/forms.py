@@ -1,6 +1,7 @@
 import datetime
 from datetime import date
 from cProfile import label
+from random import choices
 
 from django import forms
 from django_select2.forms import Select2Widget, Select2MultipleWidget, ModelSelect2Widget
@@ -28,6 +29,10 @@ class CoursesListFilterForm(forms.Form):
         widget=Select2Widget(attrs={'class':'form-control', 'onchange':'submit()', 'id':'subjectFilter'}),
         required=False, label="Курс"
     )
+
+    sort_by = forms.ChoiceField(choices=[('1',"Время урока"), ('6', 'Время урока (убыв.)'), ('2', 'Предмет'), ('3', 'Новые'), ('4', 'Старые'), ('5', 'Учитель')],
+                                widget=Select2Widget(attrs={'class':'form-control', 'onchange':'submit()', 'id':'sortByFilter'}),
+                                required=False, label="Сортировка")
 
 class StudentsListFilterForm(forms.Form):
     text = forms.CharField(

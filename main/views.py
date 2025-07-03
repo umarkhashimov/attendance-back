@@ -213,6 +213,7 @@ class CoursesListView(AdminRequired, ListView):
         days =  self.request.GET.get('weekdays')
         teacher = self.request.GET.get('teacher')
         subject = self.request.GET.get('subject')
+        sort_by = self.request.GET.get('sort_by')
 
         queryset = super().get_queryset()
         if subject:
@@ -228,6 +229,20 @@ class CoursesListView(AdminRequired, ListView):
 
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
+
+        if sort_by:
+            if sort_by == "1":
+                queryset = queryset.order_by("lesson_time")
+            if sort_by == "6":
+                queryset = queryset.order_by("-lesson_time")
+            elif sort_by == "2":
+                queryset = queryset.order_by("subject__name")
+            elif sort_by == "3":
+                queryset = queryset.order_by("-id")
+            elif sort_by == "4":
+                queryset = queryset.order_by("id")
+            elif sort_by == "5":
+                queryset = queryset.order_by("teacher__first_name", "teacher__last_name", "teacher__username")
 
         return queryset.exclude(archived=True)
     
