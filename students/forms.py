@@ -140,9 +140,9 @@ class ReEnrollmentForm(forms.Form):
     course = forms.ModelChoiceField(queryset=CourseModel.objects.exclude(Q(archived=True) | Q(status=False)),
                                     widget=Select2Widget(attrs={'class': 'form-control'}), label="Группа")
 
-    def __init__(self, *args, student=None, teacher=None, weekdays=None, **kwargs):
+    def __init__(self, *args, student=None, teacher=None, weekdays=None, exclude_course=None, **kwargs):
         super().__init__(*args, **kwargs)
-        queryset = CourseModel.objects.all()
+        queryset = CourseModel.objects.all().exclude(Q(archived=True))
 
         if student:
             active_enrollments = Enrollment.objects.filter(student=student, status=True).values_list('course__id', flat=True)
@@ -159,6 +159,8 @@ class ReEnrollmentForm(forms.Form):
             elif weekdays == "3":
                 queryset = queryset.exclude(Q(weekdays__contains="0,2,4") | Q(weekdays__contains="1,3,5"))
 
+        if exclude_course:
+            queryset = queryset.exclude(id=exclude_course)
 
         self.fields['course'].queryset = queryset
 

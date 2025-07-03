@@ -208,3 +208,76 @@ class ReEnrollStudentView(AdminRequired, View):
                 return redirect(next_url)
 
         return redirect('main:main')
+
+class GroupReEnrollmentView(AdminRequired, View):
+    def get(self, request, group_id):
+        course = get_object_or_404(CourseModel, id=group_id)
+        weekdays = request.GET.get('weekdays', None)
+        teacher = request.GET.get('teacher', None)
+
+        # Get list of IDs passed via GET
+        enrollment_ids = request.GET.get('enrollmentid', '')
+        id_list = enrollment_ids.split(',') if enrollment_ids else []
+        enrollments = Enrollment.objects.filter(id__in=id_list, course=course)
+
+        if not enrollments or enrollments.count() == 0:
+            return redirect('courses:course_update', pk=course.id)
+
+        return render(request, 'group_re_enrollment.html', {
+            'course': course,
+            'enrollments': enrollments.order_by('student__first_name', 'student__last_name'),
+            're_enrollment_form': ReEnrollmentForm(exclude_course=course.id, teacher=teacher or None, weekdays=weekdays or None),
+            'filter_form': ReEnrollmentFilterForm(request.GET),
+        })
+
+
+    def post(self, request, group_id):
+        course = get_object_or_404(CourseModel, id=group_id)
+
+        enrollment_ids = request.POST.getlist('enrollment_ids')
+        enrollments = Enrollment.objects.filter(id__in=enrollment_ids, course=course)
+
+        form = ReEnrollmentForm(request.POST)
+        if form.is_valid() and enrollments.count() > 0:
+            print("VALID FORM")
+            for enrollment in enrollments:
+                if not Enrollment.objects.filter(student=enrollment.student, course=form.cleaned_data['course'], status=True).exists():
+                    print('NOOOO EXIST')
+                    try:
+                            data = model_to_dict(enrollment)
+
+                            # Remove fields you want to set explicitly
+                            data.pop('id', None)
+                            data.pop('transferred_from', None)
+                            data.pop('transferred', None)
+                            data['course'] = form.cleaned_data['course']
+                            data['student'] = enrollment.student
+                            data['enrolled_by'] = enrollment.enrolled_by
+                            data['enrolled_at'] = datetime.now()
+
+                            new_enrollment, created = Enrollment.objects.update_or_create(
+                                student=enrollment.student,
+                                course=form.cleaned_data['course'],
+                                defaults=data
+                            )
+
+                            if created:
+                                new_enrollment.enrolled_by = self.request.user
+                                new_enrollment.transferred = True
+                                new_enrollment.transferred_from = enrollment
+                                new_enrollment.save()
+
+                            new_enrollment.calculate_new_payment_due([x for x in new_enrollment.course.weekdays],
+                                                                     balance=enrollment.balance)
+                    except Exception as e:
+                        messages.error(request, f"Произошла ошибка. {e}")
+                    else:
+                        enrollment.status = False
+                        enrollment.save()
+
+                        messages.success(request, "Запись успешно перенаправлена.")
+                else:
+                        messages.error(request, "Запись уже существует.")
+
+
+        return redirect('courses:course_update', pk=course.id)
