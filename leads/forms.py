@@ -12,6 +12,7 @@ class LeadForm(forms.ModelForm):
                                      widget=Select2Widget(attrs={'class': 'form-control'}),required=False, label='Выберите ученика')
     select_student = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'onclick': 'toggleStudentInputType(this)'}), label='Создать нового ученика', initial=True)
 
+
     class Meta:
         model = LeadsModel
         fields = ['weekdays', 'subject', 'lesson_time', 'teacher', 'arrival_date', 'note']
@@ -89,6 +90,9 @@ class LeadsListFilterForm(forms.Form):
     date_to = forms.DateField(widget=forms.DateInput(
         attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
         required=False, label="До")
+
+    arrival_month = forms.DateField(widget=forms.DateInput(attrs={'type': 'month', 'class': 'form-control', 'onchange': 'submit()'}), required=False, label="Записан на")
+
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

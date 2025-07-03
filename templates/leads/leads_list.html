@@ -25,22 +25,29 @@
                         </h6>
                     </div>
                     <div class="row mt-2 pb-3">
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-3">
                             <div class="custom-select-2">
                                 <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.student.label }}</label>
                                 {{ filter_form.student }}
                             </div>
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-3">
                             <div class="custom-select-2">
                                 <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.subject.label }}</label>
                                 {{ filter_form.subject }}
                             </div>
                         </div>
-                        <div class="col-12 col-md-4">
+                        <div class="col-12 col-md-3">
                             <div class="custom-select-2">
                                 <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
                                 {{ filter_form.teacher }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <div class="custom-select-2">
+                                <label for="id_enrollment_month"
+                                       class="me-2 ms-1 mb-1">{{ filter_form.created_by.label }}</label>
+                                {{ filter_form.created_by }}
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-md-2 mt-2">
@@ -72,8 +79,8 @@
                         <div class="col-12 col-md-4 mt-2">
                             <div class="custom-select-2">
                                 <label for="id_enrollment_month"
-                                       class="me-2 ms-1 mb-1">{{ filter_form.created_by.label }}</label>
-                                {{ filter_form.created_by }}
+                                       class="me-2 ms-1 mb-1">{{ filter_form.arrival_month.label }}</label>
+                                {{ filter_form.arrival_month }}
                             </div>
                         </div>
                     </div>

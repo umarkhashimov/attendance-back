@@ -50,6 +50,7 @@ class LeadsListView(AdminRequired, ListView):
         date_to = self.request.GET.get('date_to', None)
         student_id = self.request.GET.get('student', None)
         created_by = self.request.GET.get('created_by', None)
+        arrival_month = self.request.GET.get('arrival_month', None)
 
         if student_id:
             queryset = queryset.filter(student__id=student_id)
@@ -75,6 +76,10 @@ class LeadsListView(AdminRequired, ListView):
                 queryset = queryset.filter(weekdays__contains='1,3,5')
             elif days == "3":
                 queryset = queryset.exclude(Q(weekdays__contains="0,2,4") | Q(weekdays__contains="1,3,5"))
+
+        if arrival_month:
+            year, month = map(int, arrival_month.split('-'))
+            queryset = queryset.filter(arrival_date__month=month, arrival_date__year=year)
 
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
