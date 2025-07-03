@@ -227,10 +227,14 @@
                                                                             class="bi bi-x-lg"></i></span>{% endif %}
                                                                 </td>
                                                             </tr>
-                                                            <tr>
                                                         {% if enrollment.transferred %}
+                                                            <tr>
                                                                 <td>Перенаправлен откуда</td>
-                                                                <td>{{ enrollment.transferred_from }}</td>
+                                                                <td>{{ enrollment.transferred_from.course }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td>Прошлая запись Создана в</td>
+                                                                <td>{{ enrollment.transferred_from.created_at }}</td>
                                                             </tr>
                                                         {% endif %}
                                                     </table>
