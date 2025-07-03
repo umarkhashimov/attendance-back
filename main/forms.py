@@ -108,8 +108,9 @@ class EnrollmentsListFilterForm(forms.Form):
         attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': datetime.date.today()}),
                                        required=False, label="До")
 
+    DISPLAY_CHOICES = [(4, "Активные"),(1, 'Пробники'), (2, 'Неактивные'), (3, "Должники"), (6, "Замороженные")]
     display_only = forms.ChoiceField(
-        choices=[(1, 'Пробники'), (2, 'Неактивные'), (3, "Должники"), (4, "Активные"), (5, "Замороженные")],
+        choices=DISPLAY_CHOICES,
         widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
         label="Показать", required=False
     )
@@ -132,20 +133,10 @@ class EnrollmentsListFilterForm(forms.Form):
         elif end_date and not start_date:
             self.initial['date_from'] = end_date
 
-
         if start_date:
             self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
+            self.fields['display_only'].choices = [(5, "Активные (новые)")] + self.DISPLAY_CHOICES
 
         if end_date:
             self.fields['date_from'].widget.attrs.update({'max': end_date})
-            # self.fields['date_to'].widget.attrs.update({'min': start_date, 'max': datetime.date.today()})
 
-            #
-            # if end_date:
-            #     payment_date_start = datetime.datetime.strptime(start_date, '%Y-%m-%d')
-            #     payment_date_end = datetime.datetime.strptime(end_date, '%Y-%m-%d')
-            #
-            #     if payment_date_end < payment_date_start:
-            #         self.initial['date_to'] = datetime.date.today().strftime('%Y-%m-%d')
-            # else:
-            #     self.initial['date_to'] = datetime.date.today().strftime('%Y-%m-%d')

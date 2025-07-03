@@ -308,6 +308,9 @@ class EnrollmentsListView(AdminRequired, ListView):
             elif display_only == '4':
                 queryset = queryset.filter(payment_due__isnull=False).exclude(Q(trial_lesson=True) | Q(status=False))
             elif display_only == '5':
+                if date_from:
+                    queryset = queryset.filter(Q(transferred_from__isnull=True) | Q(transferred_from__created_at__gte=date_from), payment_due__isnull=False).exclude(Q(trial_lesson=True) | Q(status=False))
+            elif display_only == '6':
                 queryset = queryset.filter(hold=True)
 
         if order_by:
