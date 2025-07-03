@@ -7,6 +7,7 @@
     {% include 'layout/navbar.html' %}
 
     <div class="container courses-list mt-5">
+        {{ user.is_superuser }}
         {% if request.user.role == '2' %}
             <div class="d-flex flex-column flex-md-row mb-3">
                 <div class="bg-light bg-light rounded py-2 px-2 border">
@@ -69,7 +70,7 @@
                         </p>
                     </div>
 
-                    {% if obj.course.check_time and obj.status or user.role == '2' and obj.status %}
+                    {% if obj.course.check_time and obj.status and user.role == '1' or user.is_superuser and obj.status %}
                         <div class="btn-group flex-shrink-0">
                             <button type="button" class="btn btn-warning px-3 rounded-0 rounded-end-1 fixed-width-btn"
                                     data-bs-toggle="modal" data-bs-target="#attendanceModal{{ obj.id }}">
@@ -85,7 +86,7 @@
 
 
         {% for conducted in conducted_sessions %}
-            {% if conducted.course.check_time or user.role == '2' %}
+            {% if conducted.course.check_time or user.is_superuser %}
                 <!-- Attendance Modal -->
                 <form class="attendance-form"
                       action="{% url 'attendance:session_detail' course_id=conducted.course.id session_id=conducted.id session_date=filter_date %}"
@@ -222,7 +223,7 @@
                             <span class="badge text-bg-light border border-1 ms-2">{{ obj.lesson_time|time:'H:i' }}</span>
                         </p>
                     </div>
-                    {% if obj.check_time and today == filter_date or request.user.role == '2' and today == filter_date %}
+                    {% if obj.check_time and today == filter_date and user.role == '1' or user.is_superuser  %}
                         <div class="d-flex btn-group rounded-0">
                             <button type="button" class="btn btn-danger px-3  rounded-0 " data-bs-toggle="modal"
                                     data-bs-target="#cancelModal{{ obj.id }}">
