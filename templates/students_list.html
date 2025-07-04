@@ -31,7 +31,7 @@
                                 {{ filter_form.text }}
                                 <datalist id="name-options">
                                     {% for x in all_students_names %}
-                                     <option value="{% for l in x %}{{ l }}{% endfor %}">
+                                     <option value="{% for l in x %}{{ l }} {% endfor %}">
                                     {% endfor %}
                                 </datalist>
                             </div>
