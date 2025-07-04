@@ -5,6 +5,7 @@ from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse
 from urllib.parse import urlencode
+from rapidfuzz import fuzz
 
 from students.forms import StudentInfoForm, EnrollmentForm
 from students.models import StudentModel, Enrollment
@@ -107,6 +108,7 @@ class StudentsListView(AdminRequired, ListView):
         context['create_student_form'] = StudentInfoForm
         context['queryset_length'] = self.get_queryset().count()
         context['overall_count'] = StudentModel.objects.all().count()
+        context['all_students_names'] = StudentModel.objects.all().values_list('first_name', 'last_name')
         context['active_count'] = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False, enrollment__payment_due__isnull=False).distinct().count()
         return context
 
@@ -134,6 +136,7 @@ class StudentsListView(AdminRequired, ListView):
                 Q(last_name__in=words) |
                 Q(first_name__in=words) |
                 Q(last_name__icontains=text) |
+                Q(first_name__icontains=text) |
                 Q(phone_number__icontains=text) |
                 Q(additional_number__icontains=text)
             )

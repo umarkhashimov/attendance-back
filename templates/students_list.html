@@ -29,6 +29,11 @@
                             <div class="custom-select-2">
                                 <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
                                 {{ filter_form.text }}
+                                <datalist id="name-options">
+                                    {% for x in all_students_names %}
+                                     <option value="{% for l in x %}{{ l }}{% endfor %}">
+                                    {% endfor %}
+                                </datalist>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
@@ -76,7 +81,7 @@
                        class="border border-3 px-2 py-2 d-block course-list-item {% if obj.in_debt %} border-danger-subtle bg-danger-subtle {% endif %}">
                         <p class="text-dark mb-0 course-name">
                             <span class="me-1 fw-semibold">{{ forloop.counter }}.</span>
-{#                            <span class="text-secondary course-id">{{ obj.id }}</span>#}
+                            {#                            <span class="text-secondary course-id">{{ obj.id }}</span>#}
                             {{ obj.full_name|capfirst }}
                         </p>
                     </a>

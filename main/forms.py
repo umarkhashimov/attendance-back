@@ -36,8 +36,7 @@ class CoursesListFilterForm(forms.Form):
 
 class StudentsListFilterForm(forms.Form):
     text = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={'class': 'form-control shadow-none rounded-1 py-0', 'onchange': 'submit()'}),
+        widget=forms.TextInput(attrs={'class': 'form-control shadow-none rounded-1 py-0', 'onchange': 'submit()', 'list': 'name-options'}),
         required=False, label="Имя/Номер"
     )
 
