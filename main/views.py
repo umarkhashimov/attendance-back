@@ -5,7 +5,6 @@ from django.db.models import Q, Prefetch
 from django.shortcuts import redirect
 from django.urls import reverse
 from urllib.parse import urlencode
-from rapidfuzz import fuzz
 
 from students.forms import StudentInfoForm, EnrollmentForm
 from students.models import StudentModel, Enrollment
