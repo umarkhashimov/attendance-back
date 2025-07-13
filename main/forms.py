@@ -30,7 +30,7 @@ class CoursesListFilterForm(forms.Form):
         required=False, label="Курс"
     )
 
-    sort_by = forms.ChoiceField(choices=[('1',"Время урока"), ('6', 'Время урока (убыв.)'), ('2', 'Предмет'), ('3', 'Новые'), ('4', 'Старые'), ('5', 'Учитель')],
+    sort_by = forms.ChoiceField(choices=[('3', 'Новые (15д)'), ('4', 'Новые (30д)'),('1',"Время урока"), ('6', 'Время урока (убыв.)'), ('2', 'Предмет'), ('5', 'Учитель')],
                                 widget=Select2Widget(attrs={'class':'form-control', 'onchange':'submit()', 'id':'sortByFilter'}),
                                 required=False, label="Сортировка")
 

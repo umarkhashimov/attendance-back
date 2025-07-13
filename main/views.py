@@ -240,9 +240,11 @@ class CoursesListView(AdminRequired, ListView):
             elif sort_by == "2":
                 queryset = queryset.order_by("subject__name")
             elif sort_by == "3":
-                queryset = queryset.order_by("-id")
+                days15 = datetime.today() - timedelta(days=15)
+                queryset = queryset.filter(created_at__gte=days15)
             elif sort_by == "4":
-                queryset = queryset.order_by("id")
+                days30 = datetime.today() - timedelta(days=30)
+                queryset = queryset.filter(created_at__gte=days30)
             elif sort_by == "5":
                 queryset = queryset.order_by("teacher__first_name", "teacher__last_name", "teacher__username")
 
