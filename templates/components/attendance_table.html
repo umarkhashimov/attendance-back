@@ -1,27 +1,21 @@
 {% block content %}
-    <table class="border table-bordered w-100 attendance-record-table">
+    <table class="table table-bordered w-100 attendance-record-table table-hover">
+        <thead>
         <tr>
-            <td class="px-2 border border-secondary border-1 border-black student-name-cell fw-bold">
-                Имя студента
-            </td>
+            <th>Имя студента</th>
             {% for session in sessions %}
-                <td class="text-center border border-secondary border-black border-1 date-cell px-1 {% if session.status == False %} bg-danger bg-opacity-50 {% endif %}">
-                    <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
+                <td class="text-center">
+                    <b>{{ session.date|date:"d-M" }}</b><br>{{ session.date|date:"Y" }}
                 </td>
-            {% empty %}
-                {% if attendance_data|length > 1 %}
-                    <td rowspan="{{ attendance_data|length|add:1 }}"
-                        class="text-center border border-secondary border-1 date-cell">
-                        нет записей
-                    </td>
-                {% endif %}
             {% endfor %}
         </tr>
+        </thead>
+        <tbody>
         {% for record in attendance_data %}
-            <tr>
-                <td class="px-2 py-1 border border-black border-secondary border-1 status-cell">{{ record.student }}</td>
+            <tr class="">
+                <td class="px-2 py-1 border border-secondary-subtle status-cell">{{ record.student }}</td>
                 {% for info in record.attendance %}
-                    <td class="border border-secondary border-1 border-black text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary-subtle {% endif %}">
+                    <td class="border border-secondary-subtle text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">
                         {% if info.status == 1 or info.status == 2 %}
                             <span title="оценка за дом.зад./посещение"
                                   class="text-black">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>
@@ -37,8 +31,10 @@
             </tr>
         {% empty %}
             <tr>
-                <td colspan="3" class="text-center w-100">нет записей</td>
+                <td colspan="{{ sessions|length|add:1 }}" class="text-center">Нет записей</td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
+
 {% endblock %}
