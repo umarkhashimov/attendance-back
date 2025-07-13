@@ -3,9 +3,9 @@
         <table class="table table-striped table-bordered w-100 attendance-record-table table-hover">
             <thead class="sticky-top">
             <tr>
-                <td class="text-center border border-secondary">Имя студента</td>
+                <td class="text-center border border-1 border-secondary">Имя студента</td>
                 {% for session in sessions %}
-                    <td class="text-center border border-secondary date-cell px-1 {% if session.status == False %} bg-danger bg-opacity-50 {% endif %}">
+                    <td class="text-center border border-secondary border-1 date-cell px-1 {% if session.status == False %} bg-danger bg-opacity-50 {% endif %}">
                         <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
                     </td>
                 {% endfor %}
