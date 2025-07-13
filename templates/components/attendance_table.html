@@ -21,7 +21,7 @@
             <tr>
                 <td class="px-2 py-1 border border-black border-secondary border-1 status-cell">{{ record.student }}</td>
                 {% for info in record.attendance %}
-                    <td class="border border-secondary border-1 border-black text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% else %} bg-secondary-subtle {% endif %}">
+                    <td class="border border-secondary border-1 border-black text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary-subtle {% endif %}">
                         {% if info.status == 1 or info.status == 2 %}
                             <span title="оценка за дом.зад./посещение"
                                   class="text-black">{{ info.homework_grade|default:"-" }}/{{ info.participation_grade|default:"-" }}</span>

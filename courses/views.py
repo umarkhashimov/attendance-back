@@ -70,32 +70,34 @@ class CourseUpdateView(AdminRequired, UpdateView):
         context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True).order_by('student__first_name', 'student__last_name')
         context['payment_form'] = CreatePaymentForm
 
-        # Get the course and its related sessions
+        # Get the course and its sessions sorted by date
         course = CourseModel.objects.get(id=self.get_object().id)
-        sessions = SessionsModel.objects.filter(course=course)
+        sessions = SessionsModel.objects.filter(course=course).order_by('-date')
 
-        # Get all enrollments for the course
-        enrollments = Enrollment.objects.filter(course=course, status=True).order_by('student__first_name', 'student__last_name')
+        # Get all enrollments
+        enrollments = Enrollment.objects.filter(course=course, status=True).order_by('student__first_name',
+                                                                                     'student__last_name')
 
-        # Get the attendance records for the sessions
+        # Get all attendance records and index them for fast lookup
+        attendances = AttendanceModel.objects.filter(session__in=sessions, enrollment__in=enrollments)
+        attendance_lookup = {
+            (att.enrollment_id, att.session_id): att for att in attendances
+        }
+
+        # Build attendance data aligned to sessions
         attendance_data = []
         for enrollment in enrollments:
             student_attendance = []
             for session in sessions:
-                attendance = AttendanceModel.objects.filter(
-                    session=session,
-                    enrollment=enrollment
-                ).first()
-                student_attendance.append(
-                    {
-                        'status': attendance.status if attendance else None,
-                        'homework_grade': attendance.homework_grade if attendance else None,
-                        'participation_grade': attendance.participation_grade if attendance else None,
-                    })
-
+                att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
+                student_attendance.append({
+                    'status': att.status if att else 404,
+                    'homework_grade': att.homework_grade if att else None,
+                    'participation_grade': att.participation_grade if att else None,
+                })
             attendance_data.append({
                 'student': enrollment.student.full_name,
-                'attendance': student_attendance,
+                'attendance': student_attendance
             })
 
         context.update({
@@ -217,32 +219,34 @@ class GroupInfoView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        # Get the course and its related sessions
+        # Get the course and its sessions sorted by date
         course = CourseModel.objects.get(id=self.get_object().id)
-        sessions = SessionsModel.objects.filter(course=course)
+        sessions = SessionsModel.objects.filter(course=course).order_by('-date')
 
-        # Get all enrollments for the course
-        enrollments = Enrollment.objects.filter(course=course, status=True).order_by('student__first_name', 'student__last_name')
+        # Get all enrollments
+        enrollments = Enrollment.objects.filter(course=course, status=True).order_by('student__first_name',
+                                                                                     'student__last_name')
 
-        # Get the attendance records for the sessions
+        # Get all attendance records and index them for fast lookup
+        attendances = AttendanceModel.objects.filter(session__in=sessions, enrollment__in=enrollments)
+        attendance_lookup = {
+            (att.enrollment_id, att.session_id): att for att in attendances
+        }
+
+        # Build attendance data aligned to sessions
         attendance_data = []
         for enrollment in enrollments:
             student_attendance = []
             for session in sessions:
-                attendance = AttendanceModel.objects.filter(
-                    session=session,
-                    enrollment=enrollment
-                ).first()
-                student_attendance.append(
-                    {
-                        'status': attendance.status if attendance else None,
-                        'homework_grade': attendance.homework_grade if attendance else None,
-                        'participation_grade': attendance.participation_grade if attendance else None,
-                    })
-
+                att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
+                student_attendance.append({
+                    'status': att.status if att else 404,
+                    'homework_grade': att.homework_grade if att else None,
+                    'participation_grade': att.participation_grade if att else None,
+                })
             attendance_data.append({
                 'student': enrollment.student.full_name,
-                'attendance': student_attendance,
+                'attendance': student_attendance
             })
 
         context.update({

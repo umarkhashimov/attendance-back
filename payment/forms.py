@@ -8,6 +8,15 @@ from students.models import StudentModel
 from .models import PaymentModel
 
 class CreatePaymentForm(forms.ModelForm):
+    MONTHS_CHOICES = [
+        (1, "1 Месяц"),
+        (2, "2 Месяца"),
+        (3, "3 Месяца"),
+        (6, "6 Месяца"),
+        (0, "Поурочно")
+    ]
+    months = forms.ChoiceField(choices=MONTHS_CHOICES)
+    lessons_count = forms.IntegerField(required=False)
     start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     automatic_date = forms.BooleanField(widget=forms.CheckboxInput(attrs={'type': 'checkbox'}), required=False)

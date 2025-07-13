@@ -3,14 +3,9 @@ from students.models import Enrollment
 
 
 class PaymentModel(models.Model):
-    MONTHS_CHOICES = [
-        (1, "1 Месяц"),
-        (2, "2 Месяца"),
-        (3, "3 Месяца"),
-        (6, "6 Месяца"),
-    ]
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE, verbose_name="Запись")
-    months = models.PositiveIntegerField(choices=MONTHS_CHOICES, verbose_name="Кол-во месяйев")
+    months = models.PositiveIntegerField(verbose_name="Кол-во месяйев")
+    payed_lessons = models.PositiveIntegerField(null=True)
     amount = models.FloatField(null=True, blank=True, verbose_name="Сумма оплаты")
     payed_from = models.DateField(null=True, blank=True, verbose_name="Начало абонимента")
     payed_due = models.DateField(null=True, blank=True, verbose_name="Конец абонимента")

@@ -27,7 +27,7 @@ class UsersModel(AbstractUser):
             return self.username
 
     def __str__(self):
-        return f"{self.username} - {self.get_full_name}"
+        return f"{self.get_full_name} - {self.username}"
 
     class Meta:
         verbose_name = 'пользователь'
