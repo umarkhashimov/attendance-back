@@ -6,11 +6,11 @@ def calculate_payment_amount(enrollment, count):
     discount = enrollment.discount
     
 
-    cost_by_count = cost * count
+    cost_by_count = (cost / 12) * count
     discount_amount = (cost_by_count / 100) * discount
     overall = cost_by_count - discount_amount
 
-    return float(overall)
+    return float(round(overall, 2))
 
 def calculate_payment_due_date(enrollment, iterate_balance=None, count_from=None):
     weekdays = [x for x in enrollment.course.weekdays]

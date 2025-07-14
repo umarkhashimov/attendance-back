@@ -24,12 +24,32 @@ function resetForm(event) {
 
 //  Student/Course detail pages
 function calculateAmount(selectMonth) {
+    const lessons_input_wrapper = document.getElementById(`customLessonsCountWrapper${selectMonth.getAttribute('forPayment')}`)
+    const lessons_input = lessons_input_wrapper.querySelector('input#id_lessons_count')
+    if (selectMonth.value == 0) {
+        lessons_input_wrapper.classList.remove('d-none')
+        lessons_input.removeAttribute('hidden')
+        lessons_input.setAttribute('required', '')
+    } else {
+        lessons_input_wrapper.classList.add('d-none')
+        lessons_input.setAttribute('hidden', '')
+        lessons_input.removeAttribute('required')
+    }
     const modal = document.querySelector(`#editEnrollmentModal${selectMonth.getAttribute('forPayment')}`)
     const price = Number(modal.querySelector(`#priceInp${selectMonth.getAttribute('forPayment')}`).value)
     const discount = Number(modal.querySelector(`#dicountInp${selectMonth.getAttribute('forPayment')}`).value)
 
     const result = (price - ((price / 100) * discount)) * Number(selectMonth.value)
     modal.querySelector(`#amountInp${selectMonth.getAttribute('forPayment')}`).value = result
+}
+
+function customLessonsOninput(element) {
+    element.value = element.value.replace(/[^0-9]/g, '')
+    const modal = document.querySelector(`#editEnrollmentModal${element.getAttribute('forPayment')}`)
+    const price = Number(modal.querySelector(`#priceInp${element.getAttribute('forPayment')}`).value)
+    const discount = Number(modal.querySelector(`#dicountInp${element.getAttribute('forPayment')}`).value)
+    const result = ((price / 12) - ((price / 100) * discount)) * Number(element.value)
+    modal.querySelector(`#amountInp${element.getAttribute('forPayment')}`).value = result.toFixed(2)
 }
 
 function openEnrollmentTab(btn) {
@@ -75,22 +95,22 @@ document.querySelectorAll('form').forEach((form) => {
     })
 })
 
-function setMultipleWeekdays(selector){
+function setMultipleWeekdays(selector) {
     let weekdaysFieldDiv = document.getElementById('weekdays-wrapper-div')
     if (String(selector.value) == '3') {
         weekdaysFieldDiv.classList.remove('d-none')
-    }else{
+    } else {
         weekdaysFieldDiv.classList.add('d-none')
     }
 }
 
-function manualPaymentDatesCheckbox(element){
+function manualPaymentDatesCheckbox(element) {
     let targetDiv = document.getElementById(element.getAttribute('forDiv'))
     let startInp = targetDiv.querySelector('input[name="start_date"]')
-    if (element.checked){
+    if (element.checked) {
         startInp.removeAttribute('required')
         targetDiv.classList.remove('show')
-    }else{
+    } else {
         targetDiv.classList.add('show')
         startInp.setAttribute('required', "")
     }

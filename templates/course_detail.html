@@ -23,7 +23,8 @@
                         <table class="table border border-2 enrollments mb-0" id="enrollmentsTable">
                             <thead>
                             <tr>
-                                <th class="w-auto"><input id="checkAllInp" type="checkbox" onclick="checkallEnrollments(this)"
+                                <th class="w-auto"><input id="checkAllInp" type="checkbox"
+                                                          onclick="checkallEnrollments(this)"
                                                           class="form-check-input me-2">Студент
                                 </th>
                                 <th class="w-auto">Баланс</th>
@@ -260,23 +261,42 @@
                                                                     </p>
                                                                     <div paymentModal="payment{{ enrollment.id }}">
                                                                     </div>
-                                                                    <label class="mt-3 mb-2"
-                                                                           for="paymentTypeInp{{ enrollment.id }}">Оплата
-                                                                        за</label>
-                                                                    <label class="mb-2">{{ payment_form.months.label }}</label>
+                                                                    <label for="paymentTypeInp{{ enrollment.id }}"
+                                                                           class="mb-2">{{ payment_form.months.label }}</label>
                                                                     <select class="form-select mt-2" name="months"
                                                                             forPayment="{{ enrollment.id }}"
                                                                             id="paymentTypeInp{{ enrollment.id }}"
                                                                             onchange="calculateAmount(this)" required>
+                                                                        <option value="" disabled selected
+                                                                                hidden></option>
                                                                         {% for opt in payment_form.months.field.choices %}
                                                                             <option value="{{ opt.0 }}">{{ opt.1 }}</option>
                                                                         {% endfor %}
                                                                     </select>
+                                                                    <div id="customLessonsCountWrapper{{ enrollment.id }}"
+                                                                         class="d-none">
+                                                                        <label for="id_lessons_count"
+                                                                               class="my-2">{{ payment_form.lessons_count.label }}</label>
+                                                                        <input name="lessons_count" type="number"
+                                                                               oninput="customLessonsOninput(this)"
+                                                                               class="form-control"
+                                                                               forPayment="{{ enrollment.id }}" hidden
+                                                                               id="id_lessons_count">
+
+                                                                    </div>
+
+                                                                    <div>
+                                                                        <label for=""
+                                                                               class="my-2">{{ payment_form.payment_type.label }}</label>
+                                                                        {{ payment_form.payment_type }}
+                                                                    </div>
+
                                                                     <label class="mt-3 mb-2"
                                                                            for="amountInp{{ enrollment.id }}">{{ payment_form.amount.label }}</label>
                                                                     <input type="number" class="form-control" readonly
                                                                            name="amount"
                                                                            id="amountInp{{ enrollment.id }}">
+
                                                                     <div class="mt-2">
                                                                         <input checked name="automatic_date"
                                                                                class="form-check-input" type="checkbox"
@@ -337,7 +357,8 @@
                         </table>
                     </div>
                     <div class="bg-light rounded px-2 py-3 border collapse" id="enrollmentActionsBar">
-                        <button type="submit" class="link-primary d-inline-block bg-transparent border-0"><i class="bi bi-caret-right-fill"></i>
+                        <button type="submit" class="link-primary d-inline-block bg-transparent border-0"><i
+                                class="bi bi-caret-right-fill"></i>
                             Перенаправить
                             всех выбранных учеников
                         </button>
@@ -504,8 +525,9 @@
                                                     <thead>
                                                     <tr>
                                                         <th class="text-center">Ученик</th>
+                                                        <th class="text-center">Тип</th>
                                                         <th class="text-center">Сумма</th>
-                                                        <th class="text-center">Месяц</th>
+                                                        <th class="text-center">Кол-во</th>
                                                         <th class="text-center">Начало</th>
                                                         <th class="text-center">Конец</th>
                                                         <th class="text-center">Оплачено</th>
@@ -515,8 +537,15 @@
                                                     {% for payment in payment_history %}
                                                         <tr class="list-items-hover">
                                                             <td class="px-1">{{ payment.enrollment.student }}</td>
+                                                            <td class="px-1">{{ payment.get_payment_type_display }}</td>
                                                             <td class="px-1">{{ payment.amount }}</td>
-                                                            <td class="px-1">{{ payment.months }}</td>
+                                                            <td class="px-1">
+                                                                {% if payment.months == 0 %}
+                                                                    <span>{{ payment.payed_lessons }} у.</span>
+                                                                {% else %}
+                                                                    <span>{{ payment.months }} м.</span>
+                                                                {% endif %}
+                                                            </td>
                                                             <td class="px-1">{{ payment.payed_from|date:'d-m-Y'|default:'?' }}</td>
                                                             <td class="px-1">{{ payment.payed_due|date:'d-m-Y'|default:'?' }}</td>
                                                             <td class="px-1">{{ payment.date|date:'d-m-Y' }}</td>
@@ -586,12 +615,13 @@
         }
 
         let checkAllBox = document.querySelector('input#checkAllInp')
-        function allCheckedStatus(){
+
+        function allCheckedStatus() {
             let enrollmentChecks = document.querySelectorAll('input#enrollmentCheckbox')
-            let checkedCount  = [...enrollmentChecks].filter(cb => cb.checked).length;
-            if (enrollmentChecks.length == checkedCount){
+            let checkedCount = [...enrollmentChecks].filter(cb => cb.checked).length;
+            if (enrollmentChecks.length == checkedCount) {
                 checkAllBox.checked = checkedCount > 0 ? true : false
-            }else{
+            } else {
                 checkAllBox.checked = false
             }
 

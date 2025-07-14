@@ -70,8 +70,9 @@
                     <tr>
                         <th class="text-center">Ученик</th>
                         <th class="text-center">Курс</th>
+                        <th class="text-center">Тип</th>
                         <th class="text-center">Сумма</th>
-                        <th class="text-center">Месяц</th>
+                        <th class="text-center">Кол-во</th>
                         <th class="text-center">Начало</th>
                         <th class="text-center">Конец</th>
                         <th class="text-center">Оплачено</th>
@@ -88,8 +89,15 @@
                             <td class="px-1"><a class="{% if payment.date|date:'d-m-Y' == today|date:'d-m-Y' %}text-success{% else %} text-dark{% endif %} text-decoration-none table-obj-name-link"
                                                 href="{% url 'courses:course_update' pk=payment.enrollment.course.id %}">{{ payment.enrollment.course }}</a>
                             </td>
+                            <td class="px-1">{{ payment.get_payment_type_display }}</td>
                             <td class="px-1">{{ payment.amount }}</td>
-                            <td class="px-1">{{ payment.months }}</td>
+                            <td class="px-1">
+                                {% if payment.months == 0 %}
+                                    <span>{{ payment.payed_lessons }} у.</span>
+                                {% else %}
+                                    <span>{{ payment.months }} м.</span>
+                                {% endif %}
+                            </td>
                             <td class="px-1">{{ payment.payed_from|date:'d-m-Y'|default:'?' }}</td>
                             <td class="px-1">{{ payment.payed_due|date:'d-m-Y'|default:'?' }}</td>
                             <td class="px-1">{{ payment.date|date:'d-m-Y' }}</td>

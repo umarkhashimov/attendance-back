@@ -15,19 +15,20 @@ class CreatePaymentForm(forms.ModelForm):
         (6, "6 Месяца"),
         (0, "Поурочно")
     ]
-    months = forms.ChoiceField(choices=MONTHS_CHOICES)
-    lessons_count = forms.IntegerField(required=False)
+    months = forms.ChoiceField(choices=MONTHS_CHOICES, label="Оплатить за", widget=forms.Select(attrs={'class': 'form-control'}))
+    lessons_count = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control', 'hidden':'', 'oninput': "customLessonsOninput(this)"}), label='Кол-во уроков',required=False)
     start_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     end_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}), required=False)
     automatic_date = forms.BooleanField(widget=forms.CheckboxInput(attrs={'type': 'checkbox'}), required=False)
 
     class Meta:
         model = PaymentModel
-        fields = ['months', 'amount']
+        fields = ['months', 'amount', 'payment_type']
 
         widgets = {
             'months': forms.Select(attrs={'class':'form-control ordinary mt-2'}),
             'amount': forms.NumberInput(attrs={'readonly':True}),
+            'payment_type': forms.Select(attrs={'class':'form-select ordinary mt-2'}),
         }
 
 

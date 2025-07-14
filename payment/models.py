@@ -11,6 +11,7 @@ class PaymentModel(models.Model):
     payed_due = models.DateField(null=True, blank=True, verbose_name="Конец абонимента")
     manual_dates = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True, verbose_name="Дата и время оплаты")
+    payment_type = models.IntegerField(choices=[(1, 'Наличные'), (2, 'Карта'), (3, "Онлайн перевод")], default=1, verbose_name='Тип оплаты')
 
     def __str__(self):
         return f"{self.enrollment.student} - {self.enrollment.course.subject}, {self.enrollment.course}"
