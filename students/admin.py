@@ -3,7 +3,7 @@ from .models import StudentModel, Enrollment
 
 @admin.register(StudentModel)
 class StudentModelAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'phone_number', 'additional_number']
+    list_display = ['first_name', 'last_name', 'phone_number', 'additional_number', 'enrollment_date']
     list_display_links = ['first_name', 'last_name']
     search_fields = ['first_name', 'last_name', 'phone_number', 'additional_number']
     list_filter = ['enrollment_date', 'courses']
