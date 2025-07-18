@@ -23,28 +23,32 @@ from payment.helpers import last_closest_session_date
 from rapidfuzz import fuzz
 
 def autocomplete_students(request):
-    q = request.GET.get('q', '').lower()
+    q = request.GET.get('q', '').strip().lower()
     if not q:
         return JsonResponse({'results': []})
 
-    candidates = StudentModel.objects.all()
+    suggestions = set()
 
-    scored = []
-    for student in candidates:
-        name = f"{student.first_name} {student.last_name} {student.phone_number} {student.additional_number}".lower()
-        score = fuzz.partial_ratio(q, name)
-        if score > 60:  # threshold
-            scored.append((score, student))
+    for student in StudentModel.objects.all():
+        first = student.first_name.strip().lower()
+        last = student.last_name.strip().lower()
+        full = f"{first} {last}"
 
-    # Sort by score descending and take top 10
-    scored.sort(key=lambda x: x[0], reverse=True)
-    results = [
-        {
-            "id": student.id,
-            "text": f"{student.first_name} {student.last_name}"
-        }
-        for score, student in scored[:10]
-    ]
+        # Match first name only
+        if q in first and fuzz.partial_ratio(q, first) > 70:
+            suggestions.add(student.first_name)
+
+        # Match last name only
+        elif q in last and fuzz.partial_ratio(q, last) > 70:
+            suggestions.add(f"{student.first_name} {student.last_name}")
+
+        # Match full name
+        elif q in full and fuzz.partial_ratio(q, full) > 70:
+            suggestions.add(f"{student.first_name} {student.last_name}")
+
+    # Convert to sorted list
+    results = [{"id": i, "text": name} for i, name in enumerate(sorted(suggestions))]
+
     return JsonResponse({'results': results})
 
 class StudentUpdateView(AdminRequired, UpdateView):
