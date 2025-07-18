@@ -29,11 +29,6 @@
                             <div class="custom-select-2">
                                 <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
                                 {{ filter_form.text }}
-                                <datalist id="name-options">
-                                    {% for x in all_students_names %}
-                                     <option value="{% for l in x %}{{ l }} {% endfor %}">
-                                    {% endfor %}
-                                </datalist>
                             </div>
                         </div>
                         <div class="col-12 col-sm-6 col-md-4">
@@ -96,4 +91,28 @@
         {% endif %}
     </div>
 
+{% endblock %}
+
+{% block custom_js %}
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css" defer>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" defer></script>
+    <script defer>
+
+        $(function () {
+            $("#id_text").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/autocomplete-students/",
+                        dataType: "json",
+                        data: {q: request.term},
+                        success: function (data) {
+                            response(data.results.map(item => item.text));  // just show text
+                        }
+                    });
+                },
+                minLength: 1
+            });
+        });
+
+    </script>
 {% endblock %}

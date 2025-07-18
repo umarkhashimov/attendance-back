@@ -6,7 +6,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from collections import defaultdict
 from django.forms.models import model_to_dict
 from django.contrib import messages
-
+from django.http import JsonResponse
+from django.db.models import Q
 from users.filters import AdminRequired
 from users.forms import TeacherSelectForm
 from users.helpers import record_action
@@ -18,6 +19,33 @@ from payment.models import PaymentModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
 from attendance.models import AttendanceModel
 from payment.helpers import last_closest_session_date
+
+from rapidfuzz import fuzz
+
+def autocomplete_students(request):
+    q = request.GET.get('q', '').lower()
+    if not q:
+        return JsonResponse({'results': []})
+
+    candidates = StudentModel.objects.all()
+
+    scored = []
+    for student in candidates:
+        name = f"{student.first_name} {student.last_name} {student.phone_number} {student.additional_number}".lower()
+        score = fuzz.partial_ratio(q, name)
+        if score > 60:  # threshold
+            scored.append((score, student))
+
+    # Sort by score descending and take top 10
+    scored.sort(key=lambda x: x[0], reverse=True)
+    results = [
+        {
+            "id": student.id,
+            "text": f"{student.first_name} {student.last_name} - {student.phone_number}"
+        }
+        for score, student in scored[:10]
+    ]
+    return JsonResponse({'results': results})
 
 class StudentUpdateView(AdminRequired, UpdateView):
     model = StudentModel
