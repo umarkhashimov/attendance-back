@@ -98,30 +98,31 @@
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" defer></script>
     <script defer>
 
-       $(function () {
+      $(function () {
     $("#id_text").autocomplete({
       source: function (request, response) {
         $.ajax({
           url: "/autocomplete-students/",
           dataType: "json",
-          data: {
-            q: request.term
-          },
+          data: { q: request.term },
           success: function (data) {
-            response(data.results.map(item => item.text));
+            response(data.results.map(item => ({ label: item.text, value: item.text })));
           }
         });
       },
       minLength: 1,
 
-      // 🔁 Override select behavior
-      select: function (event, ui) {
+      focus: function(event, ui) {
+        return false;
+      },
+
+      select: function(event, ui) {
         let currentText = this.value;
         let words = currentText.trim().split(/\s+/);
-        words.pop();  // remove the last word
-        words.push(ui.item.value);  // add selected suggestion
-        this.value = words.join(' ') + ' ';  // optional space after
-        return false; // prevent default replacement
+        words.pop();  // remove last word
+        words.push(ui.item.value);  // insert selected suggestion
+        this.value = words.join(' ') + ' ';
+        return false; // prevent default behavior
       }
     });
   });
