@@ -23,12 +23,15 @@ from payment.helpers import last_closest_session_date
 from rapidfuzz import fuzz
 
 def autocomplete_students(request):
-    q = request.GET.get('q', '').strip()
+    q = request.GET.get('q')
+
     if not q:
         return JsonResponse({'results': []})
 
     # Take only the last word the user typed
     last_word = q.split()[-1].lower()
+    print(last_word)
+
 
     # Collect all unique first and last names
     all_first_names = set(StudentModel.objects.values_list('first_name', flat=True))
