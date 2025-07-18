@@ -40,7 +40,7 @@ def autocomplete_students(request):
     suggestions = set()
 
     for name in all_first_names.union(all_last_names):
-        if fuzz.ratio(last_word, name.lower()) >= 50:
+        if fuzz.ratio(last_word, name.lower()) >= 70:
             suggestions.add(name)
 
     results = [{"id": i, "text": name} for i, name in enumerate(sorted(suggestions))]
