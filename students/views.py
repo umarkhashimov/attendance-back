@@ -23,42 +23,24 @@ from payment.helpers import last_closest_session_date
 from rapidfuzz import fuzz
 
 def autocomplete_students(request):
-    q = request.GET.get('q', '').strip().lower()
+    q = request.GET.get('q', '').strip()
     if not q:
         return JsonResponse({'results': []})
 
-    parts = q.split()
+    # Take only the last word the user typed
+    last_word = q.split()[-1].lower()
+
+    # Collect all unique first and last names
+    all_first_names = set(StudentModel.objects.values_list('first_name', flat=True))
+    all_last_names = set(StudentModel.objects.values_list('last_name', flat=True))
+
     suggestions = set()
 
-    for student in StudentModel.objects.all():
-        first = student.first_name.strip().lower()
-        last = student.last_name.strip().lower()
+    for name in all_first_names.union(all_last_names):
+        if fuzz.ratio(last_word, name.lower()) >= 80:
+            suggestions.add(name)
 
-        # Case 1: only one part (user types "Umar" or "Hosh")
-        if len(parts) == 1:
-            input_part = parts[0]
-
-            # If matches first name fuzzily: suggest distinct first name
-            if fuzz.ratio(input_part, first) >= 80:
-                suggestions.add(student.first_name)
-
-            # If matches last name fuzzily: suggest full name
-            elif fuzz.ratio(input_part, last) >= 80:
-                suggestions.add(f"{student.first_name} {student.last_name}")
-
-        # Case 2: full name typed (e.g. "Umar Hosh")
-        elif len(parts) >= 2:
-            first_part = parts[0]
-            last_part = parts[-1]
-
-            if (
-                fuzz.ratio(first_part, first) >= 80 and
-                fuzz.ratio(last_part, last) >= 70
-            ):
-                suggestions.add(f"{student.first_name} {student.last_name}")
-
-    # Return sorted, distinct suggestions
-    results = [{"id": i, "text": text} for i, text in enumerate(sorted(suggestions))]
+    results = [{"id": i, "text": name} for i, name in enumerate(sorted(suggestions))]
     return JsonResponse({'results': results})
 
 class StudentUpdateView(AdminRequired, UpdateView):
