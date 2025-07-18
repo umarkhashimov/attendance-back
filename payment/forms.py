@@ -9,11 +9,19 @@ from .models import PaymentModel
 
 class CreatePaymentForm(forms.ModelForm):
     MONTHS_CHOICES = [
+        (0, "Поурочно"),
         (1, "1 Месяц"),
         (2, "2 Месяца"),
         (3, "3 Месяца"),
+        (4, "4 Месяца"),
+        (5, "5 Месяца"),
         (6, "6 Месяца"),
-        (0, "Поурочно")
+        (7, "7 Месяца"),
+        (8, "8 Месяца"),
+        (9, "9 Месяца"),
+        (10, "10 Месяца"),
+        (11, "11 Месяца"),
+        (12, "12 Месяца"),
     ]
     months = forms.ChoiceField(choices=MONTHS_CHOICES, label="Оплатить за", widget=forms.Select(attrs={'class': 'form-control'}))
     lessons_count = forms.IntegerField(widget=forms.NumberInput(attrs={'class':'form-control', 'hidden':'', 'oninput': "customLessonsOninput(this)"}), label='Кол-во уроков',required=False)
