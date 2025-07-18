@@ -27,28 +27,38 @@ def autocomplete_students(request):
     if not q:
         return JsonResponse({'results': []})
 
+    parts = q.split()
     suggestions = set()
 
     for student in StudentModel.objects.all():
         first = student.first_name.strip().lower()
         last = student.last_name.strip().lower()
-        full = f"{first} {last}"
 
-        # Match first name only
-        if q in first and fuzz.partial_ratio(q, first) > 70:
-            suggestions.add(student.first_name)
+        # Case 1: only one part (user types "Umar" or "Hosh")
+        if len(parts) == 1:
+            input_part = parts[0]
 
-        # Match last name only
-        elif q in last and fuzz.partial_ratio(q, last) > 70:
-            suggestions.add(f"{student.first_name} {student.last_name}")
+            # If matches first name fuzzily: suggest distinct first name
+            if fuzz.ratio(input_part, first) >= 80:
+                suggestions.add(student.first_name)
 
-        # Match full name
-        elif q in full and fuzz.partial_ratio(q, full) > 70:
-            suggestions.add(f"{student.first_name} {student.last_name}")
+            # If matches last name fuzzily: suggest full name
+            elif fuzz.ratio(input_part, last) >= 80:
+                suggestions.add(f"{student.first_name} {student.last_name}")
 
-    # Convert to sorted list
-    results = [{"id": i, "text": name} for i, name in enumerate(sorted(suggestions))]
+        # Case 2: full name typed (e.g. "Umar Hosh")
+        elif len(parts) >= 2:
+            first_part = parts[0]
+            last_part = parts[-1]
 
+            if (
+                fuzz.ratio(first_part, first) >= 80 and
+                fuzz.ratio(last_part, last) >= 70
+            ):
+                suggestions.add(f"{student.first_name} {student.last_name}")
+
+    # Return sorted, distinct suggestions
+    results = [{"id": i, "text": text} for i, text in enumerate(sorted(suggestions))]
     return JsonResponse({'results': results})
 
 class StudentUpdateView(AdminRequired, UpdateView):
