@@ -41,7 +41,7 @@ def autocomplete_students(request):
     results = [
         {
             "id": student.id,
-            "text": f"{student.first_name} {student.last_name} - {student.phone_number}"
+            "text": f"{student.first_name} {student.last_name}"
         }
         for score, student in scored[:10]
     ]
