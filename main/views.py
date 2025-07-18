@@ -1,7 +1,8 @@
 from django.template.defaultfilters import first
 from django.views.generic import TemplateView, ListView
 from datetime import date, datetime, timedelta
-from django.db.models import Q, Prefetch
+from django.db.models import Q, Prefetch, Value
+from django.db.models.functions import Concat
 from django.shortcuts import redirect
 from django.urls import reverse
 from urllib.parse import urlencode
@@ -129,15 +130,40 @@ class StudentsListView(AdminRequired, ListView):
 
         # Apply search text filter
         if text:
-            words = text.split()
-            queryset = queryset.filter(
-                Q(last_name__in=words) |
-                Q(first_name__in=words) |
-                Q(last_name__icontains=text) |
-                Q(first_name__icontains=text) |
-                Q(phone_number__icontains=text) |
-                Q(additional_number__icontains=text)
+            words = text.strip().split()
+            queryset = queryset.annotate(
+                full_name_db=Concat('first_name', Value(' '), 'last_name'),
+                reversed_full_name=Concat('last_name', Value(' '), 'first_name')
             )
+
+            filters = Q()
+
+            if len(words) == 1:
+                word = words[0]
+                filters |= Q(first_name__icontains=word)
+                filters |= Q(last_name__icontains=word)
+                filters |= Q(phone_number__icontains=word)
+                filters |= Q(additional_number__icontains=word)
+
+            elif len(words) == 2:
+                full_input = " ".join(words)
+                reversed_input = " ".join(reversed(words))
+
+                filters |= Q(full_name_db__icontains=full_input)
+                filters |= Q(reversed_full_name__icontains=reversed_input)
+
+                # Optional: also match parts separately (stricter)
+                filters |= Q(first_name__icontains=words[0], last_name__icontains=words[1])
+                filters |= Q(first_name__icontains=words[1], last_name__icontains=words[0])
+
+            else:
+                # Too many words – treat as raw substring to be safe
+                filters |= Q(full_name_db__icontains=text)
+                filters |= Q(reversed_full_name__icontains=text)
+                filters |= Q(phone_number__icontains=text)
+                filters |= Q(additional_number__icontains=text)
+
+            queryset = queryset.filter(filters)
 
         # Filter by teacher
         if teacher:
