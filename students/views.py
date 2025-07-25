@@ -30,8 +30,6 @@ def autocomplete_students(request):
 
     # Take only the last word the user typed
     last_word = q.split()[-1].lower()
-    print(last_word)
-
 
     # Collect all unique first and last names
     all_first_names = set(StudentModel.objects.values_list('first_name', flat=True))

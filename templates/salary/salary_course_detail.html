@@ -1,0 +1,164 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+    <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+    {% include 'layout/navbar.html' %}
+
+    <div class="container pt-1">
+        <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
+            <h5 class="mt-1 mb-2">Зарплата за группу</h5>
+        </div>
+        <hr class="table-group-divider"/>
+        <div class="row m-0 p-0 ">
+            <div class="col-12 bg-light rounded pt-2 px-2 border">
+                <form id="filterForm" method="get" class=""
+                      onreset="resetForm(event)">
+                    <div class="">
+                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
+                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                        </h6>
+                    </div>
+                    <div class="row mt-2 pb-3">
+                        <div class="col-12 col-md-2">
+                            <div class="custom-select-2">
+                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.month.label }}</label>
+                                {{ filter_form.month }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="table-responsive" style="max-height: calc(100vh - 120px);">
+            <table class="table table-striped table-bordered w-100 attendance-record-table table-hover">
+                <thead class="sticky-top">
+                <tr>
+                    <td class="text-center border border-1 border-secondary">Цена</td>
+                    <td class="text-center border border-1 border-secondary">Имя студента</td>
+                    {% for session in sessions %}
+                        <td col="{{ forloop.counter }}"
+                            class="text-center border border-secondary border-1 date-cell px-1 {% if session.record_by.id != session.course.teacher.id %} bg-secondary-subtle  {% elif session.status == False %} bg-danger-subtle {% endif %}">
+                            <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
+                        </td>
+                    {% endfor %}
+                </tr>
+                </thead>
+                <tbody>
+                {% for record in attendance_data %}
+                    <tr class="info_row" row="{{ forloop.counter }}">
+                        <td class="border-secondary-subtle status-cell  max-w-100px">
+                            <div class="d-flex justify-content-center w-100">
+
+                                <input id="priceInput" value="13000.00" oninput="priceInputChange(this)"
+                                       onblur="priceInpBlur(this)"
+                                       type="number" maxlength="4"
+                                       class="form-control border-black w-100 text-center">
+                            </div>
+                        </td>
+                        <td class="px-2 py-1 border border-secondary-subtle status-cell">{{ record.student }}</td>
+                        {% for info in record.attendance %}
+                            <td col="{{ forloop.counter }}"
+                                class="border {% if info.trial_attendance == True %} border-warning border-5 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">
+                                {% if info.status|stringformat:'s' in '1.2.0' or info.status == None %}
+                                    <span title="оценка за дом.зад./посещение"
+                                          class="text-black">
+                                    {% if info.session.status == True and info.trial_attendance == False %}
+                                        <input {% if info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
+                                               type="checkbox"
+                                               class="form-check-input border-1 border-black fs-3 attendance-checkbox">
+                                    {% endif %}
+                                </span>
+                                {% endif %}
+                            </td>
+
+                        {% endfor %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="{{ sessions|length|add:1 }}" class="text-center">Нет записей</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+
+
+            </table>
+        </div>
+        <div>
+            <h5 id="priceWindow">
+                <p id="quantity" class="fs-6 fw-normal">Кол-во: <span>--</span></p>
+                <p id="price">Обшая сумма: <span>--</span></p>
+            </h5>
+            <button class="btn btn-primary" onclick="FindAllCheckedBoxes()">Подсчитать</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script>
+
+        function priceInputChange(e) {
+            const oldValue = e.value;
+            const caretPosition = e.selectionStart;
+
+            // Match only allowed pattern: digits and max one dot
+            const validPattern = /^(\d+(\.\d*)?|\.\d*)?$/;
+
+            if (!validPattern.test(oldValue)) {
+                // Remove all invalid characters and multiple dots
+                let newValue = oldValue.replace(/[^0-9.]/g, '');
+
+                // Keep only the first dot
+                const firstDot = newValue.indexOf('.');
+                if (firstDot !== -1) {
+                    newValue = newValue.substring(0, firstDot + 1) + newValue.substring(firstDot + 1).replace(/\./g, '');
+                }
+
+                // Update value and restore caret
+                e.value = newValue;
+                e.setSelectionRange(caretPosition - 1, caretPosition - 1);
+            }
+        }
+
+        function priceInpBlur(e) {
+            let value = e.value.trim();
+
+            // Empty or just a dot becomes 0.00
+            if (value === '' || value === '.') {
+                e.value = '0.00';
+                return;
+            }
+
+            // If starts with a dot, prefix with 0
+            if (value.startsWith('.')) {
+                value = '0' + value;
+            }
+
+            // Format to float with 2 decimal places
+            const num = parseFloat(value);
+            if (!isNaN(num)) {
+                e.value = num.toFixed(2);
+            } else {
+                e.value = '0.00';
+            }
+        }
+
+
+        function FindAllCheckedBoxes() {
+            let overall = 0
+            const infoRows = document.querySelectorAll('tr.info_row')
+
+            infoRows.forEach((row) => {
+                const price = row.querySelector('#priceInput').value
+                const checkedCount = row.querySelectorAll('input[type="checkbox"].attendance-checkbox:checked').length
+                let rowPrice = parseFloat(price) * Number(checkedCount)
+                overall = overall + rowPrice
+            })
+            const priceWindow = document.getElementById("priceWindow")
+            priceWindow.querySelector('#price > span').innerHTML = overall
+            priceWindow.querySelector('#quantity > span').innerHTML = document.querySelectorAll('input[type="checkbox"].attendance-checkbox:checked').length
+        }
+
+    </script>
+{% endblock %}

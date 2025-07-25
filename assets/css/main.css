@@ -585,6 +585,10 @@ input::-ms-clear {
     max-width: 50px !important;
 }
 
+.max-w-100px{
+    max-width: 100px !important;
+}
+
 tr.active-tr {
     position: relative;
     background-color: rgba(0, 145, 255, 0.15) !important;

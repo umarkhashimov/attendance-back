@@ -107,3 +107,8 @@ class UserActionsFilterForm(forms.Form):
                     self.initial['date_end'] = datetime.date.today().strftime('%Y-%m-%d')
             else:
                 self.initial['date_end'] = datetime.date.today().strftime('%Y-%m-%d')
+
+
+class SalaryMonthFilterForm(forms.Form):
+    month = forms.DateField(widget=forms.DateInput(attrs={'type': 'month', 'class': 'form-control', 'onchange': 'submit()', 'max': datetime.datetime.today().month}), required=False, label="Месяц")
+

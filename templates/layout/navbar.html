@@ -18,6 +18,7 @@
                         <ul class="dropdown-menu-end dropdown-menu">
                             <li><a class="dropdown-item" href="{% url 'users:update_password' %}">Пароль</a></li>
                             {% if request.user.is_superuser %}
+                                <li><a class="dropdown-item" href="{% url 'users:users_list' %}">Пользователи</a></li>
                                 <li><a class="dropdown-item" href="{% url 'users:admin_actions' %}">История</a></li>
                             {% endif %}
                             <li>
@@ -80,6 +81,10 @@
                         <a class="nav-link {% if request.path|slice:':6' == '/leads' %}active{% endif %}"
                            aria-current="page" href="{% url 'leads:leads_list' %}">Лиды</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path|slice:':7' == '/salary' %}active{% endif %}"
+                           aria-current="page" href="{% url 'users:salary_users_list' %}">Зарплата</a>
+                    </li>
                 {% endif %}
             </ul>
         </div>
@@ -95,6 +100,7 @@
                     <ul class="dropdown-menu-end dropdown-menu">
                         <li><a class="dropdown-item" href="{% url 'users:update_password' %}">Пароль</a></li>
                         {% if request.user.is_superuser %}
+                            <li><a class="dropdown-item" href="{% url 'users:users_list' %}">Пользователи</a></li>
                             <li><a class="dropdown-item" href="{% url 'users:admin_actions' %}">История</a></li>
                         {% endif %}
                         <li>

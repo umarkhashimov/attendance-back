@@ -1,12 +1,15 @@
 from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
-from django.views.generic import TemplateView, UpdateView, ListView
+from django.shortcuts import render
+from django.views.generic import TemplateView, UpdateView, ListView, DetailView, View
 from django.urls import reverse, reverse_lazy
 from datetime import datetime, timedelta
 from .filters import AdminRequired, SuperUserRequired
 from .models import UsersModel, LogAdminActionsModel
-from .forms import LoginForm, TeacherUpdateForm, UserActionsFilterForm
-
+from .forms import LoginForm, TeacherUpdateForm, UserActionsFilterForm, SalaryMonthFilterForm
+from courses.models import CourseModel, SessionsModel
+from attendance.models import AttendanceModel
+from students.models import Enrollment
 class LoginPageView(LoginView):
     form_class = LoginForm
     template_name = 'auth/login.html'
@@ -88,3 +91,72 @@ class AdminActionsView(SuperUserRequired, ListView):
 
 
         return queryset
+
+
+class UsersListView(ListView):
+    model = UsersModel
+    template_name = 'users/users_list.html'
+    context_object_name = 'users'
+
+
+class SalaryUsersListView(ListView):
+    queryset = UsersModel.objects.all().filter(role='1', is_active=True)
+    template_name = 'salary/salary_users_list.html'
+    context_object_name = 'users'
+
+
+class SalaryCourseDetailView(View):
+    template_name = 'salary/salary_course_detail.html'
+
+    def get(self, request, course_id):
+        course = CourseModel.objects.get(id=course_id)
+        month = request.GET.get('month', None)
+        date = datetime.today()
+        if month and self.request.user.role != '1':
+            date = datetime.strptime(month, '%Y-%m').date()
+
+
+        context = {
+            'course': course,
+            'filter_form': SalaryMonthFilterForm(initial={'month': date.strftime("%Y-%m")}),
+            'month': date.strftime("%Y-%m"),
+        }
+
+        # Get the course and its sessions sorted by date
+        course = CourseModel.objects.get(id=course_id)
+        sessions = SessionsModel.objects.filter(course=course, date__month=date.month, date__year=date.year).order_by('-date')
+
+        # Get all enrollments
+        enrollments = Enrollment.objects.filter(course=course, status=True).order_by('student__first_name',
+                                                                                     'student__last_name')
+
+        # Get all attendance records and index them for fast lookup
+        attendances = AttendanceModel.objects.filter(session__in=sessions, enrollment__in=enrollments)
+        attendance_lookup = {
+            (att.enrollment_id, att.session_id): att for att in attendances
+        }
+
+        # Build attendance data aligned to sessions
+        attendance_data = []
+        for enrollment in enrollments:
+            student_attendance = []
+            for session in sessions:
+                att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
+                student_attendance.append({
+                    'status': att.status if att else 404,
+                    'homework_grade': att.homework_grade if att else None,
+                    'participation_grade': att.participation_grade if att else None,
+                    'session': session,
+                    'trial_attendance': att.trial_attendance if att else None,
+                })
+            attendance_data.append({
+                'student': enrollment.student.full_name,
+                'attendance': student_attendance
+            })
+
+        context.update({
+            'course': course,
+            'sessions': sessions,
+            'attendance_data': attendance_data
+        })
+        return render(request, self.template_name, context)

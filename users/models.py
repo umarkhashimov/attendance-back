@@ -3,6 +3,8 @@ from random import choices
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
 from django.contrib.admin.models import LogEntry, ContentType
+from django.apps import apps
+
 
 class UsersModel(AbstractUser):
     ROLE_CHOICES = [
@@ -28,6 +30,17 @@ class UsersModel(AbstractUser):
 
     def __str__(self):
         return f"{self.get_full_name} - {self.username}"
+
+    def get_courses(self):
+        Courses = apps.get_model('courses', 'CourseModel')
+        filter = Courses.objects.filter(teacher=self, archived=False)
+        return filter
+
+    def get_enrollments(self):
+        Enrollments = apps.get_model('students', 'Enrollment')
+        courses = self.get_courses()
+        filter = Enrollments.objects.filter(course__in=courses, status=True, trial_lesson=False)
+        return filter
 
     class Meta:
         verbose_name = 'пользователь'

@@ -7,10 +7,8 @@ def course_date_match(course) -> bool:
     lesson_time = datetime.combine(datetime.today(), course.lesson_time)
     lesson_endtime = lesson_time + timedelta(minutes=course.duration + 10)
     time_now = datetime.now().time().strftime("%H:%M")
-    print('>>', time_now, lesson_time.strftime("%H:%M"), lesson_endtime.strftime("%H:%M"))
     weekday_match = str(now.weekday()) in course_weekdays
     time_match = time_now >= lesson_time.strftime("%H:%M") and time_now <= lesson_endtime.strftime("%H:%M")
-    print(course, time_match, weekday_match, time_now,  lesson_time.strftime("%H:%M"))
     return time_match and weekday_match
     
     

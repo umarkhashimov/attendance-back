@@ -1,0 +1,130 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+    <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+    {% include 'layout/navbar.html' %}
+
+    <div class="container pt-1">
+        <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
+            <h5 class="mt-1 mb-2">Учителя</h5>
+        </div>
+        <hr class="table-group-divider"/>
+        <div class="row m-0 p-0 ">
+            <div class="col-12 bg-light rounded pt-2 px-2 border">
+                <form id="filterForm" method="get" action="{% url 'main:teachers_list' %}" class=""
+                      onreset="resetForm(event)">
+                    <div class="">
+                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
+                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                        </h6>
+                    </div>
+                    <div class="row mt-2 pb-3">
+                        <div class="col-12 col-md-6">
+                            <div class="custom-select-2">
+                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.text.label }}</label>
+                                {{ filter_form.text }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row px-2 mt-3">
+            {#            <table class="table border border-2 enrollments mb-0" id="enrollmentsTable">#}
+            {#                <thead>#}
+            {#                <tr>#}
+            {#                    <th class="w-auto">Полное имя</th>#}
+            {#                    <th class="w-auto">Имя пользователя</th>#}
+            {#                    <th class="w-auto">кол-во групп</th>#}
+            {#                    <th class="w-auto">кол-во учеников</th>#}
+            {#                </tr>#}
+            {#                </thead>#}
+            {#                <tbody>#}
+            {#                {% for user in users %}#}
+            {#                    <tr class="enrollment-data">#}
+            {#                        <td class="py-2 align-middle">#}
+            {#                            <a href="" class="text-black text-decoration-none table-obj-name-link">#}
+            {#                                <span class="mx-1 text-secondary opacity-75">{{ forloop.counter }}.</span>#}
+            {#                                {% if user.first_name and user.last_name %}{{ user.get_full_name }} {% else %}---#}
+            {#                                    ---{% endif %}#}
+            {#                            </a>#}
+            {#                        </td>#}
+            {#                        <td class="py-2 align-middle">#}
+            {#                            <a href="" class="text-black text-decoration-none table-obj-name-link">#}
+            {#                                <span class="text-primary">{{ user.username }}</span>#}
+            {#                            </a>#}
+            {#                        </td>#}
+            {#                        <td class="py-2 align-middle">{{ user.get_courses.count }}</td>#}
+            {#                        <td class="py-2 align-middle">{{ user.get_enrollments.count }}</td>#}
+            {#                    </tr>#}
+            {#                {% endfor %}#}
+            {##}
+            {#                </tbody>#}
+            {#            </table>#}
+            <div class="accordion accordion-flush px-1" id="usersAccordion">
+                {% for user in users %}
+                    <div class="accordion-item my-1">
+                        <div class="accordion-header">
+                            <div class="d-flex justify-content-between align-items-center border">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <span class="ms-3 text-secondary opacity-75">{{ forloop.counter }}. </span>
+                                    <p class="py-2 ps-2 d-flex align-items-center text-dark text-decoration-none  m-0 w-100 h-100">
+                                        <span class="text-primary fw-medium font-monospace">{{ user.username }}</span>
+                                        <span class="ms-1">-
+                                                {{ user.get_full_name }}
+                                              </span>
+                                    </p>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 h-100">
+                                    <div class="d-flex gap-2">
+                                        <p title="Кол-во групп" data-bs-toggle="tooltip" data-bs-placement="top"
+                                           class="badge text-bg-light border border-1 border-primary my-0 me-1 gap-1 d-flex">
+                                            <i class="bi bi-collection"></i>{{ user.get_courses.count }}</p>
+                                        <p title="Кол-во учеников" data-bs-toggle="tooltip" data-bs-placement="top"
+                                           class="badge text-bg-light border border-1 border-primary my-0 me-1 gap-1 d-flex">
+                                            <i class="me-1 bi bi-person-fill"></i>{{ user.get_enrollments.count }}</p>
+                                    </div>
+                                    <button class="accordion-button shadow-none collapsed border py-3 h-100"
+                                            type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#usersAccordion{{ user.id }}" aria-expanded="false"
+                                            aria-controls="flush-collapseOne">
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div id="usersAccordion{{ user.id }}" class="accordion-collapse collapse border"
+                             data-bs-parent="#usersAccordion">
+                            <div class="accordion-body bg-opacity-25 bg-light">
+                                <ul class="list-group list-unstyled">
+                                    {% for course in user.get_courses %}
+                                        <a href="{% url 'users:salary_course_detail' course_id=course.id %}"
+                                           class="my-auto text-dark table-obj-name-link text-decoration-none">
+                                            <li class="list-group-item list-items-hover py-0">
+                                                <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">
+
+                                                    <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">
+                                                        {{ course }}
+                                                    </div>
+                                                    <span class="badge text-bg-primary text-white rounded-pill bg-opacity-100">{{ course.get_enrolled_count }}</span>
+                                                </div>
+                                            </li>
+                                        </a>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                {% empty %}
+                    <p class="text-center text-secondary">Нет Учителей.</p>
+                {% endfor %}
+            </div>
+            {% if page_obj.paginator.count > 30 %}
+                {% include 'layout/pagination.html' %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
