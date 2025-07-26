@@ -149,7 +149,7 @@ class SalaryCourseDetailView(View):
                         'status': att.status if att else 404,
                         'session': session,
                         'trial_attendance': att.trial_attendance if att else None,
-                        'payed': True if enrollment.payment_due and enrollment.payment_due > session.date else False,
+                        'payed': True if enrollment.payment_due and enrollment.payment_due >= session.date else False,
                     })
                 attendance_data.append({
                     'student': enrollment.student.full_name,
