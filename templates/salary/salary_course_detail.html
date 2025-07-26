@@ -64,7 +64,7 @@
                                 {% if info.status|stringformat:'s' in '1.2.0' or info.status == None %}
                                     <span title="оценка за дом.зад./посещение"
                                           class="text-black">
-                                    {% if info.session.status == True and info.trial_attendance == False %}
+                                    {% if info.session.status == True and info.trial_attendance == False and info.payed == True %}
                                         <input col="{{ forloop.counter }}"
                                                {% if info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
                                                type="checkbox"

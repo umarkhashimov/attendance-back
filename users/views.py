@@ -147,10 +147,9 @@ class SalaryCourseDetailView(View):
                     att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
                     student_attendance.append({
                         'status': att.status if att else 404,
-                        'homework_grade': att.homework_grade if att else None,
-                        'participation_grade': att.participation_grade if att else None,
                         'session': session,
                         'trial_attendance': att.trial_attendance if att else None,
+                        'payed': True if enrollment.payment_due and enrollment.payment_due > session.date else False,
                     })
                 attendance_data.append({
                     'student': enrollment.student.full_name,
