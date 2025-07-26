@@ -38,7 +38,7 @@
                     <td class="text-center border border-1 border-secondary">Цена</td>
                     <td class="text-center border border-1 border-secondary">Имя студента</td>
                     {% for session in sessions %}
-                        <td onclick="checkWholeColumn({{ forloop.counter }})"  col="{{ forloop.counter }}"
+                        <td onclick="checkWholeColumn({{ forloop.counter }})" col="{{ forloop.counter }}"
                             class="text-center cursor-pointer border border-secondary border-1 date-cell px-1 {% if session.record_by.id != session.course.teacher.id %} bg-secondary-subtle  {% elif session.status == False %} bg-danger-subtle {% endif %}">
                             <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
                         </td>
@@ -65,7 +65,8 @@
                                     <span title="оценка за дом.зад./посещение"
                                           class="text-black">
                                     {% if info.session.status == True and info.trial_attendance == False %}
-                                        <input col="{{ forloop.counter }}" {% if info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
+                                        <input col="{{ forloop.counter }}"
+                                               {% if info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
                                                type="checkbox"
                                                class="form-check-input border-1 border-black fs-3 attendance-checkbox">
                                     {% endif %}
@@ -156,11 +157,14 @@
                 overall = overall + rowPrice
             })
             const priceWindow = document.getElementById("priceWindow")
-            priceWindow.querySelector('#price > span').innerHTML = overall
+            priceWindow.querySelector('#price > span').innerHTML = overall.toLocaleString('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
             priceWindow.querySelector('#quantity > span').innerHTML = document.querySelectorAll('input[type="checkbox"].attendance-checkbox:checked').length
         }
 
-        function checkWholeColumn(col){
+        function checkWholeColumn(col) {
             const checkBoxesCol = document.querySelectorAll(`input[type="checkbox"].attendance-checkbox[col="${col}"]`)
             checkBoxesCol.forEach((box) => {
                 box.checked = true
