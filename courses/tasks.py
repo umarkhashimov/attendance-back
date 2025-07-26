@@ -48,13 +48,12 @@ def mark_unmarked_sessions(date=None):
                     defaults={'status': True, 'record_by_id': None, 'topic': course.last_topic}
                 )
                 if created:
-                    enrollments = Enrollment.objects.filter(course=course, status=True).select_related('student')
-
-                    attendance_records = [
-                        AttendanceModel(enrollment=enroll, session=session)
-                        for enroll in enrollments
-                    ]
-                    AttendanceModel.objects.bulk_create(attendance_records, ignore_conflicts=True)
+                    # generate empty attendance based on enrollment status
+                    enrollments = Enrollment.objects.filter(course=course, status=True)
+                    for obj in enrollments:
+                        enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
+                        AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session,
+                                                              defaults={'status': 3 if obj.hold else None})
 
                     text = (
                         f'Группа: {course}\n'
