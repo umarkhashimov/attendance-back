@@ -38,8 +38,8 @@
                     <td class="text-center border border-1 border-secondary">Цена</td>
                     <td class="text-center border border-1 border-secondary">Имя студента</td>
                     {% for session in sessions %}
-                        <td col="{{ forloop.counter }}"
-                            class="text-center border border-secondary border-1 date-cell px-1 {% if session.record_by.id != session.course.teacher.id %} bg-secondary-subtle  {% elif session.status == False %} bg-danger-subtle {% endif %}">
+                        <td onclick="checkWholeColumn({{ forloop.counter }})"  col="{{ forloop.counter }}"
+                            class="text-center cursor-pointer border border-secondary border-1 date-cell px-1 {% if session.record_by.id != session.course.teacher.id %} bg-secondary-subtle  {% elif session.status == False %} bg-danger-subtle {% endif %}">
                             <span>{{ session.date|date:"d-M" }}</span><br><span>{{ session.date|date:"Y" }}</span>
                         </td>
                     {% endfor %}
@@ -65,7 +65,7 @@
                                     <span title="оценка за дом.зад./посещение"
                                           class="text-black">
                                     {% if info.session.status == True and info.trial_attendance == False %}
-                                        <input {% if info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
+                                        <input col="{{ forloop.counter }}" {% if info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
                                                type="checkbox"
                                                class="form-check-input border-1 border-black fs-3 attendance-checkbox">
                                     {% endif %}
@@ -160,5 +160,11 @@
             priceWindow.querySelector('#quantity > span').innerHTML = document.querySelectorAll('input[type="checkbox"].attendance-checkbox:checked').length
         }
 
+        function checkWholeColumn(col){
+            const checkBoxesCol = document.querySelectorAll(`input[type="checkbox"].attendance-checkbox[col="${col}"]`)
+            checkBoxesCol.forEach((box) => {
+                box.checked = true
+            })
+        }
     </script>
 {% endblock %}
