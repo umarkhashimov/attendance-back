@@ -157,7 +157,6 @@ class DeactivateEnrollmentView(AdminRequired, View):
         enrollment = get_object_or_404(Enrollment, id=enrollment_id)
         enrollment.trial_lesson = False
         enrollment.hold = False
-        enrollment.payment_due = None
         enrollment.debt_note = None
         enrollment.status = False
         enrollment.save()
