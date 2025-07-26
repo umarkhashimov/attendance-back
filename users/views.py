@@ -136,23 +136,26 @@ class SalaryCourseDetailView(View):
             (att.enrollment_id, att.session_id): att for att in attendances
         }
 
+
         # Build attendance data aligned to sessions
         attendance_data = []
         for enrollment in enrollments:
-            student_attendance = []
-            for session in sessions:
-                att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
-                student_attendance.append({
-                    'status': att.status if att else 404,
-                    'homework_grade': att.homework_grade if att else None,
-                    'participation_grade': att.participation_grade if att else None,
-                    'session': session,
-                    'trial_attendance': att.trial_attendance if att else None,
+            if any(key == enrollment.id for key, value in attendance_lookup):
+
+                student_attendance = []
+                for session in sessions:
+                    att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
+                    student_attendance.append({
+                        'status': att.status if att else 404,
+                        'homework_grade': att.homework_grade if att else None,
+                        'participation_grade': att.participation_grade if att else None,
+                        'session': session,
+                        'trial_attendance': att.trial_attendance if att else None,
+                    })
+                attendance_data.append({
+                    'student': enrollment.student.full_name,
+                    'attendance': student_attendance
                 })
-            attendance_data.append({
-                'student': enrollment.student.full_name,
-                'attendance': student_attendance
-            })
 
         context.update({
             'course': course,
