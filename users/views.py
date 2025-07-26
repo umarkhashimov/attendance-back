@@ -127,7 +127,7 @@ class SalaryCourseDetailView(View):
         sessions = SessionsModel.objects.filter(course=course, date__month=date.month, date__year=date.year).order_by('-date')
 
         # Get all enrollments
-        enrollments = Enrollment.objects.filter(course=course, status=True).order_by('student__first_name',
+        enrollments = Enrollment.objects.filter(course=course).order_by('student__first_name',
                                                                                      'student__last_name')
 
         # Get all attendance records and index them for fast lookup
