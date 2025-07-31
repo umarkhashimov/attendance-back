@@ -145,7 +145,7 @@ class SalaryCourseDetailView(View):
 
                 student_attendance = []
                 latest_payment_due = (PaymentModel.objects.filter(enrollment=enrollment).order_by('-payed_due').values_list('payed_due', flat=True).first() or None)
-                payment_check_date = enrollment.payment_due if enrollment.payment_due else latest_payment_due
+                payment_check_date = enrollment.payment_due if enrollment.payment_due and enrollment.status == True else latest_payment_due
                 for session in sessions:
                     att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
 
