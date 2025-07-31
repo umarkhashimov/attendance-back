@@ -152,8 +152,9 @@ class SalaryCourseDetailView(View):
                         'payed': True if enrollment.payment_due and enrollment.payment_due >= session.date else False,
                     })
                 attendance_data.append({
-                    'student': enrollment.student.full_name,
-                    'attendance': student_attendance
+                    'student': {'id': enrollment.student.id, 'full_name': enrollment.student.full_name},
+                    'attendance': student_attendance,
+                    'balance': enrollment.balance if enrollment.payment_due else None,
                 })
 
         context.update({
