@@ -40,7 +40,7 @@
                     {% for session in sessions %}
                         <td data-bs-toggle="tooltip" data-bs-placement="top" {% if session.record_by.id != session.course.teacher.id %} title="Урок не был отмечен учителем"  {% elif session.status == False %} title="Урок отменен" {% endif %} onclick="checkWholeColumn({{ forloop.counter }})" col="{{ forloop.counter }}"
                             class="px-0 text-center cursor-pointer border border-secondary border-1 date-cell {% if session.record_by.id != session.course.teacher.id %} bg-secondary-subtle  {% elif session.status == False %} bg-danger-subtle {% endif %}">
-                            <span>{{ session.date|date:"d-M" }}</span>
+                            <span>{{ session.date|date:"d" }}</span>
                         </td>
                     {% endfor %}
                 </tr>
