@@ -60,14 +60,15 @@
                         <td class="p-2 min-w-130px border border-secondary-subtle status-cell text-break text-wrap"><a href="{% url 'students:student_update' pk=record.student.id %}" class="text-decoration-none text-dark table-obj-name-link">{{ record.student.full_name }} </a> <span  data-bs-toggle="tooltip" data-bs-placement="top" title="Баланс" class="text-success {% if record.balance <= 0 %}text-danger{% elif record.balance == None %}text-secondary{% endif %}"> | {{ record.balance|default:'--' }}</span></td>
                         {% for info in record.attendance %}
                             <td col="{{ forloop.counter }}"
-                                class=" p-0 border align-middle {% if info.trial_attendance == True %} border-warning border-5 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">
+                                class=" p-0 border align-middle {% if info.trial_attendance == True %} border-warning border-4 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">
                                 {% if info.status|stringformat:'s' in '1.2.0' or info.status == None %}
-                                    <label  class="text-black w-100 h-100 d-flex justify-content-center align-items-center flex-column pb-1">
+                                    <label for="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}"  class=" position-relative text-black w-100 h-100 cursor-pointer">
                                         {% if info.session.status == True and info.trial_attendance == False and info.payed == True %}
                                         <input col="{{ forloop.counter }}"
                                                {% if info.status != None and info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
                                                type="checkbox"
-                                               class="shadow-none form-check-input border-1 border-black fs-3 attendance-checkbox">
+                                               class="shadow-none border-1 border-black fs-3 attendance-checkbox salary-checkbox" id="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}">
+                                            <span class="checkmark"></span>
                                     {% endif %}
                                 </label>
                                 {% endif %}
