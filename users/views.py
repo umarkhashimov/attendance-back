@@ -10,6 +10,7 @@ from .forms import LoginForm, TeacherUpdateForm, UserActionsFilterForm, SalaryMo
 from courses.models import CourseModel, SessionsModel
 from attendance.models import AttendanceModel
 from students.models import Enrollment
+from payment.models import PaymentModel
 class LoginPageView(LoginView):
     form_class = LoginForm
     template_name = 'auth/login.html'
@@ -143,13 +144,17 @@ class SalaryCourseDetailView(View):
             if any(key == enrollment.id for key, value in attendance_lookup):
 
                 student_attendance = []
+                latest_payment_due = (PaymentModel.objects.filter(enrollment=enrollment).order_by('-payed_due').values_list('payed_due', flat=True).first() or None)
+                payment_check_date = enrollment.payment_due if enrollment.payment_due else latest_payment_due
                 for session in sessions:
                     att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
+
+
                     student_attendance.append({
                         'status': att.status if att else 404,
                         'session': session,
                         'trial_attendance': att.trial_attendance if att else None,
-                        'payed': True if enrollment.payment_due and enrollment.payment_due >= session.date else False,
+                        'payed': True if payment_check_date and payment_check_date >= session.date else False,
                     })
                 attendance_data.append({
                     'student': {'id': enrollment.student.id, 'full_name': enrollment.student.full_name},
