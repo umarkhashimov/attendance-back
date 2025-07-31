@@ -38,7 +38,7 @@
                     <td class="p-0 text-center border border-1 border-secondary">Цена</td>
                     <td class="p-0 text-center border border-1 border-secondary">Имя студента</td>
                     {% for session in sessions %}
-                        <td onclick="checkWholeColumn({{ forloop.counter }})" col="{{ forloop.counter }}"
+                        <td data-bs-toggle="tooltip" data-bs-placement="top" {% if session.record_by.id != session.course.teacher.id %} title="Урок не был отмечен учителем"  {% elif session.status == False %} title="Урок отменен" {% endif %} onclick="checkWholeColumn({{ forloop.counter }})" col="{{ forloop.counter }}"
                             class="px-0 text-center cursor-pointer border border-secondary border-1 date-cell {% if session.record_by.id != session.course.teacher.id %} bg-secondary-subtle  {% elif session.status == False %} bg-danger-subtle {% endif %}">
                             <span>{{ session.date|date:"d-M" }}</span>
                         </td>
@@ -60,17 +60,17 @@
                         <td class="p-2 border border-secondary-subtle status-cell">{{ record.student }}</td>
                         {% for info in record.attendance %}
                             <td col="{{ forloop.counter }}"
-                                class="p-0 border {% if info.trial_attendance == True %} border-warning border-5 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">
+                                class="p-0 border {% if info.trial_attendance == True %} border-warning-subtle border-5 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">
                                 {% if info.status|stringformat:'s' in '1.2.0' or info.status == None %}
-                                    <span title="оценка за дом.зад./посещение"
-                                          class="text-black">
+                                    <label
+                                          class="text-black w-100 h-100">
                                     {% if info.session.status == True and info.trial_attendance == False and info.payed == True %}
                                         <input col="{{ forloop.counter }}"
-                                               {% if info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
+                                               {% if info.status != None and info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
                                                type="checkbox"
-                                               class="form-check-input border-1 border-black fs-3 attendance-checkbox">
+                                               class="shadow-none form-check-input border-1 border-black fs-3 attendance-checkbox">
                                     {% endif %}
-                                </span>
+                                </label>
                                 {% endif %}
                             </td>
 
