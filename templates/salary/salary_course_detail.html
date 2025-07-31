@@ -48,7 +48,7 @@
                 <tbody>
                 {% for record in attendance_data %}
                     <tr class="info_row" row="{{ forloop.counter }}">
-                        <td class="p-0 border-secondary-subtle status-cell max-w-130px">
+                        <td class="p-0 border-secondary-subtle status-cell max-w-130px min-w-100px">
                             <div class="d-flex justify-content-center w-100">
 
                                 <input id="priceInput" value="13000.00" oninput="priceInputChange(this)"
@@ -57,7 +57,7 @@
                                        class="form-control rounded-0 border-black w-100 text-center">
                             </div>
                         </td>
-                        <td class="p-2 border border-secondary-subtle status-cell">{{ record.student }}</td>
+                        <td class="p-2 border border-secondary-subtle status-cell text-break text-wrap">{{ record.student }}</td>
                         {% for info in record.attendance %}
                             <td col="{{ forloop.counter }}"
                                 class="p-0 border {% if info.trial_attendance == True %} border-warning-subtle border-5 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">

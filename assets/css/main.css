@@ -589,6 +589,10 @@ input::-ms-clear {
     max-width: 100px !important;
 }
 
+.min-w-100px{
+    min-width: 100px !important;
+}
+
 .max-w-130px{
     max-width: 130px !important;
 }
