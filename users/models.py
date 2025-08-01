@@ -33,7 +33,7 @@ class UsersModel(AbstractUser):
 
     def get_courses(self):
         Courses = apps.get_model('courses', 'CourseModel')
-        filter = Courses.objects.filter(teacher=self, archived=False)
+        filter = Courses.objects.filter(teacher=self)
         return filter
 
     def get_enrollments(self):
