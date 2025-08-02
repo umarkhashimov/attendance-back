@@ -64,7 +64,7 @@
                                                             <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">
                                                                 {{ course }}
                                                             </div>
-                                                            <span class="badge text-bg-primary text-white rounded-pill bg-opacity-100">{{ course.enrolled.count }}</span>
+                                                            <span class="badge text-bg-primary text-white rounded-pill bg-opacity-100">{{ course.get_all_enrolled_count }}</span>
                                                         </div>
                                                     </li>
                                                 </a>

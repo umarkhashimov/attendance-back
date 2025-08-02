@@ -1,12 +1,19 @@
-from django.contrib.auth.views import LoginView, PasswordChangeView, PasswordResetView
+from django.contrib.auth.views import LoginView, PasswordChangeView
+from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
-from django.views.generic import TemplateView, UpdateView, ListView, DetailView, View
+from functools import reduce
+from operator import or_
+from django.template.defaultfilters import first
+from django.views.generic import TemplateView, UpdateView, ListView, View
 from django.urls import reverse, reverse_lazy
+from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Q
 from datetime import datetime, timedelta
+from django.contrib import messages
 from .filters import AdminRequired, SuperUserRequired
 from .models import UsersModel, LogAdminActionsModel
-from .forms import LoginForm, TeacherUpdateForm, UserActionsFilterForm, SalaryMonthFilterForm
+from .forms import LoginForm, TeacherUpdateForm, UserActionsFilterForm, SalaryMonthFilterForm, UserUpdateForm, UserSetPasswordForm, UsersListFilterForm
 from courses.models import CourseModel, SessionsModel
 from attendance.models import AttendanceModel
 from students.models import Enrollment
@@ -94,11 +101,75 @@ class AdminActionsView(SuperUserRequired, ListView):
         return queryset
 
 
-class UsersListView(ListView):
+class UsersListView(ListView, SuperUserRequired):
     model = UsersModel
     template_name = 'users/users_list.html'
     context_object_name = 'users'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = UsersListFilterForm(self.request.GET)
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        text = self.request.GET.get('text', None)
+        status = self.request.GET.get('status', None)
+        role = self.request.GET.get('role', None)
+
+        if status:
+            queryset = queryset.filter(is_active=status)
+
+        if role:
+            queryset = queryset.filter(role=role)
+
+        if text:
+            words = text.split()
+            conditions = []
+
+            for word in words:
+                conditions.append(Q(username__icontains=word))
+                conditions.append(Q(first_name__icontains=word))
+                conditions.append(Q(last_name__icontains=word))
+
+            query = reduce(or_, conditions)
+            queryset = queryset.filter(query)
+
+        return queryset
+
+class UserUpdateView(UpdateView, SuperUserRequired):
+    model = UsersModel
+    form_class = UserUpdateForm
+    template_name = 'users/users_update.html'
+    context_object_name = 'obj_user'
+    success_url = reverse_lazy('users:users_list')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request  # Pass the request to the form
+        return kwargs
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['password_form'] = UserSetPasswordForm(user=self.request.user)
+        return context
+
+def reset_user_password(request, pk):
+    if not request.user.is_superuser:
+        raise PermissionError  # or raise PermissionDenied
+
+    user = get_object_or_404(UsersModel, pk=pk)
+
+    if request.method == 'POST':
+        form = SetPasswordForm(user=user, data=request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Пароль пользователя '{user.username}' был изменен.")
+        else:
+            messages.error(request, "Произошла ошибка.")
+    return redirect('users:user_update', pk=pk)
 
 class SalaryUsersListView(ListView):
     queryset = UsersModel.objects.all().filter(role='1', is_active=True)

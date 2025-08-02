@@ -3,8 +3,11 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
+from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
 from django.contrib.admin.models import LogEntry, ContentType
 import datetime
+
+from .filters import SuperUserRequired
 from .models import UsersModel, ACTION_FLAG_CHOICES
 
 class LoginForm(AuthenticationForm):
@@ -112,3 +115,47 @@ class UserActionsFilterForm(forms.Form):
 class SalaryMonthFilterForm(forms.Form):
     month = forms.DateField(widget=forms.DateInput(attrs={'type': 'month', 'class': 'form-control', 'onchange': 'submit()', 'max': datetime.datetime.today().month}), required=False, label="Месяц")
 
+
+class UserUpdateForm(UserChangeForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)  # take it out before super()
+        super().__init__(*args, **kwargs)
+
+        if 'password' in self.fields:
+            del self.fields['password']
+
+        if self.instance.pk == self.request.user.pk:
+            del self.fields['is_active']
+
+        for field_name, field in self.fields.items():
+            if field_name not in ['is_active', 'role']:
+
+                field.widget.attrs.update({
+                    "class": "form-control",  # Add Bootstrap class
+                    "placeholder": ' ',  # Optional: Use label as placeholder
+                })
+
+    class Meta:
+        model = UsersModel
+        fields = ['username', 'role', 'first_name', 'last_name', 'phone_number', 'is_active']
+        widgets = {
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'role': forms.Select(attrs={'class': 'form-select'}),
+        }
+
+
+class UserSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                "class": "form-control",  # Add Bootstrap class
+                "placeholder": ' ',  # Optional: Use label as placeholder
+            })
+
+
+class UsersListFilterForm(forms.Form):
+    text = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder':'', 'onchange':'submit()'}), required=False, label="Имя/Фамилия/Пользователь")
+    role = forms.ChoiceField(choices=[('1', 'Учитель'),('2', 'Администратор')], widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}), required=False, label="Роль")
+    status = forms.ChoiceField(choices=[(True, 'Активный'), (False, 'Не активный')],widget=Select2Widget(attrs={'class': 'form-select d-inline', 'placeholder':'', 'onchange':'submit()'}), required=False, label="Статус")
