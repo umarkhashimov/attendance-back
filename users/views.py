@@ -176,6 +176,29 @@ class SalaryUsersListView(ListView):
     template_name = 'salary/salary_users_list.html'
     context_object_name = 'users'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter_form'] = UsersListFilterForm(self.request.GET)
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        text = self.request.GET.get('text', None)
+
+        if text:
+            words = text.split()
+            conditions = []
+
+            for word in words:
+                conditions.append(Q(username__icontains=word))
+                conditions.append(Q(first_name__icontains=word))
+                conditions.append(Q(last_name__icontains=word))
+
+            query = reduce(or_, conditions)
+            queryset = queryset.filter(query)
+
+        return queryset
 
 class SalaryCourseDetailView(View):
     template_name = 'salary/salary_course_detail.html'
