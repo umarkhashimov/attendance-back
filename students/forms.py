@@ -123,7 +123,7 @@ class CourseEnrollmentForm(ModelForm):
 
         if course:
             enrolled = Enrollment.objects.filter(course=course, status=True).values_list('student__id', flat=True)
-            self.fields['student'].queryset = StudentModel.objects.all().exclude(id__in=enrolled, archived=True)
+            self.fields['student'].queryset = StudentModel.objects.all().exclude(Q(id__in=enrolled) | Q(archived=True))
 
 
 class UpdateEnrollmentForm(forms.Form):
