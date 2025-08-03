@@ -117,6 +117,7 @@ class StudentsListView(AdminRequired, ListView):
         ordering = self.request.GET.get('order_by')
         date_from = self.request.GET.get('date_from')
         date_to = self.request.GET.get('date_to')
+        display = self.request.GET.get('display')
 
         queryset = super().get_queryset()
 
@@ -127,6 +128,12 @@ class StudentsListView(AdminRequired, ListView):
             queryset = queryset.filter(enrollment_date__lte=date_to)
         elif not date_to and date_from:
             queryset = queryset.filter(enrollment_date__lte=date_from)
+
+        if display:
+            if display == '2':
+                queryset = queryset.filter(archived=False)
+            elif display == '3':
+                queryset = queryset.filter(archived=True)
 
         # Apply search text filter
         if text:

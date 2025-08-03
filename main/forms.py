@@ -48,7 +48,7 @@ class StudentsListFilterForm(forms.Form):
 
     order_by = forms.ChoiceField(
         choices=[(1, "Имя Фамилия"), (2, "Имя Фамилия (убывание)"), (3, "Последние"), (4, "Ранние"),],
-        widget=Select2Widget(attrs={'class': 'form-select', 'onchange': 'submit()'}),
+        widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
         label="Сортировать по", required=False
     )
 
@@ -66,9 +66,14 @@ class StudentsListFilterForm(forms.Form):
         attrs={'type': 'date', 'onchange': 'submit()', 'class': 'form-control', 'max': date.today().isoformat()}),
         required=False, label="До")
 
+    display = forms.ChoiceField(
+        choices=[(1, 'Все'), (2, 'Активные'), (3, "Архив")],
+        widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
+        required=False, label=True
+    )
+
     def __init__(self,  *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         start_date = self.initial.get("date_from")
         end_date = self.initial.get("date_to")
 
