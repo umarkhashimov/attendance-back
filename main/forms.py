@@ -69,7 +69,7 @@ class StudentsListFilterForm(forms.Form):
     display = forms.ChoiceField(
         choices=[(1, 'Все'), (2, 'Активные'), (3, "Архив")],
         widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
-        required=False, label=True
+        required=False, label="Показать"
     )
 
     def __init__(self,  *args, **kwargs):
