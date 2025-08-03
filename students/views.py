@@ -1,6 +1,4 @@
 from datetime import datetime
-
-from dateutil.relativedelta import weekdays
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -10,6 +8,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.db.models import Q
 from users.filters import AdminRequired
+from users.models import UsersModel
 from users.forms import TeacherSelectForm
 from users.helpers import record_action
 from .models import StudentModel, Enrollment
@@ -21,8 +20,6 @@ from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, 
 from attendance.models import AttendanceModel
 from leads.models import LeadsModel
 from leads.forms import LeadForm
-from payment.helpers import last_closest_session_date
-
 from rapidfuzz import fuzz
 
 def autocomplete_students(request):
@@ -375,5 +372,31 @@ class ConvertEnrollmentToLead(AdminRequired,View):
         return  redirect(request.META.get('HTTP_REFERER', '/'))
 
 
+class AbsentStudentsList(AdminRequired, View):
+    template_name = 'payment/absent_students_list.html'
 
+    def get(self, request):
 
+        teachers = UsersModel.objects.filter(role='1').distinct()
+        # Filters
+        weekdays = self.request.GET.get('weekdays', None)
+
+        attendances = AttendanceModel.objects.select_related('enrollment__course__teacher').filter(Q(status=0) | Q(status=None), session__date=datetime.today())
+
+        session_enrollment_map = defaultdict(list)
+        for attendance in attendances:
+            session = attendance.session
+            session_enrollment_map[session].append(attendance)
+
+        teacher_data = defaultdict(lambda: defaultdict(list))
+        for session, attendance_list in session_enrollment_map.items():
+            teacher = session.course.teacher
+            teacher_data[teacher][session] = attendance_list
+
+        teacher_data = {
+            teacher: dict(course_map)
+            for teacher, course_map in teacher_data.items()
+        }
+
+        context = {'teacher_enrollments': teacher_data}
+        return render(request, self.template_name, context)

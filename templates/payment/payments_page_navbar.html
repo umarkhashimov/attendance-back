@@ -1,16 +1,24 @@
 <div class="">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                {% url 'payment:debt_payments_list' as cpath %}
-                <a class="nav-link {% if request.path == cpath %}active{% endif %}" href="{% url 'payment:debt_payments_list' %}">Должники</a>
-            </li>
-            <li class="nav-item">
-                {% url 'payment:trial_enrollments_list' as cpath %}
-                <a class="nav-link {% if request.path == cpath %}active{% endif %}" href="{% url 'payment:trial_enrollments_list' %}">Пробники</a>
-            </li>
-            <li class="nav-item">
-                {% url 'payment:payments_list' as cpath %}
-                <a class="nav-link {% if request.path == cpath %}active{% endif %}" href="{% url 'payment:payments_list' %}">История оплат</a>
-            </li>
-        </ul>
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            {% url 'payment:debt_payments_list' as cpath %}
+            <a class="nav-link {% if request.path == cpath %}active{% endif %}"
+               href="{% url 'payment:debt_payments_list' %}">Должники</a>
+        </li>
+        <li class="nav-item">
+            {% url 'payment:trial_enrollments_list' as cpath %}
+            <a class="nav-link {% if request.path == cpath %}active{% endif %}"
+               href="{% url 'payment:trial_enrollments_list' %}">Пробники</a>
+        </li>
+        <li class="nav-item">
+            {% url 'payment:payments_list' as cpath %}
+            <a class="nav-link {% if request.path == cpath %}active{% endif %}"
+               href="{% url 'payment:payments_list' %}">История оплат</a>
+        </li>
+        <li class="nav-item">
+            {% url 'students:absent_list' as cpath %}
+            <a class="nav-link {% if request.path == cpath %}active{% endif %}"
+               href="{% url 'students:absent_list' %}">Отсутсвие</a>
+        </li>
+    </ul>
 </div>

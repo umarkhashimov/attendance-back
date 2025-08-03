@@ -1,0 +1,150 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+    <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+    {% include 'layout/navbar.html' %}
+
+    <div class="container courses-list">
+        <div class="mt-5 mb-2 d-flex align-items-center justify-content-between">
+        </div>
+        {% include './payments_page_navbar.html' %}
+        <hr class="table-group-divider mt-0"/>
+        <div class="row m-0 p-0 ">
+{#            <div class="col-12 bg-light rounded pt-2 px-2 border">#}
+{#                <form id="filterForm" method="get" action="{% url 'payment:trial_enrollments_list' %}" class="" onreset="resetForm(event)">#}
+{#                    <div class="">#}
+{#                        <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры#}
+{#                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>#}
+{#                        </h6>#}
+{#                    </div>#}
+{#                    <div class="row mt-2 pb-3">#}
+{#                        <div class="col-12 col-md-4">#}
+{#                            <div class="custom-select-2">#}
+{#                                <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.weekdays.label }}</label>#}
+{#                                {{ filter_form.weekdays }}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="col-12 col-sm-6 col-md-4">#}
+{#                            <div class="custom-select-2">#}
+{#                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>#}
+{#                                {{ filter_form.teacher }}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="col-12 col-sm-6 col-md-4">#}
+{#                            <div class="custom-select-2">#}
+{#                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.subject.label }}</label>#}
+{#                                {{ filter_form.subject }}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </form>#}
+{#            </div>#}
+        </div>
+        <div class="row px-3 mt-3 debt-accordions">
+{#            {% for teacher, courses in teacher_enrollments.items %}#}
+{#                <div class="accordion accordion-flush" id="accordionExample">#}
+{#                    <div class="accordion-item my-1">#}
+{#                        <h2 class="accordion-header">#}
+{#                            <button class="accordion-button shadow-none collapsed border py-2" type="button"#}
+{#                                    data-bs-toggle="collapse" data-bs-target="#accordion{{ teacher.id }}"#}
+{#                                    aria-expanded="false">#}
+{#                                <span class="me-1 text-secondary opacity-75">{{ forloop.counter }}. </span>{{ teacher }}#}
+{#                            </button>#}
+{#                        </h2>#}
+{#                        <div id="accordion{{ teacher.id }}" class="accordion-collapse collapse border">#}
+{#                            <div class="accordion-body bg-opacity-25 bg-light">#}
+{#                                {% for course, enrollments in courses.items %}#}
+{#                                    <h2 class="accordion-header">#}
+{#                                        <button class="accordion-button shadow-none collapsed border py-2" type="button"#}
+{#                                                data-bs-toggle="collapse"#}
+{#                                                data-bs-target="#accordion{{ course.id }}Teacher{{ teacher.id }}"#}
+{#                                                aria-expanded="false">#}
+{#                                            {{ course }}<span#}
+{#                                                class="badge text-light mx-2 bg-primary p-1">{{ enrollments|length }}</span>#}
+{#                                        </button>#}
+{#                                    </h2>#}
+{#                                    <div id="accordion{{ course.id }}Teacher{{ teacher.id }}"#}
+{#                                         class="accordion-collapse collapse">#}
+{#                                        <div class="accordion-body bg-opacity-50 bg-light border">#}
+{#                                            <ul class="list-group list-unstyled">#}
+{##}
+{#                                                {% for enrollment in enrollments %}#}
+{#                                                    <li class="list-group-item list-items-hover py-0">#}
+{#                                                        <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">#}
+{##}
+{#                                                            <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">#}
+{#                                                                <a href="{% url 'students:student_update' pk=enrollment.student.id %}"#}
+{#                                                                   class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>#}
+{#                                                            {% if enrollment.note %}#}
+{#                                                                <p class="m-0 ms-2 text-secondary">- {{ enrollment.note }}</p>#}
+{#                                                            {% endif %}#}
+{#                                                                <p class="ms-sm-auto ms-0 mb-0 text-info-emphasis d-flex gap-1 flex-sm-column flex-md-row gap-md-3 debt-students-phone-numbers">#}
+{#                                                                    <span type="button"#}
+{#                                                                          copy="{{ enrollment.student.phone_number }}"#}
+{#                                                                          onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>#}
+{#                                                                    <span type="button"#}
+{#                                                                          copy="{{ enrollment.student.additional_number|default_if_none:"---" }}"#}
+{#                                                                          {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                    </li>#}
+{#                                                {% endfor %}#}
+{#                                            </ul>#}
+{##}
+{#                                        </div>#}
+{#                                    </div>#}
+{##}
+{#                                {% endfor %}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            {% empty %}#}
+{#                <p class="text-center text-secondary">Нет Пробников.</p>#}
+{#            {% endfor %}#}
+
+            {% for teacher, courses in teacher_enrollments.items %}
+                <ol class="list-group my-2 border-primary border p-0">
+                <li class="list-group-item list-group-item-primary w-100 fs-5 fw-semibold mb-3">{{ forloop.counter }}. {{ teacher }}</li>
+                    {% for course, enrollments in courses.items %}
+                        <li class="list-unstyled list-group-item border-0 py-0 mb-3">
+
+                            <ul class="list-group border border-secondary shadow shadow-sm" id="courseTable{{ course.id }}">
+                                <li class="list-group-item-secondary list-group-item fw-semibold bg-opacity-25">
+                                    <a href="{% url 'courses:course_update' pk=course.course.id %}"
+                                                                   class="my-auto text-dark table-obj-name-link text-decoration-none">{{ course }}</a>
+                                </li>
+                                {% for attendance in enrollments %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center list-items-hover">
+                                <div class="d-flex">
+                                    <span class="text-secondary me-1">{{ forloop.counter }}.</span> <a href="{% url 'students:student_update' pk=attendance.enrollment.student.id %}"
+                                                                   class="my-auto text-dark table-obj-name-link text-decoration-none">{{ attendance.enrollment.student.full_name }}</a>
+                                    <p class="m-0 ms-2  {% if attendance.status == 0%}text-danger {% else %}text-secondary {% endif %}">- {{ attendance.get_status_display|default:"?" }}</p>
+                                </div>
+                                <div class="debt-students-phone-numbers d-flex gap-3">
+                                    <span type="button" copy="{{ attendance.enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ attendance.enrollment.student.phone_number }}</span>
+                                    <span type="button" copy="{{ attendance.enrollment.student.additional_number|default_if_none:"---" }}" {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ attendance.enrollment.student.additional_number|default_if_none:"---" }}</span>
+                                    <div>
+                                            <form method="post"
+                                                  action="{% url 'students:update_enrollment_note' pk=attendance.enrollment.id %}?next={{ request.path }}#courseTable{{ course.id }}">
+                                                {% csrf_token %}
+                                                <input name="text" onchange="submit()" maxlength="25"
+                                                       class="text-center form-control rounded-0 align-middle w-100"
+                                                       value="{{ attendance.enrollment.note|default:"" }}">
+                                            </form>
+                                        </div>
+                                </div>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ol>
+            {% empty %}
+                <p class="text-center text-secondary">Нет Пробников.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
