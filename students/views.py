@@ -305,3 +305,31 @@ class GroupReEnrollmentView(AdminRequired, View):
 
 
         return redirect('courses:course_update', pk=course.id)
+
+class ArchiveStudent(AdminRequired,View):
+    def get(self, request, pk):
+        student = get_object_or_404(StudentModel, id=pk)
+        if student.get_enrolled_count() < 1 and not student.archived:
+            student.archived = True
+            student.save()
+
+            messages.success(request,'Студент Архивирован')
+        else:
+            messages.error(request,'Что-то пощло не так')
+
+        return redirect('students:student_update', pk=student.id)
+
+
+class UnArchiveStudent(AdminRequired, View):
+    def get(self, request, pk):
+        student = get_object_or_404(StudentModel, id=pk)
+
+        if student.archived:
+            student.archived = False
+            student.save()
+
+            messages.success(request, 'Студент разархивирован')
+        else:
+            messages.error(request, 'Что-то пощло не так')
+
+        return redirect('students:student_update', pk=student.id)

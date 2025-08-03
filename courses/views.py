@@ -277,7 +277,6 @@ class ArchiveCourseView(SuperUserRequired,View):
     def get(self, request, pk):
         course = get_object_or_404(CourseModel, id=pk)
         status = course.archive_course()
-        print('aaaaaaaaaaaaaaaaaa')
         if status:
             return redirect("main:courses_list")
 

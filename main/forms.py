@@ -19,8 +19,8 @@ class CoursesListFilterForm(forms.Form):
     )
 
     weekdays = forms.ChoiceField(
-        choices=[(1, "Нечетные"), (2, "Четные"), (3, "Другие")],
-        widget=Select2Widget(attrs={'class': 'form-control', 'onchange':'submit()'}),
+        choices=[('', "--"), (1, "Нечетные"), (2, "Четные"), (3, "Другие")],
+        widget=forms.Select(attrs={'class': 'form-select', 'onchange':'submit()'}),
         required=False, label="Дни"
     )
 
@@ -30,9 +30,15 @@ class CoursesListFilterForm(forms.Form):
         required=False, label="Курс"
     )
 
-    sort_by = forms.ChoiceField(choices=[('3', 'Новые (15д)'), ('4', 'Новые (30д)'),('1',"Время урока"), ('6', 'Время урока (убыв.)'), ('2', 'Предмет'), ('5', 'Учитель')],
-                                widget=Select2Widget(attrs={'class':'form-control', 'onchange':'submit()', 'id':'sortByFilter'}),
+    sort_by = forms.ChoiceField(choices=[('', '--'), ('3', 'Новые (15д)'), ('4', 'Новые (30д)'),('1',"Время урока"), ('6', 'Время урока (убыв.)'), ('2', 'Предмет'), ('5', 'Учитель')],
+                                widget=forms.Select(attrs={'class':'form-select', 'onchange':'submit()', 'id':'sortByFilter'}),
                                 required=False, label="Сортировка")
+
+    display = forms.ChoiceField(
+        choices=[(1, 'Существующие'), (2, "Архив"), (3, 'Все') ],
+        widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
+        required=False, label="Показать"
+    )
 
 class StudentsListFilterForm(forms.Form):
     text = forms.CharField(
@@ -67,7 +73,7 @@ class StudentsListFilterForm(forms.Form):
         required=False, label="До")
 
     display = forms.ChoiceField(
-        choices=[(1, 'Все'), (2, 'Активные'), (3, "Архив")],
+        choices=[(2, 'Активные'), (3, "Архив"), (1, 'Все')],
         widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
         required=False, label="Показать"
     )

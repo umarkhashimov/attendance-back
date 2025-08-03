@@ -367,13 +367,14 @@
             </div>
             <div class="col-12 col-md-6" id="editGroupInfo">
                 <div class="bg-light rounded py-3 mt-3 px-2 border">
-                    <p class="text-black ms-1">Изменить инфорамацию группы #{{ obj.id }}</p>
-                    {% comment %} {{ form.as_p }} {% endcomment %}
-                    <form method="post">
-                        {% csrf_token %}
-                        {% for field in form %}
-                            <div id="{{ field.name }}-wrapper-div"
-                                 class="my-1 {% if field.name == 'weekdays' and form.days.value != 3 %}d-none{% endif %} {% if field.name not in 'weekday,status' %}
+                    {% if not obj.archived %}
+                        <p class="text-black ms-1">Изменить инфорамацию группы #{{ obj.id }}</p>
+                        {% comment %} {{ form.as_p }} {% endcomment %}
+                        <form method="post">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div id="{{ field.name }}-wrapper-div"
+                                     class="my-1 {% if field.name == 'weekdays' and form.days.value != 3 %}d-none{% endif %} {% if field.name not in 'weekday,status' %}
                     
                     form-floating
 
@@ -382,36 +383,75 @@
                      ms-1
 
                   {% endif %}">
-                                {{ field }}
-                                <label aria-required="{{ field.field.required }}" {{ field.required }}
-                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            </div>
-                            {% if field.errors %}
-                                <div class="text-danger small">
-                                    {% for error in field.errors %}
-                                        {{ error }}
-                                    {% endfor %}
+                                    {{ field }}
+                                    <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 </div>
-                            {% endif %}
-                        {% endfor %}
-                        <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
-                            <button type="submit" class="btn btn-success">Сохранить</button>
-                        </div>
-                    </form>
+                                {% if field.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="d-flex justify-content-end flex-column flex-md-row pt-2">
+                                <button type="submit" class="btn btn-success">Сохранить</button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <p class="text-black ms-1">Инфорамация группы #{{ obj.id }}</p>
+
+                        <table class="table bottom-1 border bg-white enrollment-info-table">
+                            <tr>
+                                <td>Курс</td>
+                                <td>{{ obj.subject }}</td>
+                            </tr>
+                            <tr>
+                                <td>Имя куса</td>
+                                <td>{{ obj.course_name }}</td>
+                            </tr>
+                            <tr>
+                                <td>Учитель</td>
+                                <td>{{ obj.teacher }}</td>
+                            </tr>
+                            <tr>
+                                <td>Дни уроков</td>
+                                <td>{{ obj.get_weekdays_display }}</td>
+                            </tr>
+                            <tr>
+                                <td>Время урока</td>
+                                <td>{{ obj.lesson_time }}</td>
+                            </tr>
+                            <tr>
+                                <td>Длительность урока (мин)</td>
+                                <td>{{ obj.duration }}</td>
+                            </tr>
+                            <tr>
+                                <td>Цена за 12 уроков</td>
+                                <td>{{ obj.session_cost }}</td>
+                            </tr>
+                            <tr>
+                                <td>Тема</td>
+                                <td>{{ enrollment.enrolled_by.username|default:'?' }}</td>
+                            </tr>
+                        </table>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-12 col-md-6">
                 <div>
-                    <div class="">
-                        <div class="bg-light rounded py-3 mt-3 px-2 border">
-                            <p class="text-dark ms-1">Записать нового Ученика</p>
+                    {% if not obj.archived %}
+                        <div class="">
+                            <div class="bg-light rounded py-3 mt-3 px-2 border">
+                                <p class="text-dark ms-1">Записать нового Ученика</p>
 
-                            <form method="post"
-                                  action="{% url 'students:create_enrollment_from_course' course_id=obj.id %}">
-                                {% csrf_token %}
-                                {% comment %} {{ enrollment_form|crispy }} {% endcomment %}
-                                {% for field in enrollment_form %}
-                                    <div class="my-1 {% if field.name != 'trial_lesson' %}
+                                <form method="post"
+                                      action="{% url 'students:create_enrollment_from_course' course_id=obj.id %}">
+                                    {% csrf_token %}
+                                    {% comment %} {{ enrollment_form|crispy }} {% endcomment %}
+                                    {% for field in enrollment_form %}
+                                        <div class="my-1 {% if field.name != 'trial_lesson' %}
 
                     form-floating
 
@@ -420,23 +460,24 @@
                     ms-1
 
                   {% endif %}">
-                                        {{ field }}
-                                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                                    </div>
-                                    {% if field.errors %}
-                                        <div class="text-danger small">
-                                            {% for error in field.errors %}
-                                                {{ error }}
-                                            {% endfor %}
+                                            {{ field }}
+                                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                                         </div>
-                                    {% endif %}
-                                {% endfor %}
-                                <div class="d-flex justify-content-end flex-column flex-md-row mt-2">
-                                    <button type="submit" class="btn btn-success">Сохранить</button>
-                                </div>
-                            </form>
+                                        {% if field.errors %}
+                                            <div class="text-danger small">
+                                                {% for error in field.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <div class="d-flex justify-content-end flex-column flex-md-row mt-2">
+                                        <button type="submit" class="btn btn-success">Сохранить</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                     {#      Group additional tools     #}
                     <div class="bg-light rounded py-2 px-2 mt-3 border">
                         <button type="button" class="btn btn-secondary py-1 my-1" data-bs-toggle="modal"
@@ -447,7 +488,7 @@
                                 data-bs-target="#paymentHistoryModal">
                             История оплат
                         </button>
-                        {% if request.user.is_superuser and obj.get_all_enrolled_count == 0 %}
+                        {% if request.user.is_superuser and obj.get_all_enrolled_count == 0 and not obj.archived %}
                             <!-- Button trigger modal -->
                             <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                     data-bs-target="#staticBackdrop">
@@ -464,7 +505,7 @@
                                         {% csrf_token %}
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Modal title</h1>
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Перенести в архив</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                             </div>

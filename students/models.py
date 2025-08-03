@@ -27,6 +27,10 @@ class StudentModel(models.Model):
         overdue_enrollments_count = Enrollment.objects.filter(student=self, payment_due__lt=datetime.datetime.today().date(), status=True).count()
         return overdue_enrollments_count > 0
 
+    def get_enrolled_count(self):
+        enrolled_count = Enrollment.objects.filter(student=self, status=True).count()
+        return enrolled_count
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 

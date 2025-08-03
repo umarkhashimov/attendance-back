@@ -32,6 +32,25 @@
                         </h6>
                     </div>
                     <div class="row mt-2 pb-3">
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            <div class="custom-select-2">
+                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
+                                {{ filter_form.teacher }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.subject.label }}</label>
+                                {{ filter_form.subject }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-6 col-lg-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.sort_by.label }}</label>
+                                {{ filter_form.sort_by }}
+                            </div>
+                        </div>
                         <div class="col-12 col-sm-6 col-lg-3">
                             <div class="custom-select-2">
                                 <label for="daySelect" class="me-2 ms-1 mb-1">{{ filter_form.weekdays.label }}</label>
@@ -40,20 +59,8 @@
                         </div>
                         <div class="col-12 col-sm-6 col-lg-3">
                             <div class="custom-select-2">
-                                <label for="teacherName" class="me-2 ms-1 mb-1">{{ filter_form.teacher.label }}</label>
-                                {{ filter_form.teacher }}
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-6 col-lg-3">
-                            <div class="custom-select-2">
-                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.subject.label }}</label>
-                                {{ filter_form.subject }}
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-6 col-lg-3">
-                            <div class="custom-select-2">
-                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.sort_by.label }}</label>
-                                {{ filter_form.sort_by }}
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.display.label }}</label>
+                                {{ filter_form.display }}
                             </div>
                         </div>
                     </div>

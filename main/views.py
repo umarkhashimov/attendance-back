@@ -222,7 +222,7 @@ class TeachersListView(AdminRequired, ListView):
 
 
 class CoursesListView(AdminRequired, ListView):
-    queryset = CourseModel.objects.all().exclude(Q(subject__show_separately=True) | Q(archived=True))
+    queryset = CourseModel.objects.all().exclude(subject__show_separately=True)
     template_name = "courses_list.html"
     context_object_name = 'courses'
     paginate_by = 30
@@ -248,6 +248,7 @@ class CoursesListView(AdminRequired, ListView):
         teacher = self.request.GET.get('teacher')
         subject = self.request.GET.get('subject')
         sort_by = self.request.GET.get('sort_by')
+        display = self.request.GET.get('display')
 
         queryset = super().get_queryset()
         if subject:
@@ -263,6 +264,12 @@ class CoursesListView(AdminRequired, ListView):
 
         if teacher:
             queryset = queryset.filter(teacher_id=teacher)
+
+        if display:
+            if display == '1':
+                queryset = queryset.filter(archived=False)
+            elif display == '2':
+                queryset = queryset.filter(archived=True)
 
         if sort_by:
             if sort_by == "1":
@@ -280,7 +287,7 @@ class CoursesListView(AdminRequired, ListView):
             elif sort_by == "5":
                 queryset = queryset.order_by("teacher__first_name", "teacher__last_name", "teacher__username")
 
-        return queryset.exclude(archived=True)
+        return queryset
     
 
     def get_context_data(self, **kwargs):
