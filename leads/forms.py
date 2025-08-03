@@ -8,7 +8,7 @@ from .models import LeadsModel
 from students.models import StudentModel
 
 class LeadForm(forms.ModelForm):
-    student = forms.ModelChoiceField(queryset=StudentModel.objects.all(),
+    student = forms.ModelChoiceField(queryset=StudentModel.objects.all().exclude(archived=True),
                                      widget=Select2Widget(attrs={'class': 'form-control'}),required=False, label='Выберите ученика')
     select_student = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input', 'onclick': 'toggleStudentInputType(this)'}), label='Создать нового ученика', initial=True)
 
