@@ -7,11 +7,8 @@ from apscheduler.triggers.interval import IntervalTrigger
 from decouple import config
 import requests, datetime
 from courses.tasks import mark_unmarked_sessions
+from users.models import TelegramChatsModel
 
-def send_test_message():
-    url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
-    data = {"chat_id": 5811454533, 'text': f"scheduler is working!\ndatetime: {datetime.datetime.now()}"}
-    requests.post(url=url, data=data)
 
 class Command(BaseCommand):
  help = "Runs the APScheduler for Django"
@@ -20,7 +17,7 @@ class Command(BaseCommand):
      scheduler = BackgroundScheduler()
      scheduler.add_job(mark_unmarked_sessions, CronTrigger(hour=23, minute=00))  # 11 PM
      scheduler.add_job(mark_unmarked_sessions, CronTrigger(hour=23, minute=30))  # 11:30 PM
-     scheduler.add_job(send_test_message, IntervalTrigger(hours=1), max_instances=1)  # every 1 hour
+     # scheduler.add_job(send_test_message, IntervalTrigger(hours=1), max_instances=1)  # every 1 hour
      scheduler.start()
 
      self.stdout.write(self.style.SUCCESS("APScheduler started..."))

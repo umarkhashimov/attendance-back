@@ -79,3 +79,11 @@ class LogAdminActionsModel(models.Model):
     class Meta:
         verbose_name = 'запись'
         verbose_name_plural = 'записи'
+
+
+class TelegramChatsModel(models.Model):
+    name = models.CharField(max_length=200)
+    chat_id = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.name} - {self.chat_id}"

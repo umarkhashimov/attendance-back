@@ -1,7 +1,7 @@
 from django.contrib.admin.models import LogEntry
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import UsersModel, LogAdminActionsModel
+from .models import UsersModel, LogAdminActionsModel, TelegramChatsModel
 from django.contrib.contenttypes.models import ContentType
 from django.utils.safestring import mark_safe
 from django import forms
@@ -59,3 +59,9 @@ class CustomContentTypeAdmin(admin.ModelAdmin):
         return 'Unknown'
 
     custom_model_name.short_description = 'Model Name'
+
+
+@admin.register(TelegramChatsModel)
+class TelegramChatsAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'chat_id']
+    list_display_links = ['id','name']
