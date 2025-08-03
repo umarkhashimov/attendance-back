@@ -17,6 +17,7 @@ class StudentModel(models.Model):
     notes = models.TextField(blank=True, null=True, verbose_name='Заметка')
     enrollment_date = models.DateField(auto_now_add=True, verbose_name='Дата создания')  # Date the student was enrolled
     courses = models.ManyToManyField(CourseModel, through='Enrollment', verbose_name='Записанные курсы')
+    archived = models.BooleanField(default=False)
 
     @property
     def full_name(self):

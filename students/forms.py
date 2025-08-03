@@ -11,7 +11,7 @@ class StudentInfoForm(ModelForm):
     
     class Meta:
         model = StudentModel
-        exclude = ['courses']
+        exclude = ['courses', 'archived']
         widgets = {
             'notes': forms.Textarea(attrs={'rows': '2'})
         }
