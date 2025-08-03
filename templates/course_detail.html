@@ -157,6 +157,14 @@
                                                                                  for="payment-tab">Оплата
                                                                         </buttont>
                                                                     </li>
+                                                                    <li class="nav-item">
+                                                                        <buttont type="button" class="nav-link tab-btn"
+                                                                                 aria-current="page"
+                                                                                 enrollment_id="{{ enrollment.id }}"
+                                                                                 onclick="openEnrollmentTab(this)"
+                                                                                 for="convert-lead-tab">Отложить запись
+                                                                        </buttont>
+                                                                    </li>
                                                                 </ul>
                                                             </div>
                                                             <div class="enrollment-tab mytab bg-light border rounded-0 p-2">
@@ -328,6 +336,28 @@
                                                                     <div class="d-flex flex-column flex-md-row justify-content-end mt-2">
                                                                         <button class="btn btn-success" type="submit">
                                                                             Оплатить
+                                                                        </button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                            <div class="convert-lead-tab  mytab d-none bg-light border rounded-0 p-2">
+                                                                <form method="post" action="{% url 'students:convert_enrollment_to_lead' enrollment_id=enrollment.id %}">
+                                                                    {% csrf_token %}
+                                                                    <p class="mb-0">! Запись будет отключена.</p>
+                                                                    <p>! Детали будут преоброзованы в лид</p>
+                                                                    <div class="form-floating my-1">
+                                                                        {{ lead_form.note }}
+                                                                        <label aria-required="{{ lead_form.note.required }}" {{ lead_form.note.required }}
+                                                                               for="{{ lead_form.note.id_for_label }}">{{ lead_form.note.label }}</label>
+                                                                    </div>
+                                                                    <div class="form-floating my-1">
+                                                                        {{ lead_form.arrival_date }}
+                                                                        <label aria-required="{{ lead_form.arrival_date.required }}" {{ lead_form.arrival_date.required }}
+                                                                               for="{{ lead_form.arrival_date.id_for_label }}">{{ lead_form.arrival_date.label }}</label>
+                                                                    </div>
+                                                                    <div class="d-flex flex-column flex-md-row justify-content-end mt-2">
+                                                                        <button class="btn btn-success" type="submit">
+                                                                            Принять
                                                                         </button>
                                                                     </div>
                                                                 </form>
@@ -505,7 +535,8 @@
                                         {% csrf_token %}
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Перенести в архив</h1>
+                                                <h1 class="modal-title fs-5" id="staticBackdropLabel">Перенести в
+                                                    архив</h1>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                         aria-label="Close"></button>
                                             </div>
@@ -616,6 +647,11 @@
 
 {% block custom_js %}
     <script defer>
+
+        flatpickr('#datePicker', {
+            dateFormat: "Y-m-d",
+        })
+
         flatpickr('#LessonTimePicker', {
             enableTime: true,
             noCalendar: true,

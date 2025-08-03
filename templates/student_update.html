@@ -12,7 +12,7 @@
             <div class="col-12 col-md-6">
                 <div class="bg-light rounded py-4 px-2 mt-3 border">
                     {% if student.archived %}
-                    <p class="text-danger fs-6 m-0 ms-1">В архиве</p>
+                        <p class="text-danger fs-6 m-0 ms-1">В архиве</p>
                     {% endif %}
                     <p class="text-black ms-1">Изменить информацию ученика #{{ student.id }}
                         - {{ student.first_name|default:'нет Имени' }} {{ student.last_name|default:'нет Фамилии' }}</p>
@@ -44,17 +44,17 @@
                 <div class="bg-light rounded py-3 mt-3 px-2 border">
                     <p class="text-dark ms-1 mb-2">Записать на новый курс</p>
                     {% if not student.archived %}
-                    <form method="get">
-                        <div class="form-floating mb-1">
-                            {{ teacher_select_form.teacher }}
-                            <label for="floatingInput">{{ teacher_select_form.teacher.label }}</label>
-                        </div>
-                    </form>
-                    <form method="post"
-                          action="{% url 'students:create_enrollment_from_student' student_id=student.id %}">
-                        {% csrf_token %}
-                        {% for field in enrollment_form %}
-                            <div class="my-1 {% if field.name != 'trial_lesson' %}
+                        <form method="get">
+                            <div class="form-floating mb-1">
+                                {{ teacher_select_form.teacher }}
+                                <label for="floatingInput">{{ teacher_select_form.teacher.label }}</label>
+                            </div>
+                        </form>
+                        <form method="post"
+                              action="{% url 'students:create_enrollment_from_student' student_id=student.id %}">
+                            {% csrf_token %}
+                            {% for field in enrollment_form %}
+                                <div class="my-1 {% if field.name != 'trial_lesson' %}
 
                   form-floating
 
@@ -63,22 +63,22 @@
                   ms-1
 
                 {% endif %}">
-                                {{ field }}
-                                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            </div>
-                            {% if field.errors %}
-                                <div class="text-danger small">
-                                    {% for error in field.errors %}
-                                        {{ error }}
-                                    {% endfor %}
+                                    {{ field }}
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                                 </div>
-                            {% endif %}
-                        {% endfor %}
-                        <div class="d-flex justify-content-end flex-column flex-md-row">
-                            <button type="submit" class="btn btn-success">Сохранить</button>
-                        </div>
-                    </form>
-                        {% else %}
+                                {% if field.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in field.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                            <div class="d-flex justify-content-end flex-column flex-md-row">
+                                <button type="submit" class="btn btn-success">Сохранить</button>
+                            </div>
+                        </form>
+                    {% else %}
                         <p class="text-center mt-4 text-danger">Студент в архиве !</p>
                     {% endif %}
                 </div>
@@ -104,26 +104,26 @@
                              data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                              aria-hidden="true">
                             <div class="modal-dialog">
-                                    {% csrf_token %}
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Перенести Архив</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>Вы уверены что хотите перенести этого ученика в архив ?</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Отмена
-                                            </button>
-                                            <a type="button" class="btn btn-danger"
-                                               href="{% url 'students:archive_student' pk=student.id %}">
-                                                Подтвердить
-                                            </a>
-                                        </div>
+                                {% csrf_token %}
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Перенести Архив</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
+                                    <div class="modal-body">
+                                        <p>Вы уверены что хотите перенести этого ученика в архив ?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Отмена
+                                        </button>
+                                        <a type="button" class="btn btn-danger"
+                                           href="{% url 'students:archive_student' pk=student.id %}">
+                                            Подтвердить
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -140,25 +140,25 @@
                              data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
                              aria-hidden="true">
                             <div class="modal-dialog">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="staticBackdropLabel">Разархивировать</h1>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                    aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <p>Вы уверены что хотите разархивировать ученика ?</p>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                Отмена
-                                            </button>
-                                            <a type="button" class="btn btn-danger"
-                                               href="{% url 'students:unarchive_student' pk=student.id %}">
-                                                Подтвердить
-                                            </a>
-                                        </div>
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Разархивировать</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                     </div>
+                                    <div class="modal-body">
+                                        <p>Вы уверены что хотите разархивировать ученика ?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Отмена
+                                        </button>
+                                        <a type="button" class="btn btn-danger"
+                                           href="{% url 'students:unarchive_student' pk=student.id %}">
+                                            Подтвердить
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     {% endif %}
@@ -448,6 +448,14 @@
                                                                             for="payment-tab">Оплата
                                                                     </button>
                                                                 </li>
+                                                                <li class="nav-item">
+                                                                    <buttont type="button" class="nav-link tab-btn"
+                                                                             aria-current="page"
+                                                                             enrollment_id="{{ enrollment.id }}"
+                                                                             onclick="openEnrollmentTab(this)"
+                                                                             for="convert-lead-tab">Отложить запись
+                                                                    </buttont>
+                                                                </li>
                                                             </ul>
                                                         </div>
                                                         <div class="enrollment-tab mytab bg-light border rounded-0 p-2">
@@ -619,6 +627,29 @@
                                                                 </div>
                                                             </form>
                                                         </div>
+                                                        <div class="convert-lead-tab  mytab d-none bg-light border rounded-0 p-2">
+                                                            <form method="post"
+                                                                  action="{% url 'students:convert_enrollment_to_lead' enrollment_id=enrollment.id %}">
+                                                                {% csrf_token %}
+                                                                <p class="mb-0">! Запись будет отключена.</p>
+                                                                <p>! Детали будут преоброзованы в лид</p>
+                                                                <div class="form-floating my-1">
+                                                                    {{ lead_form.note }}
+                                                                    <label aria-required="{{ lead_form.note.required }}" {{ lead_form.note.required }}
+                                                                           for="{{ lead_form.note.id_for_label }}">{{ lead_form.note.label }}</label>
+                                                                </div>
+                                                                <div class="form-floating my-1">
+                                                                    {{ lead_form.arrival_date }}
+                                                                    <label aria-required="{{ lead_form.arrival_date.required }}" {{ lead_form.arrival_date.required }}
+                                                                           for="{{ lead_form.arrival_date.id_for_label }}">{{ lead_form.arrival_date.label }}</label>
+                                                                </div>
+                                                                <div class="d-flex flex-column flex-md-row justify-content-end mt-2">
+                                                                    <button class="btn btn-success" type="submit">
+                                                                        Принять
+                                                                    </button>
+                                                                </div>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -647,4 +678,12 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script defer>
+        flatpickr('#datePicker', {
+            dateFormat: "Y-m-d",
+        })
+    </script>
 {% endblock %}

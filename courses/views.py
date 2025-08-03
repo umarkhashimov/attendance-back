@@ -16,6 +16,7 @@ from attendance.models import AttendanceModel
 from .forms import CancelCauseForm, CourseCreateForm,CreateSubjectForm
 from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
+from leads.forms import LeadForm
 
 class CourseUpdateView(AdminRequired, UpdateView):
     model = CourseModel
@@ -69,6 +70,7 @@ class CourseUpdateView(AdminRequired, UpdateView):
         context['enrollment_form'] = CourseEnrollmentForm(course=self.get_object().id)
         context['enrollments'] = Enrollment.objects.all().filter(course=self.get_object(), status=True).order_by('student__first_name', 'student__last_name')
         context['payment_form'] = CreatePaymentForm
+        context['lead_form'] = LeadForm
 
         # Get the course and its sessions sorted by date
         course = CourseModel.objects.get(id=self.get_object().id)

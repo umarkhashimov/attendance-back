@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from dateutil.relativedelta import weekdays
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -18,6 +19,8 @@ from payment.forms import CreatePaymentForm
 from payment.models import PaymentModel
 from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, CourseEnrollmentForm
 from attendance.models import AttendanceModel
+from leads.models import LeadsModel
+from leads.forms import LeadForm
 from payment.helpers import last_closest_session_date
 
 from rapidfuzz import fuzz
@@ -60,6 +63,7 @@ class StudentUpdateView(AdminRequired, UpdateView):
         context['enrollments'] = Enrollment.objects.all().filter(student=self.get_object(), status=True)
         context['enrollment_form'] = StudentEnrollmentForm(student=self.get_object(), teacher=self.request.GET.get('teacher', None))
         context['payment_form'] = CreatePaymentForm
+        context['lead_form'] = LeadForm
 
         # Payment history
         enrolled = Enrollment.objects.filter(student=self.get_object())
@@ -333,3 +337,43 @@ class UnArchiveStudent(AdminRequired, View):
             messages.error(request, 'Что-то пощло не так')
 
         return redirect('students:student_update', pk=student.id)
+
+
+class ConvertEnrollmentToLead(AdminRequired,View):
+
+    def post(self, request, enrollment_id):
+        enrollment = get_object_or_404(Enrollment, pk=enrollment_id)
+        arrival_date = request.POST.get('arrival_date', '')
+        note = request.POST.get('note', '')
+
+        try:
+            weekdays = 3
+            if enrollment.course.weekdays == ['0', '2', '4']:
+                weekdays = 1
+            elif enrollment.course.weekdays == ['1', '3', '5']:
+                weekdays = 2
+
+            lead = LeadsModel.objects.create(student=enrollment.student,
+                                             weekdays=weekdays,
+                                             lesson_time=enrollment.course.lesson_time,
+                                             subject=enrollment.course.subject,
+                                             teacher=enrollment.course.teacher,
+                                             arrival_date=arrival_date,
+                                             note=note,
+                                             created_by=request.user,
+                                             status=1)
+            enrollment.trial_lesson = False
+            enrollment.hold = False
+            enrollment.debt_note = None
+            enrollment.status = False
+            enrollment.save()
+            messages.success(request, 'Запись отключена')
+            messages.success(request, 'Лид успешно создан')
+        except Exception as e:
+            messages.error(request, 'Произошла ошибка')
+
+        return  redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+
+

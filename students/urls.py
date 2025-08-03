@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import StudentUpdateView, CreateStudentView, CreateEnrollmentView, UpdateEnrollmentView, GroupReEnrollmentView, DeactivateEnrollmentView, UpdateEnrollmentNote, ReEnrollStudentView, autocomplete_students, ArchiveStudent, UnArchiveStudent
+from .views import StudentUpdateView, CreateStudentView, CreateEnrollmentView, UpdateEnrollmentView, GroupReEnrollmentView, DeactivateEnrollmentView, UpdateEnrollmentNote, ReEnrollStudentView, autocomplete_students, ArchiveStudent, UnArchiveStudent, ConvertEnrollmentToLead
 
 app_name = 'students'
 
@@ -17,5 +17,5 @@ urlpatterns = [
     path('autocomplete-students/', autocomplete_students, name='autocomplete-students'),
     path('student/<int:pk>/archive', ArchiveStudent.as_view(), name='archive_student'),
     path('student/<int:pk>/unarchive', UnArchiveStudent.as_view(), name='unarchive_student'),
-
+    path('student/<int:enrollment_id>/convert-lead', ConvertEnrollmentToLead.as_view(), name='convert_enrollment_to_lead'),
 ]
