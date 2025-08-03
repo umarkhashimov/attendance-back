@@ -7,6 +7,8 @@ from attendance.models import AttendanceModel
 from django.db import connection, close_old_connections
 from django.db.utils import OperationalError
 
+from users.models import TelegramChatsModel
+
 def ensure_db_connection():
     try:
         connection.ensure_connection()
@@ -14,9 +16,14 @@ def ensure_db_connection():
         connection.close()
 
 def alert_admin_chat(text):
- url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
- data = {"chat_id": config('ADMIN_CHAT_ID'), 'text': text}
- requests.post(url=url, data=data)
+    chats = TelegramChatsModel.objects.all().values_list('chat_id', flat=True)
+
+    url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
+
+    for chat_id in chats:
+        data = {"chat_id": chat_id, 'text': text}
+        requests.post(url=url, data=data)
+
 
 def mark_unmarked_sessions(date=None):
     from django.db import close_old_connections

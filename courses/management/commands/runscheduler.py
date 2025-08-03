@@ -3,11 +3,7 @@ from django.core.management.base import BaseCommand
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
-from apscheduler.triggers.interval import IntervalTrigger
-from decouple import config
-import requests, datetime
 from courses.tasks import mark_unmarked_sessions
-from users.models import TelegramChatsModel
 
 
 class Command(BaseCommand):

@@ -1,10 +1,7 @@
 from django.core.management.base import BaseCommand
-import datetime
 import requests
 from users.models import TelegramChatsModel
 from decouple import config
-
-from courses.tasks import mark_unmarked_sessions
 
 
 def send_test_message():
