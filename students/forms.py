@@ -95,7 +95,7 @@ class StudentEnrollmentForm(ModelForm):
 class CourseEnrollmentForm(ModelForm):
     
     student = forms.ModelChoiceField(
-        queryset=StudentModel.objects.all(),
+        queryset=StudentModel.objects.all().exclude(archived=True),
         widget=Select2Widget(),
         label='Студент'
     )
