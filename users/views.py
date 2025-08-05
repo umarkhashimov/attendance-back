@@ -101,7 +101,7 @@ class AdminActionsView(SuperUserRequired, ListView):
         return queryset
 
 
-class UsersListView(ListView, SuperUserRequired):
+class UsersListView(SuperUserRequired, ListView):
     model = UsersModel
     template_name = 'users/users_list.html'
     context_object_name = 'users'
@@ -138,7 +138,7 @@ class UsersListView(ListView, SuperUserRequired):
 
         return queryset
 
-class UserUpdateView(UpdateView, SuperUserRequired):
+class UserUpdateView(SuperUserRequired,UpdateView):
     model = UsersModel
     form_class = UserUpdateForm
     template_name = 'users/users_update.html'
@@ -171,7 +171,7 @@ def reset_user_password(request, pk):
             messages.error(request, "Произошла ошибка.")
     return redirect('users:user_update', pk=pk)
 
-class SalaryUsersListView(ListView):
+class SalaryUsersListView(SuperUserRequired,ListView):
     queryset = UsersModel.objects.all().filter(role='1', is_active=True)
     template_name = 'salary/salary_users_list.html'
     context_object_name = 'users'
@@ -200,7 +200,7 @@ class SalaryUsersListView(ListView):
 
         return queryset
 
-class SalaryCourseDetailView(View):
+class SalaryCourseDetailView(SuperUserRequired,View):
     template_name = 'salary/salary_course_detail.html'
 
     def get(self, request, course_id):

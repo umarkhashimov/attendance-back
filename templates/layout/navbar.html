@@ -81,10 +81,12 @@
                         <a class="nav-link {% if request.path|slice:':6' == '/leads' %}active{% endif %}"
                            aria-current="page" href="{% url 'leads:leads_list' %}">Лиды</a>
                     </li>
+                    {% if user.is_superuser %}
                     <li class="nav-item">
                         <a class="nav-link {% if request.path|slice:':7' == '/salary' %}active{% endif %}"
                            aria-current="page" href="{% url 'users:salary_users_list' %}">Зарплата</a>
                     </li>
+                        {% endif %}
                 {% endif %}
             </ul>
         </div>
