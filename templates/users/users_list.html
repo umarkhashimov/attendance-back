@@ -8,7 +8,12 @@
 
     <div class="container pt-1">
         <div class="mt-4 mb-2 d-flex align-items-center justify-content-between">
-            <h5 class="mt-1 mb-2">Пользователи</h5>
+            <h5 class="m-0">Пользователи</h5>
+            <div>
+                <a href="{% url 'users:user_create' %}" type="button" class="btn btn-primary">
+                    Создать
+                </a>
+            </div>
         </div>
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">

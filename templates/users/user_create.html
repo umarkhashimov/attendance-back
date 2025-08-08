@@ -1,0 +1,50 @@
+{% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %}
+    <title>Панель Управления</title>
+{% endblock %}
+{% block content %}
+    {% include 'layout/navbar.html' %}
+
+    <div class="container courses-list">
+
+        <h4 class="mt-5">Создать нового пользователя</h4>
+        <hr class="table-group-divider"/>
+        <div class="bg-light rounded py-3 mt-3 px-2 border">
+
+            <form method="post">
+                <div>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {% if field.name != 'is_active' %}
+
+                            <div class="form-floating my-1">
+                                {{ field }}
+                                <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+
+                        {% else %}
+                            <div class="d-flex align-items-center my-1 ms-1 mt-2 gap-2">
+                                {{ field }}
+                                <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            </div>
+
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="text-danger small">
+                                {% for error in field.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <div class="d-flex justify-content-end flex-column flex-md-row pt-2 gap-3">
+                        <button type="submit" class="btn btn-success">Сохранить</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

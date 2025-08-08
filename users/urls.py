@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 
-from .views import reset_user_password, UserUpdateView, LoginPageView, ProfileView, TeacherUpdateView, CustomPasswordChangeView, SalaryUsersListView, SalaryCourseDetailView, AdminActionsView, UsersListView
+from .views import CustomUserCreateView, reset_user_password, UserUpdateView, LoginPageView, ProfileView, TeacherUpdateView, CustomPasswordChangeView, SalaryUsersListView, SalaryCourseDetailView, AdminActionsView, UsersListView
 
 app_name = 'users'
 
@@ -18,6 +18,7 @@ urlpatterns = [
     path('users/<int:pk>/update/', UserUpdateView.as_view(), name='user_update'),
 path('users/<int:pk>/reset-password/', reset_user_password, name='reset_user_password'),
 
+    path('users/create/', CustomUserCreateView.as_view(), name='user_create'),
     path('salary/users/', SalaryUsersListView.as_view(), name='salary_users_list'),
     path('salary/course/<int:course_id>', SalaryCourseDetailView.as_view(), name='salary_course_detail'),
 ]

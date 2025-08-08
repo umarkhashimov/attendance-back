@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django_select2.forms import Select2Widget
 from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
 from django.contrib.admin.models import LogEntry, ContentType
+from django.contrib.auth.forms import UserCreationForm
 import datetime
 
 from .filters import SuperUserRequired
@@ -159,3 +160,22 @@ class UsersListFilterForm(forms.Form):
     text = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder':'', 'onchange':'submit()'}), required=False, label="Имя/Фамилия/Пользователь")
     role = forms.ChoiceField(choices=[('1', 'Учитель'),('2', 'Администратор')], widget=Select2Widget(attrs={'class': 'form-control', 'placeholder':'...', 'onchange':'submit()'}), required=False, label="Роль")
     status = forms.ChoiceField(choices=[(True, 'Активный'), (False, 'Не активный')],widget=Select2Widget(attrs={'class': 'form-select d-inline', 'placeholder':'', 'onchange':'submit()'}), required=False, label="Статус")
+
+
+
+class CustomUserCreationForm(UserCreationForm):
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+
+    class Meta:
+        model = UsersModel
+        fields = ['username', 'role', 'first_name', 'last_name', 'email', 'password1', 'password2']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field_name, field in self.fields.items():
+            field.widget.attrs.update({
+                "class": "form-control",  # Add Bootstrap class
+                "placeholder": ' ',  # Optional: Use label as placeholder
+            })

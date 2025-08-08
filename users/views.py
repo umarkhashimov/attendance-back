@@ -5,7 +5,7 @@ from django.shortcuts import render
 from functools import reduce
 from operator import or_
 from django.template.defaultfilters import first
-from django.views.generic import TemplateView, UpdateView, ListView, View
+from django.views.generic import TemplateView, UpdateView, ListView, View, CreateView
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from django.db.models import Q
@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 from django.contrib import messages
 from .filters import AdminRequired, SuperUserRequired
 from .models import UsersModel, LogAdminActionsModel
-from .forms import LoginForm, TeacherUpdateForm, UserActionsFilterForm, SalaryMonthFilterForm, UserUpdateForm, UserSetPasswordForm, UsersListFilterForm
+from .forms import LoginForm, CustomUserCreationForm, TeacherUpdateForm, UserActionsFilterForm, SalaryMonthFilterForm, UserUpdateForm, UserSetPasswordForm, UsersListFilterForm
 from courses.models import CourseModel, SessionsModel
 from attendance.models import AttendanceModel
 from students.models import Enrollment
@@ -262,3 +262,9 @@ class SalaryCourseDetailView(SuperUserRequired,View):
             'attendance_data': attendance_data
         })
         return render(request, self.template_name, context)
+
+class CustomUserCreateView(CreateView):
+    model = UsersModel
+    form_class = CustomUserCreationForm
+    template_name = 'users/user_create.html'
+    success_url = reverse_lazy('users:users_list')
