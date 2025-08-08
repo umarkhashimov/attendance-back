@@ -151,7 +151,7 @@ class UserSetPasswordForm(SetPasswordForm):
 
         for field_name, field in self.fields.items():
             field.widget.attrs.update({
-                "class": "form-control",  # Add Bootstrap class
+                "class": "form-control passwordinput",  # Add Bootstrap class
                 "placeholder": ' ',  # Optional: Use label as placeholder
             })
 
@@ -179,3 +179,8 @@ class CustomUserCreationForm(UserCreationForm):
                 "class": "form-control",  # Add Bootstrap class
                 "placeholder": ' ',  # Optional: Use label as placeholder
             })
+
+            if field_name in ['password1', 'password2']:
+                field.widget.attrs.update({
+                    'class': 'form-control passwordinput', 'placeholder': ' '
+                })

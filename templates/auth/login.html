@@ -24,8 +24,8 @@
 
                 {{ form|crispy }}
                 <div class="d-flex gap-2 align-items-center">
-                    <input type="checkbox" id="showPassword" class="form-check-input border-2 fs-5 m-0">
-                    <label for="showPassword" class="user-select-none">Показать пароль</label>
+                    <input type="checkbox" id="showPassword" class="form-check-input cursor-pointer border-2 fs-5 m-0">
+                    <label for="showPassword" class="user-select-none cursor-pointer">Показать пароли</label>
                 </div>
 
                 <div class="mt-4 d-flex justify-content-end">
@@ -43,8 +43,6 @@
         const showPasswordCheckbox = document.getElementById('showPassword');
 
         showPasswordCheckbox.addEventListener('change', function () {
-            console.log(passwordInput)
-            console.log(showPasswordCheckbox)
             passwordInput.type = this.checked ? 'text' : 'password';
         });
     </script>
