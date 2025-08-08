@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from django.views.generic import UpdateView, CreateView, View
 from django.urls import reverse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -376,12 +376,21 @@ class AbsentStudentsList(AdminRequired, View):
     template_name = 'payment/absent_students_list.html'
 
     def get(self, request):
+        context = {}
+        t = self.request.GET.get('date')
+        today = date.today()
+        if t:
+            today = datetime.strptime(t, '%Y-%m-%d').date()
+            if today > date.today():
+                today = date.today()
+        context['prev_date'] = today - timedelta(days=1)
+        context['next_date'] = date.today() if today == date.today() else today + timedelta(days=1)
 
         teachers = UsersModel.objects.filter(role='1').distinct()
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
-        attendances = AttendanceModel.objects.select_related('enrollment__course__teacher').filter(Q(status=0) | Q(status=None), session__date=datetime.today())
+        attendances = AttendanceModel.objects.select_related('enrollment__course__teacher').filter(Q(status=0) | Q(status=None), session__date=today)
 
         session_enrollment_map = defaultdict(list)
         for attendance in attendances:
@@ -398,5 +407,9 @@ class AbsentStudentsList(AdminRequired, View):
             for teacher, course_map in teacher_data.items()
         }
 
-        context = {'teacher_enrollments': teacher_data}
+        context.update({
+            'teacher_enrollments': teacher_data,
+            'today': datetime.today().date().strftime("%Y-%m-%d"),
+            'filter_date': today.strftime("%Y-%m-%d"),
+        })
         return render(request, self.template_name, context)
