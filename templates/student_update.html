@@ -361,41 +361,44 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i
                                                 class="bi bi-pencil-fill"></i></button>
-                                        <button type="button" class="rounded-0 btn btn-danger px-3 py-1"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteEnrollmentModal{{ enrollment.id }}"><i
-                                                class="bi bi-trash3"></i></button>
-                                        <!-- Enrollment delete modal -->
-                                        <div class="modal fade" id="deleteEnrollmentModal{{ enrollment.id }}"
-                                             tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить
-                                                            Запись</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                                aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <p>
-                                                            Вы действительно хотите удалить ученика
-                                                            <b>{{ enrollment.student.full_name }}</b> из группы
-                                                            <b>{{ enrollment.course }}</b>
-                                                        </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Отмена
-                                                        </button>
-                                                        <form method="post"
-                                                              action="{% url 'students:delete_enrollment' enrollment_id=enrollment.id %}?next={{ request.path }}">
-                                                            {% csrf_token %}
-                                                            <button type="submit" class="btn btn-danger">Да</button>
-                                                        </form>
+                                        {% if 'delete_enrollment' in user.custom_persmissions or user.is_superuser %}
+                                            <button type="button" class="rounded-0 btn btn-danger px-3 py-1"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#deleteEnrollmentModal{{ enrollment.id }}"><i
+                                                    class="bi bi-trash3"></i></button>
+                                            <!-- Enrollment delete modal -->
+                                            <div class="modal fade" id="deleteEnrollmentModal{{ enrollment.id }}"
+                                                 tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Удалить
+                                                                Запись</h1>
+                                                            <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal"
+                                                                    aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>
+                                                                Вы действительно хотите удалить ученика
+                                                                <b>{{ enrollment.student.full_name }}</b> из группы
+                                                                <b>{{ enrollment.course }}</b>
+                                                            </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Отмена
+                                                            </button>
+                                                            <form method="post"
+                                                                  action="{% url 'students:delete_enrollment' enrollment_id=enrollment.id %}?next={{ request.path }}">
+                                                                {% csrf_token %}
+                                                                <button type="submit" class="btn btn-danger">Да</button>
+                                                            </form>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        {% endif %}
                                         <!-- Edit Enrollment modal -->
                                         <div class="modal fade" data-bs-backdrop="static"
                                              id="editEnrollmentModal{{ enrollment.id }}" tabindex="-1"

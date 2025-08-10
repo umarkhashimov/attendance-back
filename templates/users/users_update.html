@@ -42,19 +42,22 @@
                             </div>
                         {% endif %}
                     {% endfor %}
-                    <a class="btn dropdown-toggle border-0 text-decoration-underline m-0 p-0 ps-2 py-2 mt-2" data-bs-toggle="collapse" href="#collapseExample" role="button"
-                       aria-expanded="false" aria-controls="collapseExample">
-                        Разрешения
-                    </a>
-                    <div class="collapse" id="collapseExample">
-                        <div class="card card-body">
-                            {% for field in form.custom_permissions %}
-                                <div class="form-check">
-                                {{ field }}
-                                </div>
-                            {% endfor %}
+                    {% if obj_user.role == '2' and not obj_user.is_superuser %}
+                        <a class="btn dropdown-toggle border-0 text-decoration-underline m-0 p-0 ps-2 py-2 mt-2"
+                           data-bs-toggle="collapse" href="#permissionsCollapse" role="button"
+                           aria-expanded="false" aria-controls="permissionsCollapse">
+                            Разрешения
+                        </a>
+                        <div class="collapse" id="permissionsCollapse">
+                            <div class="card card-body">
+                                {% for field in form.custom_permissions %}
+                                    <div class="form-check">
+                                        {{ field }}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
+                    {% endif %}
                     <div class="d-flex justify-content-end flex-column flex-md-row pt-3 gap-3">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#passwordResetModal">

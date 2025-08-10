@@ -196,21 +196,35 @@ class UsersListFilterForm(forms.Form):
 class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
+    custom_permissions = forms.MultipleChoiceField(
+        choices=UsersModel.PERMISSION_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False  # Make this field optional
+    )
 
     class Meta:
         model = UsersModel
         fields = ['username', 'role', 'first_name', 'last_name', 'email', 'password1', 'password2']
-
+        widgets = {
+            'role': forms.Select(attrs={'class': 'form-select', 'onchange': 'roleChange(this)'}),
+        }
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if self.instance and self.instance.custom_permissions:
+            self.fields['custom_permissions'].initial = self.instance.custom_permissions
 
         for field_name, field in self.fields.items():
-            field.widget.attrs.update({
-                "class": "form-control",  # Add Bootstrap class
-                "placeholder": ' ',  # Optional: Use label as placeholder
-            })
+            if field_name not in ['password1', 'password2', 'custom_permissions']:
+                field.widget.attrs.update({
+                    "class": "form-control",  # Add Bootstrap class
+                    "placeholder": ' ',  # Optional: Use label as placeholder
+                })
 
-            if field_name in ['password1', 'password2']:
+            elif field_name in ['password1', 'password2']:
                 field.widget.attrs.update({
                     'class': 'form-control passwordinput', 'placeholder': ' '
+                })
+            elif field_name == 'custom_permissions':
+                field.widget.attrs.update({
+                    'class': 'form-check-input',
                 })

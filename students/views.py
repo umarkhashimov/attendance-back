@@ -154,16 +154,23 @@ class UpdateEnrollmentView(AdminRequired, View):
         return redirect(next_url + '#enrollmentsTable')
 
 class DeactivateEnrollmentView(AdminRequired, View):
-    def post(self, request, enrollment_id):
-        enrollment = get_object_or_404(Enrollment, id=enrollment_id)
-        enrollment.trial_lesson = False
-        enrollment.hold = False
-        enrollment.debt_note = None
-        enrollment.status = False
-        enrollment.save()
-        action_message = f"Удалил ученика <b>{enrollment.student}</b> из группы <b>{enrollment.course}</b>"
-        record_action(3, self.request.user, enrollment, enrollment.id, action_message)
+    def get(self, request, enrollment_id):
         next_url  = self.request.GET.get('next', '/')
+        if self.request.user.has_permission('delete_enrollment') or self.request.user.is_superuser:
+            try:
+                enrollment = get_object_or_404(Enrollment, id=enrollment_id)
+                enrollment.trial_lesson = False
+                enrollment.hold = False
+                enrollment.status = False
+                enrollment.save()
+                messages.success(request, 'Запись отключена успешно')
+                action_message = f"Удалил ученика <b>{enrollment.student}</b> из группы <b>{enrollment.course}</b>"
+                record_action(3, self.request.user, enrollment, enrollment.id, action_message)
+            except Exception as e:
+                messages.error(request, 'Что-то пошло не так')
+        else:
+            messages.warning(request, 'У вас нет доступа к этой функции')
+
         return redirect(next_url)
 
 
