@@ -12,26 +12,27 @@
             {% if obj_user.is_superuser %}<span class="text-secondary fs-6"> - супер админ</span>{% endif %}</h4>
         <hr class="table-group-divider"/>
         <div class="bg-light rounded py-3 mt-3 px-2 border">
-
             <form method="post">
                 <div>
                     {% csrf_token %}
                     {% for field in form %}
-                        {% if field.name != 'is_active' %}
+                        {% if field.name != 'custom_permissions' %}
+                            {% if field.name not in 'is_active' %}
 
-                            <div class="form-floating my-1">
-                                {{ field }}
-                                <label aria-required="{{ field.field.required }}" {{ field.required }}
-                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            </div>
+                                <div class="form-floating my-1">
+                                    {{ field }}
+                                    <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                </div>
 
-                        {% else %}
-                            <div class="d-flex align-items-center my-1 ms-1 mt-2 gap-2">
-                                {{ field }}
-                                <label aria-required="{{ field.field.required }}" {{ field.required }}
-                                       for="{{ field.id_for_label }}">{{ field.label }}</label>
-                            </div>
+                            {% else %}
+                                <div class="d-flex align-items-center my-1 ms-1 mt-2 gap-2">
+                                    {{ field }}
+                                    <label aria-required="{{ field.field.required }}" {{ field.required }}
+                                           for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                </div>
 
+                            {% endif %}
                         {% endif %}
                         {% if field.errors %}
                             <div class="text-danger small">
@@ -41,7 +42,20 @@
                             </div>
                         {% endif %}
                     {% endfor %}
-                    <div class="d-flex justify-content-end flex-column flex-md-row pt-2 gap-3">
+                    <a class="btn dropdown-toggle border-0 text-decoration-underline m-0 p-0 ps-2 py-2 mt-2" data-bs-toggle="collapse" href="#collapseExample" role="button"
+                       aria-expanded="false" aria-controls="collapseExample">
+                        Разрешения
+                    </a>
+                    <div class="collapse" id="collapseExample">
+                        <div class="card card-body">
+                            {% for field in form.custom_permissions %}
+                                <div class="form-check">
+                                {{ field }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end flex-column flex-md-row pt-3 gap-3">
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                 data-bs-target="#passwordResetModal">
                             Сбросить пароль

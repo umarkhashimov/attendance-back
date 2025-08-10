@@ -11,6 +11,23 @@ import datetime
 from .filters import SuperUserRequired
 from .models import UsersModel, ACTION_FLAG_CHOICES
 
+class UserUpdateAdminForm(forms.ModelForm):
+    custom_permissions = forms.MultipleChoiceField(
+        choices=UsersModel.PERMISSION_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False  # Make this field optional
+    )
+
+    class Meta:
+        model = UsersModel
+        fields = ['username', 'email', 'custom_permissions']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # You can initialize the field with current selected permissions if needed
+        if self.instance and self.instance.custom_permissions:
+            self.fields['custom_permissions'].initial = self.instance.custom_permissions
+
 class LoginForm(AuthenticationForm):
     username = forms.CharField(
         max_length=254,
@@ -118,6 +135,12 @@ class SalaryMonthFilterForm(forms.Form):
 
 
 class UserUpdateForm(UserChangeForm):
+    custom_permissions = forms.MultipleChoiceField(
+        choices=UsersModel.PERMISSION_CHOICES,
+        widget=forms.CheckboxSelectMultiple,
+        required=False  # Make this field optional
+    )
+
     def __init__(self, *args, **kwargs):
         self.request = kwargs.pop('request', None)  # take it out before super()
         super().__init__(*args, **kwargs)
@@ -128,12 +151,19 @@ class UserUpdateForm(UserChangeForm):
         if self.instance.pk == self.request.user.pk:
             del self.fields['is_active']
 
+        if self.instance and self.instance.custom_permissions:
+            self.fields['custom_permissions'].initial = self.instance.custom_permissions
+
         for field_name, field in self.fields.items():
-            if field_name not in ['is_active', 'role']:
+            if field_name not in ['is_active', 'role', 'custom_permissions']:
 
                 field.widget.attrs.update({
                     "class": "form-control",  # Add Bootstrap class
                     "placeholder": ' ',  # Optional: Use label as placeholder
+                })
+            elif field_name == 'custom_permissions':
+                field.widget.attrs.update({
+                    'class': 'form-check-input',
                 })
 
     class Meta:

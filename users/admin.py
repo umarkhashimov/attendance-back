@@ -1,18 +1,20 @@
 from django.contrib.admin.models import LogEntry
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserChangeForm
+
 from .models import UsersModel, LogAdminActionsModel, TelegramChatsModel
 from django.contrib.contenttypes.models import ContentType
 from django.utils.safestring import mark_safe
-from django import forms
-
+from .forms import UserUpdateAdminForm
 
 class CustomUserAdmin(UserAdmin):
+    form = UserUpdateAdminForm
     # Specify the fields in the desired order
     fieldsets = (
         (None, {'fields': ('username', 'password', 'role')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'phone_number', 'email', 'color')}),
-        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'custom_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),
     )
 
