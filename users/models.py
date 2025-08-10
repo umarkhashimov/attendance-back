@@ -22,7 +22,7 @@ class UsersModel(AbstractUser):
     PERMISSION_CHOICES = [
         ('delete_enrollment', 'Может удалить ученика из группы'),
     ]
-    custom_permissions = models.JSONField(default={}, blank=True, null=True)
+    custom_permissions = models.JSONField(default=None, blank=True, null=True)
 
     def has_permission(self, permission):
         return permission in self.custom_permissions
