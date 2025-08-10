@@ -22,12 +22,12 @@ class UsersModel(AbstractUser):
     PERMISSION_CHOICES = [
         ('delete_enrollment', 'Может удалить ученика из группы'),
     ]
+    custom_permissions = models.JSONField(default={}, blank=True, null=True)
 
     def has_permission(self, permission):
         return permission in self.custom_permissions
 
     # Store selected permissions as a set of boolean flags
-    custom_permissions = models.JSONField(default=dict, blank=True, null=True)
     @property
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
