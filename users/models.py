@@ -8,7 +8,7 @@ from django.apps import apps
 PERMISSION_CHOICES = [
     ('delete_enrollment', 'Может удалить ученика из группы'),
     ('re_enrollment', 'Может перемещать запись'),
-    ('mark_session', 'Может отмечать уроки'),
+    ('mark_session', 'Может отмечать уроки (только во время урока)'),
     ('create_payment', 'Может вводить оплату'),
 ]
 

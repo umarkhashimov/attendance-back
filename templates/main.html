@@ -222,7 +222,7 @@
                             <span class="badge text-bg-light border border-1 ms-2">{{ obj.lesson_time|time:'H:i' }}</span>
                         </p>
                     </div>
-                    {% if obj.check_time and today == filter_date or user.is_superuser  %}
+                    {% if obj.check_time and today == filter_date and user.role == '1' or obj.check_time and today == filter_date and user.role == '2' and 'mark_session' in user.custom_permissions or user.is_superuser  %}
                         <div class="d-flex btn-group rounded-0">
                             <button type="button" class="btn btn-danger px-3  rounded-0 " data-bs-toggle="modal"
                                     data-bs-target="#cancelModal{{ obj.id }}">
