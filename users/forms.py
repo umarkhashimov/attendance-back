@@ -7,13 +7,14 @@ from django.contrib.auth.forms import UserChangeForm, SetPasswordForm
 from django.contrib.admin.models import LogEntry, ContentType
 from django.contrib.auth.forms import UserCreationForm
 import datetime
+from .models import PERMISSION_CHOICES
 
 from .filters import SuperUserRequired
 from .models import UsersModel, ACTION_FLAG_CHOICES
 
 class UserUpdateAdminForm(forms.ModelForm):
     custom_permissions = forms.MultipleChoiceField(
-        choices=UsersModel.PERMISSION_CHOICES,
+        choices=PERMISSION_CHOICES,
         widget=forms.CheckboxSelectMultiple,
         required=False  # Make this field optional
     )
@@ -136,7 +137,7 @@ class SalaryMonthFilterForm(forms.Form):
 
 class UserUpdateForm(UserChangeForm):
     custom_permissions = forms.MultipleChoiceField(
-        choices=UsersModel.PERMISSION_CHOICES,
+        choices=PERMISSION_CHOICES,
         widget=forms.CheckboxSelectMultiple,
         required=False  # Make this field optional
     )
@@ -197,7 +198,7 @@ class CustomUserCreationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
     last_name = forms.CharField(max_length=30, required=True)
     custom_permissions = forms.MultipleChoiceField(
-        choices=UsersModel.PERMISSION_CHOICES,
+        choices=PERMISSION_CHOICES,
         widget=forms.CheckboxSelectMultiple,
         required=False  # Make this field optional
     )
