@@ -5,12 +5,6 @@ from django.contrib.auth.models import AbstractUser, User
 from django.contrib.admin.models import LogEntry, ContentType
 from django.apps import apps
 
-class CustomUserPermissions(models.TextChoices):
-    CAN_VIEW = 'view', 'Can View'
-    CAN_EDIT = 'edit', 'Can Edit'
-    CAN_APPROVE = 'approve', 'Can Approve'
-    CAN_DELETE = 'delete', 'Can Delete'
-
 class UsersModel(AbstractUser):
     ROLE_CHOICES = [
         ('1', 'Учитель'),
@@ -21,6 +15,9 @@ class UsersModel(AbstractUser):
     color = models.CharField(max_length=7, default='#ffffff', null=True, blank=True, verbose_name="Цвет выделения")
     PERMISSION_CHOICES = [
         ('delete_enrollment', 'Может удалить ученика из группы'),
+        ('re_enrollment', 'Может перемещать запись'),
+        ('mark_session', 'Может отмечать уроки'),
+        ('create_payment', 'Может вводить оплату'),
     ]
     custom_permissions = models.JSONField(default=dict, blank=True, null=True)
 
