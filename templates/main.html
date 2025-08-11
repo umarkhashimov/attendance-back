@@ -69,7 +69,7 @@
                         </p>
                     </div>
 
-                    {% if obj.course.check_time and obj.status or user.is_superuser and obj.status %}
+                    {% if obj.course.check_time and obj.status or user.is_superuser and obj.status or obj.status and user.role == '2' and 'change_attendance' in user.custom_permissions %}
                         <div class="btn-group flex-shrink-0">
                             <button type="button" class="btn btn-warning px-3 rounded-0 rounded-end-1 fixed-width-btn"
                                     data-bs-toggle="modal" data-bs-target="#attendanceModal{{ obj.id }}">
@@ -85,7 +85,7 @@
 
 
         {% for conducted in conducted_sessions %}
-            {% if conducted.course.check_time or user.is_superuser %}
+            {% if conducted.course.check_time or user.is_superuser or user.role == '2' and 'change_attendance' in user.custom_permissions  %}
                 <!-- Attendance Modal -->
                 <form class="attendance-form"
                       action="{% url 'attendance:session_detail' course_id=conducted.course.id session_id=conducted.id session_date=filter_date %}"

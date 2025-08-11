@@ -9,6 +9,7 @@ PERMISSION_CHOICES = [
     ('delete_enrollment', 'Может удалить ученика из группы'),
     ('re_enrollment', 'Может перемещать запись'),
     ('mark_session', 'Может отмечать уроки (только во время урока)'),
+    ('change_attendance', 'Может изменить посещаемость'),
     ('create_payment', 'Может вводить оплату'),
 ]
 
