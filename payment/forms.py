@@ -84,10 +84,9 @@ class UpdatePaymentDatesForm(forms.ModelForm):
     factual_date = forms.DateTimeField(widget=forms.DateInput(attrs={'type': 'date'}), required=False, label="Фактическая дата оплаты")
     manual_due_date = forms.BooleanField(widget=forms.CheckboxInput(attrs={'type': 'checkbox', 'onchange': 'custom_due_date_toggle(this)'}), required=False, label="Конец посчитать автоматически")
 
-
     class Meta:
         model = PaymentModel
-        fields = ['payed_from', 'payed_due', 'manual_due_date', 'factual_date', 'manual_due_date']
+        fields = ['payed_from', 'payed_due', 'manual_due_date', 'payment_type', 'factual_date', 'manual_due_date']
         widgets = {
             'payed_from': forms.DateInput(attrs={'type': 'date'}, format='%Y-%m-%d'),
             'payed_due': forms.DateInput(attrs={'type': 'date',}, format='%Y-%m-%d'),
