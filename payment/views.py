@@ -105,67 +105,66 @@ class CreatePaymentView(AdminRequired, View):
         form = CreatePaymentForm(request.POST)
         next_url = request.GET.get('next', '/')
 
-        print(request.POST)
+        if self.request.user.is_superuser or 'create_payment' in request.user.custom_permissions:
+            if form.is_valid():
 
-        if form.is_valid():
+                months = form.cleaned_data['months']
+                auto_date = form.cleaned_data['automatic_date']
+                start_date = form.cleaned_data.get('start_date')
+                end_date = form.cleaned_data.get('end_date')
+                lessons_count = form.cleaned_data.get('lessons_count')
+                payment_type = form.cleaned_data.get('payment_type')
 
-            months = form.cleaned_data['months']
-            auto_date = form.cleaned_data['automatic_date']
-            start_date = form.cleaned_data.get('start_date')
-            end_date = form.cleaned_data.get('end_date')
-            lessons_count = form.cleaned_data.get('lessons_count')
-            payment_type = form.cleaned_data.get('payment_type')
+                try:
+                    payment = PaymentModel.objects.create(enrollment=enrollment, months=months, payment_type=payment_type)
 
-            try:
-                payment = PaymentModel.objects.create(enrollment=enrollment, months=months, payment_type=payment_type)
+                    payed_lessons = 0
+                    if int(months) == 0:
+                        if int(lessons_count) > 0:
+                            payed_lessons = int(lessons_count)
+                    else:
+                        payed_lessons = 12 * int(months)
 
-                payed_lessons = 0
-                if int(months) == 0:
-                    if int(lessons_count) > 0:
-                        payed_lessons = int(lessons_count)
-                else:
-                    payed_lessons = 12 * int(months)
-
-                payment.payed_lessons = payed_lessons
-                payment.amount = calculate_payment_amount(enrollment, payed_lessons)
+                    payment.payed_lessons = payed_lessons
+                    payment.amount = calculate_payment_amount(enrollment, payed_lessons)
 
 
-                # Determine payed_from and payed_due
-                if auto_date:
-                    base_date = enrollment.payment_due if enrollment.payment_due else datetime.today().date()
-                    payment.payed_from = next_closest_session_date(course=enrollment.course, today=base_date, include_today=True if not enrollment.payment_due else False)
-                    payment.payed_due = calculate_payment_due_date(enrollment, payed_lessons, payment.payed_from)
-                else:
-                    payment.payed_from = start_date if start_date else datetime.today()
-                    payment.payed_due = end_date or calculate_payment_due_date(enrollment, payed_lessons, payment.payed_from)
-                    payment.manual_dates = True
+                    # Determine payed_from and payed_due
+                    if auto_date:
+                        base_date = enrollment.payment_due if enrollment.payment_due else datetime.today().date()
+                        payment.payed_from = next_closest_session_date(course=enrollment.course, today=base_date, include_today=True if not enrollment.payment_due else False)
+                        payment.payed_due = calculate_payment_due_date(enrollment, payed_lessons, payment.payed_from)
+                    else:
+                        payment.payed_from = start_date if start_date else datetime.today()
+                        payment.payed_due = end_date or calculate_payment_due_date(enrollment, payed_lessons, payment.payed_from)
+                        payment.manual_dates = True
 
-                payment.save()
+                    payment.save()
 
-                # Update enrollment's payment_due if necessary
-                if enrollment.payment_due is None:
-                        enrollment.payment_due = payment.payed_due
-                else:
-                    if enrollment.payment_due < payment.payed_due:
-                        enrollment.payment_due = payment.payed_due
+                    # Update enrollment's payment_due if necessary
+                    if enrollment.payment_due is None:
+                            enrollment.payment_due = payment.payed_due
+                    else:
+                        if enrollment.payment_due < payment.payed_due:
+                            enrollment.payment_due = payment.payed_due
 
-                enrollment.save()
+                    enrollment.save()
 
-                # Record action
-                action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
-                record_action(1, request.user, payment, payment.id, action_message)
+                    # Record action
+                    action_message = f"Оплата ученика <b>{payment.enrollment.student}</b> в группу <b>{payment.enrollment.course}</b>"
+                    record_action(1, request.user, payment, payment.id, action_message)
 
-                messages.success(request, "Оплата успешно добавлена.")
-                return redirect(next_url)
-            except Exception as e:
-                messages.error(request, "Что-то пошло не так.")
-                print('>>>>>', e)
-                traceback.print_exc()
-                return redirect(next_url)
+                    messages.success(request, "Оплата успешно добавлена.")
+                except Exception as e:
+                    messages.error(request, "Что-то пошло не так.")
+                    traceback.print_exc()
 
+            else:
+                messages.success(request, "Ошибка в форме")
         else:
-            messages.success(request, "Ошибка в форме")
-            return redirect(next_url)
+            messages.warning(request, 'У вас не доступа к этой функции')
+
+        return redirect(next_url)
 
 
 class DebtPaymentsListView(AdminRequired, View):

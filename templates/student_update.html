@@ -361,7 +361,7 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editEnrollmentModal{{ enrollment.id }}"><i
                                                 class="bi bi-pencil-fill"></i></button>
-                                        {% if 'delete_enrollment' in user.custom_persmissions or user.is_superuser %}
+                                        {% if 'delete_enrollment' in user.custom_permissions or user.is_superuser %}
                                             <button type="button" class="rounded-0 btn btn-danger px-3 py-1"
                                                     data-bs-toggle="modal"
                                                     data-bs-target="#deleteEnrollmentModal{{ enrollment.id }}"><i
@@ -539,6 +539,7 @@
                                                             </form>
                                                         </div>
                                                         <div class="payment-tab mytab d-none bg-light border rounded-0 p-2">
+                                                        {% if 'create_payment' in user.custom_permissions or user.is_superuser %}
                                                             <form method="post"
                                                                   action="{% url "payment:create_payment_enrollment" enrollment_id=enrollment.id %}?next={{ request.path }}"
                                                                   class=" gap-2">
@@ -629,6 +630,9 @@
                                                                     </button>
                                                                 </div>
                                                             </form>
+                                                        {% else %}
+                                                                <p class="text-center text-secondary mt-3">У вас нет доступа к этой функции</p>
+                                                            {% endif %}
                                                         </div>
                                                         <div class="convert-lead-tab  mytab d-none bg-light border rounded-0 p-2">
                                                             <form method="post"
