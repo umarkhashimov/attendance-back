@@ -117,6 +117,25 @@ function manualPaymentDatesCheckbox(element) {
     console.log(startInp)
 }
 
+function keydownHandler(e) {
+    const key = e.key || e.keyCode;
+    const isEsc = key === 'Escape' || key === 'Esc' || key === 27;
+
+    const t = e.target;
+    const isTyping =
+        t && (t.isContentEditable ||
+            /^(INPUT|TEXTAREA|SELECT)$/i.test(t.tagName));
+
+    if (isEsc && !isTyping) {
+        document.removeEventListener('keydown', keydownHandler);
+        window.location.assign(urlOnESC); // or window.location.href = url;
+    }
+}
+
+if (typeof urlOnESC !== 'undefined'){
+    document.addEventListener('keydown', keydownHandler);
+}
+
 // flatpickr('input[type="date"]', {
 //     dateFormat: "Y-m-d",
 // })
