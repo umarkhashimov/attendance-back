@@ -57,17 +57,17 @@
                                             <p class="m-0 ms-2  {% if attendance.status == 0 %}text-danger {% else %}text-secondary {% endif %}">
                                                 - {{ attendance.get_status_display|default:"?" }}</p>
                                         </div>
-                                        <div class="debt-students-phone-numbers d-flex gap-3">
+                                        <div class="debt-students-phone-numbers d-flex align-items-center gap-3">
                                             <span type="button" copy="{{ attendance.enrollment.student.phone_number }}"
                                                   onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ attendance.enrollment.student.phone_number }}</span>
                                             <span type="button"
                                                   copy="{{ attendance.enrollment.student.additional_number|default_if_none:"---" }}"
                                                   {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ attendance.enrollment.student.additional_number|default_if_none:"---" }}</span>
-                                            <div>
-                                                <form method="post"
+                                            <div class="w-350px">
+                                                <form method="post" class="w-350px"
                                                       action="{% url 'students:update_enrollment_note' pk=attendance.enrollment.id %}?next={{ request.path }}#courseTable{{ course.id }}">
                                                     {% csrf_token %}
-                                                    <input name="text" onchange="submit()" maxlength="25"
+                                                    <input name="text" onchange="submit()" maxlength="40"
                                                            class="text-center form-control rounded-0 align-middle w-100"
                                                            value="{{ attendance.enrollment.note|default:"" }}">
                                                 </form>
