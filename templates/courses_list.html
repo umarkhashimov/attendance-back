@@ -83,7 +83,7 @@
                             {{ obj.teacher.username }}{% endif %}<span style="background: {{ obj.teacher.color }}"
                                                                        class="label-bg"></span></span>
                         <a href="{% url 'courses:course_update' pk=obj.id %}"
-                           class="border-3 border px-2 py-2 d-block course-list-item mt-2 mb-1">
+                           class="border-3 border course-obj px-2 py-2 d-block position-relative course-list-item mt-2 mb-1">
                             <div class="row">
                                 {% if obj.subject.individual and obj.get_single_enrollment %}
                                     <div class="col-9 gap-2 align-right pt-1">
@@ -116,6 +116,11 @@
                                         </p>
                                     </div>
                                 {% endif %}
+                                <div class="h-info px-0">
+                                    <ul class=" w-100 list-unstyled text-dark border mb-0 border-black border-3">
+                                        <li class="w-100 d-flex justify-content-between px-2 py-1">Создано: <span>{{obj.created_at}}</span></li>
+                                    </ul>
+                                </div>
                             </div>
                         </a>
                     </div>
