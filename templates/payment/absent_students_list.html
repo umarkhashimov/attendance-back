@@ -64,13 +64,13 @@
                                                   copy="{{ attendance.enrollment.student.additional_number|default_if_none:"---" }}"
                                                   {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ attendance.enrollment.student.additional_number|default_if_none:"---" }}</span>
                                             <div class="w-350px">
-                                                <form method="post" class="w-350px"
-                                                      action="{% url 'students:update_enrollment_note' pk=attendance.enrollment.id %}?next={{ request.path }}#courseTable{{ course.id }}">
-                                                    {% csrf_token %}
-                                                    <input name="text" onchange="submit()" maxlength="40"
-                                                           class="text-center form-control rounded-0 align-middle w-100"
-                                                           value="{{ attendance.enrollment.note|default:"" }}">
-                                                </form>
+                                                <form method="post" onsubmit="handleFormSubmit(event)" class="w-350px noBtn note-update-form"
+                                                  action="{% url 'students:update_enrollment_note' pk=attendance.enrollment.id %}">
+                                                {% csrf_token %}
+                                                <input name="text" onchange="this.form.requestSubmit()" maxlength="40"
+                                                       class="text-center form-control rounded-0 align-middle w-100"
+                                                       value="{{ attendance.enrollment.note|default:'' }}">
+                                            </form>
                                             </div>
                                         </div>
                                     </li>
