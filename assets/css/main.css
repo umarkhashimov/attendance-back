@@ -685,3 +685,16 @@ tr.active-tr {
 .salary-checkbox:checked + .checkmark::after{
     opacity: 1;
 }
+
+.note-update-form input{
+    transition: 0.1s;
+    outline: 0 solid transparent;
+}
+
+.note-update-form.success input{
+    outline: 3px solid darkgreen;
+}
+
+.note-update-form.error input{
+    outline: 3px solid red;
+}
