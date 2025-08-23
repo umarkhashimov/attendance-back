@@ -400,7 +400,8 @@
             <div class="col-12 col-md-6" id="editGroupInfo">
                 <div class="bg-light rounded py-3 mt-3 px-2 border">
                     {% if not obj.archived %}
-                        <p class="text-black ms-1">Изменить инфорамацию группы #{{ obj.id }}</p>
+                        <p class="text-black ms-1 mb-1">Изменить инфорамацию группы #{{ obj.id }}</p>
+                        <p class="ms-1 text-secondary fs-6">Создано:  {{obj.created_at}}</p>
                         {% comment %} {{ form.as_p }} {% endcomment %}
                         <form method="post">
                             {% csrf_token %}
