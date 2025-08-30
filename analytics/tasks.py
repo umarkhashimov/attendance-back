@@ -36,7 +36,7 @@ def record_daily_analytics(day=None):
 
         new_students = StudentModel.objects.filter(archived=False, enrollment_date=today).count()
         new_enrollments = Enrollment.objects.filter(status=True, created_at__date=today).count()
-        courses = CourseModel.objects.filter(status=True).count()
+        courses = CourseModel.objects.filter(status=True, archived=False).count()
 
         data, created = AnalyticsModel.objects.update_or_create(date=today,
                                                                 defaults={
