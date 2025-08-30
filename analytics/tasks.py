@@ -11,6 +11,12 @@ from payment.models import PaymentModel
 from decouple import config
 import requests
 
+from datetime import datetime, time, timedelta, date as _date
+from django.utils import timezone
+from django.db.models import Sum, FloatField, Value
+from django.db.models.functions import Coalesce
+
+
 
 def record_daily_analytics(day=None):
     url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
@@ -20,27 +26,24 @@ def record_daily_analytics(day=None):
         if day: today = day
 
         tz = timezone.get_current_timezone()
-
         print(today)
+        start_local = timezone.make_aware(datetime.combine(today, time.min), tz)
+        end = timezone.make_aware(datetime.combine(today + timedelta(days=1), time.min), tz)
+
         students = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False,
                                                enrollment__payment_due__isnull=False).distinct().count()
         enrollments = Enrollment.objects.filter(status=True, trial_lesson=False,
                                                 payment_due__isnull=False).distinct().count()
         trial_enrollments = Enrollment.objects.filter(status=True, trial_lesson=True).distinct().count()
-        payments_qs = PaymentModel.objects.filter(date__date=today)
-        print(payments_qs)
+        payments_qs = PaymentModel.objects.filter(date__gte=start_local, date__lte=end)
 
-        payments_sum = (
-            PaymentModel.objects
-            .annotate(day=TruncDate('date', tzinfo=tz))  # convert DateTime -> local date
-            .filter(date__date=today)  # match the fixed date
-            .aggregate(
+
+        payments_sum = payments_qs.aggregate(
                 total=Coalesce(
                     Cast(Sum('amount'), FloatField()),  # cast Decimal->float in DB
                     Value(0.0, output_field=FloatField())
                 )
-            )
-        )['total']
+            )['total']
 
         print(payments_sum, type(payments_sum))
         new_students = StudentModel.objects.filter(archived=False, enrollment_date=today).count()
