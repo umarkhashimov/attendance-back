@@ -1,7 +1,9 @@
 from datetime import date
+from django.utils import timezone
 
 from . import models
-from django.db.models import Sum
+from django.db.models import Sum, FloatField, Value
+from django.db.models.functions import TruncDate, Coalesce, Cast
 from .models import AnalyticsModel
 from courses.models import CourseModel
 from students.models import StudentModel, Enrollment
@@ -17,6 +19,8 @@ def record_daily_analytics(day=None):
         today = date.today()
         if day: today = day
 
+        tz = timezone.get_current_timezone()
+
         print(today)
         students = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False,
                                                enrollment__payment_due__isnull=False).distinct().count()
@@ -25,7 +29,19 @@ def record_daily_analytics(day=None):
         trial_enrollments = Enrollment.objects.filter(status=True, trial_lesson=True).distinct().count()
         payments_qs = PaymentModel.objects.filter(date__date=today)
         print(payments_qs)
-        payments_sum = payments_qs.aggregate(sum=Sum("amount"))['sum']
+
+        payments_sum = (
+            PaymentModel.objects
+            .annotate(day=TruncDate('date', tzinfo=tz))  # convert DateTime -> local date
+            .filter(day=today)  # match the fixed date
+            .aggregate(
+                total=Coalesce(
+                    Cast(Sum('amount'), FloatField()),  # cast Decimal->float in DB
+                    Value(0.0, output_field=FloatField())
+                )
+            )
+        )['total']
+
         print(payments_sum, type(payments_sum))
         new_students = StudentModel.objects.filter(archived=False, enrollment_date=today).count()
         new_enrollments = Enrollment.objects.filter(status=True, created_at__date=today).count()
