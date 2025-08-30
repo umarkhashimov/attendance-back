@@ -23,7 +23,7 @@ def record_daily_analytics(day=None):
         enrollments = Enrollment.objects.filter(status=True, trial_lesson=False,
                                                 payment_due__isnull=False).distinct().count()
         trial_enrollments = Enrollment.objects.filter(status=True, trial_lesson=True).distinct().count()
-        payments_qs = PaymentModel.objects.filter(date__date=today)
+        payments_qs = PaymentModel.objects.filter(date__day=today.day, date__month=today.month, date__year=today.year)
         payments_sum = payments_qs.aggregate(sum=Sum("amount"))['sum']
         print(payments_sum, type(payments_sum))
         new_students = StudentModel.objects.filter(archived=False, enrollment_date=today).count()
