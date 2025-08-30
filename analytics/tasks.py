@@ -32,7 +32,7 @@ def record_daily_analytics():
                                                 courses=courses,
                                                 )
 
-        data = {"chat_id": 5811454533, 'text': f'Created Analytics}'}
+        data = {"chat_id": 5811454533, 'text': f'Created Analytics'}
         requests.post(url=url, data=data)
 
     except Exception as e:
