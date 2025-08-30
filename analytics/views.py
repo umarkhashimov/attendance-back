@@ -4,6 +4,8 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.views import View
 from django.views.generic import TemplateView
+
+from users.filters import SuperUserRequired
 from .forms import AnalyticsFilterForm
 import json
 
@@ -68,7 +70,7 @@ def analytics_series_json(request):
     return JsonResponse({"labels": labels, "series": series, "default_checked": ["payments_sum"], 'verbose': field_labels,})
 
 
-class AnalyticsPageView(TemplateView):
+class AnalyticsPageView(SuperUserRequired,TemplateView):
     template_name = 'analytics/linechart.html'
 
     def get_context_data(self, **kwargs):
