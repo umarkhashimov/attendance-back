@@ -16,7 +16,7 @@ def record_daily_analytics():
     payments = PaymentModel.objects.filter(date__date=today)
     payments_sum = payments.aggregate(Sum('amount'))['amount__sum']
     new_students = StudentModel.objects.filter(archived=False, enrollment_date=today).count()
-    new_enrollments = Enrollment.objects.filter(status=True, created_at=today).count()
+    new_enrollments = Enrollment.objects.filter(status=True, created_at__date=today).count()
     courses = CourseModel.objects.filter(status=True).count()
 
     data, created = AnalyticsModel.objects.update_or_create(date=today,
