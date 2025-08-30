@@ -6,6 +6,7 @@ from collections import defaultdict
 from django.forms.models import model_to_dict
 from django.contrib import messages
 from django.http import JsonResponse
+import json
 from django.db.models import Q
 from users.filters import AdminRequired
 from users.models import UsersModel
@@ -176,12 +177,21 @@ class DeactivateEnrollmentView(AdminRequired, View):
 
 class UpdateEnrollmentNote(AdminRequired, View):
     def post(self, request, pk):
+        try:
+            data = json.loads(request.body.decode("utf-8"))  # parse JSON
+        except json.JSONDecodeError:
+            return JsonResponse({"ok": False, "message": "Произошла ошибка !"}, status=400)
+
         enrollment = get_object_or_404(Enrollment, id=pk)
-        text = request.POST.get('text', None)
-        enrollment.note = text.strip()
-        enrollment.save()
-        next_url = self.request.GET.get('next', '/')
-        return redirect(next_url)
+        text = data.get("text", "").strip()
+
+        try:
+            enrollment.note = text
+            enrollment.save()
+            return JsonResponse({"ok": True, "message": "Заметка Обновлена"}, status=200)
+        except Exception as e:
+            return JsonResponse({"ok": False, "message": "Произошла ошибка !"}, status=400)
+
 
 class ReEnrollStudentView(AdminRequired, View):
 
@@ -407,7 +417,7 @@ class AbsentStudentsList(AdminRequired, View):
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
-        attendances = AttendanceModel.objects.select_related('enrollment__course__teacher').filter(Q(status=0) | Q(status=None), session__date=today)
+        attendances = AttendanceModel.objects.select_related('enrollment__course__teacher').filter(Q(status=0) | Q(status=None), session__date=today, enrollment__status=True).exclude(Q(enrollment__trial_lesson=True) | Q(trial_attendance=True))
 
         session_enrollment_map = defaultdict(list)
         for attendance in attendances:

@@ -87,7 +87,7 @@ function unmarkStudent(stid, session_id) {
     studentData.querySelector(`#statusInp${stid}`).value = '';
 }
 
-document.querySelectorAll('form').forEach((form) => {
+document.querySelectorAll('form:not(.noBtn)').forEach((form) => {
     form.addEventListener('submit', (f) => {
         f.preventDefault()
         f.target.querySelector('button[type="submit"]').disabled = true
@@ -117,6 +117,93 @@ function manualPaymentDatesCheckbox(element) {
     console.log(startInp)
 }
 
+function keydownHandler(e) {
+    const key = e.key || e.keyCode;
+    const isEsc = key === 'Escape' || key === 'Esc' || key === 27;
+
+    const t = e.target;
+    const isTyping =
+        t && (t.isContentEditable ||
+            /^(INPUT|TEXTAREA|SELECT)$/i.test(t.tagName));
+
+    if (isEsc && !isTyping) {
+        document.removeEventListener('keydown', keydownHandler);
+        window.location.assign(urlOnESC); // or window.location.href = url;
+    }
+}
+
+if (typeof urlOnESC !== 'undefined'){
+    document.addEventListener('keydown', keydownHandler);
+}
+
 // flatpickr('input[type="date"]', {
 //     dateFormat: "Y-m-d",
 // })
+
+// handle Form submit
+
+function showAlert(status, message){
+  const container = document.getElementById('message-container');
+
+  const alertEl = document.createElement('div');
+  alertEl.className = `alert alert-${status} p-1 mb-2 ps-3 d-flex align-items-center alert-dismissible fade show`;
+  alertEl.setAttribute('role', 'alert');
+
+  const span = document.createElement('span');
+  span.textContent = message; // safe text ✅
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn-close position-relative p-2 ms-4 shadow-none';
+  btn.setAttribute('data-bs-dismiss', 'alert');
+  btn.setAttribute('aria-label', 'Close');
+
+  alertEl.append(span, btn);
+  container.appendChild(alertEl);
+
+  setTimeout(() => {
+        const bsAlert = bootstrap.Alert.getOrCreateInstance(alertEl);
+        bsAlert.close();
+      }, 2000);
+}
+
+function getCookie(name){
+  const m = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return m ? m.pop() : '';
+}
+
+async function handleFormSubmit(event) {
+
+    event.preventDefault();
+    const form = event.target
+    let formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+
+    let url = `${window.location.origin}${form.getAttribute('action')}`
+
+    const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+          "X-CSRFToken": getCookie("csrftoken"),
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        body: JSON.stringify(data),
+      });
+    const result = await response.json();
+
+    if (response.ok){
+        showAlert('success', result.message)
+        form.classList.add('success')
+        setTimeout(() => {
+            form.classList.remove('success')
+            }, 2000);
+    }else{
+        showAlert('danger', result.message)
+        form.classList.add('error')
+        setTimeout(() => {
+            form.classList.remove('error')
+            }, 2000);
+    }
+}

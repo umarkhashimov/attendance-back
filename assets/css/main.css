@@ -35,7 +35,7 @@
 
 
 .courses-list-item:hover {
-    box-shadow: 2px 2px 2px 2px black !important;
+    outline: 2px black !important;
 }
 
 .course-list-item {
@@ -43,6 +43,24 @@
     text-decoration: none;
     transition: 0.3s;
     border-color: black;
+}
+
+.course-obj .h-info{
+    position: absolute;
+    background-color: white;
+    top: 105%;
+    left: 0;
+    z-index: 999;
+    width: 200%;
+    max-height: 0;
+    overflow: hidden;
+    transition: 0.1s 0s;
+}
+
+
+.course-obj:hover .h-info{
+    max-height: 50px;
+    transition: 0.2s 0.5s;
 }
 
 .course-list-item p,
@@ -601,6 +619,10 @@ input::-ms-clear {
     min-width: 130px !important;
 }
 
+.w-350px{
+    width: 350px !important;
+}
+
 tr.active-tr {
     position: relative;
     background-color: rgba(0, 145, 255, 0.15) !important;
@@ -662,4 +684,17 @@ tr.active-tr {
 
 .salary-checkbox:checked + .checkmark::after{
     opacity: 1;
+}
+
+.note-update-form input{
+    transition: 0.1s;
+    outline: 0 solid transparent;
+}
+
+.note-update-form.success input{
+    outline: 3px solid darkgreen;
+}
+
+.note-update-form.error input{
+    outline: 3px solid red;
 }

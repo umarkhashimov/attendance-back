@@ -14,8 +14,6 @@
                 <hr class="table-group-divider mb-0"/>
             </div>
             <div class="col-12 col-md-12">
-                <form method="get" id="enrollmentsActionForm"
-                      action="{% url 'students:group-re-enroll' group_id=obj.id %}">
                     <div class="rounded py-2 mt-3 mt-md-0">
                         <p class="mt-2 text-dark ms-1 mb-2">Записанные ученики</p>
 
@@ -40,7 +38,7 @@
                                     <td name="enrollment_{{ enrollment.id }}"
                                         class="py-0 align-middle me-2 enrollment-select-check">
                                         <input type="checkbox" name="enrollmentid" value="{{ enrollment.id }}"
-                                               id="enrollmentCheckbox" class="form-check-input">
+                                               id="enrollmentCheckbox" class="form-check-input" form="enrollmentsActionForm">
                                         <span class="me-1 text-dark">{{ forloop.counter }}. </span>
                                         <a
                                                 class="text-decoration-none text-dark opacity-100 table-obj-name-link"
@@ -151,26 +149,26 @@
                                                                         </button>
                                                                     </li>
                                                                     <li class="nav-item">
-                                                                        <buttont type="button" class="nav-link tab-btn"
+                                                                        <button type="button" class="nav-link tab-btn"
                                                                                  aria-current="page"
                                                                                  enrollment_id="{{ enrollment.id }}"
                                                                                  onclick="openEnrollmentTab(this)"
                                                                                  for="payment-tab">Оплата
-                                                                        </buttont>
+                                                                        </button>
                                                                     </li>
                                                                     <li class="nav-item">
-                                                                        <buttont type="button" class="nav-link tab-btn"
+                                                                        <button type="button" class="nav-link tab-btn"
                                                                                  aria-current="page"
                                                                                  enrollment_id="{{ enrollment.id }}"
                                                                                  onclick="openEnrollmentTab(this)"
                                                                                  for="convert-lead-tab">Отложить запись
-                                                                        </buttont>
+                                                                        </button>
                                                                     </li>
                                                                 </ul>
                                                             </div>
                                                             <div class="enrollment-tab mytab bg-light border rounded-0 p-2">
                                                                 <form method="post"
-                                                                      action="{% url "students:update_enrollment" pk=enrollment.id %}?next={{ request.path }}">
+                                                                      action="{% url 'students:update_enrollment' pk=enrollment.id %}?next={{ request.path }}">
                                                                     {% csrf_token %}
                                                                     {% if request.user.is_superuser %}
                                                                         <div class="mb-3">
@@ -230,11 +228,6 @@
                                                                             урок</label>
                                                                     </div>
                                                                     <div class="w-100 flex-column-reverse mt-3 d-flex flex-sm-row justify-content-end gap-2 px-4 px-sm-0">
-                                                                        {#                                                                    <button type="button" class="btn btn-success"#}
-                                                                        {#                                                                            data-bs-toggle="modal"#}
-                                                                        {#                                                                            data-bs-target="#payment{{ enrollment.id }}">#}
-                                                                        {#                                                                        Оплата#}
-                                                                        {#                                                                    </button>#}
                                                                         <div class="d-flex flex-column-reverse flex-sm-row gap-2">
                                                                             <button type="button"
                                                                                     class="btn btn-secondary"
@@ -246,12 +239,13 @@
                                                                             </button>
                                                                         </div>
                                                                     </div>
+
                                                                 </form>
                                                             </div>
                                                             <div class="payment-tab mytab d-none bg-light border rounded-0 p-2">
                                                             {% if 'create_payment' in user.custom_permissions or user.is_superuser %}
                                                                 <form method="post"
-                                                                      action="{% url "payment:create_payment_enrollment" enrollment_id=enrollment.id %}?next={{ request.path }}"
+                                                                      action="{% url 'payment:create_payment_enrollment' enrollment_id=enrollment.id %}?next={{ request.path }}"
                                                                       class=" gap-2">
                                                                     {% csrf_token %}
                                                                     <p class="mb-1">
@@ -375,13 +369,13 @@
                                         </div>
                                     </td>
                                     <td class="py-0 pe-0 align-middle text-break text-center">
-                                        <form method="post"
-                                              action="{% url 'students:update_enrollment_note' pk=enrollment.id %}?next={{ request.path }}#enrollmentsTable">
-                                            {% csrf_token %}
-                                            <input name="text" onchange="submit()" maxlength="25"
-                                                   class="text-center form-control rounded-0 align-middle w-100"
-                                                   value="{{ enrollment.note|default:"" }}">
-                                        </form>
+                                        <form method="post" onsubmit="handleFormSubmit(event)" class="noBtn note-update-form"
+                                                  action="{% url 'students:update_enrollment_note' pk=enrollment.id %}">
+                                                {% csrf_token %}
+                                                <input name="text" onchange="this.form.requestSubmit()" maxlength="40"
+                                                       class="text-center form-control rounded-0 align-middle w-100"
+                                                       value="{{ enrollment.note|default:'' }}">
+                                            </form>
                                     </td>
                                 </tr>
                             {% empty %}
@@ -392,6 +386,8 @@
                             </tbody>
                         </table>
                     </div>
+                <form method="get" id="enrollmentsActionForm"
+                      action="{% url 'students:group-re-enroll' group_id=obj.id %}">
                     <div class="bg-light rounded px-2 py-3 border collapse" id="enrollmentActionsBar">
                         <button type="submit" class="link-primary d-inline-block bg-transparent border-0"><i
                                 class="bi bi-caret-right-fill"></i>
@@ -404,7 +400,8 @@
             <div class="col-12 col-md-6" id="editGroupInfo">
                 <div class="bg-light rounded py-3 mt-3 px-2 border">
                     {% if not obj.archived %}
-                        <p class="text-black ms-1">Изменить инфорамацию группы #{{ obj.id }}</p>
+                        <p class="text-black ms-1 mb-1">Изменить инфорамацию группы #{{ obj.id }}</p>
+                        <p class="ms-1 text-secondary fs-6">Создано:  {{obj.created_at}}</p>
                         {% comment %} {{ form.as_p }} {% endcomment %}
                         <form method="post">
                             {% csrf_token %}
@@ -649,6 +646,9 @@
             </div>
         </div>
     </div>
+<script defer>
+    const urlOnESC = '{% url "main:courses_list" %}'
+</script>
 {% endblock %}
 
 {% block custom_js %}
