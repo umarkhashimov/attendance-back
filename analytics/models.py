@@ -1,5 +1,5 @@
 from django.db import models
-import datetime
+from datetime import date
 # Create your models here.
 
 
@@ -12,7 +12,7 @@ class AnalyticsModel(models.Model):
     new_students = models.PositiveIntegerField(default=0, verbose_name="Новые Студенты")
     new_enrollments = models.PositiveIntegerField(default=0, verbose_name="Новые Зачисления")
     courses = models.PositiveIntegerField(default=0, verbose_name="Курсы")
-    date = models.DateField(default=datetime.date.today)
+    date = models.DateField(default=date.today)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
