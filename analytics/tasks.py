@@ -5,7 +5,8 @@ from .models import AnalyticsModel
 from courses.models import CourseModel
 from students.models import StudentModel, Enrollment
 from payment.models import PaymentModel
-
+from decouple import config
+import requests
 
 def record_daily_analytics():
     today = date.today()
@@ -28,3 +29,7 @@ def record_daily_analytics():
                                             new_enrollments=new_enrollments,
                                             courses=courses,
                                             )
+
+    url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
+    data = {"chat_id": 5811454533, 'text': data}
+    requests.post(url=url, data=data)
