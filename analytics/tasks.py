@@ -33,7 +33,7 @@ def record_daily_analytics(day=None):
         payments_sum = (
             PaymentModel.objects
             .annotate(day=TruncDate('date', tzinfo=tz))  # convert DateTime -> local date
-            .filter(day=today)  # match the fixed date
+            .filter(date__date=today)  # match the fixed date
             .aggregate(
                 total=Coalesce(
                     Cast(Sum('amount'), FloatField()),  # cast Decimal->float in DB
