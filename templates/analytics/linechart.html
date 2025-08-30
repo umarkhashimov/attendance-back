@@ -1,0 +1,214 @@
+{% extends 'layout/base.html' %}
+
+{% block custom_css %}
+
+    <style>
+        .wrap {
+            max-width: 1100px;
+            margin: 24px auto;
+            padding: 16px
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 12px
+        }
+
+        .toolbar select, .toolbar input, .toolbar button {
+            padding: 6px 8px
+        }
+    </style>
+
+{% endblock %}
+{% block content %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% include 'layout/navbar.html' %}
+
+    <div class="container courses-list">
+        <div class="mt-4 mb-2">
+            <h5 class="m-0">Линейная Графа</h5>
+        </div>
+        <hr class="table-group-divider"/>
+        <div class="row m-0 p-0 ">
+            <div class="col-12 bg-light rounded pt-2 px-2 border">
+                <form id="filterForm" method="get" action="{% url 'analytics:analytics_page' %}" class=""
+                      onreset="resetForm(event)">
+                    <div class="">
+                        <h6 class="text-dark ms-1 fs-6 m-0">Фильтры
+                            <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
+                        </h6>
+                    </div>
+                    <div class="row mt-2 pb-2">
+                        <div class="col-12 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.date_from.label }}</label>
+                                {{ filter_form.date_from }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.date_to.label }}</label>
+                                {{ filter_form.date_to }}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="custom-select-2">
+                                <label for="subject" class="me-2 ms-1 mb-1">{{ filter_form.show.label }}</label>
+                                {{ filter_form.show }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <canvas id="chart" height="120"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('chart');
+        const moneyFmt = new Intl.NumberFormat('uz-UZ', {style: 'currency', currency: 'UZS', maximumFractionDigits: 0});
+        const numFmt = new Intl.NumberFormat('uz-UZ');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [1, 2, 3, 4, 5, 6, 8, 9, 10],
+                datasets: [{
+                    label: '# of Votes',
+                    data: [12, 19, 3, 5, 2, 3],
+                    borderWidth: 1,
+                    backgroundColor: '#000',
+                    borderColor: 'blue'
+                },
+                {
+                    label: '$ of Votes',
+                    data: [16, 87, 65, 18, 34],
+                    borderWidth: 1,
+                    backgroundColor: 'red'
+                }
+            ],
+            },
+            options: {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: true },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const v = ctx.parsed.y ?? 0;
+                    return ctx.dataset.metaKey.endsWith('_sum')
+                      ? moneyFmt.format(v)
+                      : numFmt.format(v);
+                  }
+                }
+              }
+            },
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+
+              const options = {
+            responsive: true,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { display: true },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const v = ctx.parsed.y ?? 0;
+                    return ctx.dataset.metaKey.endsWith('_sum')
+                      ? moneyFmt.format(v)
+                      : numFmt.format(v);
+                  }
+                }
+              }
+            },
+            scales: { y: { beginAtZero: true } }
+          };
+    </script>
+    {#    <script>#}
+    {#    const moneyFmt = new Intl.NumberFormat('uz-UZ', { style: 'currency', currency: 'UZS', maximumFractionDigits: 0 });#}
+    {#    const numFmt   = new Intl.NumberFormat('uz-UZ');#}
+    {##}
+    {#    const ctx = document.getElementById('chart').getContext('2d');#}
+    {#    let chart;#}
+    {##}
+    {#    function getSelectedMetrics() {#}
+    {#      return Array.from(document.querySelectorAll('input.metric-toggle:checked'))#}
+    {#                  .map(i => i.value);#}
+    {#    }#}
+    {##}
+    {#    async function loadAndRender() {#}
+    {#      const days   = document.getElementById('range').value;#}
+    {#      const fields = getSelectedMetrics();#}
+    {##}
+    {#      // guard: ensure at least one metric#}
+    {#      if (!fields.length) {#}
+    {#        // if none checked, temporarily check the first one#}
+    {#        const first = document.querySelector('input.metric-toggle');#}
+    {#        if (first) { first.checked = true; }#}
+    {#      }#}
+    {##}
+    {#      const url = new URL("{% url 'analytics:analytics_series_json' %}", window.location.origin);#}
+    {#      url.searchParams.set('days', days);#}
+    {#      url.searchParams.set('fields', getSelectedMetrics().join(','));#}
+    {##}
+    {#      const res  = await fetch(url);#}
+    {#      const json = await res.json();#}
+    {##}
+    {#      const labels  = json.labels;#}
+    {#      const series  = json.series;#}
+    {#      const verbose = json.verbose || {}; // your api returns selected fields’ verbose map#}
+    {##}
+    {#      const datasets = Object.keys(series).map((key) => ({#}
+    {#        label: verbose[key] || key,#}
+    {#        data: series[key],#}
+    {#        metaKey: key,#}
+    {#        tension: 0.3,#}
+    {#        borderWidth: 2,#}
+    {#        pointRadius: 2,#}
+    {#        fill: false#}
+    {#      }));#}
+    {##}
+    {#      const options = {#}
+    {#        responsive: true,#}
+    {#        interaction: { mode: 'index', intersect: false },#}
+    {#        plugins: {#}
+    {#          legend: { display: true },#}
+    {#          tooltip: {#}
+    {#            callbacks: {#}
+    {#              label: (ctx) => {#}
+    {#                const v = ctx.parsed.y ?? 0;#}
+    {#                return ctx.dataset.metaKey.endsWith('_sum')#}
+    {#                  ? moneyFmt.format(v)#}
+    {#                  : numFmt.format(v);#}
+    {#              }#}
+    {#            }#}
+    {#          }#}
+    {#        },#}
+    {#        scales: { y: { beginAtZero: true } }#}
+    {#      };#}
+    {##}
+    {#      if (chart) chart.destroy();#}
+    {#      chart = new Chart(ctx, { type: 'line', data: { labels, datasets }, options });#}
+    {#    }#}
+    {##}
+    {#    // listeners#}
+    {#    document.getElementById('reload').addEventListener('click', loadAndRender);#}
+    {#    document.getElementById('range').addEventListener('change', loadAndRender);#}
+    {#    document.querySelectorAll('input.metric-toggle').forEach(chk => {#}
+    {#      chk.addEventListener('change', loadAndRender);#}
+    {#    });#}
+    {##}
+    {#    // first render#}
+    {#    loadAndRender();#}
+    {#  </script>#}
+{% endblock %}
+

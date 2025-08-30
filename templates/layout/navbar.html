@@ -82,11 +82,16 @@
                            aria-current="page" href="{% url 'leads:leads_list' %}">Лиды</a>
                     </li>
                     {% if user.is_superuser %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.path|slice:':7' == '/salary' %}active{% endif %}"
-                           aria-current="page" href="{% url 'users:salary_users_list' %}">Зарплата</a>
-                    </li>
-                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.path|slice:':7' == '/salary' %}active{% endif %}"
+                               aria-current="page" href="{% url 'users:salary_users_list' %}">Зарплата</a>
+                        </li>
+                        <li class="nav-item">
+                            {% url 'analytics:analytics_page' as cpath %}
+                            <a class="nav-link {% if request.path == cpath %}active{% endif %}"
+                               aria-current="page" href="{% url 'analytics:analytics_page' %}">Аналитика</a>
+                        </li>
+                    {% endif %}
                 {% endif %}
             </ul>
         </div>
