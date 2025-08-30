@@ -6,13 +6,19 @@ from students.models import StudentModel, Enrollment
 from payment.models import PaymentModel
 from decouple import config
 import requests
+from datetime import date
 
-def record_daily_analytics(date=None):
+def record_daily_analytics(day=None):
     url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
     try:
+        today = date
+        if today is None:
+            today = timezone.localdate()
+        elif isinstance(day, str):
+            today = date.fromisoformat(day.strip())
+        elif isinstance(day, day):
+            today = day.date()
 
-        today = timezone.localdate()
-        if date: today = date
         students = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False, enrollment__payment_due__isnull=False).distinct().count()
         enrollments = Enrollment.objects.filter(status=True, trial_lesson=False, payment_due__isnull=False).distinct().count()
         trial_enrollments = Enrollment.objects.filter(status=True, trial_lesson=True).distinct().count()
