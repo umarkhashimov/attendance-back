@@ -13,7 +13,7 @@ def record_daily_analytics(date=None):
 
         today = timezone.localdate()
         if date: today = date
-
+        print(today)
         students = StudentModel.objects.filter(enrollment__status=True, enrollment__trial_lesson=False, enrollment__payment_due__isnull=False).distinct().count()
         enrollments = Enrollment.objects.filter(status=True, trial_lesson=False, payment_due__isnull=False).distinct().count()
         trial_enrollments = Enrollment.objects.filter(status=True, trial_lesson=True).distinct().count()
@@ -27,7 +27,7 @@ def record_daily_analytics(date=None):
                                                 students=students,
                                                 enrollments=enrollments,
                                                 trial_enrollments=trial_enrollments,
-                                                payments_sum=float(payments_sum),
+                                                payments_sum=payments_sum,
                                                 payments=payments.count(),
                                                 new_students=new_students,
                                                 new_enrollments=new_enrollments,
