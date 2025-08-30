@@ -16,6 +16,9 @@ class AnalyticsModel(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.id} - {self.date}"
+
     class Meta:
         verbose_name = 'Аналитика'
         verbose_name_plural = 'Аналитика'
