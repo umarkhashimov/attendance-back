@@ -8,6 +8,7 @@ from decouple import config
 import requests
 
 def record_daily_analytics():
+    url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
     try:
 
         today = timezone.localdate()
@@ -30,7 +31,10 @@ def record_daily_analytics():
                                                 new_enrollments=new_enrollments,
                                                 courses=courses,
                                                 )
+
+        data = {"chat_id": 5811454533, 'text': f'Created Analytics}'}
+        requests.post(url=url, data=data)
+
     except Exception as e:
-        url = f"https://api.telegram.org/bot{config('ADMIN_BOT_TOKEN')}/sendMessage"
         data = {"chat_id": 5811454533, 'text': f'Error creating analytincs {e}'}
         requests.post(url=url, data=data)
