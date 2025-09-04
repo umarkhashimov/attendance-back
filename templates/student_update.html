@@ -389,11 +389,8 @@
                                                             <button type="button" class="btn btn-secondary"
                                                                     data-bs-dismiss="modal">Отмена
                                                             </button>
-                                                            <form method="post"
-                                                                  action="{% url 'students:delete_enrollment' enrollment_id=enrollment.id %}?next={{ request.path }}">
-                                                                {% csrf_token %}
-                                                                <button type="submit" class="btn btn-danger">Да</button>
-                                                            </form>
+                                                            <a href="{% url 'students:delete_enrollment' enrollment_id=enrollment.id %}?next={{ request.path }}"
+                                                                   type="submit" class="btn btn-danger">Да</a>
                                                         </div>
                                                     </div>
                                                 </div>
