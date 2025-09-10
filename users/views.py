@@ -280,7 +280,6 @@ class SalaryCourseDetailView(SuperUserRequired, View):
                         'payed': True if payment_check_date and payment_check_date >= session.date else False,
                     })
                 attendance_data.append({
-                    'payments': payments,
                     'enrollment': enrollment,
                     'student': {'id': enrollment.student.id, 'full_name': enrollment.student.full_name},
                     'attendance': student_attendance,

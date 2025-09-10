@@ -184,7 +184,7 @@ class DebtPaymentsListView(AdminRequired, View):
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
-        enrollments = Enrollment.objects.select_related('course__teacher').filter(Q(payment_due__lt=datetime.today().date()) | Q(payment_due__isnull=True), status=True)
+        enrollments = Enrollment.objects.select_related('course__teacher').filter(Q(payment_due__lt=datetime.today().date()) | Q(payment_due__isnull=True), status=True).order_by('course__teacher__first_name', 'course__teacher__last_name','course__lesson_time', 'student__first_name', 'student__last_name')
 
         if weekdays:
             if weekdays == '1':
@@ -231,7 +231,7 @@ class TrialEnrollmentsView(AdminRequired, View):
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
-        enrollments = Enrollment.objects.select_related('course__teacher').filter(trial_lesson=True, status=True)
+        enrollments = Enrollment.objects.select_related('course__teacher').filter(trial_lesson=True, status=True).order_by('course__teacher__first_name', 'course__teacher__last_name','course__lesson_time', 'student__first_name', 'student__last_name')
 
         if weekdays:
             if weekdays == '1':

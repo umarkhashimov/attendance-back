@@ -417,7 +417,7 @@ class AbsentStudentsList(AdminRequired, View):
         # Filters
         weekdays = self.request.GET.get('weekdays', None)
 
-        attendances = AttendanceModel.objects.select_related('enrollment__course__teacher').filter(Q(status=0) | Q(status=None), session__date=today, enrollment__status=True).exclude(Q(enrollment__trial_lesson=True) | Q(trial_attendance=True))
+        attendances = AttendanceModel.objects.select_related('enrollment__course__teacher').filter(Q(status=0) | Q(status=None), session__date=today, enrollment__status=True).exclude(Q(enrollment__trial_lesson=True) | Q(trial_attendance=True)).order_by('enrollment__course__teacher', 'enrollment__course__lesson_time', 'enrollment__student__first_name', 'enrollment__student__last_name')
 
         session_enrollment_map = defaultdict(list)
         for attendance in attendances:
