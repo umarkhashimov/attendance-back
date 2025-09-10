@@ -44,7 +44,7 @@ class MainPageView(TemplateView):
         marked_sessions = SessionsModel.objects.filter(date=today)
 
         # Get courses scheduled for today based on weekdays
-        sessions_today = CourseModel.objects.filter(status=True, weekdays__contains=str(today.weekday()))
+        sessions_today = CourseModel.objects.filter(status=True, archived=False, weekdays__contains=str(today.weekday()))
 
         # Exclude courses that already have marked sessions
         marked_course_ids = marked_sessions.values_list('course', flat=True)
