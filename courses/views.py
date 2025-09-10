@@ -156,17 +156,22 @@ class CancelSessionView(View):
         form = CancelCauseForm(request.POST)
         if form.is_valid():
             cause = form.cleaned_data['cause']
+
             today = datetime.datetime.now().date()
             course= get_object_or_404(CourseModel, id=course_id)
             session, created = SessionsModel.objects.get_or_create(course=course, date=session_date, defaults={'status': False, 'record_by_id': self.request.user.id, 'cause': cause})
             # generate empty attendance based on enrollment status
             enrollments = Enrollment.objects.filter(course=course, status=True)
 
+
             if created:
                 for obj in enrollments:
                     enrolled = Enrollment.objects.get(student__student_id=obj.student.student_id, course=course)
                     AttendanceModel.objects.get_or_create(enrollment=enrolled, session=session)
 
+                if int(cause) == 3:
+                    for obj in enrollments:
+                        obj.add_lessons(1)
 
                 if self.request.user.is_superuser:
                     action_message = f"Отметил урок <b>{session}</b> как отмененный"

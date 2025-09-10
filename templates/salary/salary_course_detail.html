@@ -54,7 +54,7 @@
                                 <input id="priceInput" value="13000.00" oninput="priceInputChange(this)"
                                        onblur="priceInpBlur(this)"
                                        type="number" maxlength="4"
-                                       class="form-control rounded-0 border-black w-100 text-center min-w-100px">
+                                       class="form-control rounded-0 border-none shadow-none border-0 w-100 text-center min-w-100px">
                             </div>
                         </td>
                         <td class="p-2 min-w-130px border border-secondary-subtle status-cell text-break text-wrap"><a href="{% url 'students:student_update' pk=record.student.id %}" class="text-decoration-none text-dark table-obj-name-link">{{ record.student.full_name }} </a> {% if record.enrollment.transferred %} <span data-bs-toggle="tooltip" data-bs-placement="top" title="Перенаправленная запись" role='button' class="text-primary ms-1"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %} <span  data-bs-toggle="tooltip" data-bs-placement="top" title="Баланс" class="text-success {% if record.balance <= 0 %}text-danger{% elif record.balance == None %}text-secondary{% endif %}"> | {{ record.balance|default:'--' }}</span></td>
@@ -62,7 +62,7 @@
                             <td col="{{ forloop.counter }}"
                                 class=" p-0 border align-middle {% if info.trial_attendance == True %} border-warning border-4 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">
                                 {% if info.status|stringformat:'s' in '1.2.0' or info.status == None %}
-                                    <label for="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}"  class=" position-relative text-black w-100 h-100 cursor-pointer">
+                                    <label for="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}"  class="position-relative text-black w-100 h-100 cursor-pointer">
                                         {% if info.session.status == True and info.trial_attendance == False and info.payed == True %}
                                         <input col="{{ forloop.counter }}"
                                                {% if info.status != None and info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}

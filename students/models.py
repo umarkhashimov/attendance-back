@@ -67,6 +67,19 @@ class Enrollment(models.Model):
         else:
             return True
 
+    def add_lessons(self, count: int):
+        if self.payment_due:
+            date = self.payment_due
+            weekdays = [x for x in self.course.weekdays]
+            counter = 0
+            while counter < count:
+                date = date + datetime.timedelta(days=1)
+                if str(date.weekday()) in weekdays:
+                    counter += 1
+            else:
+                self.payment_due = date
+                self.save()
+
     @property
     def balance(self):
         return calculate_balance(self)
