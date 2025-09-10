@@ -65,7 +65,8 @@ class CourseCreateForm(forms.ModelForm):
 class CancelCauseForm(forms.Form):
     CAUSE_OPTIONS = [
         ("1", 'Праздник'),
-        ("2", 'Другая причина')
+        ("2", 'Другая причина'),
+        ("3", 'Отменить и прибавить к абонименту')
     ]
 
     cause = forms.ChoiceField(choices=CAUSE_OPTIONS, widget=forms.RadioSelect, label="", initial='1')

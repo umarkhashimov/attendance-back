@@ -260,8 +260,14 @@ class SalaryCourseDetailView(SuperUserRequired, View):
             if any(key == enrollment.id for key, value in attendance_lookup):
 
                 student_attendance = []
+                payments = PaymentModel.objects.filter(enrollment=enrollment)
+
+                if enrollment.transferred and enrollment.transferred_from:
+                    previous_payments = PaymentModel.objects.filter(enrollment=enrollment.transferred_from)
+                    payments = payments.union(previous_payments)
+
                 latest_payment_due = (
-                            PaymentModel.objects.filter(enrollment=enrollment).order_by('-payed_due').values_list(
+                            payments.order_by('-payed_due').values_list(
                                 'payed_due', flat=True).first() or None)
                 payment_check_date = enrollment.payment_due if enrollment.payment_due and enrollment.status == True else latest_payment_due
                 for session in sessions:
@@ -274,6 +280,8 @@ class SalaryCourseDetailView(SuperUserRequired, View):
                         'payed': True if payment_check_date and payment_check_date >= session.date else False,
                     })
                 attendance_data.append({
+                    'payments': payments,
+                    'enrollment': enrollment,
                     'student': {'id': enrollment.student.id, 'full_name': enrollment.student.full_name},
                     'attendance': student_attendance,
                     'balance': enrollment.balance if enrollment.payment_due else None,
