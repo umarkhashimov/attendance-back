@@ -242,7 +242,7 @@ class SalaryCourseDetailView(SuperUserRequired, View):
         # Get the course and its sessions sorted by date
         course = CourseModel.objects.get(id=course_id)
         sessions = SessionsModel.objects.filter(course=course, date__month=date.month, date__year=date.year).order_by(
-            '-date')
+            'date')
 
         # Get all enrollments
         enrollments = Enrollment.objects.filter(course=course).order_by('student__first_name',
@@ -270,25 +270,39 @@ class SalaryCourseDetailView(SuperUserRequired, View):
                             payments.order_by('-payed_due').values_list(
                                 'payed_due', flat=True).first() or None)
                 payment_check_date = enrollment.payment_due if enrollment.payment_due and enrollment.status == True else latest_payment_due
+
+
+                absents = 0 # do not count as payed when exceeds 2
+
                 for session in sessions:
                     att = attendance_lookup.get((enrollment.id, session.id))  # returns None if not found
+
+                    if att and att.status == 0:
+                        absents += 1
+                    else:
+                        absents = 0
 
                     student_attendance.append({
                         'status': att.status if att else 404,
                         'session': session,
                         'trial_attendance': att.trial_attendance if att else None,
-                        'payed': True if payment_check_date and payment_check_date >= session.date else False,
+                        'payed': True if payment_check_date and payment_check_date >= session.date and absents < 3 else False,
                     })
+                    student_attendance.sort(key=lambda x: x['session'].date, reverse=True)
+
                 attendance_data.append({
+
                     'enrollment': enrollment,
                     'student': {'id': enrollment.student.id, 'full_name': enrollment.student.full_name},
                     'attendance': student_attendance,
                     'balance': enrollment.balance if enrollment.payment_due else None,
                 })
 
+
+
         context.update({
             'course': course,
-            'sessions': sessions,
+            'sessions': sessions.order_by('-date'),
             'attendance_data': attendance_data
         })
         return render(request, self.template_name, context)
