@@ -104,6 +104,10 @@ class CourseModel(models.Model):
 
     get_name.short_description = 'Дни занятий'
 
+    @property
+    def name(self):
+        return f"{self.id}. {self.get_name()} - {self.lesson_time.strftime(format="%H:%M")}. {self.subject}"
+
     def __str__(self):
         return f"{self.id}. {self.get_name()} - {self.lesson_time.strftime(format="%H:%M")}. {self.subject}"
     

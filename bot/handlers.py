@@ -1,37 +1,46 @@
 from aiogram.handlers import BaseHandler
-from aiogram.types import Message
+from aiogram import Router, F, Bot
+from aiogram.filters import Command, CommandStart
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
-from asgiref.sync import sync_to_async
-from django.db.models import Q
-from .utils import RegistrationForm
-from .keyboards import confirm_button, request_phone_keyboard
+from .utils import RegistrationForm, ChatState
+from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard
+from .database import get_user, add_user
+from .helpers import get_students, get_enrollments, get_enrollment_balance, get_student, get_enrollment_attendance_list
 
+router = Router()
 
-from students.models import Enrollment, StudentModel
+@router.message(Command('start'))
+async def start(message: Message, state: FSMContext):
+    kb = await get_main_menu_keyboard(message.from_user.id)
+    await message.answer(text="Добро пожаловать!", reply_markup=kb)
+    await state.set_state(ChatState.main_menu)
 
-@sync_to_async
-def get_enrollments(phone_number):
-    results =  list(
-        Enrollment.objects.filter(status=True, student__phone_number=str(phone_number)).distinct()
-        .values_list("student__id", "student__first_name", "student__last_name")
-    )
+@router.message(F.text == '🔙 Главное меню')
+async def main_menu(message: Message, state: FSMContext):
+    kb = await get_main_menu_keyboard(message.from_user.id)
+    await message.answer(text="Главное меню", reply_markup=kb)
+    await state.set_state(ChatState.main_menu)
 
-    return [f"{id}. {first} {last}" for id, first, last in results]
+@router.message(F.text == '🗂️ Данные Ученика')
+async def st_info_menu(message: Message, state: FSMContext):
+    await  message.answer(text='Выберите информацию', reply_markup=st_data_keyboard)
+    await state.set_state(ChatState.student_info)
 
-@sync_to_async
-def get_students(phone_number):
-    results = list(
-        StudentModel.objects.filter(Q(phone_number=str(phone_number)) | Q(additional_number=str(phone_number))).values_list("id", "first_name", "last_name")
-    )
+@router.message(F.text == '🔑 Войти', ChatState.main_menu)
+async def sign_in(message: Message, state: FSMContext):
 
-    return [f"{id}-- {first} {last}" for id, first, last in results]
+    user = await get_user(message.from_user.id)
 
-async def greeting(message: Message, state: FSMContext):
-    await message.answer("Please verify with your phone number:",
-                         reply_markup=request_phone_keyboard)
-    await state.set_state(RegistrationForm.get_phone)
+    if user:
+        await message.answer(f"Вы уже зарегестрированы", reply_markup=st_data_keyboard)
+        await state.set_state(ChatState.student_info)
+    else:
+        await message.answer("📞 Пожалуйста отправьте контакт текущего профиля:",
+                             reply_markup=request_phone_keyboard)
+        await state.set_state(RegistrationForm.get_phone)
 
-
+@router.message(F.contact, RegistrationForm.get_phone)
 async def get_contact(message: Message, state: FSMContext):
     contact = message.contact
 
@@ -42,16 +51,183 @@ async def get_contact(message: Message, state: FSMContext):
     students = await get_students(contact.phone_number)
 
     if not students:
-        await message.answer("❌ Этот номер не найден в системе.")
+        kb = await get_main_menu_keyboard(message.from_user.id)
+        await message.answer("❌ Этот номер не найден в системе.", reply_markup=kb)
+        await state.set_state(ChatState.main_menu)
         return
 
-    await message.answer(text=f"Найдено:\n\n{'\n'.join(students)}")
+    await message.answer(text=f"Найдено:\n\n{'\n'.join(['{id}. {fname} {lname}'.format(id=st['id'], fname=st['fname'], lname=st['lname']) for st in students])}")
+
+    await state.update_data(
+        phone_number=contact.phone_number,
+        first_name=contact.first_name,
+        last_name=contact.last_name,
+        user_id = contact.user_id
+    )
+
     await message.answer(
-        text=f"{contact.phone_number} Подтверждаете ?",
+        text=f"Подтверждаете ?",
         reply_markup=confirm_button
     )
     await state.set_state(RegistrationForm.confirm)
 
-async def confirm_contact(message: Message, state: FSMContext):
-    await message.answer(text="Hooray")
+
+@router.message(F.text.in_(['Да', 'Нет', '✅ Да', '❌ Нет']), RegistrationForm.confirm)
+async def confirm_contact(message: Message, state: FSMContext   ):
+    data = await state.get_data()
+
+    contact = {
+        'phone_number' : data.get("phone_number"),
+        'first_name' : data.get("first_name"),
+        'last_name' : data.get("last_name"),
+        'user_id' : data.get("user_id")
+
+    }
+
+    if message.text in ['✅ Да', 'Да']:
+        user = await add_user(contact, message.from_user)
+        if user:
+            await message.answer(text="Вы успешно зарегисрированы 🎉", reply_markup=st_data_keyboard)
+            await state.set_state(ChatState.student_info)
+        else:
+            await message.answer(text="Что-то пошло не так ⛔")
+    else:
+            await message.answer(text="Действие отменено ❌")
+
     await state.clear()
+
+@router.message(ChatState.student_info, F.text == '💰 Баланс')
+async def get_balance(message: Message, state: FSMContext):
+    user = await get_user(message.from_user.id)
+    if user:
+        students = await get_students(user['phone_number'])
+
+        if students and len(students) == 1:
+            student = students[0]
+            enrollments = await get_enrollments(student['id'])
+            text = f"{student['fname']} {student['lname']}\n\n"
+            if enrollments:
+                rows = []
+                for enrollment in enrollments:
+                    balance = await get_enrollment_balance(enrollment['id'])
+                    t = f"{enrollment['course']}\n⏳ Оплачено до: {balance['payed_due'].strftime('%m/%d/%Y') if balance['payed_due'] else '---'}\n💰 Баланс: {balance['balance']}"
+                    rows.append(t)
+
+                text += '\n----\n'.join(rows)
+                await message.answer(text=text)
+            else:
+                await message.answer("❗ Ученик никуда не записан")
+        elif  students and len(students) > 1:
+            kb_data = []
+            for student in students:
+                text = f"{student['fname']} {student['lname']}"
+                callback_data = f'get_balance_{student["id"]}'
+                kb_data.append({'text': text, 'callback_data':callback_data})
+            kb = students_inline_keyboard_builder(kb_data)
+
+            await message.answer(text="Выберите ученика для баланса: ", reply_markup=kb)
+        else:
+            kb = await get_main_menu_keyboard(message.from_user.id)
+            await message.answer("❗Ученики не найдены", reply_markup=kb)
+    else:
+        kb = await get_main_menu_keyboard(message.from_user.id)
+        await message.answer(text='Ошибка❗\nПожалуйста, попробуйте войти заново.', reply_markup=kb)
+
+
+@router.callback_query(F.data.startswith("get_balance"))
+async def callback_st_balance(call: CallbackQuery):
+    user = await get_user(call.from_user.id)
+    if user:
+        st_id = call.data.split("_")[-1]
+        student = await get_student(st_id)
+        if student:
+            enrollments = await get_enrollments(student['id'])
+            text = f"{student['fname']} {student['lname']}\n\n"
+            if enrollments:
+                rows = []
+                for enrollment in enrollments:
+                    balance = await get_enrollment_balance(enrollment['id'])
+                    t = f"{enrollment['course']}\n⏳ Оплачено до: {balance['payed_due'].strftime('%m/%d/%Y') if balance['payed_due'] else '---'}\n💰 Баланс: {balance['balance']}"
+                    rows.append(t)
+
+                text += '\n----\n'.join(rows)
+                await call.message.answer(text=text)
+            else:
+                await call.message.answer("❗ Ученик никуда не записан")
+        else:
+            await call.message.answer("❗ Ученик не найден")
+
+        await call.message.delete()
+    else:
+        kb = await get_main_menu_keyboard(call.from_user.id)
+        await call.message.answer(text='Ошибка❗\nПожалуйста, попробуйте войти заново.', reply_markup=kb)
+
+
+@router.message(ChatState.student_info, F.text == '📅 Посещение')
+async def get_attendance(message: Message, state: FSMContext):
+    user = await get_user(message.from_user.id)
+    if user:
+        students = await get_students(user['phone_number'])
+
+        if students and len(students) == 1:
+            student = students[0]
+            enrollments = await get_enrollments(student['id'])
+            text = f"{student['fname']} {student['lname']}\n\n"
+            if enrollments:
+                rows = []
+                for enrollment in enrollments:
+                    attendance_list = await get_enrollment_attendance_list(enrollment['id'])
+                    t = f"{enrollment['course']}\n"
+                    for attendance in attendance_list:
+                        t += f'🗓{attendance['date'].strftime('%m/%d/%Y')} -> {attendance["status"]}\n'
+
+                    rows.append(t)
+
+                text += '\n----\n'.join(rows)
+                await message.answer(text=text)
+            else:
+                await message.answer("❗ Ученик никуда не записан")
+
+        elif  students and len(students) > 1:
+            kb_data = []
+            for student in students:
+                text = f"{student['fname']} {student['lname']}"
+                callback_data = f'get_attendance_{student["id"]}'
+                kb_data.append({'text': text, 'callback_data':callback_data})
+            kb = students_inline_keyboard_builder(kb_data)
+
+            await message.answer(text="Выберите ученика для информации Посещения: ", reply_markup=kb)
+    else:
+        kb = await get_main_menu_keyboard(message.from_user.id)
+        await message.answer(text='Ошибка❗\nПожалуйста, попробуйте войти заново.', reply_markup=kb)
+
+@router.callback_query(F.data.startswith("get_attendance"))
+async def callback_st_attendance(call: CallbackQuery, state: FSMContext):
+    user = await get_user(call.from_user.id)
+    if user:
+        st_id = call.data.split("_")[-1]
+        student = await get_student(st_id)
+        if student:
+            enrollments = await get_enrollments(student['id'])
+            text = f"{student['fname']} {student['lname']}\n\n"
+            if enrollments:
+                rows = []
+                for enrollment in enrollments:
+                    attendance_list = await get_enrollment_attendance_list(enrollment['id'])
+                    t = f"{enrollment['course']}\n"
+                    for attendance in attendance_list:
+                        t += f'🗓{attendance['date'].strftime('%m/%d/%Y')} -> {attendance["status"]}\n'
+
+                    rows.append(t)
+
+                text += '\n----\n'.join(rows)
+                await call.message.answer(text=text)
+            else:
+                await call.message.answer("❗ Ученик никуда не записан")
+        else:
+            await call.message.answer("❗ Ученик не найден")
+
+        await call.message.delete()
+    else:
+        kb = await get_main_menu_keyboard(call.from_user.id)
+        await call.message.answer(text='Ошибка❗\nПожалуйста, попробуйте войти заново.', reply_markup=kb)
