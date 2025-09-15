@@ -13,6 +13,9 @@ urlpatterns = [
     path('', include('payment.urls'), name='payment'),
     path('', include('leads.urls'), name='leads'),
     path('', include('analytics.urls'), name='analytics'),
+
+    path('api-auth/', include('rest_framework.urls')),
+    # path('', include('api.urls')),
 ]
 
 

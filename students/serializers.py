@@ -1,0 +1,15 @@
+from rest_framework import serializers
+from .models import Enrollment, StudentModel
+
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentModel
+        fields = '__all__'
+
+class EnrollmentModelSerializer(serializers.ModelSerializer):
+    student = StudentSerializer()
+    current_balance = serializers.IntegerField(source='balance', read_only=True)
+
+    class Meta:
+        model = Enrollment
+        fields = '__all__'

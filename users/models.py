@@ -32,7 +32,12 @@ class UsersModel(AbstractUser):
     # Store selected permissions as a set of boolean flags
     @property
     def get_full_name(self) -> str:
-        return f"{self.first_name} {self.last_name}"
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        elif self.first_name or self.last_name:
+            return self.first_name or self.last_name
+        else:
+            return self.username
 
     @property
     def get_short_name(self) -> str:

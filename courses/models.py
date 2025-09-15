@@ -65,6 +65,12 @@ class CourseModel(models.Model):
         else:
             return None
 
+    def is_individual(self):
+        Enrollments = apps.get_model('students', 'Enrollment')
+        enrollment = Enrollments.objects.filter(course=self, status=True)
+
+        return enrollment.count() == 1
+
     def archive_course(self):
         if self.get_all_enrolled_count() > 0:
             return False

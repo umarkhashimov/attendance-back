@@ -1,6 +1,9 @@
 from django.urls import path
 from .views import CreateSubjectView, CancelSessionView, CourseUpdateView, StartCourseView, ConductSession, GroupInfoView, CreateCourseView, MyCoursesView, UpdateGroupTopicView, ArchiveCourseView
 
+# API
+from .views import CourseListView
+
 app_name = 'courses'
 
 urlpatterns = [
@@ -14,4 +17,5 @@ urlpatterns = [
     path('groupinfo/<int:pk>/topic', UpdateGroupTopicView.as_view(), name='group_topic_update'),
     path('move_to_archive/<int:pk>', ArchiveCourseView.as_view(), name='archive_course'),
     path('new-subject/', CreateSubjectView.as_view(), name='create_subject'),
+    path('api/courses-list/', CourseListView.as_view(), name='api_course_list'),
 ]

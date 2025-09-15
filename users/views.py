@@ -313,3 +313,19 @@ class CustomUserCreateView(CreateView):
     form_class = CustomUserCreationForm
     template_name = 'users/user_create.html'
     success_url = reverse_lazy('users:users_list')
+
+
+
+# API
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .serializers import UserSerializer
+from rest_framework_simplejwt.views import generics
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data)

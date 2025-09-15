@@ -31,7 +31,7 @@
                     <li class="page-item ms-1">
                         <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}"
                            aria-label="Next">
-                            <span aria-hidden="true"><i class="bi bi-chevron-right"></i></span>
+                            <span aria-hidden="true"><i class="bi bi-chevron-double-right"></i></span>
                         </a>
                     </li>
                     <li class="page-item">

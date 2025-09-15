@@ -297,3 +297,19 @@ class CreateSubjectView(AdminRequired,CreateView):
 
     def get_success_url(self):
         return reverse('main:courses_list')
+
+
+
+# API
+
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import CourseModel
+from .serializers import CourseModelListSerializer
+from config.helpers import DefaultPageSize
+
+class CourseListView(generics.ListAPIView):
+    queryset = CourseModel.objects.all()
+    serializer_class = CourseModelListSerializer
+    permission_classes = [IsAuthenticated]   # require JWT auth
+    pagination_class = DefaultPageSize
