@@ -52,7 +52,7 @@ class MainPageView(TemplateView):
 
         # Get all marked courses
         courses = CourseModel.objects.all().filter(status=True).order_by('id')
-        if self.request.user.role:
+        if self.request.user.is_authenticated:
 
             if self.request.user.role == '1':
                 courses = courses.filter(teacher__id=self.request.user.id)
