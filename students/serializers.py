@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import Enrollment, StudentModel
 
 class StudentSerializer(serializers.ModelSerializer):
+    has_debt = serializers.BooleanField(source='in_debt', read_only=True)
+
     class Meta:
         model = StudentModel
         fields = '__all__'

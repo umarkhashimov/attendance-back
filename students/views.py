@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 import json
 from django.db.models import Q
+
 from users.filters import AdminRequired
 from users.models import UsersModel
 from users.forms import TeacherSelectForm
@@ -440,3 +441,18 @@ class AbsentStudentsList(AdminRequired, View):
             'filter_date': today.strftime("%Y-%m-%d"),
         })
         return render(request, self.template_name, context)
+
+
+# API
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from .models import StudentModel
+from .serializers import StudentSerializer
+from config.helpers import DefaultPageSize
+
+
+class StudentListView(generics.ListAPIView):
+    queryset = StudentModel.objects.all()
+    serializer_class = StudentSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = DefaultPageSize

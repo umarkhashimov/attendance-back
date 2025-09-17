@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import StudentUpdateView, CreateStudentView, CreateEnrollmentView, UpdateEnrollmentView, GroupReEnrollmentView, DeactivateEnrollmentView, UpdateEnrollmentNote, ReEnrollStudentView, autocomplete_students, ArchiveStudent, UnArchiveStudent, ConvertEnrollmentToLead, AbsentStudentsList
 
+# API
+from .views import StudentListView
 app_name = 'students'
 
 urlpatterns = [
@@ -19,4 +21,8 @@ urlpatterns = [
     path('student/<int:pk>/unarchive', UnArchiveStudent.as_view(), name='unarchive_student'),
     path('student/<int:enrollment_id>/convert-lead', ConvertEnrollmentToLead.as_view(), name='convert_enrollment_to_lead'),
     path('student/absent-list', AbsentStudentsList.as_view(), name='absent_list'),
+
+    # Api
+
+    path('api/students-list/', StudentListView.as_view(), name='api-student-list'),
 ]
