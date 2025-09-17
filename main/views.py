@@ -34,7 +34,7 @@ class MainPageView(TemplateView):
         context = super().get_context_data(**kwargs)
         t = self.request.GET.get('date')
         today = date.today()
-        if t and self.request.user.role != '1':
+        if t and self.request.user and self.request.user.role != '1':
             today = datetime.strptime(t, '%Y-%m-%d').date()
             if today > date.today():
                 today = date.today()
