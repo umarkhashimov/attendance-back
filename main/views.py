@@ -52,12 +52,14 @@ class MainPageView(TemplateView):
 
         # Get all marked courses
         courses = CourseModel.objects.all().filter(status=True).order_by('id')
+        if self.request.user.role:
 
-        if self.request.user.role == '1':
-            courses = courses.filter(teacher__id=self.request.user.id)
-            sessions_today = sessions_today.filter(teacher__id=self.request.user.id)
-            marked_sessions = marked_sessions.filter(course__in=courses)
-
+            if self.request.user.role == '1':
+                courses = courses.filter(teacher__id=self.request.user.id)
+                sessions_today = sessions_today.filter(teacher__id=self.request.user.id)
+                marked_sessions = marked_sessions.filter(course__in=courses)
+        else:
+            return redirect(reverse('main:main'))
         # attendance data test
 
         conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
