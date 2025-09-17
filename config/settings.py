@@ -200,3 +200,8 @@ DATE_INPUT_FORMATS = ['%Y-%m-%d', '%d-%m-%Y', '%m/%d/%Y', '%d.%m.%Y']
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://react.iqplus.uz",
+]
