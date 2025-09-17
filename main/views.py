@@ -59,7 +59,7 @@ class MainPageView(TemplateView):
                 sessions_today = sessions_today.filter(teacher__id=self.request.user.id)
                 marked_sessions = marked_sessions.filter(course__in=courses)
         else:
-            return redirect(reverse('main:main'))
+            return redirect('main:main')
         # attendance data test
 
         conducted_sessions = SessionsModel.objects.filter(status=True, date=today).prefetch_related('attendancemodel_set')
