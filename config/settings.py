@@ -203,5 +203,5 @@ CORS_ALLOW_CREDENTIALS = True
 
 
 CORS_ALLOWED_ORIGINS = [
-    "http://react.iqplus.uz",
+    "https://react.iqplus.uz",
 ]
