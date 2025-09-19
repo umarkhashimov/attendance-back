@@ -14,7 +14,7 @@ from .forms import LeadForm, LeadsListFilterForm, LeadUpdateForm
 from .models import LeadsModel
 from students.forms import StudentInfoForm, StudentEnrollmentForm
 from courses.models import SubjectModel
-
+from users.helpers import record_action
 
 class LeadsListView(AdminRequired, ListView):
     model = LeadsModel
@@ -141,6 +141,10 @@ class CreateLeadView(AdminRequired, View):
 
             lead = LeadsModel.objects.create(student=student, teacher=teacher, subject=subject, **lead_data, created_by=self.request.user)
 
+            # Record action
+            action_message = f"Создан лид  <a href='/leads/detail/{lead.id}'><b>{lead.id}. {lead.student}</b></a>"
+            record_action(1, request.user, lead, lead.id, action_message)
+
             messages.success(request, 'Лид успешно создан')
             return redirect('leads:leads_list')
         except Exception as e:
@@ -176,6 +180,10 @@ class LeadUpdateView(AdminRequired, UpdateView):
     form_class = LeadUpdateForm
 
     def get_success_url(self):
+        lead = self.get_object()
+        # Record action
+        action_message = f"Обновлен лид <a href='/leads/detail/{lead.id}'><b>{lead.id}. {lead.student}</b></a>"
+        record_action(2, self.request.user, lead, lead.id, action_message)
         messages.success(self.request,"Детали лида успешно изменены")
         return reverse('leads:lead_detail', kwargs={'pk': self.object.pk})
 
@@ -209,6 +217,9 @@ class LeadEnrollView(AdminRequired, View):
                 lead.processed_at = datetime.now()
                 lead.save()
 
+                # Record action
+                action_message = f"Лид Обработан <a href='/leads/detail/{lead.id}'><b>{lead.id}. {lead.student}</b></a>"
+                record_action(2, request.user, lead, lead.id, action_message)
                 messages.success(request,'Ученик успешно записан в группу в группу')
             except Exception as e:
                 messages.error(request,'Ошибка при записи ученика в группу')
@@ -226,6 +237,11 @@ class LeadCancelView(AdminRequired, View):
         lead.processed_by = self.request.user
         lead.processed_at = datetime.now()
         lead.save()
+
+        # Record action
+        action_message = f"Лид Отменен <a href='/leads/detail/{lead.id}'><b>{lead.id}. {lead.student}</b></a>"
+        record_action(3, request.user, lead, lead.id, action_message)
+
         messages.success(request, "Лид успешно Отменен")
         return redirect('leads:lead_detail', pk=pk)
 
