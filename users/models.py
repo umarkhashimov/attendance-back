@@ -1,5 +1,6 @@
 from random import choices
-
+import os
+from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
 from django.contrib.admin.models import LogEntry, ContentType
@@ -16,11 +17,17 @@ PERMISSION_CHOICES = [
 def get_default_permissions():
     return [perm[0] for perm in PERMISSION_CHOICES]
 
+def convert_file_name(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = '{:%Y-%m-%d-%H-%M-%S-%f}.{}'.format(datetime.now(), ext)
+    return os.path.join('./users', filename)
+
 class UsersModel(AbstractUser):
     ROLE_CHOICES = [
         ('1', 'Учитель'),
         ('2', 'Администратор'),
     ]
+    image = models.ImageField(upload_to=convert_file_name, null=True, blank=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1', verbose_name='Роль')
     phone_number = models.CharField(max_length=13, null=True, blank=True, verbose_name="Номер Телефона")
     color = models.CharField(max_length=7, default='#ffffff', null=True, blank=True, verbose_name="Цвет выделения")

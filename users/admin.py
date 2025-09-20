@@ -12,7 +12,7 @@ class CustomUserAdmin(UserAdmin):
     form = UserUpdateAdminForm
     # Specify the fields in the desired order
     fieldsets = (
-        (None, {'fields': ('username', 'password', 'role')}),
+        (None, {'fields': ('image','username', 'password', 'role')}),
         ('Personal info', {'fields': ('first_name', 'last_name', 'phone_number', 'email', 'color')}),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'custom_permissions')}),
         ('Important dates', {'fields': ('last_login', 'date_joined')}),

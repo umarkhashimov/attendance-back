@@ -698,3 +698,10 @@ tr.active-tr {
 .note-update-form.error input{
     outline: 3px solid red;
 }
+
+.teacher-image{
+    aspect-ratio: 1/1.1;
+    width: 300px;
+    object-fit: cover;
+    background-color: white;
+}
