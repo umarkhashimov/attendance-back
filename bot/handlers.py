@@ -3,10 +3,12 @@ from aiogram import Router, F, Bot
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
+from pyexpat.errors import messages
+
 from .utils import RegistrationForm, ChatState
-from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard
+from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder
 from .database import get_user, add_user
-from .helpers import get_students, get_enrollments, get_enrollment_balance, get_student, get_enrollment_attendance_list
+from .helpers import get_students, get_enrollments, get_enrollment_balance, get_student, get_enrollment_attendance_list, get_subjects, get_subject_teachers, get_teacher_info
 
 router = Router()
 
@@ -15,6 +17,40 @@ async def start(message: Message, state: FSMContext):
     kb = await get_main_menu_keyboard(message.from_user.id)
     await message.answer(text="Добро пожаловать!", reply_markup=kb)
     await state.set_state(ChatState.main_menu)
+
+@router.message(F.text == '🧑‍🏫 Учителя')
+async def staff(message: Message, state: FSMContext):
+    subjects = await get_subjects()
+    data = []
+    for subject in subjects:
+        text = f'{subject["name"]}'
+        callback_data = f'get_teachers_subject_{subject["id"]}'
+        data.append({'text':text, 'callback_data':callback_data})
+    kb = subjects_inline_keyboard_builder(data)
+    await message.answer(text='Выберите предмет:', reply_markup=kb)
+    await state.set_state(ChatState.select_subject)
+
+@router.callback_query(ChatState.select_subject, F.data.startswith("get_teachers_subject"))
+async def callback_subject_teachers(call: CallbackQuery, state: FSMContext):
+    subject_id = call.data.split("_")[-1]
+    teachers = await get_subject_teachers(subject_id)
+    data = []
+    for teacher in teachers:
+        text = f'{teacher["fname"]} {teacher["lname"]}'
+        callback_data = f'get_teacher_{teacher["id"]}'
+        data.append({'text': text, 'callback_data': callback_data})
+
+    kb = teachers_inline_keyboard_builder(data)
+    await call.message.answer(text='Выберите Преподователя:', reply_markup=kb)
+    await call.message.delete()
+
+@router.callback_query(F.data.startswith("get_teacher"))
+async def callback_teacher_info(call: CallbackQuery, state: FSMContext):
+    teacher_id = call.data.split("_")[-1]
+    teacher = await get_teacher_info(teacher_id)
+    caption = f'**{teacher["fname"]} {teacher["lname"]}**\n\n{teacher["bio"]}'
+    await call.message.answer_photo(photo=teacher['image'], caption=caption, parse_mode="MarkdownV2")
+
 
 @router.message(F.text == '🔙 Главное меню')
 async def main_menu(message: Message, state: FSMContext):
@@ -81,7 +117,6 @@ async def confirm_contact(message: Message, state: FSMContext   ):
         'first_name' : data.get("first_name"),
         'last_name' : data.get("last_name"),
         'user_id' : data.get("user_id")
-
     }
 
     if message.text in ['✅ Да', 'Да']:

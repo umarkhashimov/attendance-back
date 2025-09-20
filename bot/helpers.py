@@ -1,8 +1,11 @@
 from asgiref.sync import sync_to_async
 from django.db.models import Q
+from django.conf import settings
 from students.models import Enrollment, StudentModel
 from attendance.models import AttendanceModel
 from django.db import close_old_connections
+from courses.models import SubjectModel
+from users.models import UsersModel
 
 @sync_to_async
 def get_enrollments(st_id):
@@ -60,3 +63,29 @@ def get_enrollment_attendance_list(enrollment_id):
         attendance_list.append({'date': attendance.session.date, 'status': status})
 
     return attendance_list
+
+@sync_to_async
+def get_subjects():
+    close_old_connections()
+
+    subjects = SubjectModel.objects.all()
+
+    return [{'id': subject.id, 'name': subject.name} for subject in subjects]
+
+
+@sync_to_async
+def get_subject_teachers(subject_id):
+    close_old_connections()
+
+    teachers = UsersModel.objects.filter(role='1', coursemodel__subject_id=subject_id, bio__isnull=False, image__isnull=False, first_name__isnull=False, last_name__isnull=False).distinct()
+
+    return [{'id': teacher.id,'fname': teacher.first_name, 'lname': teacher.last_name} for teacher in teachers]
+
+@sync_to_async
+def get_teacher_info(teacher_id):
+    close_old_connections()
+
+    teacher = UsersModel.objects.get(id=teacher_id)
+    image_url = 'https://iqplus.uz/media/' + teacher.image.url
+
+    return {'id': teacher.id, 'fname': teacher.first_name, 'lname': teacher.last_name, 'bio': teacher.bio, 'image': image_url}

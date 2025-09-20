@@ -54,3 +54,21 @@ def students_inline_keyboard_builder(data):
 
     kb.adjust(1)
     return kb.as_markup()
+
+def subjects_inline_keyboard_builder(data):
+    kb = InlineKeyboardBuilder()
+
+    for info in data:
+        kb.button(text=info['text'], callback_data=info['callback_data'])
+
+    kb.adjust(1)
+    return kb.as_markup()
+
+def teachers_inline_keyboard_builder(data):
+    kb = InlineKeyboardBuilder()
+
+    for info in data:
+        kb.button(text=info['text'], callback_data=info['callback_data'])
+
+    kb.adjust(1)
+    return kb.as_markup()
