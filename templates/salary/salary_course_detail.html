@@ -33,7 +33,22 @@
             <div class="col-12 bg-light rounded pt-2 px-2 border my-3">
                 <ul class="list-group list-group-flush">
                     <li class="list-group-item">Цена Курса (12 занятий): <b>{{ course.session_cost }}</b></li>
-                    <li class="list-group-item">Цена Курса (1 занятия): <b>{{ course.session_cost|div:12|floatformat:2 }}</b></li>
+                    <li class="list-group-item">Цена Курса (1 занятия):
+                        <b>{{ course.session_cost|div:12|floatformat:2 }}</b></li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-5">
+
+                            <div class="input-group mb-3 border-1 border-dark-subtle border">
+
+                                <label for="priceForAll" class="input-group-text" id="basic-addon1">Цена за всех</label>
+                                <input oninput="priceInputChange(this)" onblur="priceInpBlur(this)" type="number" class="form-control" placeholder="..." aria-label="Username"
+                                       aria-describedby="basic-addon1" id="priceForAll">
+                                <button class="btn btn-success rounded-0" onclick="assignAllPrice()"><i class="bi bi-check-lg"></i></button>
+                            </div>
+                            </div>
+                        </div>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -44,7 +59,11 @@
                     <td class="p-0 text-center border border-1 border-secondary">Цена</td>
                     <td class="p-0 text-center border border-1 border-secondary">Имя студента</td>
                     {% for session in sessions %}
-                        <td data-bs-toggle="tooltip" data-bs-placement="top" {% if session.record_by.id != session.course.teacher.id %} title="Урок не был отмечен учителем"  {% elif session.status == False %} title="Урок отменен" {% endif %} onclick="checkWholeColumn({{ forloop.counter }})" col="{{ forloop.counter }}"
+                        <td data-bs-toggle="tooltip" data-bs-placement="top"
+                                {% if session.record_by.id != session.course.teacher.id %}
+                            title="Урок не был отмечен учителем"  {% elif session.status == False %}
+                            title="Урок отменен" {% endif %} onclick="checkWholeColumn({{ forloop.counter }})"
+                            col="{{ forloop.counter }}"
                             class="px-0 text-center cursor-pointer border border-secondary border-1 date-cell {% if session.record_by.id != session.course.teacher.id %} bg-secondary-subtle  {% elif session.status == False %} bg-danger-subtle {% endif %}">
                             <span>{{ session.date|date:"d" }}</span>
                         </td>
@@ -56,26 +75,39 @@
                     <tr class="info_row" row="{{ forloop.counter }}">
                         <td class="p-0 border-secondary-subtle status-cell max-w-130px min-w-100px align-middle">
                             <div class="d-flex justify-content-center w-100">
-                                <input id="priceInput" value="{{ record.price_for_student|stringformat:'s' }}" oninput="priceInputChange(this)"
+                                <input id="priceInput" value="{{ record.price_for_student|stringformat:'s' }}"
+                                       oninput="priceInputChange(this)"
                                        onblur="priceInpBlur(this)"
                                        type="number" maxlength="4"
                                        class="form-control rounded-0 border-none shadow-none border-0 w-100 text-center min-w-100px">
                             </div>
                         </td>
-                        <td class="p-2 min-w-130px border border-secondary-subtle status-cell text-break text-wrap"><a href="{% url 'students:student_update' pk=record.student.id %}" class="text-decoration-none text-dark table-obj-name-link"><span data-bs-toggle="tooltip" data-bs-placement="top" title="Скидка" role='button' class="text-secondary mx-1">{{ record.enrollment.discount }}% </span>{{ record.student.full_name }} </a> {% if record.enrollment.transferred %} <span data-bs-toggle="tooltip" data-bs-placement="top" title="Перенаправленная запись" role='button' class="text-primary ms-1"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %} <span  data-bs-toggle="tooltip" data-bs-placement="top" title="Баланс" class="text-success {% if record.balance <= 0 %}text-danger{% elif record.balance == None %}text-secondary{% endif %}"> | {{ record.balance|default:'--' }}</span></td>
+                        <td class="p-2 min-w-130px border border-secondary-subtle status-cell text-break text-wrap"><a
+                                href="{% url 'students:student_update' pk=record.student.id %}"
+                                class="text-decoration-none text-dark table-obj-name-link"><span
+                                data-bs-toggle="tooltip" data-bs-placement="top" title="Скидка" role='button'
+                                class="text-secondary mx-1">{{ record.enrollment.discount }}% </span>{{ record.student.full_name }}
+                        </a> {% if record.enrollment.transferred %}
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Перенаправленная запись"
+                                  role='button' class="text-primary ms-1"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %}
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Баланс"
+                                  class="text-success {% if record.balance <= 0 %}text-danger{% elif record.balance == None %}text-secondary{% endif %}"> | {{ record.balance|default:'--' }}</span>
+                        </td>
                         {% for info in record.attendance %}
                             <td col="{{ forloop.counter }}"
                                 class=" p-0 border align-middle {% if info.trial_attendance == True %} border-warning border-4 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">
                                 {% if info.status|stringformat:'s' in '1.2.0' or info.status == None %}
-                                    <label for="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}"  class="position-relative text-black w-100 h-100 cursor-pointer">
+                                    <label for="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}"
+                                           class="position-relative text-black w-100 h-100 cursor-pointer">
                                         {% if info.session.status == True and info.trial_attendance == False and info.payed == True %}
-                                        <input col="{{ forloop.counter }}"
-                                               {% if info.status != None and info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
-                                               type="checkbox"
-                                               class="shadow-none border-1 border-black fs-3 attendance-checkbox salary-checkbox" id="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}">
+                                            <input col="{{ forloop.counter }}"
+                                                   {% if info.status != None and info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
+                                                   type="checkbox"
+                                                   class="shadow-none border-1 border-black fs-3 attendance-checkbox salary-checkbox"
+                                                   id="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}">
                                             <span class="checkmark"></span>
-                                    {% endif %}
-                                </label>
+                                        {% endif %}
+                                    </label>
                                 {% endif %}
                             </td>
 
@@ -103,6 +135,15 @@
 
 {% block custom_js %}
     <script>
+
+        function assignAllPrice(){
+            let allPrice = document.getElementById('priceForAll').value
+            allPrice = allPrice ? allPrice : 0
+            const priceInputs = document.querySelectorAll('#priceInput')
+            priceInputs.forEach((inp) => {
+                inp.value = allPrice
+            })
+        }
 
         function priceInputChange(e) {
             const oldValue = e.value;
