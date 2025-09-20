@@ -138,7 +138,7 @@ class StudentsListView(AdminRequired, ListView):
             elif display == '3':
                 queryset = queryset.filter(archived=True)
             elif display == '4':
-                queryset = queryset.filter(archived=False, enrollment__isnull=False, enrollment__status=True)
+                queryset = queryset.filter(archived=False, enrollment__isnull=False, enrollment__status=True).distinct()
 
         # Apply search text filter
         if text:
