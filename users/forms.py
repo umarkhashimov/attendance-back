@@ -59,6 +59,7 @@ class TeacherUpdateForm(forms.ModelForm):
         # exclude = ['password', 'last_login']'
         widgets = {
             'color': forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control form-control-text pt-4', 'oninput': "this.style.height='auto';this.style.height=this.scrollHeight+'px';", 'rows': 4, 'style':"overflow:hidden;resize:none;min-height:calc(4em * 4);"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -67,7 +68,7 @@ class TeacherUpdateForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if field_name != 'color':
                 field.widget.attrs.update({
-                    "class": "form-control",  # Add Bootstrap class
+                    "class": "form-control border border-dark-subtle my-2",  # Add Bootstrap class
                     "placeholder": ' ',  # Optional: Use label as placeholder
                 })
 

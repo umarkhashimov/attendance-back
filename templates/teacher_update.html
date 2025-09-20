@@ -31,7 +31,7 @@
                 {% elif field.name == 'image' %}
                 <div class="d-flex align-items-center justify-content-center my-1 mt-2 gap-2">
                     <div class="bg-light border-1">
-                        <label for="{{ field.id_for_label }}" class="form-label btn cursor-pointer bg-light border-1 p-0 rounded-0 border">
+                        <label for="{{ field.id_for_label }}" class="form-label btn cursor-pointer bg-light border-1 border-dark-subtle p-0 rounded-0 border">
                         <img id="previewImg" src="{% if field.value %}{{ field.value.url }}{% else %}{% static 'img/user.webp' %}{% endif %}"  class="img-fluid teacher-image">
                             <input type="file" hidden name="{{ field.name }}" accept="image/*" id="{{ field.id_for_label }}" onchange="previewImage(event)">
                         </label>
