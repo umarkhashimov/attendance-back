@@ -86,6 +86,6 @@ def get_teacher_info(teacher_id):
     close_old_connections()
 
     teacher = UsersModel.objects.get(id=teacher_id)
-    image_url = 'https://iqplus.uz/media/' + teacher.image.url
+    image_url = 'https://iqplus.uz/media' + teacher.image.url
 
     return {'id': teacher.id, 'fname': teacher.first_name, 'lname': teacher.last_name, 'bio': teacher.bio, 'image': image_url}

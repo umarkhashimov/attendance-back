@@ -48,8 +48,9 @@ async def callback_subject_teachers(call: CallbackQuery, state: FSMContext):
 async def callback_teacher_info(call: CallbackQuery, state: FSMContext):
     teacher_id = call.data.split("_")[-1]
     teacher = await get_teacher_info(teacher_id)
-    caption = f'**{teacher["fname"]} {teacher["lname"]}**\n\n{teacher["bio"]}'
-    await call.message.answer_photo(photo=teacher['image'], caption=caption, parse_mode="MarkdownV2")
+    caption = f'<b>{teacher["fname"]} {teacher["lname"]}</b>\n\n{teacher["bio"]}'
+    await call.message.answer_photo(photo=teacher['image'], caption=caption, parse_mode="HTML")
+    await call.answer()
 
 
 @router.message(F.text == '🔙 Главное меню')
