@@ -1,5 +1,5 @@
 {% extends 'layout/base.html' %}
-
+{% load math_extras %}
 {% block title %}
     <title>Панель Управления</title>
 {% endblock %}
@@ -30,6 +30,12 @@
                     </div>
                 </form>
             </div>
+            <div class="col-12 bg-light rounded pt-2 px-2 border my-3">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Цена Курса (12 занятий): <b>{{ course.session_cost }}</b></li>
+                    <li class="list-group-item">Цена Курса (1 занятия): <b>{{ course.session_cost|div:12|floatformat:2 }}</b></li>
+                </ul>
+            </div>
         </div>
         <div class="table-responsive">
             <table class="table table-striped table-bordered w-100 attendance-record-table table-hover">
@@ -50,14 +56,13 @@
                     <tr class="info_row" row="{{ forloop.counter }}">
                         <td class="p-0 border-secondary-subtle status-cell max-w-130px min-w-100px align-middle">
                             <div class="d-flex justify-content-center w-100">
-
-                                <input id="priceInput" value="13000.00" oninput="priceInputChange(this)"
+                                <input id="priceInput" value="{{ record.price_for_student|stringformat:'s' }}" oninput="priceInputChange(this)"
                                        onblur="priceInpBlur(this)"
                                        type="number" maxlength="4"
                                        class="form-control rounded-0 border-none shadow-none border-0 w-100 text-center min-w-100px">
                             </div>
                         </td>
-                        <td class="p-2 min-w-130px border border-secondary-subtle status-cell text-break text-wrap"><a href="{% url 'students:student_update' pk=record.student.id %}" class="text-decoration-none text-dark table-obj-name-link">{{ record.student.full_name }} </a> {% if record.enrollment.transferred %} <span data-bs-toggle="tooltip" data-bs-placement="top" title="Перенаправленная запись" role='button' class="text-primary ms-1"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %} <span  data-bs-toggle="tooltip" data-bs-placement="top" title="Баланс" class="text-success {% if record.balance <= 0 %}text-danger{% elif record.balance == None %}text-secondary{% endif %}"> | {{ record.balance|default:'--' }}</span></td>
+                        <td class="p-2 min-w-130px border border-secondary-subtle status-cell text-break text-wrap"><a href="{% url 'students:student_update' pk=record.student.id %}" class="text-decoration-none text-dark table-obj-name-link"><span data-bs-toggle="tooltip" data-bs-placement="top" title="Скидка" role='button' class="text-secondary mx-1">{{ record.enrollment.discount }}% </span>{{ record.student.full_name }} </a> {% if record.enrollment.transferred %} <span data-bs-toggle="tooltip" data-bs-placement="top" title="Перенаправленная запись" role='button' class="text-primary ms-1"><i class="bi bi-exclamation-circle-fill"></i></span>{% endif %} <span  data-bs-toggle="tooltip" data-bs-placement="top" title="Баланс" class="text-success {% if record.balance <= 0 %}text-danger{% elif record.balance == None %}text-secondary{% endif %}"> | {{ record.balance|default:'--' }}</span></td>
                         {% for info in record.attendance %}
                             <td col="{{ forloop.counter }}"
                                 class=" p-0 border align-middle {% if info.trial_attendance == True %} border-warning border-4 {% else %} border-secondary-subtle {% endif %}  text-center status-cell {% if info.status == 1 %} bg-success bg-opacity-75 {% elif info.status == 0 %} bg-danger bg-opacity-75 {% elif info.status == 2 %} bg-warning bg-opacity-50 {% elif info.status == 3 %} bg-info bg-opacity-50  {% elif info.status is None %} bg-secondary bg-opacity-50 {% endif %}">

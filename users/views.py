@@ -290,8 +290,9 @@ class SalaryCourseDetailView(SuperUserRequired, View):
                     })
                     student_attendance.sort(key=lambda x: x['session'].date, reverse=True)
 
+                price = ((course.session_cost - ((course.session_cost / 100) * enrollment.discount)) / 12)
                 attendance_data.append({
-
+                    'price_for_student': price,
                     'enrollment': enrollment,
                     'student': {'id': enrollment.student.id, 'full_name': enrollment.student.full_name},
                     'attendance': student_attendance,
