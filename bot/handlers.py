@@ -1,9 +1,11 @@
 from aiogram.handlers import BaseHandler
 from aiogram import Router, F, Bot
 from aiogram.filters import Command, CommandStart
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
 from pyexpat.errors import messages
+import os
+from django.conf import settings
 
 from .utils import RegistrationForm, ChatState
 from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder
@@ -34,22 +36,32 @@ async def staff(message: Message, state: FSMContext):
 async def callback_subject_teachers(call: CallbackQuery, state: FSMContext):
     subject_id = call.data.split("_")[-1]
     teachers = await get_subject_teachers(subject_id)
-    data = []
-    for teacher in teachers:
-        text = f'{teacher["fname"]} {teacher["lname"]}'
-        callback_data = f'get_teacher_{teacher["id"]}'
-        data.append({'text': text, 'callback_data': callback_data})
+    if teachers and len(teachers) > 0:
+        data = []
+        for teacher in teachers:
+            text = f'{teacher["fname"]} {teacher["lname"]}'
+            callback_data = f'get_teacher_{teacher["id"]}'
+            data.append({'text': text, 'callback_data': callback_data})
 
-    kb = teachers_inline_keyboard_builder(data)
-    await call.message.answer(text='Выберите Преподователя:', reply_markup=kb)
-    await call.message.delete()
+        kb = teachers_inline_keyboard_builder(data)
+        await call.message.answer(text='Выберите Преподователя:', reply_markup=kb)
+        await call.message.delete()
+    else:
+        await call.message.answer(text="❌ Нет Учителей")
+
+    await call.answer()
 
 @router.callback_query(F.data.startswith("get_teacher"))
 async def callback_teacher_info(call: CallbackQuery, state: FSMContext):
     teacher_id = call.data.split("_")[-1]
     teacher = await get_teacher_info(teacher_id)
+
     caption = f'<b>{teacher["fname"]} {teacher["lname"]}</b>\n\n{teacher["bio"]}'
-    await call.message.answer_photo(photo=teacher['image'], caption=caption, parse_mode="HTML")
+
+    file_path = os.path.join(settings.MEDIA_ROOT, str(teacher['image']))
+    photo = FSInputFile(file_path)
+
+    await call.message.answer_photo(photo=photo, caption=caption, parse_mode="HTML")
     await call.answer()
 
 
