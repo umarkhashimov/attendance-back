@@ -2,10 +2,11 @@ from asgiref.sync import sync_to_async
 from django.db.models import Q
 from students.models import Enrollment, StudentModel
 from attendance.models import AttendanceModel
+from django.db import close_old_connections
 
 @sync_to_async
 def get_enrollments(st_id):
-
+    close_old_connections()
     results =  list(
         Enrollment.objects.filter(status=True, student__id=st_id).distinct()
     )
@@ -14,6 +15,7 @@ def get_enrollments(st_id):
 
 @sync_to_async
 def get_students(phone_number):
+    close_old_connections()
 
     results = list(
         StudentModel.objects.filter(Q(phone_number=str(phone_number)) | Q(additional_number=str(phone_number))).values_list("id", "first_name", "last_name")
@@ -23,17 +25,23 @@ def get_students(phone_number):
 
 @sync_to_async
 def get_student(st_id):
+    close_old_connections()
+
     results = StudentModel.objects.get(id=st_id)
     return {'id': results.id, 'fname': results.first_name, 'lname': results.last_name}
 
 @sync_to_async
 def get_enrollment_balance(enrollment_id):
+    close_old_connections()
+
     enrollment = Enrollment.objects.get(id=enrollment_id)
 
     return {'payed_due': enrollment.payment_due, 'balance': enrollment.balance}
 
 @sync_to_async
 def get_enrollment_attendance_list(enrollment_id):
+    close_old_connections()
+
     enrollment = Enrollment.objects.get(id=enrollment_id)
     attendances = AttendanceModel.objects.filter(enrollment=enrollment).order_by('session__date')[:12]
 
