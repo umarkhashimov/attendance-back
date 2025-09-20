@@ -73,7 +73,7 @@ class StudentsListFilterForm(forms.Form):
         required=False, label="До")
 
     display = forms.ChoiceField(
-        choices=[(2, 'Активные'), (3, "Архив"), (1, 'Все')],
+        choices=[(4, 'Активные (Записанные)'), (2, 'Активные'), (3, "Архив"), (1, 'Все')],
         widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
         required=False, label="Показать"
     )
