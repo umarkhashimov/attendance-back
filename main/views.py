@@ -120,6 +120,7 @@ class StudentsListView(AdminRequired, ListView):
         date_from = self.request.GET.get('date_from')
         date_to = self.request.GET.get('date_to')
         display = self.request.GET.get('display')
+        exclude_subject = self.request.GET.get('exclude_subject')
 
         queryset = super().get_queryset()
 
@@ -177,6 +178,9 @@ class StudentsListView(AdminRequired, ListView):
         # Filter by teacher
         if teacher:
             queryset = queryset.filter(courses__teacher=teacher)
+
+        if exclude_subject:
+            queryset = queryset.exclude(courses__subject=exclude_subject)
 
         # Apply ordering
         if ordering == "1":

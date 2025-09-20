@@ -78,6 +78,12 @@ class StudentsListFilterForm(forms.Form):
         required=False, label="Показать"
     )
 
+    exclude_subject = forms.ModelChoiceField(
+        queryset=SubjectModel.objects.all(),
+        widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+        required=False, label="Исключить предмет"
+    )
+
     def __init__(self,  *args, **kwargs):
         super().__init__(*args, **kwargs)
         start_date = self.initial.get("date_from")
