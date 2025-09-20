@@ -55,7 +55,7 @@ class TeacherUpdateForm(forms.ModelForm):
     class Meta:
         model = UsersModel
         # fields = "__all__"
-        fields = ['image','first_name', 'last_name', 'phone_number', 'color']
+        fields = ['image','first_name', 'last_name', 'phone_number', 'bio', 'color']
         # exclude = ['password', 'last_login']'
         widgets = {
             'color': forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),

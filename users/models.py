@@ -30,6 +30,7 @@ class UsersModel(AbstractUser):
     image = models.ImageField(upload_to=convert_file_name, null=True, blank=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1', verbose_name='Роль')
     phone_number = models.CharField(max_length=13, null=True, blank=True, verbose_name="Номер Телефона")
+    bio = models.TextField(null=True, blank=True, verbose_name='Биография')
     color = models.CharField(max_length=7, default='#ffffff', null=True, blank=True, verbose_name="Цвет выделения")
     custom_permissions = models.JSONField(default=get_default_permissions(), blank=True, null=True)
 
