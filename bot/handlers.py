@@ -30,9 +30,8 @@ async def staff(message: Message, state: FSMContext):
         data.append({'text':text, 'callback_data':callback_data})
     kb = subjects_inline_keyboard_builder(data)
     await message.answer(text='Выберите предмет:', reply_markup=kb)
-    await state.set_state(ChatState.select_subject)
 
-@router.callback_query(ChatState.select_subject, F.data.startswith("get_teachers_subject"))
+@router.callback_query(F.data.startswith("get_teachers_subject"))
 async def callback_subject_teachers(call: CallbackQuery, state: FSMContext):
     subject_id = call.data.split("_")[-1]
     teachers = await get_subject_teachers(subject_id)
