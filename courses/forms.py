@@ -26,7 +26,7 @@ class CourseCreateForm(forms.ModelForm):
 
     class Meta:
         model = CourseModel
-        fields = ['subject', 'course_name', 'teacher', 'days', 'weekdays', 'lesson_time', 'duration', 'session_cost', 'last_topic', 'status']
+        fields = ['subject', 'course_name', 'teacher', 'days', 'weekdays', 'lesson_time', 'duration', 'session_cost', 'last_topic', 'start_date', 'status']
         exclude = []
         widgets = {
             'lesson_time': forms.TimeInput(
@@ -43,7 +43,7 @@ class CourseCreateForm(forms.ModelForm):
             'course_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите имя курса'}),
             'weekdays': Select2MultipleWidget(attrs={'class': 'form-control multiplechoices w-100'}),
             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-
+            'start_date': forms.DateInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
