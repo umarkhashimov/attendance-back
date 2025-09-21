@@ -95,8 +95,8 @@
 
                             <ul class="list-group border border-secondary shadow shadow-sm" id="courseTable{{ course.id }}">
                                 <li class="list-group-item-secondary list-group-item fw-semibold bg-opacity-25">
-                                    <a href="{% url 'courses:course_update' pk=course.id %}"
-                                       class="my-auto text-dark table-obj-name-link text-decoration-none"><p class="m-0 d-flex justify-content-between"><span>{{ course }}</span><span>{{ course.start_date|default:'---' }}</span></p></a>
+                                    <p class="m-0 d-flex justify-content-between"><a href="{% url 'courses:course_update' pk=course.id %}"
+                                       class="my-auto text-dark table-obj-name-link text-decoration-none">{{ course }}</a> <span class="text-success fs-6 fw-medium">Открытие: <span class="text-success ms-2 fs-6 fw-bold"> {{ course.start_date|default:'---' }}</span></span></p>
                                 </li>
                                 {% for enrollment in enrollments %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center list-items-hover">
