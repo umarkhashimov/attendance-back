@@ -33,14 +33,14 @@
         </div>
         <div class="row px-2 mt-3">
             {% for teacher in teachers %}
-                <div class="col-2 p-3">
+                <div class="col-6 col-md-4 col-lg-3 p-3">
                     <a href="{% url 'users:teacher_update' teacher.id %}" class="text-decoration-none teacher-card">
                         <div class="card wrapper">
                             <img src="{% if teacher.image %}{{ teacher.image.url }}{% else %}{% static 'img/user.webp' %}{% endif %}" class="card-img-top teacher-card-image" alt="...">
                             <div class="card-body">
                                 <h6 class="card-title">{{ teacher.get_full_name }}</h6>
                                 <p class="text-primary ">{{ teacher.username }}</p>
-                                <div class=""><span class="py-1 mt-2 w-100 bg-danger d-block"></span></div>
+                                <div class=""><span class="py-1 mt-2 w-100 d-block border" style="background-color: {{ teacher.color }}"></span></div>
                             </div>
                         </div>
                     </a>

@@ -714,5 +714,5 @@ tr.active-tr {
 }
 
 .teacher-card:hover .wrapper{
-    box-shadow: 0 0 1px 1px darkgray;
+    box-shadow: 0 0 3px 1px darkgray;
 }
