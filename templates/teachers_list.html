@@ -1,5 +1,5 @@
 {% extends 'layout/base.html' %}
-
+{% load static %}
 {% block title %}
     <title>Панель Управления</title>
 {% endblock %}
@@ -13,7 +13,8 @@
         <hr class="table-group-divider"/>
         <div class="row m-0 p-0 ">
             <div class="col-12 bg-light rounded pt-2 px-2 border">
-                <form id="filterForm" method="get" action="{% url 'main:teachers_list' %}" class="" onreset="resetForm(event)">
+                <form id="filterForm" method="get" action="{% url 'main:teachers_list' %}" class=""
+                      onreset="resetForm(event)">
                     <div class="">
                         <h6 class="text-dark  ms-1 fs-6 m-0">Фильтры
                             <button type="reset" class="filter-reset-btn ms-2 mb-1"><p>Очистить</p></button>
@@ -32,54 +33,71 @@
         </div>
         <div class="row px-2 mt-3">
             {% for teacher in teachers %}
-                <div class="accordion accordion-flush px-1" id="accordionExample">
-                    <div class="accordion-item my-1">
-                        <div class="accordion-header">
-                            <div class="d-flex justify-content-between align-items-center border">
-                                <span class="ms-3 text-secondary opacity-75">{{ forloop.counter }}. </span>
-                                <a href="{% url 'users:teacher_update' pk=teacher.id %}" class="py-2 ps-2 d-flex align-items-center text-dark text-decoration-none table-obj-name-link m-0 w-100 h-100" type="button">
-                                    <span class="teacher-color-preview me-2" style="background: {{ teacher.color }}"></span>
-                                    <span class="text-primary fw-medium font-monospace">{{ teacher.username }}</span>
-                                        <span class="ms-1">-
-                                                {{ teacher.get_full_name }}
-                                              </span>
-                                </a>
-                                <div class="d-flex flex-column">
-                                <button class="accordion-button shadow-none collapsed border py-1 h-100" type="button"
-                                        data-bs-toggle="collapse" data-bs-target="#accordion{{ teacher.id }}"
-                                        aria-expanded="false">
-                                </button>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div id="accordion{{ teacher.id }}" class="accordion-collapse collapse border">
-                            <div class="accordion-body bg-opacity-25 bg-light">
-                                    <ul class="list-group list-unstyled">
-                                {% for course in teacher.coursemodel_set.all %}
-                                                <a href="{% url 'courses:course_update' pk=course.id %}" class="my-auto text-dark table-obj-name-link text-decoration-none">
-                                                    <li class="list-group-item list-items-hover py-0">
-                                                        <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">
-
-                                                            <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">
-                                                                {{ course }}
-                                                            </div>
-                                                            <span class="badge text-bg-primary text-white rounded-pill bg-opacity-100">{{ course.get_all_enrolled_count }}</span>
-                                                        </div>
-                                                    </li>
-                                                </a>
-                                {% endfor %}
-                                    </ul>
+                <div class="col-2 p-3">
+                    <a href="{% url 'users:teacher_update' teacher.id %}" class="text-decoration-none teacher-card">
+                        <div class="card wrapper">
+                            <img src="{% if teacher.image %}{{ teacher.image.url }}{% else %}{% static 'img/user.webp' %}{% endif %}" class="card-img-top teacher-card-image" alt="...">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ teacher.get_full_name }}</h6>
+                                <p class="text-primary ">{{ teacher.username }}</p>
+                                <div class=""><span class="py-1 mt-2 w-100 bg-danger d-block"></span></div>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
+                {#                <div class="accordion accordion-flush px-1" id="accordionExample">#}
+                {#                    <div class="accordion-item my-1">#}
+                {#                        <div class="accordion-header">#}
+                {#                            <div class="d-flex justify-content-between align-items-center border">#}
+                {#                                <span class="ms-3 text-secondary opacity-75">{{ forloop.counter }}. </span>#}
+                {#                                <a href="{% url 'users:teacher_update' pk=teacher.id %}"#}
+                {#                                   class="py-2 ps-2 d-flex align-items-center text-dark text-decoration-none table-obj-name-link m-0 w-100 h-100"#}
+                {#                                   type="button">#}
+                {#                                    <span class="teacher-color-preview me-2"#}
+                {#                                          style="background: {{ teacher.color }}"></span>#}
+                {#                                    <span class="text-primary fw-medium font-monospace">{{ teacher.username }}</span>#}
+                {#                                    <span class="ms-1">-#}
+                {#                                                {{ teacher.get_full_name }}#}
+                {#                                              </span>#}
+                {#                                </a>#}
+                {#                                <div class="d-flex flex-column">#}
+                {#                                    <button class="accordion-button shadow-none collapsed border py-1 h-100"#}
+                {#                                            type="button"#}
+                {#                                            data-bs-toggle="collapse" data-bs-target="#accordion{{ teacher.id }}"#}
+                {#                                            aria-expanded="false">#}
+                {#                                    </button>#}
+                {#                                </div>#}
+                {#                            </div>#}
+                {##}
+                {#                        </div>#}
+                {#                        <div id="accordion{{ teacher.id }}" class="accordion-collapse collapse border">#}
+                {#                            <div class="accordion-body bg-opacity-25 bg-light">#}
+                {#                                <ul class="list-group list-unstyled">#}
+                {#                                    {% for course in teacher.coursemodel_set.all %}#}
+                {#                                        <a href="{% url 'courses:course_update' pk=course.id %}"#}
+                {#                                           class="my-auto text-dark table-obj-name-link text-decoration-none">#}
+                {#                                            <li class="list-group-item list-items-hover py-0">#}
+                {#                                                <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">#}
+                {##}
+                {#                                                    <div class="ms-2 w-100 pe-0 pe-sm-3 d-flex flex-column flex-sm-row justify-content-between">#}
+                {#                                                        {{ course }}#}
+                {#                                                    </div>#}
+                {#                                                    <span class="badge text-bg-primary text-white rounded-pill bg-opacity-100">{{ course.get_all_enrolled_count }}</span>#}
+                {#                                                </div>#}
+                {#                                            </li>#}
+                {#                                        </a>#}
+                {#                                    {% endfor %}#}
+                {#                                </ul>#}
+                {#                            </div>#}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                </div>#}
             {% empty %}
                 <p class="text-center text-secondary">Нет Учителей.</p>
             {% endfor %}
-            {% if page_obj.paginator.count > 30  %}
+            {% if page_obj.paginator.count > 30 %}
                 {% include 'layout/pagination.html' %}
-        {% endif %}
+            {% endif %}
         </div>
     </div>
 {% endblock %}

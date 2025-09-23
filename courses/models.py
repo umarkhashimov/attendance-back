@@ -55,7 +55,7 @@ class CourseModel(models.Model):
     enrolled = models.ManyToManyField('students.StudentModel', through="students.Enrollment", editable=False)
     archived = models.BooleanField(default=False, verbose_name="В архиве")
     start_date = models.DateField(null=True, blank=True, verbose_name="Дата запуска")
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано в")
 
     def get_single_enrollment(self):
         Enrollments = apps.get_model('students', 'Enrollment')
