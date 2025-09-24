@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, User
 from django.contrib.admin.models import LogEntry, ContentType
 from django.apps import apps
+from PIL import Image, ImageOps
 
 PERMISSION_CHOICES = [
     ('delete_enrollment', 'Может удалить ученика из группы'),
@@ -69,6 +70,19 @@ class UsersModel(AbstractUser):
         courses = self.get_courses()
         filter = Enrollments.objects.filter(course__in=courses, status=True, trial_lesson=False)
         return filter
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # first save the original
+
+        if self.image:
+            img_path = self.image.path
+            img = Image.open(img_path)
+            # Fix rotation according to EXIF
+            img = ImageOps.exif_transpose(img)
+            # Example: Resize to max 300x300
+            max_size = (800, 800)
+            img.thumbnail(max_size)  # keeps aspect ratio
+            img.save(img_path, format='JPEG', quality=85, optimize=True)
 
     class Meta:
         verbose_name = 'пользователь'
