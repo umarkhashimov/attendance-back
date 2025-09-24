@@ -77,7 +77,7 @@ def get_subjects():
 def get_subject_teachers(subject_id):
     close_old_connections()
 
-    teachers = UsersModel.objects.filter(role='1', coursemodel__subject_id=subject_id).exclude(bio__isnull=True, image__isnull=True, first_name__isnull=True, last_name__isnull=True).distinct()
+    teachers = UsersModel.objects.filter(role='1', coursemodel__subject_id=subject_id).exclude(is_active=False, bio__isnull=True, image__isnull=True, first_name__isnull=True, last_name__isnull=True).distinct()
 
     return [{'id': teacher.id,'fname': teacher.first_name, 'lname': teacher.last_name} for teacher in teachers]
 
