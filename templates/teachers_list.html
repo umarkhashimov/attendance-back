@@ -31,9 +31,9 @@
                 </form>
             </div>
         </div>
-        <div class="row px-2 mt-3">
+        <div class="row px-1 mt-3">
             {% for teacher in teachers %}
-                <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 p-2 h-100">
+                <div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xl-3 px-1 py-2 h-100">
                     <a href="{% url 'users:teacher_update' teacher.id %}"
                        class="text-decoration-none teacher-card h-100">
                         <div class="card row  flex-row wrapper overflow-hidden container-fluid px-0 m-0 ">
@@ -43,7 +43,7 @@
                                         {% if teacher.image %}{{ teacher.image.url }}{% else %}{% static 'img/user.webp' %}{% endif %}"
                                      class="card-img-top teacher-card-image rounded-0" alt="...">
                             </div>
-                            <div class="col-9">
+                            <div class="col-9 px-2">
 
                                 <div class="card-body px-0 py-2 h-100">
                                     <div class="d-flex flex-column justify-content-between  h-100">

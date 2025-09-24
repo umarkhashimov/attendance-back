@@ -724,4 +724,8 @@ tr.active-tr {
     .username{
         font-size: 11px;
     }
+
+    .card-title{
+        font-size: 15px;
+    }
 }
