@@ -77,8 +77,18 @@ def get_subjects():
 def get_subject_teachers(subject_id):
     close_old_connections()
 
-    teachers = UsersModel.objects.filter(role='1', coursemodel__subject_id=subject_id).exclude(is_active=False, bio__isnull=True, image__isnull=True, first_name__isnull=True, last_name__isnull=True).distinct()
-
+    teachers = (
+        UsersModel.objects.filter(
+            role='1',
+            coursemodel__subject_id=subject_id,
+            is_active=True
+        )
+        .exclude(Q(bio__isnull=True) | Q(bio=''))
+        .exclude(Q(image__isnull=True) | Q(image=''))
+        .exclude(Q(first_name__isnull=True) | Q(first_name=''))
+        .exclude(Q(last_name__isnull=True) | Q(last_name=''))
+        .distinct()
+    )
     return [{'id': teacher.id,'fname': teacher.first_name, 'lname': teacher.last_name} for teacher in teachers]
 
 @sync_to_async
