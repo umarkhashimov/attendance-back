@@ -28,7 +28,7 @@ class UsersModel(AbstractUser):
         ('1', 'Учитель'),
         ('2', 'Администратор'),
     ]
-    image = models.ImageField(upload_to=convert_file_name, null=True, blank=True, default="img/user.webp")
+    image = models.ImageField(upload_to=convert_file_name, null=True, blank=True, default="/static/img/user.webp")
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1', verbose_name='Роль')
     phone_number = models.CharField(max_length=13, null=True, blank=True, verbose_name="Номер Телефона")
     bio = models.TextField(null=True, blank=True, verbose_name='Биография')
