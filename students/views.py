@@ -22,29 +22,65 @@ from .forms import EnrollmentForm, UpdateEnrollmentForm, StudentEnrollmentForm, 
 from attendance.models import AttendanceModel
 from leads.models import LeadsModel
 from leads.forms import LeadForm
+from django.contrib.postgres.search import TrigramSimilarity
+
 from rapidfuzz import fuzz
 
 def autocomplete_students(request):
     q = request.GET.get('q')
-
     if not q:
         return JsonResponse({'results': []})
 
-    # Take only the last word the user typed
-    last_word = q.split()[-1].lower()
+    term = q.split()[-1]  # last word user typed
 
-    # Collect all unique first and last names
-    all_first_names = set(StudentModel.objects.values_list('first_name', flat=True))
-    all_last_names = set(StudentModel.objects.values_list('last_name', flat=True))
+    # Search similar first names
+    first_names = (
+        StudentModel.objects
+        .annotate(sim=TrigramSimilarity('first_name', term))
+        .filter(sim__gt=0.2)          # similarity threshold
+        .values_list('first_name', flat=True)
+        .distinct()
+        .order_by('-sim')[:10]
+    )
 
-    suggestions = set()
+    # Search similar last names
+    last_names = (
+        StudentModel.objects
+        .annotate(sim=TrigramSimilarity('last_name', term))
+        .filter(sim__gt=0.2)
+        .values_list('last_name', flat=True)
+        .distinct()
+        .order_by('-sim')[:10]
+    )
 
-    for name in all_first_names.union(all_last_names):
-        if fuzz.ratio(last_word, name.lower()) >= 70:
-            suggestions.add(name)
+    # Merge results without duplicates
+    suggestions = sorted(set(first_names) | set(last_names))
 
-    results = [{"id": i, "text": name} for i, name in enumerate(sorted(suggestions))]
-    return JsonResponse({'results': results})
+    results = [{"id": i, "text": name} for i, name in enumerate(suggestions)]
+    return JsonResponse({"results": results})
+
+
+# def autocomplete_students(request):
+#     q = request.GET.get('q')
+#
+#     if not q:
+#         return JsonResponse({'results': []})
+#
+#     # Take only the last word the user typed
+#     last_word = q.split()[-1].lower()
+#
+#     # Collect all unique first and last names
+#     all_first_names = set(StudentModel.objects.values_list('first_name', flat=True))
+#     all_last_names = set(StudentModel.objects.values_list('last_name', flat=True))
+#
+#     suggestions = set()
+#
+#     for name in all_first_names.union(all_last_names):
+#         if fuzz.ratio(last_word, name.lower()) >= 70:
+#             suggestions.add(name)
+#
+#     results = [{"id": i, "text": name} for i, name in enumerate(sorted(suggestions))]
+#     return JsonResponse({'results': results})
 
 class StudentUpdateView(AdminRequired, UpdateView):
     model = StudentModel
