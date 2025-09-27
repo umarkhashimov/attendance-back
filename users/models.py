@@ -33,7 +33,7 @@ class UsersModel(AbstractUser):
     phone_number = models.CharField(max_length=13, null=True, blank=True, verbose_name="Номер Телефона")
     bio = models.TextField(null=True, blank=True, verbose_name='Биография')
     color = models.CharField(max_length=7, default='#ffffff', null=True, blank=True, verbose_name="Цвет выделения")
-    custom_permissions = models.JSONField(default=get_default_permissions(), blank=True, null=True)
+    custom_permissions = models.JSONField(default=get_default_permissions, blank=True, null=True)
 
     def has_permission(self, permission):
         return permission in self.custom_permissions
