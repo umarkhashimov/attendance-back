@@ -22,5 +22,5 @@ class Command(BaseCommand):
             mark_unmarked_sessions(date)
         else:
             print(f'Something went wrong...')
-    except:
-        print('Something went wrong...')
+    except Exception as e:
+        print(f'Something went wrong... {e}')
