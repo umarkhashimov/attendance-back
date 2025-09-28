@@ -39,7 +39,8 @@ async def start(message: Message, state: FSMContext):
 @router.message(F.text == "🏫 О центре")
 async def about_center(message: Message, state: FSMContext):
     kb = await get_main_menu_keyboard(message.from_user.id)
-    await message.answer(text=str(about_center_text), reply_markup=kb)
+    await message.answer(text=str(about_center_text), reply_markup=kb, parse_mode="HTML")
+    await state.set_state(ChatState.main_menu)
 
 @router.message(F.text == "📖 Материалы")
 async def get_materials(message: Message, state: FSMContext):
