@@ -72,3 +72,12 @@ def teachers_inline_keyboard_builder(data):
 
     kb.adjust(1)
     return kb.as_markup()
+
+def about_center_inline_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🌐 Наш сайт", url="https://iqcenter.uz")],
+        [InlineKeyboardButton(text="📷 Инстаграм", url="https://www.instagram.com/iqcenter.uz/")],
+        [InlineKeyboardButton(text="📍 Локация", url="https://maps.app.goo.gl/FPMr7Y9QQ9sZELc97")],
+    ])
+
+    return keyboard

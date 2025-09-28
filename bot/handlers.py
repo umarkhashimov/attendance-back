@@ -8,7 +8,7 @@ import os
 from django.conf import settings
 
 from .utils import RegistrationForm, ChatState
-from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder
+from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder, about_center_inline_keyboard
 from .database import get_user, add_user
 from .helpers import get_students, get_enrollments, get_enrollment_balance, get_student, get_enrollment_attendance_list, get_subjects, get_subject_teachers, get_teacher_info
 from .messages import about_center_text
@@ -38,8 +38,10 @@ async def start(message: Message, state: FSMContext):
 
 @router.message(F.text == "🏫 О центре")
 async def about_center(message: Message, state: FSMContext):
-    kb = await get_main_menu_keyboard(message.from_user.id)
-    await message.answer(text=str(about_center_text), reply_markup=kb, parse_mode="HTML")
+    kb = about_center_inline_keyboard()
+    file_path = os.path.join(settings.STATIC_ROOT, 'img/center-img.jpg')
+    photo = FSInputFile(file_path)
+    await message.answer_photo(photo=photo, caption=str(about_center_text), parse_mode="HTML", reply_markup=kb)
     await state.set_state(ChatState.main_menu)
 
 @router.message(F.text == "📖 Материалы")
