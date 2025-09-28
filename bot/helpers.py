@@ -81,7 +81,8 @@ def get_subject_teachers(subject_id):
         UsersModel.objects.filter(
             role='1',
             coursemodel__subject_id=subject_id,
-            is_active=True
+            is_active=True,
+            display_in_bot=True
         )
         .exclude(Q(bio__isnull=True) | Q(bio=''))
         .exclude(Q(image__isnull=True) | Q(image=''))

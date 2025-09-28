@@ -34,6 +34,7 @@ class UsersModel(AbstractUser):
     bio = models.TextField(null=True, blank=True, verbose_name='Биография')
     color = models.CharField(max_length=7, default='#ffffff', null=True, blank=True, verbose_name="Цвет выделения")
     custom_permissions = models.JSONField(default=get_default_permissions, blank=True, null=True)
+    display_in_bot = models.BooleanField(default=True, verbose_name="Показать в боте")
 
     def has_permission(self, permission):
         return permission in self.custom_permissions
