@@ -11,7 +11,7 @@ from .utils import RegistrationForm, ChatState
 from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder
 from .database import get_user, add_user
 from .helpers import get_students, get_enrollments, get_enrollment_balance, get_student, get_enrollment_attendance_list, get_subjects, get_subject_teachers, get_teacher_info
-from .messages import about_center
+from .messages import about_center_text
 
 router = Router()
 
@@ -39,7 +39,7 @@ async def start(message: Message, state: FSMContext):
 @router.message(F.text == "🏫 О центре")
 async def about_center(message: Message, state: FSMContext):
     kb = await get_main_menu_keyboard(message.from_user.id)
-    await message.answer(text=str(about_center), reply_markup=kb)
+    await message.answer(text=str(about_center_text), reply_markup=kb)
 
 @router.message(F.text == "📖 Материалы")
 async def get_materials(message: Message, state: FSMContext):
