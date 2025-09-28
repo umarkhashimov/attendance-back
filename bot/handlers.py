@@ -3,7 +3,7 @@ from aiogram import Router, F, Bot
 from aiogram.filters import Command, CommandStart
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
-from pyexpat.errors import messages
+from datetime import datetime
 import os
 from django.conf import settings
 
@@ -11,20 +11,35 @@ from .utils import RegistrationForm, ChatState
 from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder
 from .database import get_user, add_user
 from .helpers import get_students, get_enrollments, get_enrollment_balance, get_student, get_enrollment_attendance_list, get_subjects, get_subject_teachers, get_teacher_info
+from .messages import about_center
 
 router = Router()
 
 @router.message(Command('start'))
 async def start(message: Message, state: FSMContext):
     kb = await get_main_menu_keyboard(message.from_user.id)
-    await message.answer(text="Добро пожаловать!", reply_markup=kb)
+    hour = datetime.now().hour
+    if 5 <= hour < 12:
+        greeting = "🌅 Доброе утро!"
+    elif 12 <= hour < 18:
+        greeting = "☀️ Добрый день!"
+    elif 18 <= hour < 23:
+        greeting = "🌆 Добрый вечер!"
+    else:
+        greeting = "🌙 Доброй ночи!"
+    await message.answer(f"{greeting} Рады видеть вас здесь ✨", reply_markup=kb)
     await state.set_state(ChatState.main_menu)
 
 @router.message(Command('help'))
 async def start(message: Message, state: FSMContext):
     kb = await get_main_menu_keyboard(message.from_user.id)
-    await message.answer(text="Здравствуйте!ℹ️ О боте\nЭтот бот позволяет студентам учебного центра быстро получать информацию:\n• 💳 Баланс по оплате обучения\n• ✅ Посещаемость занятий\n• 🏫 Дополнительные сведения о нашем учебном центре\n\n⚠️ Важно: Ваш номер телефона в Telegram должен совпадать с номером, указанным в базе студентов у администратора.\nЕсли номер не совпадает, бот не сможет показать ваши данные.", reply_markup=kb)
+    await message.answer(text="ℹ️ О боте\nЭтот бот позволяет студентам учебного центра быстро получать информацию:\n• 💳 Баланс по оплате обучения\n• ✅ Посещаемость занятий\n• 🏫 Дополнительные сведения о нашем учебном центре\n\n⚠️ Важно: Ваш номер телефона в Telegram должен совпадать с номером, указанным в базе студентов у администратора.\nЕсли номер не совпадает, бот не сможет показать ваши данные.", reply_markup=kb)
     await state.set_state(ChatState.main_menu)
+
+@router.message(F.text == "🏫 О центре")
+async def about_center(message: Message, state: FSMContext):
+    kb = await get_main_menu_keyboard(message.from_user.id)
+    await message.answer(text=about_center, reply_markup=kb)
 
 @router.message(F.text == "📖 Материалы")
 async def get_materials(message: Message, state: FSMContext):
