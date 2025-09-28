@@ -7,7 +7,7 @@ async def get_main_menu_keyboard(uid):
     keys = [
         [
             KeyboardButton(text='🔑 Войти') if not user else KeyboardButton(text='🗂️ Данные Ученика'),
-            KeyboardButton(text='ℹ️ Помощь'),
+            KeyboardButton(text='📖 Материалы'),
         ],
         [
             KeyboardButton(text='🧑‍🏫 Учителя'),

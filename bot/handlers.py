@@ -20,6 +20,16 @@ async def start(message: Message, state: FSMContext):
     await message.answer(text="Добро пожаловать!", reply_markup=kb)
     await state.set_state(ChatState.main_menu)
 
+@router.message(Command('help'))
+async def start(message: Message, state: FSMContext):
+    kb = await get_main_menu_keyboard(message.from_user.id)
+    await message.answer(text="Здравствуйте!ℹ️ О боте\nЭтот бот позволяет студентам учебного центра быстро получать информацию:\n• 💳 Баланс по оплате обучения\n• ✅ Посещаемость занятий\n• 🏫 Дополнительные сведения о нашем учебном центре\n\n⚠️ Важно: Ваш номер телефона в Telegram должен совпадать с номером, указанным в базе студентов у администратора.\nЕсли номер не совпадает, бот не сможет показать ваши данные.", reply_markup=kb)
+    await state.set_state(ChatState.main_menu)
+
+@router.message(F.text == "📖 Материалы")
+async def get_materials(message: Message, state: FSMContext):
+    await message.answer(text='Скоро ...')
+
 @router.message(F.text == '🧑‍🏫 Учителя')
 async def staff(message: Message, state: FSMContext):
     subjects = await get_subjects()
