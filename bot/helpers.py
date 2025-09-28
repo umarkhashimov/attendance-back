@@ -98,4 +98,7 @@ def get_teacher_info(teacher_id):
 
     teacher = UsersModel.objects.get(id=teacher_id, is_active=True, display_in_bot=True)
 
-    return {'id': teacher.id, 'fname': teacher.first_name, 'lname': teacher.last_name, 'bio': teacher.bio, 'image': teacher.image}
+    if teacher and teacher.is_active and teacher.display_in_bot:
+        return {'id': teacher.id, 'fname': teacher.first_name, 'lname': teacher.last_name, 'bio': teacher.bio, 'image': teacher.image}
+
+    return None

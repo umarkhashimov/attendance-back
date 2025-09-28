@@ -55,12 +55,15 @@ async def callback_teacher_info(call: CallbackQuery, state: FSMContext):
     teacher_id = call.data.split("_")[-1]
     teacher = await get_teacher_info(teacher_id)
 
-    caption = f'<b>{teacher["fname"]} {teacher["lname"]}</b>\n\n{teacher["bio"]}'
+    if teacher:
+        caption = f'<b>{teacher["fname"]} {teacher["lname"]}</b>\n\n{teacher["bio"]}'
 
-    file_path = os.path.join(settings.MEDIA_ROOT, str(teacher['image']))
-    photo = FSInputFile(file_path)
+        file_path = os.path.join(settings.MEDIA_ROOT, str(teacher['image']))
+        photo = FSInputFile(file_path)
 
-    await call.message.answer_photo(photo=photo, caption=caption, parse_mode="HTML")
+        await call.message.answer_photo(photo=photo, caption=caption, parse_mode="HTML")
+    else:
+        await call.message.answer(text="❗ Учитель не найден.")
     await call.answer()
 
 
