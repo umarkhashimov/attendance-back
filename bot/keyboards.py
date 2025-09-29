@@ -20,12 +20,11 @@ async def get_main_menu_keyboard(uid):
 
     return kb
 
-request_phone_keyboard = ReplyKeyboardMarkup(keyboard=[
-    [
-        KeyboardButton(text="📱 Отправить мой контакт", request_contact=True),
-    ],
+request_phone_keyboard = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text="📱 Отправить мой контакт", request_contact=True)]],
+    resize_keyboard=True
+)
 
-], resize_keyboard=True, selective=True)
 
 st_data_keyboard = ReplyKeyboardMarkup(keyboard=[
     [

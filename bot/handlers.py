@@ -119,15 +119,20 @@ async def sign_in(message: Message, state: FSMContext):
                              reply_markup=request_phone_keyboard)
         await state.set_state(RegistrationForm.get_phone)
 
+
+
 @router.message(F.contact, RegistrationForm.get_phone)
 async def get_contact(message: Message, state: FSMContext):
     contact = message.contact
+    phone_number = contact.phone_number
+    if not phone_number.startswith('+'):
+        phone_number = '+' + phone_number
 
     if contact.user_id != message.from_user.id:
         await message.answer("❌ Пожалуйста отправьте контакт текущего профиля Телеграм.")
         return
 
-    students = await get_students(contact.phone_number)
+    students = await get_students(phone_number)
 
     if not students:
         kb = await get_main_menu_keyboard(message.from_user.id)
@@ -138,7 +143,7 @@ async def get_contact(message: Message, state: FSMContext):
     await message.answer(text=f"Найдено:\n\n{'\n'.join(['{id}. {fname} {lname}'.format(id=st['id'], fname=st['fname'], lname=st['lname']) for st in students])}")
 
     await state.update_data(
-        phone_number=contact.phone_number,
+        phone_number=phone_number,
         first_name=contact.first_name,
         last_name=contact.last_name,
         user_id = contact.user_id
@@ -154,7 +159,7 @@ async def get_contact(message: Message, state: FSMContext):
 @router.message(F.text.in_(['Да', 'Нет', '✅ Да', '❌ Нет']), RegistrationForm.confirm)
 async def confirm_contact(message: Message, state: FSMContext   ):
     data = await state.get_data()
-
+    main_kb = await get_main_menu_keyboard(message.from_user.id)
     contact = {
         'phone_number' : data.get("phone_number"),
         'first_name' : data.get("first_name"),
@@ -168,9 +173,9 @@ async def confirm_contact(message: Message, state: FSMContext   ):
             await message.answer(text="Вы успешно зарегисрированы 🎉", reply_markup=st_data_keyboard)
             await state.set_state(ChatState.student_info)
         else:
-            await message.answer(text="Что-то пошло не так ⛔")
+            await message.answer(text="Что-то пошло не так ⛔", reply_markup=main_kb)
     else:
-            await message.answer(text="Действие отменено ❌")
+            await message.answer(text="Действие отменено ❌", reply_markup=main_kb)
 
     await state.clear()
 
