@@ -156,7 +156,7 @@ class CreatePaymentView(AdminRequired, View):
 
                     messages.success(request, "Оплата успешно добавлена.")
                 except Exception as e:
-                    messages.error(request, f"Что-то пошло не так. {e}")
+                    messages.error(request, "Что-то пошло не так.")
                     traceback.print_exc()
 
             else:
