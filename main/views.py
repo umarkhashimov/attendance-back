@@ -146,7 +146,7 @@ class StudentsListView(AdminRequired, ListView):
                 sim_first=TrigramSimilarity('first_name', text),
                 sim_last=TrigramSimilarity('last_name', text),
                 sim_phone=TrigramSimilarity('phone_number', text),
-                sim_additional_phone=TrigramSimilarity('additional_phone', text),
+                sim_additional_phone=TrigramSimilarity('additional_number', text),
             ).filter(
                 Q(sim_first__gt=0.3) | Q(sim_last__gt=0.3) | Q(sim_phone__gt=0.8) | Q(sim_additional_phone__gt=0.8)
             ).order_by('-sim_first', '-sim_last', '-sim_phone', '-sim_additional_phone')
