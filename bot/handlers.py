@@ -169,9 +169,10 @@ async def confirm_contact(message: Message, state: FSMContext   ):
 
     if message.text in ['✅ Да', 'Да']:
         user = await add_user(contact, message.from_user)
+        main_kb = await get_main_menu_keyboard(message.from_user.id)
         if user:
-            await message.answer(text="Вы успешно зарегисрированы 🎉", reply_markup=st_data_keyboard)
-            await state.set_state(ChatState.student_info)
+            await message.answer(text="Вы успешно зарегистрированы 🎉", reply_markup=main_kb)
+            await state.set_state(ChatState.main_menu)
         else:
             await message.answer(text="Что-то пошло не так ⛔", reply_markup=main_kb)
     else:
