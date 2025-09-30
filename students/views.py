@@ -37,7 +37,7 @@ def autocomplete_students(request):
     first_names = (
         StudentModel.objects
         .annotate(sim=TrigramSimilarity('first_name', term))
-        .filter(sim__gt=0.2)          # similarity threshold
+        .filter(sim__gt=0.3)          # similarity threshold
         .values_list('first_name', flat=True)
         .distinct()
         .order_by('-sim')[:10]
@@ -47,7 +47,7 @@ def autocomplete_students(request):
     last_names = (
         StudentModel.objects
         .annotate(sim=TrigramSimilarity('last_name', term))
-        .filter(sim__gt=0.2)
+        .filter(sim__gt=0.3)
         .values_list('last_name', flat=True)
         .distinct()
         .order_by('-sim')[:10]
