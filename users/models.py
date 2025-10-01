@@ -1,11 +1,12 @@
 from random import choices
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
 from django.contrib.admin.models import LogEntry, ContentType
 from django.apps import apps
 from PIL import Image, ImageOps
+from requests import session
 
 PERMISSION_CHOICES = [
     ('delete_enrollment', 'Может удалить ученика из группы'),
@@ -65,6 +66,20 @@ class UsersModel(AbstractUser):
         Courses = apps.get_model('courses', 'CourseModel')
         filter = Courses.objects.filter(teacher=self).order_by('subject', 'weekdays','lesson_time')
         return filter
+
+    def get_sessions_courses(self):
+        Courses = apps.get_model('courses', 'CourseModel')
+        courses = Courses.objects.filter(teacher=self).order_by('subject', 'weekdays', 'lesson_time')
+        Sessions = apps.get_model('courses', 'SessionsModel')
+
+        dt = datetime.now() - timedelta(weeks=8)
+        course_sessions = Sessions.objects.filter(record_by=self, date__gte=dt).values_list('course', flat=True)
+
+        if course_sessions.count() > 0:
+            additional_courses = Courses.objects.filter(id__in=course_sessions)
+            courses = courses.union(additional_courses)
+
+        return courses
 
     def get_enrollments(self):
         Enrollments = apps.get_model('students', 'Enrollment')
