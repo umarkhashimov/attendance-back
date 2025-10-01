@@ -22,7 +22,7 @@ urlpatterns = [
     path('users/<int:pk>/reset-password/', reset_user_password, name='reset_user_password'),
     path('users/create/', CustomUserCreateView.as_view(), name='user_create'),
     path('salary/users/', SalaryUsersListView.as_view(), name='salary_users_list'),
-    path('salary/course/<int:course_id>', SalaryCourseDetailView.as_view(), name='salary_course_detail'),
+    path('salary/teacher/<int:teacher_id>/course/<int:course_id>', SalaryCourseDetailView.as_view(), name='salary_course_detail'),
 
 
     #     API

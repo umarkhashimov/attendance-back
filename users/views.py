@@ -226,10 +226,12 @@ class SalaryUsersListView(SuperUserRequired, ListView):
 class SalaryCourseDetailView(SuperUserRequired, View):
     template_name = 'salary/salary_course_detail.html'
 
-    def get(self, request, course_id):
+    def get(self, request, course_id, teacher_id):
         course = CourseModel.objects.get(id=course_id)
         month = request.GET.get('month', None)
         date = datetime.today()
+        teacher = get_object_or_404(UsersModel, pk=teacher_id)
+
         if month and self.request.user.role != '1':
             date = datetime.strptime(month, '%Y-%m').date()
 
@@ -241,7 +243,7 @@ class SalaryCourseDetailView(SuperUserRequired, View):
 
         # Get the course and its sessions sorted by date
         course = CourseModel.objects.get(id=course_id)
-        sessions = SessionsModel.objects.filter(course=course, date__month=date.month, date__year=date.year).order_by(
+        sessions = SessionsModel.objects.filter(Q(record_by=teacher) |Q(record_by__role='2') | Q(record_by__isnull=True), course=course, date__month=date.month, date__year=date.year).order_by(
             'date')
 
         # Get all enrollments
@@ -304,7 +306,8 @@ class SalaryCourseDetailView(SuperUserRequired, View):
         context.update({
             'course': course,
             'sessions': sessions.order_by('-date'),
-            'attendance_data': attendance_data
+            'attendance_data': attendance_data,
+            'teacher': teacher,
         })
         return render(request, self.template_name, context)
 
