@@ -81,6 +81,7 @@ class UsersModel(AbstractUser):
 
         return courses
 
+
     def get_enrollments(self):
         Enrollments = apps.get_model('students', 'Enrollment')
         courses = self.get_courses()
