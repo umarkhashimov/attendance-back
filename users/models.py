@@ -69,12 +69,13 @@ class UsersModel(AbstractUser):
 
     def get_sessions_courses(self):
         Courses = apps.get_model('courses', 'CourseModel')
-        courses = Courses.objects.filter(teacher=self).order_by('subject', 'weekdays', 'lesson_time')
         Sessions = apps.get_model('courses', 'SessionsModel')
 
         dt = datetime.now() - timedelta(weeks=8)
-        course_sessions = Sessions.objects.filter(record_by=self, date__gte=dt).values_list('course', flat=True)
+        sessions = Sessions.objects.filter(date__gte=dt, course__teacher=self).values_list('course', flat=True)
+        courses = Courses.objects.filter(id__in=sessions)
 
+        course_sessions = Sessions.objects.filter(record_by=self, date__gte=dt).values_list('course', flat=True)
         if course_sessions.count() > 0:
             additional_courses = Courses.objects.filter(id__in=course_sessions)
             courses = courses.union(additional_courses)
