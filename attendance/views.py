@@ -65,7 +65,7 @@ class GetSessionView(View):
                         obj.participation_grade = attendance_grade if attendance_grade else None
                         obj.homework_grade = homework_grade if homework_grade else None
 
-                    elif obj.status in [0]:
+                    elif obj.status in [0] or obj.status is None:
                         if obj.enrollment.trial_lesson and not obj.enrollment.trail_used_once:
                             obj.absent_trial = True
 
