@@ -289,6 +289,7 @@ class SalaryCourseDetailView(SuperUserRequired, View):
                         'session': session,
                         'trial_attendance': att.trial_attendance if att else None,
                         'payed': True if payment_check_date and payment_check_date >= session.date and absents < 3 else False,
+                        'absent_trial': True if att and att.status == 0 and att.absent_trial else False,
                     })
                     student_attendance.sort(key=lambda x: x['session'].date, reverse=True)
 

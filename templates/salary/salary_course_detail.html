@@ -101,7 +101,7 @@
                                 {% if info.status|stringformat:'s' in '1.2.0' or info.status == None %}
                                     <label for="salaryCheckbox-{{ record.student.id }}-{{ forloop.counter }}"
                                            class="position-relative text-black w-100 h-100 cursor-pointer">
-                                        {% if info.session.status == True and info.trial_attendance == False and info.payed == True %}
+                                        {% if info.session.status == True and info.trial_attendance == False and info.payed == True and not info.absent_trial %}
                                             <input col="{{ forloop.counter }}"
                                                    {% if info.status != None and info.session.record_by.id == info.session.course.teacher.id %}checked{% endif %}
                                                    type="checkbox"

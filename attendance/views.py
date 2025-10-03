@@ -30,9 +30,9 @@ class GetSessionView(View):
         for obj in attendances:
             if f"stid_{obj.enrollment.student.student_id}" in keys:
                 status = request.POST.get(str(f'stid_{obj.enrollment.student.student_id}'), None)
-
                 if status in ['1', '2', '0']:
                     obj.status = int(status)
+                    print(obj.status)
 
                     # Check for trial lesson logic and payment_due assignment
                     if obj.status in [1, 2]:
@@ -64,6 +64,10 @@ class GetSessionView(View):
                         homework_grade = request.POST.get(str(f'ghw_{obj.enrollment.student.student_id}'), None)
                         obj.participation_grade = attendance_grade if attendance_grade else None
                         obj.homework_grade = homework_grade if homework_grade else None
+
+                    elif obj.status in [0]:
+                        if obj.enrollment.trial_lesson and not obj.enrollment.trail_used_once:
+                            obj.absent_trial = True
 
                     obj.save()
 

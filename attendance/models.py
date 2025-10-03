@@ -11,6 +11,7 @@ class AttendanceModel(models.Model):
     homework_grade = models.IntegerField(null=True, blank=True)
     participation_grade = models.IntegerField(null=True, blank=True)
     trial_attendance = models.BooleanField(default=False)
+    absent_trial = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
