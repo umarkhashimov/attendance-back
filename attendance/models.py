@@ -2,7 +2,7 @@ from django.db import models
 from courses.models import SessionsModel
 from students.models import Enrollment
 
-
+from django.contrib.auth.models import User
 class AttendanceModel(models.Model):
     enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
     session = models.ForeignKey(SessionsModel, on_delete=models.CASCADE)

@@ -12,9 +12,10 @@ from students.models import StudentModel, Enrollment
 from users.models import UsersModel
 from .forms import LeadForm, LeadsListFilterForm, LeadUpdateForm
 from .models import LeadsModel
-from students.forms import StudentInfoForm, StudentEnrollmentForm
+from students.forms import StudentInfoForm, StudentEnrollmentForm, EnrollmentForm
 from courses.models import SubjectModel
 from users.helpers import record_action
+from courses.forms import  CourseCreateForm
 
 class LeadsListView(AdminRequired, ListView):
     model = LeadsModel
@@ -169,8 +170,8 @@ class LeadDetailView(AdminRequired, DetailView):
         object_data = model_to_dict(self.get_object())
         merged_data = {**object_data, **data}
         context['filter_form'] = LeadsListFilterForm(initial=merged_data)
-        print(merged_data)
         context['enroll_form'] = StudentEnrollmentForm(student=self.get_object().student, teacher=merged_data.get('teacher', None), subject=merged_data.get('subject', None), weekdays=merged_data.get('weekdays', None))
+        context['create_course_form'] = CourseCreateForm(initial=merged_data)
         return context
 
 class LeadUpdateView(AdminRequired, UpdateView):
@@ -220,10 +221,65 @@ class LeadEnrollView(AdminRequired, View):
                 # Record action
                 action_message = f"Лид Обработан <a href='/leads/detail/{lead.id}'><b>{lead.id}. {lead.student}</b></a>"
                 record_action(2, request.user, lead, lead.id, action_message)
-                messages.success(request,'Ученик успешно записан в группу в группу')
+                messages.success(request,'Ученик успешно записан в группу')
             except Exception as e:
                 messages.error(request,'Ошибка при записи ученика в группу')
 
+
+        return redirect('leads:lead_detail', pk=pk)
+
+class LeadCreateCourseEnrollView(AdminRequired, View):
+    def post(self, request, pk, student_id):
+        lead = get_object_or_404(LeadsModel, pk=pk)
+
+        course_allowed = CourseCreateForm().fields.keys()  # e.g. {'name','price',...}
+        cleaned_data = {k: v for k, v in request.POST.items() if k in course_allowed}
+
+        if cleaned_data.get('days') == '1':
+            cleaned_data['weekdays'] = ['0', '2', '4']
+        elif cleaned_data.get('days') == '2':
+            cleaned_data['weekdays'] = ['1', '3', '5']
+
+        form = CourseCreateForm(cleaned_data)
+
+        if form.is_valid():
+            try:
+                course = form.save()
+                student = get_object_or_404(StudentModel, pk=student_id)
+
+                enroll_allowed = EnrollmentForm().fields.keys()
+                enrollment_data = {k: v for k, v in request.POST.items() if k in enroll_allowed and k != 'course'}
+                enrollment_data['course'] = course.id
+
+                enroll_form = StudentEnrollmentForm(enrollment_data)
+
+                if enroll_form.is_valid():
+                    enrollment, created = Enrollment.objects.update_or_create(
+                        course=course,
+                        student=student,
+                        defaults={**enroll_form.cleaned_data, 'status': True, 'enrolled_at': datetime.now(), 'payment_due': None},
+                    )
+
+                    if created:
+                        enrollment.enrolled_by = self.request.user
+
+                    enrollment.save()
+
+                    lead.status = 2
+                    lead.enrollment_result = enrollment
+                    lead.processed_by = request.user
+                    lead.processed_at = datetime.now()
+                    lead.save()
+
+                    # Record action
+                    action_message = f"Лид Обработан <a href='/leads/detail/{lead.id}'><b>{lead.id}. {lead.student}</b></a>"
+                    record_action(2, request.user, lead, lead.id, action_message)
+                    messages.success(request, 'Ученик успешно записан в группу')
+                else:
+                    messages.success(request, 'Группа создана ! Но ошибка при записи.')
+
+            except Exception as e:
+                messages.error(request,'Ошибка при записи ученика в группу')
 
         return redirect('leads:lead_detail', pk=pk)
 
