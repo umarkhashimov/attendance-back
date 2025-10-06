@@ -214,8 +214,14 @@
 
         function checkWholeColumn(col) {
             const checkBoxesCol = document.querySelectorAll(`input[type="checkbox"].attendance-checkbox[col="${col}"]`)
+            const checkedBoxesCol = document.querySelectorAll(`input[type="checkbox"].attendance-checkbox[col="${col}"]:checked`)
+
+            let status = true;
+            if (checkBoxesCol.length === checkedBoxesCol.length){
+                status = false
+            }
             checkBoxesCol.forEach((box) => {
-                box.checked = true
+                box.checked = status
             })
         }
     </script>
