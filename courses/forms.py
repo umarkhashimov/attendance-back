@@ -23,6 +23,14 @@ class CourseCreateForm(forms.ModelForm):
         label="Курс"
     )
 
+    start_date = forms.DateField(
+        widget=forms.DateInput(
+            format='%Y-%m-%d',
+            attrs={'class': 'form-control', 'id': 'id_start_date'}
+        ),
+        input_formats=['%Y-%m-%d']
+    )
+
 
     class Meta:
         model = CourseModel
@@ -43,7 +51,6 @@ class CourseCreateForm(forms.ModelForm):
             'course_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите имя курса'}),
             'weekdays': Select2MultipleWidget(attrs={'class': 'form-control multiplechoices w-100'}),
             'status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-            'start_date': forms.DateInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
