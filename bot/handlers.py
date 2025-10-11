@@ -50,7 +50,7 @@ async def materials(message: Message, state: FSMContext):
     data = []
     for subject in subjects:
         text = f'{subject["name"]}'
-        callback_data = f'get_materials_subject_{subject["id"]}'
+        callback_data = f'get_materials_subject_{subject["name"]}_{subject["id"]}'
         data.append({'text': text, 'callback_data': callback_data})
 
     kb = subjects_inline_keyboard_builder(data)
@@ -59,6 +59,7 @@ async def materials(message: Message, state: FSMContext):
 @router.callback_query(F.data.startswith("get_materials_subject"))
 async def callback_subject_materials(call: CallbackQuery, state: FSMContext):
     subject_id = call.data.split("_")[-1]
+    subject_name = call.data.split("_")[-2]
     materials = await get_materials(subject_id)
     if materials and len(materials) > 0:
         data = []
@@ -68,7 +69,7 @@ async def callback_subject_materials(call: CallbackQuery, state: FSMContext):
             data.append({'text': text, 'callback_data': callback_data})
 
             kb = materials_inline_keyboard_builder(data)
-            await call.message.answer(text='Выберите Файл:', reply_markup=kb)
+            await call.message.answer(text=f'Выберите Файл предмета {subject_name}:', reply_markup=kb)
             await call.message.delete()
     else:
         await call.message.answer(text="❌ Нет Файлов")
