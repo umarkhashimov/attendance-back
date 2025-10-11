@@ -80,3 +80,12 @@ def about_center_inline_keyboard():
     ])
 
     return keyboard
+
+def materials_inline_keyboard_builder(data):
+    kb = InlineKeyboardBuilder()
+
+    for info in data:
+        kb.button(text=info['text'], callback_data=info['callback_data'])
+
+    kb.adjust(1)
+    return kb.as_markup()

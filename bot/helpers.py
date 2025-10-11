@@ -6,6 +6,7 @@ from attendance.models import AttendanceModel
 from django.db import close_old_connections
 from courses.models import SubjectModel
 from users.models import UsersModel
+from main.models import CourseMaterials
 
 @sync_to_async
 def get_enrollments(st_id):
@@ -100,5 +101,23 @@ def get_teacher_info(teacher_id):
 
     if teacher and teacher.is_active and teacher.display_in_bot:
         return {'id': teacher.id, 'fname': teacher.first_name, 'lname': teacher.last_name, 'bio': teacher.bio, 'image': teacher.image}
+
+    return None
+
+@sync_to_async
+def get_materials(subject_id):
+    close_old_connections()
+
+    materials = CourseMaterials.objects.filter(subject_id=subject_id)
+
+    return [{'id': obj.id, "file_name": obj.file_name} for obj in materials]
+
+@sync_to_async
+def get_material_info(material_id):
+    close_old_connections()
+
+    material = CourseMaterials.objects.get(id=material_id)
+    if material:
+        return {'id': material.id, 'file_name': material.file_name, 'file': material.file}
 
     return None

@@ -8,9 +8,9 @@ import os
 from django.conf import settings
 
 from .utils import RegistrationForm, ChatState
-from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder, about_center_inline_keyboard
+from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder,materials_inline_keyboard_builder,  get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder, about_center_inline_keyboard
 from .database import get_user, add_user
-from .helpers import get_students, get_enrollments, get_enrollment_balance, get_student, get_enrollment_attendance_list, get_subjects, get_subject_teachers, get_teacher_info
+from .helpers import get_students, get_enrollments, get_materials, get_material_info, get_enrollment_balance, get_student, get_enrollment_attendance_list, get_subjects, get_subject_teachers, get_teacher_info
 from .messages import about_center_text
 
 router = Router()
@@ -45,8 +45,52 @@ async def about_center(message: Message, state: FSMContext):
     await state.set_state(ChatState.main_menu)
 
 @router.message(F.text == "📖 Материалы")
-async def get_materials(message: Message, state: FSMContext):
-    await message.answer(text='Скоро ...')
+async def materials(message: Message, state: FSMContext):
+    subjects = await get_subjects()
+    data = []
+    for subject in subjects:
+        text = f'{subject["name"]}'
+        callback_data = f'get_materials_subject_{subject["id"]}'
+        data.append({'text': text, 'callback_data': callback_data})
+
+    kb = subjects_inline_keyboard_builder(data)
+    await message.answer(text='Выберите предмет для материалов:', reply_markup=kb)
+
+@router.callback_query(F.data.startswith("get_materials_subject"))
+async def callback_subject_materials(call: CallbackQuery, state: FSMContext):
+    subject_id = call.data.split("_")[-1]
+    materials = await get_materials(subject_id)
+    if materials and len(materials) > 0:
+        data = []
+        for material in materials:
+            text = f'{material["file_name"]}'
+            callback_data = f'get_material_{material["id"]}'
+            data.append({'text': text, 'callback_data': callback_data})
+
+            kb = materials_inline_keyboard_builder(data)
+            await call.message.answer(text='Выберите Файл:', reply_markup=kb)
+            await call.message.delete()
+    else:
+        await call.message.answer(text="❌ Нет Файлов")
+
+    await call.answer()
+
+@router.callback_query(F.data.startswith("get_material"))
+async def get_material_file(call: CallbackQuery, state: FSMContext):
+    material_id = call.data.split("_")[-1]
+    material = await get_material_info(material_id)
+    if material:
+        caption = f'{material["file_name"]}'
+        file_path = os.path.join(settings.MEDIA_ROOT, str(material['file']))
+        file = FSInputFile(file_path)
+
+        await call.message.answer_document(document=file, caption=caption, parse_mode="HTML")
+        await call.message.delete()
+    else:
+        await call.message.answer(text="❗ Файл не найден.")
+
+    await call.answer()
+
 
 @router.message(F.text == '🧑‍🏫 Учителя')
 async def staff(message: Message, state: FSMContext):
@@ -54,7 +98,7 @@ async def staff(message: Message, state: FSMContext):
     data = []
     for subject in subjects:
         text = f'{subject["name"]}'
-        callback_data = f'get_teachers_subject_{subject["id"]}'
+        callback_data = f'get_teachers_subject_{subject["name"]}_{subject["id"]}'
         data.append({'text':text, 'callback_data':callback_data})
     kb = subjects_inline_keyboard_builder(data)
     await message.answer(text='Выберите предмет:', reply_markup=kb)
@@ -62,6 +106,7 @@ async def staff(message: Message, state: FSMContext):
 @router.callback_query(F.data.startswith("get_teachers_subject"))
 async def callback_subject_teachers(call: CallbackQuery, state: FSMContext):
     subject_id = call.data.split("_")[-1]
+    subject_name = call.data.split("_")[-2]
     teachers = await get_subject_teachers(subject_id)
     if teachers and len(teachers) > 0:
         data = []
@@ -71,7 +116,7 @@ async def callback_subject_teachers(call: CallbackQuery, state: FSMContext):
             data.append({'text': text, 'callback_data': callback_data})
 
         kb = teachers_inline_keyboard_builder(data)
-        await call.message.answer(text='Выберите Преподователя:', reply_markup=kb)
+        await call.message.answer(text=f'Выберите Преподователя {subject_name}:', reply_markup=kb)
         await call.message.delete()
     else:
         await call.message.answer(text="❌ Нет Учителей")
