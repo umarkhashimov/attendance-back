@@ -99,8 +99,8 @@
                              data-bs-parent="#usersAccordion">
                             <div class="accordion-body bg-opacity-25 bg-light">
                                 <ul class="list-group list-unstyled">
-                                    {% for course in user.get_courses %}
-                                        <a href="{% url 'users:salary_course_detail' course_id=course.id %}"
+                                    {% for course in user.get_sessions_courses %}
+                                        <a href="{% url 'users:salary_course_detail' course_id=course.id teacher_id=user.id %}"
                                            class="my-auto text-dark table-obj-name-link text-decoration-none">
                                             <li class="list-group-item list-items-hover py-0">
                                                 <div class="py-2 d-flex justify-content-between align-items-center text-decoration-none w-100">

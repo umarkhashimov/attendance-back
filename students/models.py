@@ -1,5 +1,4 @@
-import datetime
-
+import datetime, re
 from django.db import models
 from courses.models import CourseModel
 from django.core.validators import MaxValueValidator
@@ -18,6 +17,52 @@ class StudentModel(models.Model):
     enrollment_date = models.DateField(auto_now_add=True, verbose_name='Дата создания')  # Date the student was enrolled
     courses = models.ManyToManyField(CourseModel, through='Enrollment', verbose_name='Записанные курсы')
     archived = models.BooleanField(default=False)
+
+    def clean_phone(self, raw):
+        if not raw:
+            return raw
+
+        raw = raw.strip()
+
+        # If garbage
+        if raw in {'.', ','}:
+            return '.'
+
+        # Remove spaces, (), -, letters
+        digits = re.sub(r'\D', '', raw)
+
+        if not digits:
+            return '.'
+
+        # If starts with + already and matches +998XXXXXXXXX
+        if raw.startswith('+'):
+            # normalize to + + digits only
+            return '+' + digits
+
+        # If local uzbek: 7–9 digits, prefix with +998
+        if len(digits) in [7, 8, 9]:
+            return '+998' + digits
+
+        # If starts with 998 but missing +
+        if digits.startswith('998'):
+            return '+' + digits
+
+        # Too short / invalid
+        if len(digits) < 9:
+            return '.'
+
+        # Default: return '+' + digits (fallback)
+        return '+' + digits
+
+    def save(self, *args, **kwargs):
+        if self.phone_number:
+            self.phone_number = self.clean_phone(self.phone_number)
+
+        if self.additional_number:
+            cleaned = self.clean_phone(self.additional_number)
+            # for optional field: use NULL if invalid
+            self.additional_number = None if cleaned == '.' else cleaned
+        super().save(*args, **kwargs)
 
     @property
     def full_name(self):

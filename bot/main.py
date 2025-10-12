@@ -1,13 +1,12 @@
-import types
+# Setup django
+import django, os
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
+django.setup()
 
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters.command import CommandStart, BotCommand
 import asyncio
 from decouple import config
-import django, os
-# Setup django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
-django.setup()
 from .handlers import router
 
 async def set_commands(bot: Bot):

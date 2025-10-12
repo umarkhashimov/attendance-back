@@ -2,7 +2,7 @@ from pyexpat.errors import messages
 from django.contrib import messages
 from users.filters import AdminRequired, SuperUserRequired
 from django.views.generic import DetailView,  UpdateView, View, CreateView, ListView, TemplateView
-from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 
 from users.helpers import record_action
 from .models import CourseModel, SessionsModel, SubjectModel
@@ -204,7 +204,7 @@ class ConductSession(View):
 
 
 class MyCoursesView(ListView):
-    queryset = CourseModel.objects.all()
+    queryset = CourseModel.objects.all().exclude(archived=True)
     template_name = "my_groups.html"
     context_object_name = 'courses'
     paginate_by = 20

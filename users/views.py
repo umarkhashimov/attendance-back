@@ -226,10 +226,12 @@ class SalaryUsersListView(SuperUserRequired, ListView):
 class SalaryCourseDetailView(SuperUserRequired, View):
     template_name = 'salary/salary_course_detail.html'
 
-    def get(self, request, course_id):
+    def get(self, request, course_id, teacher_id):
         course = CourseModel.objects.get(id=course_id)
         month = request.GET.get('month', None)
         date = datetime.today()
+        teacher = get_object_or_404(UsersModel, pk=teacher_id)
+
         if month and self.request.user.role != '1':
             date = datetime.strptime(month, '%Y-%m').date()
 
@@ -241,7 +243,7 @@ class SalaryCourseDetailView(SuperUserRequired, View):
 
         # Get the course and its sessions sorted by date
         course = CourseModel.objects.get(id=course_id)
-        sessions = SessionsModel.objects.filter(course=course, date__month=date.month, date__year=date.year).order_by(
+        sessions = SessionsModel.objects.filter(Q(record_by=teacher) |Q(record_by__role='2') | Q(record_by__isnull=True), course=course, date__month=date.month, date__year=date.year).order_by(
             'date')
 
         # Get all enrollments
@@ -287,11 +289,13 @@ class SalaryCourseDetailView(SuperUserRequired, View):
                         'session': session,
                         'trial_attendance': att.trial_attendance if att else None,
                         'payed': True if payment_check_date and payment_check_date >= session.date and absents < 3 else False,
+                        'absent_trial': True if att and att.status == 0 and att.absent_trial else False,
                     })
                     student_attendance.sort(key=lambda x: x['session'].date, reverse=True)
 
+                price = (13000 - ((13000 / 100) * enrollment.discount))
                 attendance_data.append({
-
+                    'price_for_student': round(price, 2),
                     'enrollment': enrollment,
                     'student': {'id': enrollment.student.id, 'full_name': enrollment.student.full_name},
                     'attendance': student_attendance,
@@ -303,7 +307,8 @@ class SalaryCourseDetailView(SuperUserRequired, View):
         context.update({
             'course': course,
             'sessions': sessions.order_by('-date'),
-            'attendance_data': attendance_data
+            'attendance_data': attendance_data,
+            'teacher': teacher,
         })
         return render(request, self.template_name, context)
 

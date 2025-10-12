@@ -1,20 +1,145 @@
 from aiogram.handlers import BaseHandler
 from aiogram import Router, F, Bot
 from aiogram.filters import Command, CommandStart
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
+from datetime import datetime
+import os
+from django.conf import settings
+
 from .utils import RegistrationForm, ChatState
-from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder, get_main_menu_keyboard
+from .keyboards import confirm_button, request_phone_keyboard, st_data_keyboard, students_inline_keyboard_builder,materials_inline_keyboard_builder,  get_main_menu_keyboard, subjects_inline_keyboard_builder, teachers_inline_keyboard_builder, about_center_inline_keyboard
 from .database import get_user, add_user
-from .helpers import get_students, get_enrollments, get_enrollment_balance, get_student, get_enrollment_attendance_list
+from .helpers import get_students, get_enrollments, get_materials, get_material_info, get_enrollment_balance, get_student, get_enrollment_attendance_list, get_subjects, get_subject_teachers, get_teacher_info
+from .messages import about_center_text
 
 router = Router()
 
 @router.message(Command('start'))
 async def start(message: Message, state: FSMContext):
     kb = await get_main_menu_keyboard(message.from_user.id)
-    await message.answer(text="Добро пожаловать!", reply_markup=kb)
+    hour = datetime.now().hour
+    if 5 <= hour < 12:
+        greeting = "🌅 Доброе утро!"
+    elif 12 <= hour < 18:
+        greeting = "☀️ Добрый день!"
+    elif 18 <= hour < 23:
+        greeting = "🌆 Добрый вечер!"
+    else:
+        greeting = "🌙 Доброй ночи!"
+    await message.answer(f"{greeting} Рады видеть вас здесь ✨", reply_markup=kb)
     await state.set_state(ChatState.main_menu)
+
+@router.message(Command('help'))
+async def start(message: Message, state: FSMContext):
+    kb = await get_main_menu_keyboard(message.from_user.id)
+    await message.answer(text="ℹ️ О боте\nЭтот бот позволяет студентам учебного центра быстро получать информацию:\n• 💳 Баланс по оплате обучения\n• ✅ Посещаемость занятий\n• 🏫 Дополнительные сведения о нашем учебном центре\n\n⚠️ Важно: Ваш номер телефона в Telegram должен совпадать с номером, указанным в базе студентов у администратора.\nЕсли номер не совпадает, бот не сможет показать ваши данные.", reply_markup=kb)
+    await state.set_state(ChatState.main_menu)
+
+@router.message(F.text == "🏫 О центре")
+async def about_center(message: Message, state: FSMContext):
+    kb = about_center_inline_keyboard()
+    file_path = os.path.join(settings.STATIC_ROOT, 'img/center-img.jpg')
+    photo = FSInputFile(file_path)
+    await message.answer_photo(photo=photo, caption=str(about_center_text), parse_mode="HTML", reply_markup=kb)
+    await state.set_state(ChatState.main_menu)
+
+@router.message(F.text == "📖 Материалы")
+async def materials(message: Message, state: FSMContext):
+    subjects = await get_subjects()
+    data = []
+    for subject in subjects:
+        text = f'{subject["name"]}'
+        callback_data = f'get_materials_subject_{subject["name"]}_{subject["id"]}'
+        data.append({'text': text, 'callback_data': callback_data})
+
+    kb = subjects_inline_keyboard_builder(data)
+    await message.answer(text='Выберите предмет для материалов:', reply_markup=kb)
+
+@router.callback_query(F.data.startswith("get_materials_subject"))
+async def callback_subject_materials(call: CallbackQuery, state: FSMContext):
+    subject_id = call.data.split("_")[-1]
+    subject_name = call.data.split("_")[-2]
+    materials = await get_materials(subject_id)
+    if materials and len(materials) > 0:
+        data = []
+        for material in materials:
+            text = f'{material["file_name"]}'
+            callback_data = f'get_material_{material["id"]}'
+            data.append({'text': text, 'callback_data': callback_data})
+
+            kb = materials_inline_keyboard_builder(data)
+            await call.message.answer(text=f'Выберите Файл предмета {subject_name}:', reply_markup=kb)
+            await call.message.delete()
+    else:
+        await call.message.answer(text="❌ Нет Файлов")
+
+    await call.answer()
+
+@router.callback_query(F.data.startswith("get_material"))
+async def get_material_file(call: CallbackQuery, state: FSMContext):
+    material_id = call.data.split("_")[-1]
+    material = await get_material_info(material_id)
+    if material:
+        caption = f'{material["file_name"]}'
+        file_path = os.path.join(settings.MEDIA_ROOT, str(material['file']))
+        file = FSInputFile(file_path)
+
+        await call.message.answer_document(document=file, caption=caption, parse_mode="HTML")
+        await call.message.delete()
+    else:
+        await call.message.answer(text="❗ Файл не найден.")
+
+    await call.answer()
+
+
+@router.message(F.text == '🧑‍🏫 Учителя')
+async def staff(message: Message, state: FSMContext):
+    subjects = await get_subjects()
+    data = []
+    for subject in subjects:
+        text = f'{subject["name"]}'
+        callback_data = f'get_teachers_subject_{subject["name"]}_{subject["id"]}'
+        data.append({'text':text, 'callback_data':callback_data})
+    kb = subjects_inline_keyboard_builder(data)
+    await message.answer(text='Выберите предмет:', reply_markup=kb)
+
+@router.callback_query(F.data.startswith("get_teachers_subject"))
+async def callback_subject_teachers(call: CallbackQuery, state: FSMContext):
+    subject_id = call.data.split("_")[-1]
+    subject_name = call.data.split("_")[-2]
+    teachers = await get_subject_teachers(subject_id)
+    if teachers and len(teachers) > 0:
+        data = []
+        for teacher in teachers:
+            text = f'{teacher["fname"]} {teacher["lname"]}'
+            callback_data = f'get_teacher_{teacher["id"]}'
+            data.append({'text': text, 'callback_data': callback_data})
+
+        kb = teachers_inline_keyboard_builder(data)
+        await call.message.answer(text=f'Выберите Преподователя {subject_name}:', reply_markup=kb)
+        await call.message.delete()
+    else:
+        await call.message.answer(text="❌ Нет Учителей")
+
+    await call.answer()
+
+@router.callback_query(F.data.startswith("get_teacher"))
+async def callback_teacher_info(call: CallbackQuery, state: FSMContext):
+    teacher_id = call.data.split("_")[-1]
+    teacher = await get_teacher_info(teacher_id)
+
+    if teacher:
+        caption = f'<b>{teacher["fname"]} {teacher["lname"]}</b>\n\n{teacher["bio"]}'
+
+        file_path = os.path.join(settings.MEDIA_ROOT, str(teacher['image']))
+        photo = FSInputFile(file_path)
+
+        await call.message.answer_photo(photo=photo, caption=caption, parse_mode="HTML")
+    else:
+        await call.message.answer(text="❗ Учитель не найден.")
+    await call.answer()
+
 
 @router.message(F.text == '🔙 Главное меню')
 async def main_menu(message: Message, state: FSMContext):
@@ -40,15 +165,20 @@ async def sign_in(message: Message, state: FSMContext):
                              reply_markup=request_phone_keyboard)
         await state.set_state(RegistrationForm.get_phone)
 
+
+
 @router.message(F.contact, RegistrationForm.get_phone)
 async def get_contact(message: Message, state: FSMContext):
     contact = message.contact
+    phone_number = contact.phone_number
+    if not phone_number.startswith('+'):
+        phone_number = '+' + phone_number
 
     if contact.user_id != message.from_user.id:
         await message.answer("❌ Пожалуйста отправьте контакт текущего профиля Телеграм.")
         return
 
-    students = await get_students(contact.phone_number)
+    students = await get_students(phone_number)
 
     if not students:
         kb = await get_main_menu_keyboard(message.from_user.id)
@@ -59,7 +189,7 @@ async def get_contact(message: Message, state: FSMContext):
     await message.answer(text=f"Найдено:\n\n{'\n'.join(['{id}. {fname} {lname}'.format(id=st['id'], fname=st['fname'], lname=st['lname']) for st in students])}")
 
     await state.update_data(
-        phone_number=contact.phone_number,
+        phone_number=phone_number,
         first_name=contact.first_name,
         last_name=contact.last_name,
         user_id = contact.user_id
@@ -75,24 +205,24 @@ async def get_contact(message: Message, state: FSMContext):
 @router.message(F.text.in_(['Да', 'Нет', '✅ Да', '❌ Нет']), RegistrationForm.confirm)
 async def confirm_contact(message: Message, state: FSMContext   ):
     data = await state.get_data()
-
+    main_kb = await get_main_menu_keyboard(message.from_user.id)
     contact = {
         'phone_number' : data.get("phone_number"),
         'first_name' : data.get("first_name"),
         'last_name' : data.get("last_name"),
         'user_id' : data.get("user_id")
-
     }
 
     if message.text in ['✅ Да', 'Да']:
         user = await add_user(contact, message.from_user)
+        main_kb = await get_main_menu_keyboard(message.from_user.id)
         if user:
-            await message.answer(text="Вы успешно зарегисрированы 🎉", reply_markup=st_data_keyboard)
-            await state.set_state(ChatState.student_info)
+            await message.answer(text="Вы успешно зарегистрированы 🎉", reply_markup=main_kb)
+            await state.set_state(ChatState.main_menu)
         else:
-            await message.answer(text="Что-то пошло не так ⛔")
+            await message.answer(text="Что-то пошло не так ⛔", reply_markup=main_kb)
     else:
-            await message.answer(text="Действие отменено ❌")
+            await message.answer(text="Действие отменено ❌", reply_markup=main_kb)
 
     await state.clear()
 

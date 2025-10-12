@@ -89,23 +89,23 @@
 {#            {% endfor %}#}
             {% for teacher, courses in teacher_enrollments.items %}
                 <ol class="list-group my-2 border-primary border p-0">
-                <li class="list-group-item list-group-item-primary w-100 fs-5 fw-semibold mb-3">{{ forloop.counter }}. {{ teacher }}</li>
+                    <li class="list-group-item list-group-item-primary w-100 fs-5 fw-semibold mb-3">{{ forloop.counter }}. {{ teacher }}</li>
                     {% for course, enrollments in courses.items %}
                         <li class="list-unstyled list-group-item border-0 py-0 mb-3">
 
                             <ul class="list-group border border-secondary shadow shadow-sm" id="courseTable{{ course.id }}">
                                 <li class="list-group-item-secondary list-group-item fw-semibold bg-opacity-25">
-                                    <a href="{% url 'courses:course_update' pk=course.id %}"
-                                                                   class="my-auto text-dark table-obj-name-link text-decoration-none">{{ course }}</a>
+                                    <p class="m-0 d-flex justify-content-between"><a href="{% url 'courses:course_update' pk=course.id %}"
+                                       class="my-auto text-dark table-obj-name-link text-decoration-none">{{ course }}</a> <span class="text-success fs-6 fw-medium">Открытие: <span class="text-success ms-2 fs-6 fw-bold"> {{ course.start_date|default:'---' }}</span></span></p>
                                 </li>
                                 {% for enrollment in enrollments %}
                                 <li class="list-group-item d-flex justify-content-between align-items-center list-items-hover">
-                                    <div class="d-flex">
+                                    <div class="d-flex align-items-center">
                                         <span class="text-secondary me-1">{{ forloop.counter }}.</span> <a href="{% url 'students:student_update' pk=enrollment.student.id %}"
                                                                        class="my-auto text-dark table-obj-name-link text-decoration-none">{{ enrollment.student.full_name }}</a>
-                                        <p class="m-0 ms-2 text-danger opacity-75">- {{ enrollment.payment_due }}  | {{ enrollment.balance }}</p>
+                                        <p class="m-0 ms-3 text-primary"> {{ enrollment.payment_due }} <span class="text-dark">| </span> <b class="fs-6 text-danger">{{ enrollment.balance }}</b>  </p>
                                     </div>
-                                    <div class="debt-students-phone-numbers d-flex gap-3">
+                                    <div class="debt-students-phone-numbers d-flex gap-3 align-items-center">
                                         <span type="button" copy="{{ enrollment.student.phone_number }}" onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)">{{ enrollment.student.phone_number }}</span>
                                         <span type="button" copy="{{ enrollment.student.additional_number|default_if_none:"---" }}" {% if enrollment.student.additional_number %}onclick="navigator.clipboard.writeText(this.getAttribute('copy')), this.classList.add('copied'), setTimeout(()=>{this.classList.remove('copied')}, 1000)"{% endif %}>{{ enrollment.student.additional_number|default_if_none:"---" }}</span>
                                         <div class="w-350px">

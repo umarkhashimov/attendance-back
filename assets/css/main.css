@@ -698,3 +698,34 @@ tr.active-tr {
 .note-update-form.error input{
     outline: 3px solid red;
 }
+
+.teacher-image{
+    aspect-ratio: 1/1.1;
+    width: 300px;
+    object-fit: cover;
+    background-color: white;
+}
+
+.teacher-card-image{
+    aspect-ratio: 1/1;
+    width: 100%;
+    height: 100%;
+    max-width: 200px;
+    object-fit: cover;
+    background-color: white;
+}
+
+.teacher-card:hover .wrapper{
+    box-shadow: 0 0 3px 1px darkgray;
+}
+
+.teacher-card{
+
+    .username{
+        font-size: 11px;
+    }
+
+    .card-title{
+        font-size: 15px;
+    }
+}

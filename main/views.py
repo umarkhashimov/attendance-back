@@ -15,6 +15,7 @@ from courses.forms import DaysMultiselectForm, CancelCauseForm
 from courses.models import CourseModel, UsersModel
 from .forms import CoursesListFilterForm, StudentsListFilterForm, TeachersListFilterForm, EnrollmentsListFilterForm
 from attendance.models import AttendanceModel
+from django.contrib.postgres.search import TrigramSimilarity
 class MainPageView(TemplateView):
     template_name = 'main.html'
 
@@ -120,6 +121,7 @@ class StudentsListView(AdminRequired, ListView):
         date_from = self.request.GET.get('date_from')
         date_to = self.request.GET.get('date_to')
         display = self.request.GET.get('display')
+        exclude_subject = self.request.GET.get('exclude_subject')
 
         queryset = super().get_queryset()
 
@@ -136,47 +138,26 @@ class StudentsListView(AdminRequired, ListView):
                 queryset = queryset.filter(archived=False)
             elif display == '3':
                 queryset = queryset.filter(archived=True)
+            elif display == '4':
+                queryset = queryset.filter(archived=False, enrollment__isnull=False, enrollment__status=True, enrollment__trial_lesson=False).distinct()
 
-        # Apply search text filter
         if text:
-            words = text.strip().split()
             queryset = queryset.annotate(
-                full_name_db=Concat('first_name', Value(' '), 'last_name'),
-                reversed_full_name=Concat('last_name', Value(' '), 'first_name')
-            )
+                sim_first=TrigramSimilarity('first_name', text),
+                sim_last=TrigramSimilarity('last_name', text),
+                sim_phone=TrigramSimilarity('phone_number', text),
+                sim_additional_phone=TrigramSimilarity('additional_number', text),
+            ).filter(
+                Q(sim_first__gt=0.3) | Q(sim_last__gt=0.3) | Q(sim_phone__gt=0.3) | Q(sim_additional_phone__gt=0.3)
+            ).order_by('-sim_first', '-sim_last', '-sim_phone', '-sim_additional_phone')
 
-            filters = Q()
-
-            if len(words) == 1:
-                word = words[0]
-                filters |= Q(first_name__icontains=word)
-                filters |= Q(last_name__icontains=word)
-                filters |= Q(phone_number__icontains=word)
-                filters |= Q(additional_number__icontains=word)
-
-            elif len(words) == 2:
-                full_input = " ".join(words)
-                reversed_input = " ".join(reversed(words))
-
-                filters |= Q(full_name_db__icontains=full_input)
-                filters |= Q(reversed_full_name__icontains=reversed_input)
-
-                # Optional: also match parts separately (stricter)
-                filters |= Q(first_name__icontains=words[0], last_name__icontains=words[1])
-                filters |= Q(first_name__icontains=words[1], last_name__icontains=words[0])
-
-            else:
-                # Too many words – treat as raw substring to be safe
-                filters |= Q(full_name_db__icontains=text)
-                filters |= Q(reversed_full_name__icontains=text)
-                filters |= Q(phone_number__icontains=text)
-                filters |= Q(additional_number__icontains=text)
-
-            queryset = queryset.filter(filters)
 
         # Filter by teacher
         if teacher:
             queryset = queryset.filter(courses__teacher=teacher)
+
+        if exclude_subject:
+            queryset = queryset.exclude(courses__subject=exclude_subject)
 
         # Apply ordering
         if ordering == "1":

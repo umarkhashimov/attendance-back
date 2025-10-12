@@ -1,9 +1,12 @@
 from random import choices
-
+import os
+from datetime import datetime, timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
 from django.contrib.admin.models import LogEntry, ContentType
 from django.apps import apps
+from PIL import Image, ImageOps
+from requests import session
 
 PERMISSION_CHOICES = [
     ('delete_enrollment', 'Может удалить ученика из группы'),
@@ -16,15 +19,23 @@ PERMISSION_CHOICES = [
 def get_default_permissions():
     return [perm[0] for perm in PERMISSION_CHOICES]
 
+def convert_file_name(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = '{:%Y-%m-%d-%H-%M-%S-%f}.{}'.format(datetime.now(), ext)
+    return os.path.join('./users', filename)
+
 class UsersModel(AbstractUser):
     ROLE_CHOICES = [
         ('1', 'Учитель'),
         ('2', 'Администратор'),
     ]
+    image = models.ImageField(upload_to=convert_file_name, null=True, blank=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='1', verbose_name='Роль')
     phone_number = models.CharField(max_length=13, null=True, blank=True, verbose_name="Номер Телефона")
+    bio = models.TextField(null=True, blank=True, verbose_name='Биография')
     color = models.CharField(max_length=7, default='#ffffff', null=True, blank=True, verbose_name="Цвет выделения")
-    custom_permissions = models.JSONField(default=get_default_permissions(), blank=True, null=True)
+    custom_permissions = models.JSONField(default=get_default_permissions, blank=True, null=True)
+    display_in_bot = models.BooleanField(default=True, verbose_name="Показать в боте")
 
     def has_permission(self, permission):
         return permission in self.custom_permissions
@@ -53,14 +64,42 @@ class UsersModel(AbstractUser):
 
     def get_courses(self):
         Courses = apps.get_model('courses', 'CourseModel')
-        filter = Courses.objects.filter(teacher=self)
+        filter = Courses.objects.filter(teacher=self).order_by('subject', 'weekdays','lesson_time')
         return filter
+
+    def get_sessions_courses(self):
+        Courses = apps.get_model('courses', 'CourseModel')
+        Sessions = apps.get_model('courses', 'SessionsModel')
+
+        dt = datetime.now() - timedelta(weeks=8)
+        sessions = Sessions.objects.filter(date__gte=dt, course__teacher=self).values_list('course', flat=True)
+        courses = Courses.objects.filter(id__in=sessions)
+
+        course_sessions = Sessions.objects.filter(record_by=self, date__gte=dt).values_list('course', flat=True)
+        if course_sessions.count() > 0:
+            additional_courses = Courses.objects.filter(id__in=course_sessions)
+            courses = courses.union(additional_courses)
+
+        return courses
 
     def get_enrollments(self):
         Enrollments = apps.get_model('students', 'Enrollment')
         courses = self.get_courses()
         filter = Enrollments.objects.filter(course__in=courses, status=True, trial_lesson=False)
         return filter
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # first save the original
+
+        if self.image:
+            img_path = self.image.path
+            img = Image.open(img_path)
+            # Fix rotation according to EXIF
+            img = ImageOps.exif_transpose(img)
+            # Example: Resize to max 300x300
+            max_size = (800, 800)
+            img.thumbnail(max_size)  # keeps aspect ratio
+            img.save(img_path, format='JPEG', quality=85, optimize=True)
 
     class Meta:
         verbose_name = 'пользователь'

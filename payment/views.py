@@ -269,7 +269,7 @@ class UpdatePaymentDatesView(SuperUserRequired, UpdateView):
     def form_valid(self, form):
         instance = form.save(commit=False)
         if form.cleaned_data['manual_due_date']:
-            instance.payed_due = calculate_payment_due_date(instance.enrollment, count_from=instance.payed_from)
+            instance.payed_due = calculate_payment_due_date(instance.enrollment, count_from=instance.payed_from, iterate_balance=instance.enrollment.balance)
         else:
             instance.payed_due = instance.payed_due
         instance.date = datetime.combine(form.cleaned_data['factual_date'].date(), datetime.now().time())

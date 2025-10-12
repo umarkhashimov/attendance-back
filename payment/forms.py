@@ -41,7 +41,7 @@ class CreatePaymentForm(forms.ModelForm):
 
 
 class PaymentHistoryFilterForm(forms.Form):
-    teacher = forms.ModelChoiceField(queryset=UsersModel.objects.filter(role='1'), required=False, label="Учитель", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
+    teacher = forms.ModelChoiceField(queryset=UsersModel.objects.filter(role='1', is_active=True), required=False, label="Учитель", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
     course = forms.ModelChoiceField(queryset=CourseModel.objects.all(), required=False, label="Курс", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
     student = forms.ModelChoiceField(queryset=StudentModel.objects.all(), required=False, label="Студет", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))
     sort_by = forms.ChoiceField(choices=[(1, "Последние"),(2, "Ранние"),(3, "Удаленные"),(4, "Кол-во месяц")], required=False, label="Сортировать по", widget=Select2Widget(attrs={'class':'form-control mt-2', 'onchange': 'submit()'}))

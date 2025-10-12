@@ -73,9 +73,15 @@ class StudentsListFilterForm(forms.Form):
         required=False, label="До")
 
     display = forms.ChoiceField(
-        choices=[(2, 'Активные'), (3, "Архив"), (1, 'Все')],
+        choices=[(4, 'Активные (Записанные)'), (2, 'Активные'), (3, "Архив"), (1, 'Все')],
         widget=forms.Select(attrs={'class': 'form-select', 'onchange': 'submit()'}),
         required=False, label="Показать"
+    )
+
+    exclude_subject = forms.ModelChoiceField(
+        queryset=SubjectModel.objects.all(),
+        widget=Select2Widget(attrs={'class': 'form-control', 'onchange': 'submit()'}),
+        required=False, label="Исключить предмет"
     )
 
     def __init__(self,  *args, **kwargs):

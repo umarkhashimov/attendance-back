@@ -9,5 +9,4 @@ class RegistrationForm(StatesGroup):
 class ChatState(StatesGroup):
     main_menu = State()
     student_info = State()
-    staff = State()
     about_us = State()

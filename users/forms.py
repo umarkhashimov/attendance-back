@@ -55,19 +55,21 @@ class TeacherUpdateForm(forms.ModelForm):
     class Meta:
         model = UsersModel
         # fields = "__all__"
-        fields = ['first_name', 'last_name', 'phone_number', 'color']
+        fields = ['image','first_name', 'last_name', 'phone_number', 'bio', 'color', 'display_in_bot']
         # exclude = ['password', 'last_login']'
         widgets = {
             'color': forms.TextInput(attrs={'type': 'color', 'class': 'form-control form-control-color'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control form-control-text pt-4', 'oninput': "this.style.height='auto';this.style.height=this.scrollHeight+'px';", 'rows': 4, 'style':"overflow:hidden;resize:none;min-height:calc(4em * 4);"}),
+            'display_in_bot': forms.CheckboxInput(attrs={'class': ' form-check-input fs-5'}),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Add attributes to all fields
         for field_name, field in self.fields.items():
-            if field_name != 'color':
+            if field_name not in  ['color', 'display_in_bot']:
                 field.widget.attrs.update({
-                    "class": "form-control",  # Add Bootstrap class
+                    "class": "form-control border border-dark-subtle my-2",  # Add Bootstrap class
                     "placeholder": ' ',  # Optional: Use label as placeholder
                 })
 

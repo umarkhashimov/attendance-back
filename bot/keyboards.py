@@ -7,7 +7,7 @@ async def get_main_menu_keyboard(uid):
     keys = [
         [
             KeyboardButton(text='🔑 Войти') if not user else KeyboardButton(text='🗂️ Данные Ученика'),
-            KeyboardButton(text='ℹ️ Помощь'),
+            KeyboardButton(text='📖 Материалы'),
         ],
         [
             KeyboardButton(text='🧑‍🏫 Учителя'),
@@ -20,12 +20,11 @@ async def get_main_menu_keyboard(uid):
 
     return kb
 
-request_phone_keyboard = ReplyKeyboardMarkup(keyboard=[
-    [
-        KeyboardButton(text="📱 Отправить мой контакт", request_contact=True),
-    ],
+request_phone_keyboard = ReplyKeyboardMarkup(
+    keyboard=[[KeyboardButton(text="📱 Отправить мой контакт", request_contact=True)]],
+    resize_keyboard=True
+)
 
-], resize_keyboard=True, selective=True)
 
 st_data_keyboard = ReplyKeyboardMarkup(keyboard=[
     [
@@ -47,6 +46,42 @@ confirm_button = ReplyKeyboardMarkup(keyboard=[
 ], resize_keyboard=True, one_time_keyboard=True, selective=True)
 
 def students_inline_keyboard_builder(data):
+    kb = InlineKeyboardBuilder()
+
+    for info in data:
+        kb.button(text=info['text'], callback_data=info['callback_data'])
+
+    kb.adjust(1)
+    return kb.as_markup()
+
+def subjects_inline_keyboard_builder(data):
+    kb = InlineKeyboardBuilder()
+
+    for info in data:
+        kb.button(text=info['text'], callback_data=info['callback_data'])
+
+    kb.adjust(1)
+    return kb.as_markup()
+
+def teachers_inline_keyboard_builder(data):
+    kb = InlineKeyboardBuilder()
+
+    for info in data:
+        kb.button(text=info['text'], callback_data=info['callback_data'])
+
+    kb.adjust(1)
+    return kb.as_markup()
+
+def about_center_inline_keyboard():
+    keyboard = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🌐 Наш сайт", url="https://iqcenter.uz")],
+        [InlineKeyboardButton(text="📷 Инстаграм", url="https://www.instagram.com/iqcenter.uz/")],
+        [InlineKeyboardButton(text="📍 Локация", url="https://maps.app.goo.gl/FPMr7Y9QQ9sZELc97")],
+    ])
+
+    return keyboard
+
+def materials_inline_keyboard_builder(data):
     kb = InlineKeyboardBuilder()
 
     for info in data:
