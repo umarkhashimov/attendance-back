@@ -69,7 +69,7 @@
                                                 {% csrf_token %}
                                                 <input name="text" onchange="this.form.requestSubmit()" maxlength="40"
                                                        class="text-center form-control rounded-0 align-middle w-100"
-                                                       value="{{ attendance.enrollment.note|default:'' }}">
+                                                       value="{{ attendance.enrollment.absent_note|default:'' }}">
                                             </form>
                                             </div>
                                         </div>
