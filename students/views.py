@@ -229,6 +229,23 @@ class UpdateEnrollmentNote(AdminRequired, View):
         except Exception as e:
             return JsonResponse({"ok": False, "message": "Произошла ошибка !"}, status=400)
 
+class UpdateEnrollmentAbsentNote(AdminRequired, View):
+    def post(self, request, pk):
+        try:
+            data = json.loads(request.body.decode("utf-8"))  # parse JSON
+        except json.JSONDecodeError:
+            return JsonResponse({"ok": False, "message": "Произошла ошибка !"}, status=400)
+
+        enrollment = get_object_or_404(Enrollment, id=pk)
+        text = data.get("text", "").strip()
+
+        try:
+            enrollment.absent_note = text
+            enrollment.save()
+            return JsonResponse({"ok": True, "message": "Заметка Обновлена"}, status=200)
+        except Exception as e:
+            return JsonResponse({"ok": False, "message": "Произошла ошибка !"}, status=400)
+
 
 class ReEnrollStudentView(AdminRequired, View):
 
