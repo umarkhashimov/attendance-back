@@ -187,10 +187,6 @@ LOGOUT_REDIRECT_URL = '/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
-try:
-    from .local_settings import *
-except:
-    pass
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d', '%d-%m-%Y', '%m/%d/%Y', '%d.%m.%Y']
 
