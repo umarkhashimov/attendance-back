@@ -83,6 +83,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'users.middleware.AuthRequiredMiddleware',
+    # 'config.middleware.ArtificialDelayMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
 

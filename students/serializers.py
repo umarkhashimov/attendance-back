@@ -3,6 +3,8 @@ from .models import Enrollment, StudentModel
 
 class StudentSerializer(serializers.ModelSerializer):
     has_debt = serializers.BooleanField(source='in_debt', read_only=True)
+    status = serializers.BooleanField(source='get_status', read_only=True)
+
 
     class Meta:
         model = StudentModel

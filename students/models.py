@@ -65,6 +65,12 @@ class StudentModel(models.Model):
         super().save(*args, **kwargs)
 
     @property
+    def get_status(self):
+        if not self.archived and self.get_enrolled_count() > 0:
+            return True
+        return False
+
+    @property
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
 
